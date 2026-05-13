@@ -1,0 +1,52 @@
+{
+  "id": "mon_elite_knight",
+  "name": "Elite Knight",
+  "description": "A brutal frontline champion that slams hard and stirs extra debris onto the board.",
+  "rarity": "elite",
+  "tier": 4,
+  "role": "elite",
+  "biome": "royal_ruins",
+  "spriteKey": "placeholder_elite_knight",
+  "stats": {
+    "hp": 95,
+    "attack": 8,
+    "armor": 1,
+    "attackIntervalLocks": 3
+  },
+  "intent": {
+    "id": "intent_heavy_slam",
+    "label": "Heavy Slam",
+    "description": "Deals extra damage and adds junk pressure."
+  },
+  "behaviors": [
+    "basic_attack",
+    "spawn_junk",
+    "shake_board"
+  ],
+  "resistances": [
+    "physical"
+  ],
+  "weaknesses": [
+    "void",
+    "combo_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 25,
+    "goldMax": 45,
+    "rewardRolls": 2,
+    "lootTableId": "loot_elite_default"
+  },
+  "tags": [
+    "late_game",
+    "armored",
+    "physical",
+    "junk_spawner",
+    "elite"
+  ],
+  "enabled": true
+}

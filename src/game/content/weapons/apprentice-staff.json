@@ -1,0 +1,28 @@
+{
+  "id": "wpn_apprentice_staff",
+  "name": "Apprentice Staff",
+  "weaponType": "staff",
+  "rarity": "common",
+  "description": "A beginner's staff that enhances mana generation.",
+  "iconKey": "wpn_apprentice_staff",
+  "stats": {
+    "lineDamageBonus": 0,
+    "comboDamageBonus": 0,
+    "spellDamageBonus": 0,
+    "manaGainBonus": 0.1,
+    "fallSpeedModifier": 0
+  },
+  "effects": [
+    {
+      "type": "increase_mana_gain",
+      "value": 0.1
+    }
+  ],
+  "allowedHeroes": ["all"],
+  "unlock": {
+    "isUnlockedByDefault": true,
+    "condition": "available_from_start"
+  },
+  "tags": ["starter", "mana"],
+  "enabled": true
+}

@@ -1,0 +1,23 @@
+{
+  "id": "status_slow",
+  "name": "Slow",
+  "category": "debuff",
+  "description": "Significantly reduces fall speed of blocks.",
+  "iconKey": "status_slow",
+  "effectKey": "effect_slow",
+  "durationType": "piece_locks",
+  "defaultDuration": 5,
+  "stacking": {
+    "stackable": true,
+    "maxStacks": 3,
+    "stackBehavior": "refresh"
+  },
+  "effects": [
+    {
+      "type": "reduce_fall_speed",
+      "value": 0.1
+    }
+  ],
+  "tags": ["debuff", "control"],
+  "enabled": true
+}

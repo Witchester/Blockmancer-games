@@ -1,0 +1,17 @@
+{
+  "id": "block_ice",
+  "name": "Ice Block",
+  "blockType": "special",
+  "rarity": "uncommon",
+  "description": "A frozen block with a chance to freeze enemies when cleared.",
+  "spriteKey": "block_ice",
+  "color": "#87ceeb",
+  "clearEffects": [
+    {
+      "type": "chance_freeze_enemy",
+      "value": 0.15
+    }
+  ],
+  "tags": ["frost", "special"],
+  "enabled": true
+}

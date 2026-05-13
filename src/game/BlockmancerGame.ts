@@ -1,0 +1,86 @@
+import Phaser from 'phaser';
+import { BootScene } from './scenes/BootScene';
+import { MainMenuScene } from './scenes/MainMenuScene';
+import { HeroSelectScene } from './scenes/HeroSelectScene';
+import { MapScene } from './scenes/MapScene';
+import { BattleScene } from './scenes/BattleScene';
+import { RewardScene } from './scenes/RewardScene';
+import { EventScene } from './scenes/EventScene';
+import { ShopScene } from './scenes/ShopScene';
+import { RestScene } from './scenes/RestScene';
+import { TreasureScene } from './scenes/TreasureScene';
+import { GameOverScene } from './scenes/GameOverScene';
+import { MapSystem } from './systems/MapSystem';
+import { SaveSystem } from './systems/SaveSystem';
+import { RewardSystem } from './systems/RewardSystem';
+import { EnemySystem } from './systems/EnemySystem';
+import { DifficultySystem } from './systems/DifficultySystem';
+import { EventSystem } from './systems/EventSystem';
+import { ShopSystem } from './systems/ShopSystem';
+import type { RunState } from './types/GameTypes';
+import { createDefaultRunState, normalizeRunState } from './data/defaultRunState';
+
+export class BlockmancerGame extends Phaser.Game {
+  readonly saveSystem = new SaveSystem();
+  readonly mapSystem = new MapSystem();
+  readonly rewardSystem = new RewardSystem();
+  readonly difficultySystem = new DifficultySystem();
+  readonly enemySystem = new EnemySystem(this.difficultySystem);
+  readonly eventSystem = new EventSystem(this.rewardSystem, this.enemySystem);
+  readonly shopSystem = new ShopSystem(this.rewardSystem);
+  runState: RunState;
+
+  constructor(parent: HTMLElement) {
+    super({
+      type: Phaser.AUTO,
+      parent,
+      width: 1280,
+      height: 800,
+      backgroundColor: '#090b13',
+      scale: {
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH
+      },
+      scene: [
+        BootScene,
+        MainMenuScene,
+        HeroSelectScene,
+        MapScene,
+        BattleScene,
+        RewardScene,
+        EventScene,
+        ShopScene,
+        RestScene,
+        TreasureScene,
+        GameOverScene
+      ]
+    });
+
+    this.runState = createDefaultRunState();
+  }
+
+  newRun(): RunState {
+    this.runState = createDefaultRunState();
+    this.saveRun();
+    return this.runState;
+  }
+
+  loadRun(): boolean {
+    const save = this.saveSystem.loadRun();
+    if (!save) {
+      return false;
+    }
+
+    this.runState = normalizeRunState(save);
+    return true;
+  }
+
+  saveRun(): void {
+    this.runState = normalizeRunState(this.runState);
+    this.saveSystem.saveRun(this.runState);
+  }
+
+  clearSave(): void {
+    this.saveSystem.clearRun();
+  }
+}

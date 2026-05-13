@@ -1,0 +1,33 @@
+{
+  "id": "spl_burn_line",
+  "name": "Burn Line",
+  "school": "fire",
+  "rarity": "uncommon",
+  "description": "Damages enemies across a line and applies burn status.",
+  "iconKey": "spell_burn_line",
+  "effectKey": "effect_burn_line",
+  "cost": {
+    "mana": 45,
+    "hp": 0,
+    "gold": 0
+  },
+  "targetType": "board",
+  "cooldownLocks": 0,
+  "effects": [
+    {
+      "type": "damage_enemy",
+      "value": 10
+    },
+    {
+      "type": "apply_status",
+      "value": "status_burn"
+    },
+    {
+      "type": "convert_random_blocks_to_fire",
+      "value": 3
+    }
+  ],
+  "upgradePath": [],
+  "tags": ["fire", "damage", "status"],
+  "enabled": true
+}

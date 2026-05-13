@@ -1,0 +1,12 @@
+{
+  "id": "block_stone",
+  "name": "Stone Block",
+  "blockType": "heavy",
+  "rarity": "uncommon",
+  "description": "A heavy block that is harder to clear.",
+  "spriteKey": "block_stone",
+  "color": "#808080",
+  "clearEffects": [],
+  "tags": ["heavy", "enemy_block"],
+  "enabled": true
+}

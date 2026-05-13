@@ -1,0 +1,46 @@
+{
+  "id": "hero_gravity_knight",
+  "name": "Gravity Knight",
+  "className": "Heavy Control",
+  "description": "A powerful warrior who bends gravity to control the board and crush enemies.",
+  "portraitKey": "hero_gravity_knight",
+  "sprite": {
+    "idle": "hero_gravity_knight_idle",
+    "cast": "hero_gravity_knight_cast",
+    "hit": "hero_gravity_knight_hit",
+    "death": "hero_gravity_knight_death"
+  },
+  "baseStats": {
+    "maxHp": 38,
+    "maxMana": 80,
+    "startingGold": 30,
+    "baseLineDamage": 6,
+    "baseFallSpeed": 1.1,
+    "spellCostModifier": 1,
+    "manaGainModifier": 1.0
+  },
+  "startingLoadout": {
+    "weaponId": "wpn_gravity_orb",
+    "spellIds": ["spl_gravity_flip", "spl_bomb_rune"],
+    "relicIds": [],
+    "upgradeIds": []
+  },
+  "passive": {
+    "id": "passive_heavy_drop",
+    "name": "Heavy Drop",
+    "description": "Hard drop deals 3 damage to enemies.",
+    "effects": [
+      {
+        "type": "hard_drop_damage",
+        "value": 3,
+        "condition": "on_hard_drop"
+      }
+    ]
+  },
+  "unlock": {
+    "isUnlockedByDefault": false,
+    "condition": "clear_100_lines"
+  },
+  "tags": ["gravity", "heavy", "unlockable"],
+  "enabled": true
+}

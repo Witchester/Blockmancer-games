@@ -1,0 +1,34 @@
+{
+  "id": "evt_shrine_of_gravity",
+  "name": "Shrine of Gravity",
+  "description": "A tilted altar offers stability at a price.",
+  "rarity": "common",
+  "biome": "dungeon",
+  "choices": [
+    {
+      "label": "Anchor",
+      "effectType": "reduce_fall_speed",
+      "value": 0.1,
+      "requirement": "none"
+    },
+    {
+      "label": "Take Tribute",
+      "effectType": "gain_gold",
+      "value": 30,
+      "requirement": "none"
+    },
+    {
+      "label": "Blood Offering",
+      "effectType": "gain_reward",
+      "value": 1,
+      "costHp": 3,
+      "requirement": "min_hp"
+    }
+  ],
+  "tags": [
+    "risk_reward",
+    "healing",
+    "gold"
+  ],
+  "enabled": true
+}

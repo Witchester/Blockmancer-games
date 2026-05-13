@@ -1,0 +1,71 @@
+{
+  "id": "loot_battle_default",
+  "name": "Battle Default",
+  "source": "battle",
+  "entries": [
+    {
+      "contentType": "upgrade",
+      "id": "upg_line_sharp_edges",
+      "weight": 15,
+      "rarity": "common",
+      "condition": "none"
+    },
+    {
+      "contentType": "upgrade",
+      "id": "upg_mana_echo",
+      "weight": 12,
+      "rarity": "common",
+      "condition": "none"
+    },
+    {
+      "contentType": "upgrade",
+      "id": "upg_board_stable_hands",
+      "weight": 10,
+      "rarity": "common",
+      "condition": "none"
+    },
+    {
+      "contentType": "upgrade",
+      "id": "upg_spell_fire_mastery",
+      "weight": 8,
+      "rarity": "uncommon",
+      "condition": "none"
+    },
+    {
+      "contentType": "upgrade",
+      "id": "upg_bomb_expert",
+      "weight": 8,
+      "rarity": "uncommon",
+      "condition": "none"
+    },
+    {
+      "contentType": "relic",
+      "id": "rel_slime_core",
+      "weight": 5,
+      "rarity": "common",
+      "condition": "none"
+    },
+    {
+      "contentType": "gold",
+      "id": "gold_bundle_small",
+      "weight": 10,
+      "rarity": "common",
+      "amount": 30,
+      "condition": "none"
+    },
+    {
+      "contentType": "healing",
+      "id": "heal_bundle_small",
+      "weight": 8,
+      "rarity": "common",
+      "amount": 6,
+      "condition": "none"
+    }
+  ],
+  "rollConfig": {
+    "choicesShown": 3,
+    "allowDuplicates": false,
+    "rarityBias": "normal"
+  },
+  "enabled": true
+}

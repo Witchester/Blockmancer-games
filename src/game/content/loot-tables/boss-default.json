@@ -1,0 +1,71 @@
+{
+  "id": "loot_boss_default",
+  "name": "Boss Default",
+  "source": "boss",
+  "entries": [
+    {
+      "contentType": "relic",
+      "id": "rel_cracked_crown",
+      "weight": 8,
+      "rarity": "epic",
+      "condition": "none"
+    },
+    {
+      "contentType": "relic",
+      "id": "rel_void_eye",
+      "weight": 7,
+      "rarity": "rare",
+      "condition": "none"
+    },
+    {
+      "contentType": "relic",
+      "id": "rel_stone_heart",
+      "weight": 7,
+      "rarity": "rare",
+      "condition": "none"
+    },
+    {
+      "contentType": "upgrade",
+      "id": "upg_emergency_barrier",
+      "weight": 8,
+      "rarity": "rare",
+      "condition": "none"
+    },
+    {
+      "contentType": "upgrade",
+      "id": "upg_arcane_preview",
+      "weight": 6,
+      "rarity": "uncommon",
+      "condition": "none"
+    },
+    {
+      "contentType": "upgrade",
+      "id": "upg_combo_heart",
+      "weight": 8,
+      "rarity": "rare",
+      "condition": "none"
+    },
+    {
+      "contentType": "gold",
+      "id": "gold_bundle_massive",
+      "weight": 10,
+      "rarity": "rare",
+      "amount": 120,
+      "condition": "none"
+    },
+    {
+      "contentType": "healing",
+      "id": "heal_bundle_massive",
+      "weight": 8,
+      "rarity": "rare",
+      "amount": 15,
+      "condition": "none"
+    }
+  ],
+  "rollConfig": {
+    "choicesShown": 4,
+    "allowDuplicates": false,
+    "rarityBias": "boss"
+  },
+  "enabled": true
+}

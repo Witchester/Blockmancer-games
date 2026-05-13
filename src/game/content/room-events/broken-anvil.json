@@ -1,0 +1,33 @@
+{
+  "id": "evt_broken_anvil",
+  "name": "Broken Anvil",
+  "description": "A cracked forge can still temper unstable magic.",
+  "rarity": "uncommon",
+  "biome": "royal_ruins",
+  "choices": [
+    {
+      "label": "Temper Spell",
+      "effectType": "upgrade_spell",
+      "value": 1,
+      "requirement": "has_spell"
+    },
+    {
+      "label": "Pay For Precision",
+      "effectType": "upgrade_spell",
+      "value": 1,
+      "costGold": 30,
+      "requirement": "min_gold"
+    },
+    {
+      "label": "Leave",
+      "effectType": "leave",
+      "value": 0,
+      "requirement": "none"
+    }
+  ],
+  "tags": [
+    "spell_upgrade",
+    "shop_like"
+  ],
+  "enabled": true
+}

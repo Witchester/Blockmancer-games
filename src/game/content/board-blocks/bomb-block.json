@@ -1,0 +1,21 @@
+{
+  "id": "block_bomb",
+  "name": "Bomb Block",
+  "blockType": "special",
+  "rarity": "rare",
+  "description": "Explodes and damages enemies in an area when cleared.",
+  "spriteKey": "block_bomb",
+  "color": "#ff6b00",
+  "clearEffects": [
+    {
+      "type": "clear_board_area",
+      "value": 1
+    },
+    {
+      "type": "damage_enemy",
+      "value": 10
+    }
+  ],
+  "tags": ["bomb", "damage", "rare"],
+  "enabled": true
+}

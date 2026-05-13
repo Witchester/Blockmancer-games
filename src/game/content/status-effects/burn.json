@@ -1,0 +1,15 @@
+{
+  "id": "status_burn",
+  "name": "Burn",
+  "category": "damage_over_time",
+  "durationType": "piece_locks",
+  "defaultDuration": 3,
+  "stacking": {
+    "stackable": true,
+    "maxStacks": 3
+  },
+  "effects": [
+    "damage_over_time"
+  ],
+  "enabled": true
+}

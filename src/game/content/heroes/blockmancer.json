@@ -1,0 +1,43 @@
+{
+  "id": "hero_blockmancer",
+  "name": "Blockmancer",
+  "className": "Blockmancer",
+  "description": "A balanced prison mage who turns stable line clears into reliable magical pressure.",
+  "portraitKey": "hero_blockmancer",
+  "baseStats": {
+    "maxHp": 30,
+    "maxMana": 100,
+    "startingGold": 50,
+    "baseLineDamage": 5,
+    "baseFallSpeed": 1,
+    "spellCostModifier": 1,
+    "manaGainModifier": 1
+  },
+  "startingLoadout": {
+    "weaponId": "wpn_basic_wand",
+    "spellIds": [
+      "spl_fireball",
+      "spl_frost_lock"
+    ],
+    "relicIds": [],
+    "upgradeIds": []
+  },
+  "passive": {
+    "id": "passive_line_mage",
+    "name": "Line Mage",
+    "description": "The first line clear in each battle grants a small extra burst of mana.",
+    "effects": [
+      "increase_mana_gain"
+    ]
+  },
+  "unlock": {
+    "isUnlockedByDefault": true,
+    "condition": "available_from_start"
+  },
+  "tags": [
+    "starter",
+    "line_damage_focused",
+    "mobile_friendly"
+  ],
+  "enabled": true
+}

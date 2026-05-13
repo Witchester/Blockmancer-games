@@ -1,0 +1,11 @@
+{
+  "id": "node_start",
+  "name": "Start",
+  "nodeType": "start",
+  "description": "The beginning of your dungeon run.",
+  "iconKey": "node_start",
+  "roomScene": "MapScene",
+  "effects": [],
+  "tags": ["start"],
+  "enabled": true
+}

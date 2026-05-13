@@ -1,0 +1,48 @@
+{
+  "id": "mon_bat",
+  "name": "Blind Bat",
+  "description": "A shrieking cave flier that obscures the next piece preview.",
+  "rarity": "common",
+  "tier": 1,
+  "role": "disruptor",
+  "biome": "crypt",
+  "spriteKey": "placeholder_bat",
+  "stats": {
+    "hp": 25,
+    "attack": 3,
+    "armor": 0,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_screech",
+    "label": "Blind Screech",
+    "description": "Hides preview information for a short time."
+  },
+  "behaviors": [
+    "hide_next_piece"
+  ],
+  "resistances": [
+    "gravity"
+  ],
+  "weaknesses": [
+    "lightning"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 10,
+    "goldMax": 18,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "early_game",
+    "small",
+    "flying",
+    "board_disruptor"
+  ],
+  "enabled": true
+}

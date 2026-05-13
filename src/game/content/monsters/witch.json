@@ -1,0 +1,47 @@
+{
+  "id": "mon_witch",
+  "name": "Dungeon Witch",
+  "description": "A hex-casting foe that punishes spell-heavy runs with mana corruption.",
+  "rarity": "rare",
+  "tier": 2,
+  "role": "caster",
+  "biome": "void",
+  "spriteKey": "placeholder_witch",
+  "stats": {
+    "hp": 55,
+    "attack": 5,
+    "armor": 0,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_hex",
+    "label": "Mana Hex",
+    "description": "Temporarily increases spell costs."
+  },
+  "behaviors": [
+    "mana_hex"
+  ],
+  "resistances": [
+    "spell_damage"
+  ],
+  "weaknesses": [
+    "line_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 16,
+    "goldMax": 28,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "mid_game",
+    "magical",
+    "board_disruptor"
+  ],
+  "enabled": true
+}

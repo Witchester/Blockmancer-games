@@ -1,0 +1,56 @@
+{
+  "id": "evt_mana_well",
+  "name": "Mana Well",
+  "rarity": "common",
+  "description": "A well of arcane energy.",
+  "iconKey": "evt_mana_well",
+  "backgroundKey": "bg_event_well",
+  "biome": "dungeon",
+  "choices": [
+    {
+      "id": "choice_mana_full",
+      "label": "Draw mana",
+      "description": "Restore mana to full.",
+      "requirements": [],
+      "effects": [
+        {
+          "type": "restore_mana_full",
+          "value": 1
+        }
+      ],
+      "resultText": "The well fills you with arcane power."
+    },
+    {
+      "id": "choice_mana_passive",
+      "label": "Learn mana gain",
+      "description": "Permanently increase mana gain by 10%.",
+      "requirements": [],
+      "effects": [
+        {
+          "type": "increase_mana_gain_passive",
+          "value": 0.1
+        }
+      ],
+      "resultText": "You attune to the well's energy."
+    },
+    {
+      "id": "choice_risky",
+      "label": "Consume the well",
+      "description": "Damage yourself but gain a powerful spell.",
+      "requirements": [],
+      "effects": [
+        {
+          "type": "damage_player",
+          "value": 2
+        },
+        {
+          "type": "gain_random_spell",
+          "value": 1
+        }
+      ],
+      "resultText": "The well's power is yours, but at a cost."
+    }
+  ],
+  "tags": ["utility", "mana"],
+  "enabled": true
+}

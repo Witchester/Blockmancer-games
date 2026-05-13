@@ -1,0 +1,28 @@
+{
+  "id": "wpn_stone_hammer",
+  "name": "Stone Hammer",
+  "weaponType": "hammer",
+  "rarity": "uncommon",
+  "description": "A heavy hammer that crushes blocks and enemies.",
+  "iconKey": "wpn_stone_hammer",
+  "stats": {
+    "lineDamageBonus": 1,
+    "comboDamageBonus": 0,
+    "spellDamageBonus": 0,
+    "manaGainBonus": 0,
+    "fallSpeedModifier": 0
+  },
+  "effects": [
+    {
+      "type": "hard_drop_damage",
+      "value": 5
+    }
+  ],
+  "allowedHeroes": ["all"],
+  "unlock": {
+    "isUnlockedByDefault": false,
+    "condition": "reward_or_shop"
+  },
+  "tags": ["damage", "heavy", "uncommon"],
+  "enabled": true
+}

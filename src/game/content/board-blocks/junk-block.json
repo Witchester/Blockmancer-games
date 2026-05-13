@@ -1,0 +1,12 @@
+{
+  "id": "block_junk",
+  "name": "Junk Block",
+  "blockType": "hazard",
+  "rarity": "common",
+  "description": "A worthless junk block that provides no reward.",
+  "spriteKey": "block_junk",
+  "color": "#4d4d4d",
+  "clearEffects": [],
+  "tags": ["junk", "enemy_generated", "no_reward"],
+  "enabled": true
+}

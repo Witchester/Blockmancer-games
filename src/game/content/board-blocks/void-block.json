@@ -1,0 +1,17 @@
+{
+  "id": "block_void",
+  "name": "Void Block",
+  "blockType": "special",
+  "rarity": "rare",
+  "description": "A void-touched block that clears extra cells when cleared.",
+  "spriteKey": "block_void",
+  "color": "#4b0082",
+  "clearEffects": [
+    {
+      "type": "clear_extra_cell",
+      "value": 1
+    }
+  ],
+  "tags": ["void", "special", "rare"],
+  "enabled": true
+}

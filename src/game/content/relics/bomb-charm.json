@@ -1,0 +1,23 @@
+{
+  "id": "rel_bomb_charm",
+  "name": "Bomb Charm",
+  "rarity": "uncommon",
+  "description": "Spawns a bomb block when landing a 3+ combo.",
+  "iconKey": "rel_bomb_charm",
+  "trigger": "on_combo",
+  "effects": [
+    {
+      "type": "spawn_bomb_block",
+      "value": 1,
+      "condition": "combo_3_plus"
+    }
+  ],
+  "stacking": {
+    "stackable": true,
+    "maxStacks": 2,
+    "stackBehavior": "add_bomb_spawn"
+  },
+  "conflictsWith": [],
+  "tags": ["bomb", "combo"],
+  "enabled": true
+}

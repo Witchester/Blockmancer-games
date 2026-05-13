@@ -1,0 +1,26 @@
+{
+  "id": "upg_board_stable_hands",
+  "name": "Stable Hands",
+  "category": "board",
+  "rarity": "common",
+  "description": "Your grip on the battlefield steadies the fall speed.",
+  "iconKey": "icon_stable_hands",
+  "appliesTo": {
+    "contentType": "board",
+    "ids": [],
+    "tags": []
+  },
+  "effects": [
+    "reduce_fall_speed"
+  ],
+  "maxLevel": 2,
+  "levelScaling": {
+    "mode": "flat",
+    "valuePerLevel": 0.05
+  },
+  "tags": [
+    "board_control",
+    "defense"
+  ],
+  "enabled": true
+}

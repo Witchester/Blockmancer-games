@@ -1,0 +1,27 @@
+{
+  "id": "upg_emergency_barrier",
+  "name": "Emergency Barrier",
+  "category": "defense",
+  "rarity": "rare",
+  "description": "Prevent lethal damage once per battle.",
+  "iconKey": "upg_emergency_barrier",
+  "appliesTo": {
+    "contentType": "global",
+    "ids": [],
+    "tags": []
+  },
+  "effects": [
+    {
+      "type": "prevent_lethal_damage",
+      "value": 1,
+      "condition": "once_per_battle"
+    }
+  ],
+  "maxLevel": 1,
+  "levelScaling": {
+    "mode": "none",
+    "valuePerLevel": 0
+  },
+  "tags": ["defense", "rare", "lifesaver"],
+  "enabled": true
+}

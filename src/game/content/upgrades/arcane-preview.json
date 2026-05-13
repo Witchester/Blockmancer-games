@@ -1,0 +1,26 @@
+{
+  "id": "upg_arcane_preview",
+  "name": "Arcane Preview",
+  "category": "board",
+  "rarity": "uncommon",
+  "description": "Shows one additional piece in advance.",
+  "iconKey": "upg_arcane_preview",
+  "appliesTo": {
+    "contentType": "global",
+    "ids": [],
+    "tags": []
+  },
+  "effects": [
+    {
+      "type": "increase_next_piece_preview",
+      "value": 1
+    }
+  ],
+  "maxLevel": 1,
+  "levelScaling": {
+    "mode": "none",
+    "valuePerLevel": 0
+  },
+  "tags": ["utility", "board"],
+  "enabled": true
+}

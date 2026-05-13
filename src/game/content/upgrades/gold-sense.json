@@ -1,0 +1,26 @@
+{
+  "id": "upg_gold_sense",
+  "name": "Gold Sense",
+  "category": "economy",
+  "rarity": "common",
+  "description": "Increase gold gain by 15%.",
+  "iconKey": "upg_gold_sense",
+  "appliesTo": {
+    "contentType": "global",
+    "ids": [],
+    "tags": []
+  },
+  "effects": [
+    {
+      "type": "increase_gold_gain_percent",
+      "value": 0.15
+    }
+  ],
+  "maxLevel": 3,
+  "levelScaling": {
+    "mode": "linear",
+    "valuePerLevel": 0.05
+  },
+  "tags": ["economy", "gold", "stackable"],
+  "enabled": true
+}

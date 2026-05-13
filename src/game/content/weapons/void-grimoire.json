@@ -1,0 +1,28 @@
+{
+  "id": "wpn_void_grimoire",
+  "name": "Void Grimoire",
+  "weaponType": "tome",
+  "rarity": "rare",
+  "description": "A powerful grimoire that reduces the cost of void spells.",
+  "iconKey": "wpn_void_grimoire",
+  "stats": {
+    "lineDamageBonus": 0,
+    "comboDamageBonus": 0,
+    "spellDamageBonus": 0,
+    "manaGainBonus": 0,
+    "fallSpeedModifier": 0
+  },
+  "effects": [
+    {
+      "type": "reduce_void_spell_cost",
+      "value": 15
+    }
+  ],
+  "allowedHeroes": ["all"],
+  "unlock": {
+    "isUnlockedByDefault": false,
+    "condition": "rare_drop"
+  },
+  "tags": ["void", "rare", "spell"],
+  "enabled": true
+}

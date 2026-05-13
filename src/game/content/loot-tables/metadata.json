@@ -1,0 +1,158 @@
+{
+  "contentType": "lootTable",
+  "version": "1.0.0",
+  "idPrefix": "loot_",
+  "displayName": "Loot Tables",
+  "description": "Schema metadata for weighted reward pools, entry content types, and roll configuration.",
+  "idFormat": "loot_<source>_<name>",
+  "exampleIds": [
+    "loot_battle_default",
+    "loot_elite_default",
+    "loot_boss_default",
+    "loot_shop_default",
+    "loot_treasure_default",
+    "loot_event_default"
+  ],
+  "requiredFields": [
+    "id",
+    "name",
+    "source",
+    "entries",
+    "enabled"
+  ],
+  "fields": {
+    "id": {
+      "type": "string",
+      "pattern": "^loot_[a-z0-9]+(?:_[a-z0-9]+)*$"
+    },
+    "name": {
+      "type": "string"
+    },
+    "source": {
+      "type": "enum",
+      "dataList": "source"
+    },
+    "entries": {
+      "type": "array",
+      "itemType": "object"
+    },
+    "rollConfig": {
+      "type": "object",
+      "properties": {
+        "choicesShown": {
+          "type": "number",
+          "min": 1
+        },
+        "allowDuplicates": {
+          "type": "boolean"
+        },
+        "rarityBias": {
+          "type": "enum",
+          "dataList": "rarityBias"
+        }
+      }
+    },
+    "enabled": {
+      "type": "boolean"
+    }
+  },
+  "dataList": {
+    "source": [
+      "battle",
+      "elite",
+      "boss",
+      "shop",
+      "treasure",
+      "event",
+      "starting_loadout"
+    ],
+    "entryContentType": [
+      "spell",
+      "relic",
+      "upgrade",
+      "weapon",
+      "gold",
+      "heal",
+      "curse",
+      "statusEffect"
+    ],
+    "rarity": [
+      "common",
+      "uncommon",
+      "rare",
+      "epic",
+      "legendary",
+      "cursed"
+    ],
+    "rarityBias": [
+      "low",
+      "normal",
+      "high",
+      "boss",
+      "debug"
+    ],
+    "conditions": [
+      "none",
+      "stage_min",
+      "stage_max",
+      "hero_class",
+      "has_spell",
+      "has_relic",
+      "not_owned",
+      "boss_cleared"
+    ],
+    "tags": [
+      "default",
+      "early_game",
+      "mid_game",
+      "late_game",
+      "shop",
+      "boss",
+      "elite",
+      "treasure",
+      "debug"
+    ]
+  },
+  "commonDataList": {
+    "enabled": [
+      true,
+      false
+    ],
+    "contentStatus": [
+      "draft",
+      "testing",
+      "balanced",
+      "deprecated"
+    ],
+    "source": [
+      "base_game",
+      "event",
+      "shop",
+      "boss_reward",
+      "achievement",
+      "debug"
+    ],
+    "platform": [
+      "web",
+      "android",
+      "ios",
+      "desktop"
+    ],
+    "balanceStatus": [
+      "untested",
+      "needs_buff",
+      "needs_nerf",
+      "stable"
+    ]
+  },
+  "defaults": {
+    "source": "battle",
+    "entries": [],
+    "rollConfig": {
+      "choicesShown": 3,
+      "allowDuplicates": false,
+      "rarityBias": "normal"
+    },
+    "enabled": true
+  }
+}

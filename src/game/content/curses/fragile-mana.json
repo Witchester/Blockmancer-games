@@ -1,0 +1,16 @@
+{
+  "id": "curse_fragile_mana",
+  "name": "Fragile Mana",
+  "rarity": "cursed",
+  "description": "Gain 15% less mana from line clears.",
+  "iconKey": "curse_fragile_mana",
+  "effects": [
+    {
+      "type": "reduce_mana_gain_percent",
+      "value": 0.15
+    }
+  ],
+  "removeCost": 55,
+  "tags": ["curse", "mana"],
+  "enabled": true
+}

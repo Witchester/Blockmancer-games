@@ -1,0 +1,23 @@
+{
+  "id": "rel_arcane_lens",
+  "name": "Arcane Lens",
+  "rarity": "uncommon",
+  "description": "Has a 15% chance to refund 10 mana when casting spells.",
+  "iconKey": "rel_arcane_lens",
+  "trigger": "on_spell_cast",
+  "effects": [
+    {
+      "type": "chance_refund_mana",
+      "value": 10,
+      "chance": 0.15
+    }
+  ],
+  "stacking": {
+    "stackable": true,
+    "maxStacks": 2,
+    "stackBehavior": "increase_chance"
+  },
+  "conflictsWith": [],
+  "tags": ["mana", "spell", "utility"],
+  "enabled": true
+}

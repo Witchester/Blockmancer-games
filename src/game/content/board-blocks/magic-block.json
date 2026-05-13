@@ -1,0 +1,17 @@
+{
+  "id": "block_magic",
+  "name": "Magic Block",
+  "blockType": "special",
+  "rarity": "uncommon",
+  "description": "A magical block that grants mana when cleared.",
+  "spriteKey": "block_magic",
+  "color": "#8b5cf6",
+  "clearEffects": [
+    {
+      "type": "gain_mana",
+      "value": 10
+    }
+  ],
+  "tags": ["mana", "special"],
+  "enabled": true
+}

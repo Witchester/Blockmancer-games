@@ -1,0 +1,52 @@
+{
+  "id": "mon_boss_falling_king",
+  "name": "Falling King",
+  "description": "The dungeon sovereign who accelerates the battlefield into collapse.",
+  "rarity": "boss",
+  "tier": 5,
+  "role": "boss",
+  "biome": "royal_ruins",
+  "spriteKey": "placeholder_falling_king",
+  "stats": {
+    "hp": 160,
+    "attack": 10,
+    "armor": 2,
+    "attackIntervalLocks": 2
+  },
+  "intent": {
+    "id": "intent_royal_collapse",
+    "label": "Royal Collapse",
+    "description": "Raises fall speed, shakes the board, and spawns junk."
+  },
+  "behaviors": [
+    "increase_fall_speed",
+    "spawn_junk",
+    "shake_board"
+  ],
+  "resistances": [
+    "line_damage",
+    "spell_damage"
+  ],
+  "weaknesses": [
+    "void"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0.1
+  },
+  "rewards": {
+    "goldMin": 50,
+    "goldMax": 80,
+    "rewardRolls": 3,
+    "lootTableId": "loot_boss_default"
+  },
+  "tags": [
+    "late_game",
+    "large",
+    "boss_phase",
+    "speed_scaler",
+    "junk_spawner"
+  ],
+  "enabled": true
+}

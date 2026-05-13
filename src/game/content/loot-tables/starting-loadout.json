@@ -1,0 +1,48 @@
+{
+  "id": "loot_starting_loadout",
+  "name": "Starting Loadout",
+  "source": "starting_loadout",
+  "entries": [
+    {
+      "contentType": "weapon",
+      "id": "wpn_basic_wand",
+      "weight": 1,
+      "rarity": "common",
+      "condition": "none"
+    },
+    {
+      "contentType": "spell",
+      "id": "spl_fireball",
+      "weight": 1,
+      "rarity": "common",
+      "condition": "none"
+    },
+    {
+      "contentType": "spell",
+      "id": "spl_frost_lock",
+      "weight": 1,
+      "rarity": "common",
+      "condition": "none"
+    },
+    {
+      "contentType": "spell",
+      "id": "spl_bomb_rune",
+      "weight": 1,
+      "rarity": "common",
+      "condition": "none"
+    },
+    {
+      "contentType": "spell",
+      "id": "spl_void_cut",
+      "weight": 1,
+      "rarity": "common",
+      "condition": "none"
+    }
+  ],
+  "rollConfig": {
+    "choicesShown": 5,
+    "allowDuplicates": false,
+    "rarityBias": "normal"
+  },
+  "enabled": true
+}

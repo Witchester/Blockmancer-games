@@ -1,0 +1,28 @@
+{
+  "id": "wpn_rune_blade",
+  "name": "Rune Blade",
+  "weaponType": "blade",
+  "rarity": "uncommon",
+  "description": "A blade inscribed with runes that increases damage.",
+  "iconKey": "wpn_rune_blade",
+  "stats": {
+    "lineDamageBonus": 2,
+    "comboDamageBonus": 1,
+    "spellDamageBonus": 0,
+    "manaGainBonus": 0,
+    "fallSpeedModifier": 0
+  },
+  "effects": [
+    {
+      "type": "increase_line_damage",
+      "value": 2
+    }
+  ],
+  "allowedHeroes": ["all"],
+  "unlock": {
+    "isUnlockedByDefault": false,
+    "condition": "reward_or_shop"
+  },
+  "tags": ["damage", "uncommon"],
+  "enabled": true
+}

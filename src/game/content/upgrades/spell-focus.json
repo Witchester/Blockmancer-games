@@ -1,0 +1,26 @@
+{
+  "id": "upg_spell_focus",
+  "name": "Spell Focus",
+  "category": "spell",
+  "rarity": "uncommon",
+  "description": "Increase all spell damage by 5.",
+  "iconKey": "upg_spell_focus",
+  "appliesTo": {
+    "contentType": "global",
+    "ids": [],
+    "tags": []
+  },
+  "effects": [
+    {
+      "type": "increase_spell_damage",
+      "value": 5
+    }
+  ],
+  "maxLevel": 4,
+  "levelScaling": {
+    "mode": "linear",
+    "valuePerLevel": 5
+  },
+  "tags": ["spell", "damage", "stackable"],
+  "enabled": true
+}

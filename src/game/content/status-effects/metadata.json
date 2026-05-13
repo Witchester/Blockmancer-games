@@ -1,0 +1,149 @@
+{
+  "contentType": "statusEffect",
+  "version": "1.0.0",
+  "idPrefix": "status_",
+  "displayName": "Status Effects",
+  "description": "Schema metadata for buffs, debuffs, temporary combat states, and board modifiers.",
+  "idFormat": "status_<effect_name>",
+  "exampleIds": [
+    "status_burn",
+    "status_freeze",
+    "status_stun",
+    "status_shield",
+    "status_mana_hex",
+    "status_slow",
+    "status_vulnerable"
+  ],
+  "requiredFields": [
+    "id",
+    "name",
+    "category",
+    "durationType",
+    "effects",
+    "enabled"
+  ],
+  "fields": {
+    "id": {
+      "type": "string",
+      "pattern": "^status_[a-z0-9]+(?:_[a-z0-9]+)*$"
+    },
+    "name": {
+      "type": "string"
+    },
+    "category": {
+      "type": "enum",
+      "dataList": "category"
+    },
+    "durationType": {
+      "type": "enum",
+      "dataList": "durationType"
+    },
+    "defaultDuration": {
+      "type": "number",
+      "min": 0
+    },
+    "stacking": {
+      "type": "object",
+      "properties": {
+        "stackable": {
+          "type": "boolean"
+        },
+        "maxStacks": {
+          "type": "number",
+          "min": 1
+        }
+      }
+    },
+    "effects": {
+      "type": "array",
+      "itemType": "enum",
+      "dataList": "effectTypes"
+    },
+    "enabled": {
+      "type": "boolean"
+    }
+  },
+  "dataList": {
+    "category": [
+      "buff",
+      "debuff",
+      "damage_over_time",
+      "control",
+      "defense",
+      "board_modifier"
+    ],
+    "durationType": [
+      "turns",
+      "piece_locks",
+      "seconds",
+      "battle",
+      "permanent"
+    ],
+    "effectTypes": [
+      "damage_over_time",
+      "reduce_fall_speed",
+      "increase_fall_speed",
+      "prevent_action",
+      "reduce_damage_taken",
+      "increase_damage_taken",
+      "increase_spell_cost",
+      "reduce_spell_cost",
+      "shield_player",
+      "freeze_piece",
+      "hide_next_piece"
+    ],
+    "tags": [
+      "combat",
+      "board",
+      "mana",
+      "control",
+      "damage",
+      "defense",
+      "enemy",
+      "player"
+    ]
+  },
+  "commonDataList": {
+    "enabled": [
+      true,
+      false
+    ],
+    "contentStatus": [
+      "draft",
+      "testing",
+      "balanced",
+      "deprecated"
+    ],
+    "source": [
+      "base_game",
+      "event",
+      "shop",
+      "boss_reward",
+      "achievement",
+      "debug"
+    ],
+    "platform": [
+      "web",
+      "android",
+      "ios",
+      "desktop"
+    ],
+    "balanceStatus": [
+      "untested",
+      "needs_buff",
+      "needs_nerf",
+      "stable"
+    ]
+  },
+  "defaults": {
+    "category": "debuff",
+    "durationType": "piece_locks",
+    "defaultDuration": 3,
+    "stacking": {
+      "stackable": false,
+      "maxStacks": 1
+    },
+    "effects": [],
+    "enabled": true
+  }
+}

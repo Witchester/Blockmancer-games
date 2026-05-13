@@ -1,0 +1,29 @@
+{
+  "id": "spl_mana_burst",
+  "name": "Mana Burst",
+  "school": "arcane",
+  "rarity": "common",
+  "description": "A quick arcane spell that deals damage and refunds mana on kill.",
+  "iconKey": "spell_mana_burst",
+  "effectKey": "effect_mana_burst",
+  "cost": {
+    "mana": 20,
+    "hp": 0,
+    "gold": 0
+  },
+  "targetType": "enemy",
+  "cooldownLocks": 0,
+  "effects": [
+    {
+      "type": "damage_enemy",
+      "value": 10
+    },
+    {
+      "type": "refund_mana_on_kill",
+      "value": 10
+    }
+  ],
+  "upgradePath": [],
+  "tags": ["damage", "arcane", "mana"],
+  "enabled": true
+}

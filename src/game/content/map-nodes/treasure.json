@@ -1,0 +1,16 @@
+{
+  "id": "node_treasure",
+  "name": "Treasure",
+  "nodeType": "treasure",
+  "description": "A treasure room with valuable rewards.",
+  "iconKey": "node_treasure",
+  "roomScene": "TreasureScene",
+  "effects": [
+    {
+      "type": "open_loot",
+      "lootTableId": "loot_treasure_default"
+    }
+  ],
+  "tags": ["reward"],
+  "enabled": true
+}

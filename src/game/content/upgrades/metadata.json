@@ -1,0 +1,247 @@
+{
+  "contentType": "upgrade",
+  "version": "1.0.0",
+  "idPrefix": "upg_",
+  "displayName": "Upgrades",
+  "description": "Schema metadata for run upgrades, applicability, level scaling, and effect routing.",
+  "idFormat": "upg_<category>_<name>",
+  "exampleIds": [
+    "upg_line_sharp_edges",
+    "upg_mana_echo",
+    "upg_board_stable_hands",
+    "upg_spell_fire_mastery",
+    "upg_bomb_expert",
+    "upg_combo_heart",
+    "upg_arcane_preview",
+    "upg_stonebreaker",
+    "upg_emergency_barrier"
+  ],
+  "requiredFields": [
+    "id",
+    "name",
+    "category",
+    "rarity",
+    "description",
+    "effects",
+    "maxLevel",
+    "enabled"
+  ],
+  "fields": {
+    "id": {
+      "type": "string",
+      "pattern": "^upg_[a-z0-9]+(?:_[a-z0-9]+)*$"
+    },
+    "name": {
+      "type": "string"
+    },
+    "category": {
+      "type": "enum",
+      "dataList": "category"
+    },
+    "rarity": {
+      "type": "enum",
+      "dataList": "rarity"
+    },
+    "description": {
+      "type": "string"
+    },
+    "iconKey": {
+      "type": "enum",
+      "dataList": "iconKey"
+    },
+    "appliesTo": {
+      "type": "object",
+      "properties": {
+        "contentType": {
+          "type": "enum",
+          "dataList": "appliesToContentType"
+        },
+        "ids": {
+          "type": "array",
+          "itemType": "string"
+        },
+        "tags": {
+          "type": "array",
+          "itemType": "string"
+        }
+      }
+    },
+    "effects": {
+      "type": "array",
+      "itemType": "enum",
+      "dataList": "effectTypes"
+    },
+    "maxLevel": {
+      "type": "number",
+      "min": 1
+    },
+    "levelScaling": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "type": "enum",
+          "dataList": "levelScalingMode"
+        },
+        "valuePerLevel": {
+          "type": "number"
+        }
+      }
+    },
+    "tags": {
+      "type": "array",
+      "itemType": "enum",
+      "dataList": "tags",
+      "uniqueItems": true
+    },
+    "enabled": {
+      "type": "boolean"
+    }
+  },
+  "dataList": {
+    "category": [
+      "line_damage",
+      "spell",
+      "mana",
+      "board",
+      "defense",
+      "economy",
+      "combo",
+      "weapon",
+      "hero"
+    ],
+    "rarity": [
+      "common",
+      "uncommon",
+      "rare",
+      "epic",
+      "legendary"
+    ],
+    "appliesToContentType": [
+      "global",
+      "hero",
+      "weapon",
+      "spell",
+      "relic",
+      "board",
+      "enemy",
+      "reward"
+    ],
+    "effectTypes": [
+      "increase_line_damage",
+      "increase_spell_damage",
+      "increase_specific_spell_damage",
+      "reduce_spell_cost",
+      "increase_mana_gain",
+      "increase_max_hp",
+      "heal_player",
+      "increase_gold_gain",
+      "reduce_fall_speed",
+      "increase_combo_bonus",
+      "increase_reward_choices",
+      "reroll_reward",
+      "ignore_enemy_resistance",
+      "reduce_enemy_attack",
+      "clear_extra_blocks",
+      "spawn_magic_block",
+      "spawn_bomb_block"
+    ],
+    "levelScalingMode": [
+      "flat",
+      "linear",
+      "percent",
+      "exponential",
+      "custom"
+    ],
+    "targetSpellIds": [
+      "spl_fireball",
+      "spl_frost_lock",
+      "spl_bomb_rune",
+      "spl_void_cut",
+      "spl_lightning_chain",
+      "spl_gravity_flip",
+      "spl_heal_glyph"
+    ],
+    "targetWeaponIds": [
+      "wpn_basic_wand",
+      "wpn_apprentice_staff",
+      "wpn_fire_tome",
+      "wpn_gravity_orb",
+      "wpn_rune_blade"
+    ],
+    "iconKey": [
+      "placeholder_upgrade",
+      "icon_sharp_edges",
+      "icon_mana_echo",
+      "icon_stable_hands",
+      "icon_fire_mastery",
+      "icon_bomb_expert",
+      "icon_combo_heart",
+      "icon_arcane_preview",
+      "icon_stonebreaker",
+      "icon_emergency_barrier"
+    ],
+    "tags": [
+      "damage",
+      "spell",
+      "mana",
+      "board_control",
+      "defense",
+      "economy",
+      "combo",
+      "starter",
+      "late_game",
+      "boss_reward",
+      "stackable"
+    ]
+  },
+  "commonDataList": {
+    "enabled": [
+      true,
+      false
+    ],
+    "contentStatus": [
+      "draft",
+      "testing",
+      "balanced",
+      "deprecated"
+    ],
+    "source": [
+      "base_game",
+      "event",
+      "shop",
+      "boss_reward",
+      "achievement",
+      "debug"
+    ],
+    "platform": [
+      "web",
+      "android",
+      "ios",
+      "desktop"
+    ],
+    "balanceStatus": [
+      "untested",
+      "needs_buff",
+      "needs_nerf",
+      "stable"
+    ]
+  },
+  "defaults": {
+    "category": "line_damage",
+    "rarity": "common",
+    "iconKey": "placeholder_upgrade",
+    "appliesTo": {
+      "contentType": "global",
+      "ids": [],
+      "tags": []
+    },
+    "effects": [],
+    "maxLevel": 1,
+    "levelScaling": {
+      "mode": "flat",
+      "valuePerLevel": 0
+    },
+    "tags": [],
+    "enabled": true
+  }
+}

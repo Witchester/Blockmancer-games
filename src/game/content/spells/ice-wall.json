@@ -1,0 +1,29 @@
+{
+  "id": "spl_ice_wall",
+  "name": "Ice Wall",
+  "school": "frost",
+  "rarity": "uncommon",
+  "description": "Creates a protective ice barrier and freezes the current piece.",
+  "iconKey": "spell_ice_wall",
+  "effectKey": "effect_ice_wall",
+  "cost": {
+    "mana": 45,
+    "hp": 0,
+    "gold": 0
+  },
+  "targetType": "board",
+  "cooldownLocks": 0,
+  "effects": [
+    {
+      "type": "gain_shield",
+      "value": 5
+    },
+    {
+      "type": "freeze_piece",
+      "value": 1
+    }
+  ],
+  "upgradePath": [],
+  "tags": ["frost", "defense", "control"],
+  "enabled": true
+}

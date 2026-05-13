@@ -1,0 +1,78 @@
+{
+  "id": "loot_elite_default",
+  "name": "Elite Default",
+  "source": "elite",
+  "entries": [
+    {
+      "contentType": "upgrade",
+      "id": "upg_spell_fire_mastery",
+      "weight": 8,
+      "rarity": "uncommon",
+      "condition": "none"
+    },
+    {
+      "contentType": "upgrade",
+      "id": "upg_bomb_expert",
+      "weight": 8,
+      "rarity": "uncommon",
+      "condition": "none"
+    },
+    {
+      "contentType": "upgrade",
+      "id": "upg_stonebreaker",
+      "weight": 6,
+      "rarity": "rare",
+      "condition": "none"
+    },
+    {
+      "contentType": "upgrade",
+      "id": "upg_emergency_barrier",
+      "weight": 6,
+      "rarity": "rare",
+      "condition": "none"
+    },
+    {
+      "contentType": "relic",
+      "id": "rel_broken_hourglass",
+      "weight": 7,
+      "rarity": "rare",
+      "condition": "none"
+    },
+    {
+      "contentType": "relic",
+      "id": "rel_dragon_tooth",
+      "weight": 6,
+      "rarity": "rare",
+      "condition": "none"
+    },
+    {
+      "contentType": "relic",
+      "id": "rel_frozen_dice",
+      "weight": 5,
+      "rarity": "uncommon",
+      "condition": "none"
+    },
+    {
+      "contentType": "gold",
+      "id": "gold_bundle_large",
+      "weight": 8,
+      "rarity": "uncommon",
+      "amount": 60,
+      "condition": "none"
+    },
+    {
+      "contentType": "healing",
+      "id": "heal_bundle_large",
+      "weight": 6,
+      "rarity": "uncommon",
+      "amount": 10,
+      "condition": "none"
+    }
+  ],
+  "rollConfig": {
+    "choicesShown": 3,
+    "allowDuplicates": false,
+    "rarityBias": "high"
+  },
+  "enabled": true
+}

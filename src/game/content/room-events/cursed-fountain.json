@@ -1,0 +1,51 @@
+{
+  "id": "evt_cursed_fountain",
+  "name": "Cursed Fountain",
+  "rarity": "uncommon",
+  "description": "A mysterious fountain with both blessing and curse.",
+  "iconKey": "evt_cursed_fountain",
+  "backgroundKey": "bg_event_fountain",
+  "biome": "dungeon",
+  "choices": [
+    {
+      "id": "choice_heal_full_curse",
+      "label": "Drink fully",
+      "description": "Restore all health but gain a random curse.",
+      "requirements": [],
+      "effects": [
+        {
+          "type": "heal_full",
+          "value": 1
+        },
+        {
+          "type": "gain_random_curse",
+          "value": 1
+        }
+      ],
+      "resultText": "You feel refreshed but cursed!"
+    },
+    {
+      "id": "choice_mana_surge",
+      "label": "Channel mana",
+      "description": "Restore 100 mana.",
+      "requirements": [],
+      "effects": [
+        {
+          "type": "gain_mana",
+          "value": 100
+        }
+      ],
+      "resultText": "Mana flows through you."
+    },
+    {
+      "id": "choice_leave",
+      "label": "Walk away",
+      "description": "Leave the fountain untouched.",
+      "requirements": [],
+      "effects": [],
+      "resultText": "You decide not to tempt fate."
+    }
+  ],
+  "tags": ["risk_reward", "blessing"],
+  "enabled": true
+}

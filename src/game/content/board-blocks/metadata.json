@@ -1,0 +1,60 @@
+{
+  "contentType": "boardBlock",
+  "version": "1.0.0",
+  "idPrefix": "block_",
+  "displayName": "Board Blocks",
+  "description": "Special board block types with unique clearance effects and behaviors.",
+  "idFormat": "block_<type>",
+  "exampleIds": [
+    "block_red",
+    "block_blue",
+    "block_magic",
+    "block_bomb",
+    "block_void"
+  ],
+  "requiredFields": [
+    "id",
+    "name",
+    "blockType",
+    "rarity",
+    "spriteKey",
+    "enabled"
+  ],
+  "fields": {
+    "id": {
+      "type": "string",
+      "pattern": "^block_[a-z0-9]+(?:_[a-z0-9]+)*$"
+    },
+    "name": {
+      "type": "string"
+    },
+    "blockType": {
+      "type": "enum",
+      "values": ["normal", "special", "heavy", "hazard"]
+    },
+    "rarity": {
+      "type": "enum",
+      "values": ["common", "uncommon", "rare"]
+    },
+    "spriteKey": {
+      "type": "string"
+    },
+    "clearEffects": {
+      "type": "array",
+      "itemType": "object"
+    },
+    "tags": {
+      "type": "array",
+      "itemType": "string"
+    },
+    "enabled": {
+      "type": "boolean"
+    }
+  },
+  "dataList": {},
+  "defaults": {
+    "enabled": true,
+    "clearEffects": [],
+    "tags": []
+  }
+}

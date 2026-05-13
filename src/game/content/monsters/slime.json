@@ -1,0 +1,45 @@
+{
+  "id": "mon_dungeon_slime",
+  "name": "Dungeon Slime",
+  "description": "A gelatinous beginner foe that bounces forward and splashes direct damage.",
+  "rarity": "common",
+  "tier": 1,
+  "role": "basic",
+  "biome": "dungeon",
+  "spriteKey": "placeholder_slime",
+  "stats": {
+    "hp": 30,
+    "attack": 3,
+    "armor": 0,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_attack",
+    "label": "Bounce Attack",
+    "description": "Deals direct damage."
+  },
+  "behaviors": [
+    "basic_attack"
+  ],
+  "resistances": [],
+  "weaknesses": [
+    "fire"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 10,
+    "goldMax": 20,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "early_game",
+    "tutorial",
+    "small"
+  ],
+  "enabled": true
+}

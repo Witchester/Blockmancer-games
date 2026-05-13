@@ -1,0 +1,24 @@
+{
+  "id": "rel_broken_hourglass",
+  "name": "Broken Hourglass",
+  "rarity": "uncommon",
+  "description": "When danger rises, time drags and the board slows slightly.",
+  "iconKey": "icon_broken_hourglass",
+  "trigger": "on_low_hp",
+  "effects": [
+    "reduce_fall_speed"
+  ],
+  "stacking": {
+    "stackable": false,
+    "maxStacks": 1,
+    "stackBehavior": "none"
+  },
+  "conflictsWith": [
+    "fall_speed_control"
+  ],
+  "tags": [
+    "defense",
+    "board_control"
+  ],
+  "enabled": true
+}

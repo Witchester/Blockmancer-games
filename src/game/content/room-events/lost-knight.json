@@ -1,0 +1,33 @@
+{
+  "id": "evt_lost_knight",
+  "name": "Lost Knight",
+  "description": "A fading warrior offers one last favor before vanishing.",
+  "rarity": "common",
+  "biome": "crypt",
+  "choices": [
+    {
+      "label": "Bind Wounds",
+      "effectType": "heal_player",
+      "value": 5,
+      "requirement": "none"
+    },
+    {
+      "label": "Take Pouch",
+      "effectType": "gain_gold",
+      "value": 20,
+      "requirement": "none"
+    },
+    {
+      "label": "Honor Duel",
+      "effectType": "start_elite_fight",
+      "value": 1,
+      "requirement": "none"
+    }
+  ],
+  "tags": [
+    "healing",
+    "gold",
+    "combat"
+  ],
+  "enabled": true
+}

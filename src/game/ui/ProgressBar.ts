@@ -1,0 +1,68 @@
+import Phaser from 'phaser';
+import { COLORS } from '../utils/constants';
+
+export type ProgressBarOptions = {
+  label?: string;
+  width?: number;
+  height?: number;
+  fillColor?: number;
+  trackColor?: number;
+  textColor?: string;
+  showValueText?: boolean;
+};
+
+export class ProgressBar extends Phaser.GameObjects.Container {
+  private readonly track: Phaser.GameObjects.Rectangle;
+  private readonly fill: Phaser.GameObjects.Rectangle;
+  private readonly labelText?: Phaser.GameObjects.Text;
+  private readonly valueText?: Phaser.GameObjects.Text;
+  private readonly fillWidth: number;
+
+  constructor(scene: Phaser.Scene, x: number, y: number, options: ProgressBarOptions = {}) {
+    super(scene, x, y);
+
+    this.fillWidth = options.width ?? 400;
+    const height = options.height ?? 16;
+    const showValueText = options.showValueText ?? true;
+    const barY = options.label ? 26 : 0;
+
+    if (options.label) {
+      this.labelText = scene.add.text(0, 0, options.label, {
+        color: options.textColor ?? '#f6f7ff',
+        fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
+        fontSize: '18px'
+      }).setOrigin(0, 0);
+      this.add(this.labelText);
+    }
+
+    if (showValueText) {
+      this.valueText = scene.add.text(this.fillWidth, 0, '', {
+        color: options.textColor ?? '#f6f7ff',
+        fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
+        fontSize: '18px'
+      }).setOrigin(1, 0);
+      this.add(this.valueText);
+    }
+
+    this.track = scene.add
+      .rectangle(0, barY, this.fillWidth, height, options.trackColor ?? 0x2f3652, 1)
+      .setOrigin(0, 0);
+    this.fill = scene.add
+      .rectangle(0, barY, this.fillWidth, height, options.fillColor ?? COLORS.danger, 1)
+      .setOrigin(0, 0);
+
+    this.add([this.track, this.fill]);
+    scene.add.existing(this);
+  }
+
+  setValue(current: number, max: number): void {
+    const safeMax = Math.max(1, max);
+    const ratio = Phaser.Math.Clamp(current / safeMax, 0, 1);
+    this.fill.width = this.fillWidth * ratio;
+    this.valueText?.setText(`${Math.max(0, Math.round(current))}/${safeMax}`);
+  }
+
+  setLabel(text: string): void {
+    this.labelText?.setText(text);
+  }
+}

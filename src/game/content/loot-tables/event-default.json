@@ -1,0 +1,50 @@
+{
+  "id": "loot_event_default",
+  "name": "Event Default",
+  "source": "event",
+  "entries": [
+    {
+      "contentType": "gold",
+      "id": "gold_bundle_small",
+      "weight": 10,
+      "rarity": "common",
+      "amount": 30,
+      "condition": "none"
+    },
+    {
+      "contentType": "healing",
+      "id": "heal_bundle_tiny",
+      "weight": 8,
+      "rarity": "common",
+      "amount": 5,
+      "condition": "none"
+    },
+    {
+      "contentType": "upgrade",
+      "id": "upg_line_sharp_edges",
+      "weight": 9,
+      "rarity": "common",
+      "condition": "none"
+    },
+    {
+      "contentType": "relic",
+      "id": "rel_slime_core",
+      "weight": 6,
+      "rarity": "common",
+      "condition": "none"
+    },
+    {
+      "contentType": "curse",
+      "id": "curse_heavy_blocks",
+      "weight": 4,
+      "rarity": "cursed",
+      "condition": "none"
+    }
+  ],
+  "rollConfig": {
+    "choicesShown": 3,
+    "allowDuplicates": false,
+    "rarityBias": "normal"
+  },
+  "enabled": true
+}

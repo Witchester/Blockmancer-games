@@ -1,0 +1,28 @@
+{
+  "name": "blockmancer-dungeon",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --force",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "validate:metadata": "node scripts/validate-content-metadata.mjs",
+    "validate:content": "node scripts/validate-content-data.mjs",
+    "android:init": "node -e \"const fs=require('fs');const {spawnSync}=require('child_process');if(fs.existsSync('android')){console.log('Android project already exists.');process.exit(0);}const cmd=process.platform==='win32'?'npx.cmd':'npx';const result=spawnSync(cmd,['cap','add','android'],{stdio:'inherit',shell:process.platform==='win32'});process.exit(result.status??0);\"",
+    "android:sync": "npm run build && npx cap sync android",
+    "android:open": "npx cap open android",
+    "android:build:debug": "node -e \"const fs=require('fs');const {spawnSync}=require('child_process');if(!fs.existsSync('android')){console.error('Android project not found. Run npm run android:init first.');process.exit(1);}const command=process.platform==='win32'?'gradlew.bat':'./gradlew';const result=spawnSync(command,['assembleDebug'],{cwd:'android',stdio:'inherit',shell:process.platform==='win32'});process.exit(result.status??0);\"",
+    "clean": "node -e \"const fs=require('fs');['dist','node_modules/.vite','android/.gradle','android/app/build'].forEach((target)=>{if(fs.existsSync(target)){fs.rmSync(target,{recursive:true,force:true});console.log('Removed',target);}});\""
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.0.1",
+    "@capacitor/cli": "^7.0.1",
+    "@capacitor/core": "^7.0.1",
+    "phaser": "^3.90.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "vite": "^7.0.0"
+  }
+}

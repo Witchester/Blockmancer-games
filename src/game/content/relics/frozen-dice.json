@@ -1,0 +1,22 @@
+{
+  "id": "rel_frozen_dice",
+  "name": "Frozen Dice",
+  "rarity": "uncommon",
+  "description": "Grants a reroll at the start of each battle.",
+  "iconKey": "rel_frozen_dice",
+  "trigger": "on_battle_start",
+  "effects": [
+    {
+      "type": "gain_piece_reroll",
+      "value": 1
+    }
+  ],
+  "stacking": {
+    "stackable": true,
+    "maxStacks": 3,
+    "stackBehavior": "add_rerolls"
+  },
+  "conflictsWith": [],
+  "tags": ["utility", "reroll"],
+  "enabled": true
+}

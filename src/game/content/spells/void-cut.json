@@ -1,0 +1,29 @@
+{
+  "id": "spl_void_cut",
+  "name": "Void Cut",
+  "school": "void",
+  "rarity": "rare",
+  "description": "Slices a row out of reality while carving into the enemy.",
+  "iconKey": "icon_void_cut",
+  "cost": {
+    "mana": 70,
+    "hp": 0,
+    "gold": 0
+  },
+  "targetType": "row",
+  "cooldownLocks": 0,
+  "effects": [
+    "damage_enemy",
+    "clear_random_row"
+  ],
+  "upgradePath": [
+    "increase_damage",
+    "add_refund"
+  ],
+  "tags": [
+    "damage",
+    "high_cost",
+    "board_control"
+  ],
+  "enabled": true
+}

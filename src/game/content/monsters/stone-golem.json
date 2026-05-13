@@ -1,0 +1,51 @@
+{
+  "id": "mon_stone_golem",
+  "name": "Stone Golem",
+  "description": "A heavy guardian whose armor blunts ordinary line damage.",
+  "rarity": "elite",
+  "tier": 3,
+  "role": "tank",
+  "biome": "royal_ruins",
+  "spriteKey": "placeholder_stone_golem",
+  "stats": {
+    "hp": 75,
+    "attack": 6,
+    "armor": 2,
+    "attackIntervalLocks": 3
+  },
+  "intent": {
+    "id": "intent_guard",
+    "label": "Stone Guard",
+    "description": "Reduces line damage before striking back."
+  },
+  "behaviors": [
+    "reduce_line_damage",
+    "armor_up"
+  ],
+  "resistances": [
+    "line_damage",
+    "combo_damage"
+  ],
+  "weaknesses": [
+    "void",
+    "bomb"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 20,
+    "goldMax": 35,
+    "rewardRolls": 2,
+    "lootTableId": "loot_elite_default"
+  },
+  "tags": [
+    "mid_game",
+    "large",
+    "armored",
+    "elite"
+  ],
+  "enabled": true
+}

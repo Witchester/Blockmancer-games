@@ -1,0 +1,226 @@
+{
+  "contentType": "weapon",
+  "version": "1.0.0",
+  "idPrefix": "wpn_",
+  "displayName": "Weapons",
+  "description": "Schema metadata for hero weapons, stat bonuses, availability, and unlock routing.",
+  "idFormat": "wpn_<type>_<name>",
+  "exampleIds": [
+    "wpn_basic_wand",
+    "wpn_apprentice_staff",
+    "wpn_fire_tome",
+    "wpn_gravity_orb",
+    "wpn_rune_blade"
+  ],
+  "requiredFields": [
+    "id",
+    "name",
+    "weaponType",
+    "rarity",
+    "description",
+    "stats",
+    "effects",
+    "enabled"
+  ],
+  "fields": {
+    "id": {
+      "type": "string",
+      "pattern": "^wpn_[a-z0-9]+(?:_[a-z0-9]+)*$"
+    },
+    "name": {
+      "type": "string"
+    },
+    "weaponType": {
+      "type": "enum",
+      "dataList": "weaponType"
+    },
+    "rarity": {
+      "type": "enum",
+      "dataList": "rarity"
+    },
+    "description": {
+      "type": "string"
+    },
+    "iconKey": {
+      "type": "enum",
+      "dataList": "iconKey"
+    },
+    "stats": {
+      "type": "object",
+      "properties": {
+        "lineDamageBonus": {
+          "type": "number"
+        },
+        "comboDamageBonus": {
+          "type": "number"
+        },
+        "spellDamageBonus": {
+          "type": "number"
+        },
+        "manaGainBonus": {
+          "type": "number"
+        },
+        "fallSpeedModifier": {
+          "type": "number"
+        }
+      }
+    },
+    "effects": {
+      "type": "array",
+      "itemType": "enum",
+      "dataList": "effectTypes",
+      "uniqueItems": false
+    },
+    "allowedHeroes": {
+      "type": "array",
+      "itemType": "enum",
+      "dataList": "allowedHeroes",
+      "uniqueItems": true
+    },
+    "unlock": {
+      "type": "object",
+      "properties": {
+        "isUnlockedByDefault": {
+          "type": "boolean"
+        },
+        "condition": {
+          "type": "enum",
+          "dataList": "unlockConditions"
+        }
+      }
+    },
+    "tags": {
+      "type": "array",
+      "itemType": "enum",
+      "dataList": "tags",
+      "uniqueItems": true
+    },
+    "enabled": {
+      "type": "boolean"
+    }
+  },
+  "dataList": {
+    "weaponType": [
+      "wand",
+      "staff",
+      "blade",
+      "orb",
+      "hammer",
+      "tome"
+    ],
+    "rarity": [
+      "common",
+      "uncommon",
+      "rare",
+      "epic",
+      "legendary"
+    ],
+    "iconKey": [
+      "placeholder_weapon",
+      "icon_wand",
+      "icon_staff",
+      "icon_blade",
+      "icon_orb",
+      "icon_hammer",
+      "icon_tome"
+    ],
+    "effectTypes": [
+      "increase_line_damage",
+      "increase_combo_damage",
+      "increase_spell_damage",
+      "increase_mana_gain",
+      "reduce_spell_cost",
+      "reduce_fall_speed",
+      "increase_fall_speed",
+      "spawn_magic_block",
+      "bonus_damage_on_tetris",
+      "bonus_damage_on_combo",
+      "heal_on_line_clear",
+      "shield_on_spell_cast"
+    ],
+    "allowedHeroes": [
+      "all",
+      "hero_blockmancer",
+      "hero_pyromancer",
+      "hero_frostbinder",
+      "hero_gravity_knight",
+      "hero_void_scholar",
+      "hero_rune_engineer"
+    ],
+    "unlockConditions": [
+      "available_from_start",
+      "shop_only",
+      "treasure_only",
+      "elite_reward",
+      "boss_reward",
+      "event_reward",
+      "achievement_unlock"
+    ],
+    "tags": [
+      "starter",
+      "damage",
+      "mana",
+      "spell",
+      "combo",
+      "defense",
+      "economy",
+      "risky",
+      "slow_control",
+      "fast_play"
+    ]
+  },
+  "commonDataList": {
+    "enabled": [
+      true,
+      false
+    ],
+    "contentStatus": [
+      "draft",
+      "testing",
+      "balanced",
+      "deprecated"
+    ],
+    "source": [
+      "base_game",
+      "event",
+      "shop",
+      "boss_reward",
+      "achievement",
+      "debug"
+    ],
+    "platform": [
+      "web",
+      "android",
+      "ios",
+      "desktop"
+    ],
+    "balanceStatus": [
+      "untested",
+      "needs_buff",
+      "needs_nerf",
+      "stable"
+    ]
+  },
+  "defaults": {
+    "weaponType": "wand",
+    "rarity": "common",
+    "iconKey": "placeholder_weapon",
+    "stats": {
+      "lineDamageBonus": 0,
+      "comboDamageBonus": 0,
+      "spellDamageBonus": 0,
+      "manaGainBonus": 0,
+      "fallSpeedModifier": 0
+    },
+    "effects": [],
+    "allowedHeroes": [
+      "all"
+    ],
+    "unlock": {
+      "isUnlockedByDefault": true,
+      "condition": "available_from_start"
+    },
+    "tags": [],
+    "enabled": true
+  }
+}

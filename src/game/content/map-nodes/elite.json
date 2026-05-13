@@ -1,0 +1,16 @@
+{
+  "id": "node_elite",
+  "name": "Elite",
+  "nodeType": "elite",
+  "description": "A powerful elite enemy challenges you.",
+  "iconKey": "node_elite",
+  "roomScene": "BattleScene",
+  "effects": [
+    {
+      "type": "start_battle",
+      "enemyPool": "elite"
+    }
+  ],
+  "tags": ["combat", "elite"],
+  "enabled": true
+}

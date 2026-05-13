@@ -1,0 +1,56 @@
+{
+  "id": "loot_shop_default",
+  "name": "Shop Default",
+  "source": "shop",
+  "entries": [
+    {
+      "contentType": "healing",
+      "id": "heal_bundle_small",
+      "weight": 10,
+      "rarity": "common",
+      "amount": 8,
+      "condition": "none"
+    },
+    {
+      "contentType": "upgrade",
+      "id": "upg_line_sharp_edges",
+      "weight": 12,
+      "rarity": "common",
+      "condition": "none"
+    },
+    {
+      "contentType": "upgrade",
+      "id": "upg_mana_echo",
+      "weight": 10,
+      "rarity": "common",
+      "condition": "none"
+    },
+    {
+      "contentType": "relic",
+      "id": "rel_goblin_coin",
+      "weight": 8,
+      "rarity": "common",
+      "condition": "none"
+    },
+    {
+      "contentType": "relic",
+      "id": "rel_arcane_lens",
+      "weight": 6,
+      "rarity": "uncommon",
+      "condition": "none"
+    },
+    {
+      "contentType": "service",
+      "id": "remove_curse",
+      "weight": 5,
+      "rarity": "uncommon",
+      "condition": "has_curse"
+    }
+  ],
+  "rollConfig": {
+    "choicesShown": 4,
+    "allowDuplicates": false,
+    "rarityBias": "normal"
+  },
+  "enabled": true
+}

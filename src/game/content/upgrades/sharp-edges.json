@@ -1,0 +1,27 @@
+{
+  "id": "upg_line_sharp_edges",
+  "name": "Sharp Edges",
+  "category": "line_damage",
+  "rarity": "common",
+  "description": "Line clears cut deeper into enemies.",
+  "iconKey": "icon_sharp_edges",
+  "appliesTo": {
+    "contentType": "global",
+    "ids": [],
+    "tags": []
+  },
+  "effects": [
+    "increase_line_damage"
+  ],
+  "maxLevel": 3,
+  "levelScaling": {
+    "mode": "flat",
+    "valuePerLevel": 2
+  },
+  "tags": [
+    "damage",
+    "starter",
+    "stackable"
+  ],
+  "enabled": true
+}

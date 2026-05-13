@@ -1,0 +1,26 @@
+{
+  "id": "scale_easy",
+  "name": "Easy Mode",
+  "mode": "easy",
+  "stageRules": {
+    "maxStage": 10,
+    "bossStage": 10,
+    "eliteStageInterval": 4
+  },
+  "enemyScaling": {
+    "hpPerStage": 5,
+    "attackPerStage": 0.25,
+    "armorPerStage": 0
+  },
+  "boardScaling": {
+    "fallSpeedPerStage": 0.03,
+    "maxFallSpeed": 1.6,
+    "junkChancePerStage": 0.02
+  },
+  "rewardScaling": {
+    "goldPerStage": 6,
+    "rareChancePerStage": 0.025
+  },
+  "tags": ["easy", "beginner"],
+  "enabled": true
+}

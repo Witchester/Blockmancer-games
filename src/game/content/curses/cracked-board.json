@@ -1,0 +1,16 @@
+{
+  "id": "curse_cracked_board",
+  "name": "Cracked Board",
+  "rarity": "cursed",
+  "description": "Enemies spawn 10% more junk blocks.",
+  "iconKey": "curse_cracked_board",
+  "effects": [
+    {
+      "type": "increase_enemy_junk_chance",
+      "value": 0.1
+    }
+  ],
+  "removeCost": 50,
+  "tags": ["curse", "board"],
+  "enabled": true
+}

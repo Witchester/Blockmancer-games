@@ -1,0 +1,26 @@
+{
+  "id": "rel_cracked_crown",
+  "name": "Cracked Crown",
+  "rarity": "epic",
+  "description": "An epic crown that significantly increases line damage and fall speed.",
+  "iconKey": "rel_cracked_crown",
+  "trigger": "passive",
+  "effects": [
+    {
+      "type": "increase_line_damage_percent",
+      "value": 0.5
+    },
+    {
+      "type": "increase_fall_speed_percent",
+      "value": 0.2
+    }
+  ],
+  "stacking": {
+    "stackable": false,
+    "maxStacks": 1,
+    "stackBehavior": "none"
+  },
+  "conflictsWith": [],
+  "tags": ["epic", "damage", "speed"],
+  "enabled": true
+}

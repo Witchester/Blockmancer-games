@@ -1,0 +1,16 @@
+{
+  "id": "curse_heavy_blocks",
+  "name": "Heavy Blocks",
+  "rarity": "cursed",
+  "description": "Blocks fall much faster.",
+  "iconKey": "curse_heavy_blocks",
+  "effects": [
+    {
+      "type": "increase_fall_speed",
+      "value": 0.1
+    }
+  ],
+  "removeCost": 50,
+  "tags": ["curse", "fall_speed"],
+  "enabled": true
+}

@@ -1,0 +1,22 @@
+{
+  "id": "rel_stone_heart",
+  "name": "Stone Heart",
+  "rarity": "rare",
+  "description": "A resilient stone that increases maximum health.",
+  "iconKey": "rel_stone_heart",
+  "trigger": "passive",
+  "effects": [
+    {
+      "type": "increase_max_hp",
+      "value": 8
+    }
+  ],
+  "stacking": {
+    "stackable": true,
+    "maxStacks": 3,
+    "stackBehavior": "add_hp"
+  },
+  "conflictsWith": [],
+  "tags": ["defense", "hp", "rare"],
+  "enabled": true
+}

@@ -1,0 +1,225 @@
+{
+  "contentType": "relic",
+  "version": "1.0.0",
+  "idPrefix": "rel_",
+  "displayName": "Relics",
+  "description": "Schema metadata for passive run items, triggers, stacking rules, and conflict groups.",
+  "idFormat": "rel_<theme>_<name>",
+  "exampleIds": [
+    "rel_slime_core",
+    "rel_goblin_coin",
+    "rel_broken_hourglass",
+    "rel_dragon_tooth",
+    "rel_frozen_dice",
+    "rel_cracked_crown"
+  ],
+  "requiredFields": [
+    "id",
+    "name",
+    "rarity",
+    "description",
+    "trigger",
+    "effects",
+    "stacking",
+    "enabled"
+  ],
+  "fields": {
+    "id": {
+      "type": "string",
+      "pattern": "^rel_[a-z0-9]+(?:_[a-z0-9]+)*$"
+    },
+    "name": {
+      "type": "string"
+    },
+    "rarity": {
+      "type": "enum",
+      "dataList": "rarity"
+    },
+    "description": {
+      "type": "string"
+    },
+    "iconKey": {
+      "type": "enum",
+      "dataList": "iconKey"
+    },
+    "trigger": {
+      "type": "enum",
+      "dataList": "trigger"
+    },
+    "effects": {
+      "type": "array",
+      "itemType": "enum",
+      "dataList": "effectTypes"
+    },
+    "stacking": {
+      "type": "object",
+      "requiredFields": [
+        "stackable",
+        "maxStacks",
+        "stackBehavior"
+      ],
+      "properties": {
+        "stackable": {
+          "type": "boolean"
+        },
+        "maxStacks": {
+          "type": "number",
+          "min": 1
+        },
+        "stackBehavior": {
+          "type": "enum",
+          "dataList": "stackBehavior"
+        }
+      }
+    },
+    "conflictsWith": {
+      "type": "array",
+      "itemType": "enum",
+      "dataList": "conflictGroups",
+      "uniqueItems": true
+    },
+    "tags": {
+      "type": "array",
+      "itemType": "enum",
+      "dataList": "tags",
+      "uniqueItems": true
+    },
+    "enabled": {
+      "type": "boolean"
+    }
+  },
+  "dataList": {
+    "rarity": [
+      "common",
+      "uncommon",
+      "rare",
+      "epic",
+      "legendary",
+      "cursed"
+    ],
+    "trigger": [
+      "passive",
+      "on_run_start",
+      "on_battle_start",
+      "on_piece_spawn",
+      "on_piece_lock",
+      "on_line_clear",
+      "on_tetris_clear",
+      "on_combo",
+      "on_spell_cast",
+      "on_enemy_hit",
+      "on_enemy_attack",
+      "on_damage_taken",
+      "on_room_clear",
+      "on_reward_pick",
+      "on_low_hp",
+      "on_shop_enter",
+      "on_event_enter"
+    ],
+    "effectTypes": [
+      "increase_line_damage",
+      "increase_spell_damage",
+      "increase_combo_damage",
+      "reduce_spell_cost",
+      "gain_gold",
+      "gain_mana",
+      "heal_player",
+      "gain_shield",
+      "reduce_fall_speed",
+      "increase_fall_speed",
+      "spawn_magic_block",
+      "spawn_bomb_block",
+      "reroll_reward",
+      "discount_shop",
+      "prevent_lethal_damage",
+      "double_reward_chance",
+      "add_curse",
+      "remove_curse",
+      "delay_enemy_attack"
+    ],
+    "stackBehavior": [
+      "none",
+      "additive",
+      "multiplicative",
+      "refresh_duration",
+      "increase_duration",
+      "replace"
+    ],
+    "iconKey": [
+      "placeholder_relic",
+      "icon_goblin_coin",
+      "icon_broken_hourglass",
+      "icon_dragon_tooth",
+      "icon_slime_core",
+      "icon_frozen_dice",
+      "icon_cracked_crown"
+    ],
+    "conflictGroups": [
+      "fall_speed_control",
+      "spell_cost_control",
+      "gold_economy",
+      "high_risk_high_reward",
+      "curse_modifier"
+    ],
+    "tags": [
+      "damage",
+      "mana",
+      "economy",
+      "defense",
+      "board_control",
+      "combo",
+      "spell",
+      "curse",
+      "risky",
+      "boss_reward",
+      "shop",
+      "event"
+    ]
+  },
+  "commonDataList": {
+    "enabled": [
+      true,
+      false
+    ],
+    "contentStatus": [
+      "draft",
+      "testing",
+      "balanced",
+      "deprecated"
+    ],
+    "source": [
+      "base_game",
+      "event",
+      "shop",
+      "boss_reward",
+      "achievement",
+      "debug"
+    ],
+    "platform": [
+      "web",
+      "android",
+      "ios",
+      "desktop"
+    ],
+    "balanceStatus": [
+      "untested",
+      "needs_buff",
+      "needs_nerf",
+      "stable"
+    ]
+  },
+  "defaults": {
+    "rarity": "common",
+    "iconKey": "placeholder_relic",
+    "trigger": "passive",
+    "effects": [],
+    "stacking": {
+      "stackable": false,
+      "maxStacks": 1,
+      "stackBehavior": "none"
+    },
+    "conflictsWith": [],
+    "tags": [],
+    "enabled": true
+  }
+}

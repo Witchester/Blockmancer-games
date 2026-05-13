@@ -1,0 +1,28 @@
+{
+  "id": "wpn_frost_staff",
+  "name": "Frost Staff",
+  "weaponType": "staff",
+  "rarity": "uncommon",
+  "description": "A staff that slows the falling blocks.",
+  "iconKey": "wpn_frost_staff",
+  "stats": {
+    "lineDamageBonus": 0,
+    "comboDamageBonus": 0,
+    "spellDamageBonus": 0,
+    "manaGainBonus": 0,
+    "fallSpeedModifier": -0.05
+  },
+  "effects": [
+    {
+      "type": "increase_frost_slow",
+      "value": 0.05
+    }
+  ],
+  "allowedHeroes": ["all"],
+  "unlock": {
+    "isUnlockedByDefault": false,
+    "condition": "reward_or_shop"
+  },
+  "tags": ["frost", "control", "uncommon"],
+  "enabled": true
+}

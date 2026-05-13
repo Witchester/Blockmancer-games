@@ -1,0 +1,34 @@
+{
+  "id": "evt_strange_mirror",
+  "name": "Strange Mirror",
+  "description": "The reflection offers impossible trades and unsettling copies.",
+  "rarity": "rare",
+  "biome": "void",
+  "choices": [
+    {
+      "label": "Duplicate Relic",
+      "effectType": "gain_relic",
+      "value": 1,
+      "requirement": "has_relic"
+    },
+    {
+      "label": "Take Curse",
+      "effectType": "add_curse",
+      "value": 1,
+      "bonusGold": 60,
+      "requirement": "none"
+    },
+    {
+      "label": "Leave",
+      "effectType": "leave",
+      "value": 0,
+      "requirement": "none"
+    }
+  ],
+  "tags": [
+    "curse",
+    "risk_reward",
+    "lore"
+  ],
+  "enabled": true
+}

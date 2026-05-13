@@ -1,0 +1,30 @@
+{
+  "id": "wpn_basic_wand",
+  "name": "Basic Wand",
+  "weaponType": "wand",
+  "rarity": "common",
+  "description": "A practical beginner focus with no drawbacks and a slight line-damage lean.",
+  "iconKey": "icon_wand",
+  "stats": {
+    "lineDamageBonus": 1,
+    "comboDamageBonus": 0,
+    "spellDamageBonus": 0,
+    "manaGainBonus": 0,
+    "fallSpeedModifier": 0
+  },
+  "effects": [
+    "increase_line_damage"
+  ],
+  "allowedHeroes": [
+    "all"
+  ],
+  "unlock": {
+    "isUnlockedByDefault": true,
+    "condition": "available_from_start"
+  },
+  "tags": [
+    "starter",
+    "damage"
+  ],
+  "enabled": true
+}

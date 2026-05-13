@@ -1,0 +1,49 @@
+import type {
+  BoardState,
+  CurrentRoomProgress,
+  HeroState,
+  RunStatus,
+  SpellId,
+  WeaponState
+} from '../types/GameTypes';
+import { BOARD_COLS, BOARD_ROWS } from '../utils/constants';
+
+export const DEFAULT_HERO_ID = 'hero_blockmancer';
+export const DEFAULT_WEAPON_ID = 'wpn_basic_wand';
+export const DEFAULT_SPELL_IDS: SpellId[] = ['fireball', 'frost-lock'];
+export const DEFAULT_STAGE = 1;
+export const DEFAULT_FALL_SPEED = 1.0;
+export const DEFAULT_GOLD = 50;
+export const DEFAULT_RUN_STATUS: RunStatus = 'menu';
+export const DEFAULT_EVENT_LOG = ['The dungeon stirs beneath your feet.'];
+export const SAVE_VERSION = 1;
+
+export function createDefaultHeroState(): HeroState {
+  return {
+    id: DEFAULT_HERO_ID,
+    name: 'Blockmancer',
+    className: 'Blockmancer',
+    passiveId: 'passive_none',
+    unlocked: true
+  };
+}
+
+export function createDefaultWeaponState(): WeaponState {
+  return {
+    id: DEFAULT_WEAPON_ID,
+    name: 'Basic Wand',
+    weaponType: 'wand'
+  };
+}
+
+export function createDefaultBoardState(): BoardState {
+  return {
+    columns: BOARD_COLS,
+    rows: BOARD_ROWS,
+    activePieceType: null,
+    nextPieceType: null,
+    topOut: false
+  };
+}
+
+export const DEFAULT_ROOM_PROGRESS: CurrentRoomProgress = 'idle';

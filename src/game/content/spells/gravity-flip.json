@@ -1,0 +1,33 @@
+{
+  "id": "spl_gravity_flip",
+  "name": "Gravity Flip",
+  "school": "gravity",
+  "rarity": "rare",
+  "description": "Reverses gravity and delays enemy actions while boosting hard drop damage.",
+  "iconKey": "spell_gravity_flip",
+  "effectKey": "effect_gravity_flip",
+  "cost": {
+    "mana": 60,
+    "hp": 0,
+    "gold": 0
+  },
+  "targetType": "board",
+  "cooldownLocks": 0,
+  "effects": [
+    {
+      "type": "delay_enemy_attack",
+      "value": 2
+    },
+    {
+      "type": "shake_board",
+      "value": 1
+    },
+    {
+      "type": "hard_drop_damage_bonus",
+      "value": 5
+    }
+  ],
+  "upgradePath": [],
+  "tags": ["control", "gravity", "rare"],
+  "enabled": true
+}

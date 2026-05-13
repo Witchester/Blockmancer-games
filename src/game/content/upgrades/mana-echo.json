@@ -1,0 +1,27 @@
+{
+  "id": "upg_mana_echo",
+  "name": "Mana Echo",
+  "category": "mana",
+  "rarity": "common",
+  "description": "Every spell costs slightly less mana to cast.",
+  "iconKey": "icon_mana_echo",
+  "appliesTo": {
+    "contentType": "spell",
+    "ids": [],
+    "tags": []
+  },
+  "effects": [
+    "reduce_spell_cost"
+  ],
+  "maxLevel": 3,
+  "levelScaling": {
+    "mode": "flat",
+    "valuePerLevel": 5
+  },
+  "tags": [
+    "mana",
+    "spell",
+    "stackable"
+  ],
+  "enabled": true
+}

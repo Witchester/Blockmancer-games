@@ -1,0 +1,28 @@
+{
+  "id": "wpn_gravity_orb",
+  "name": "Gravity Orb",
+  "weaponType": "orb",
+  "rarity": "rare",
+  "description": "A rare orb that enhances combo damage and hard drop effects.",
+  "iconKey": "wpn_gravity_orb",
+  "stats": {
+    "lineDamageBonus": 0,
+    "comboDamageBonus": 2,
+    "spellDamageBonus": 0,
+    "manaGainBonus": 0,
+    "fallSpeedModifier": 0
+  },
+  "effects": [
+    {
+      "type": "hard_drop_shock_damage",
+      "value": 5
+    }
+  ],
+  "allowedHeroes": ["all"],
+  "unlock": {
+    "isUnlockedByDefault": false,
+    "condition": "rare_drop"
+  },
+  "tags": ["gravity", "rare", "combo"],
+  "enabled": true
+}

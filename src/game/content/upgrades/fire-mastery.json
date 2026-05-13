@@ -1,0 +1,28 @@
+{
+  "id": "upg_spell_fire_mastery",
+  "name": "Fire Mastery",
+  "category": "spell",
+  "rarity": "uncommon",
+  "description": "Fireball strikes with greater force.",
+  "iconKey": "icon_fire_mastery",
+  "appliesTo": {
+    "contentType": "spell",
+    "ids": [
+      "spl_fireball"
+    ],
+    "tags": []
+  },
+  "effects": [
+    "increase_specific_spell_damage"
+  ],
+  "maxLevel": 2,
+  "levelScaling": {
+    "mode": "flat",
+    "valuePerLevel": 10
+  },
+  "tags": [
+    "damage",
+    "spell"
+  ],
+  "enabled": true
+}

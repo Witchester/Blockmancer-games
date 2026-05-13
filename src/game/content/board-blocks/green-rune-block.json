@@ -1,0 +1,12 @@
+{
+  "id": "block_green",
+  "name": "Green Rune Block",
+  "blockType": "normal",
+  "rarity": "common",
+  "description": "A basic green rune block.",
+  "spriteKey": "block_green",
+  "color": "#00ff00",
+  "clearEffects": [],
+  "tags": ["basic", "rune"],
+  "enabled": true
+}

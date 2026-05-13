@@ -1,0 +1,12 @@
+{
+  "id": "block_red",
+  "name": "Red Rune Block",
+  "blockType": "normal",
+  "rarity": "common",
+  "description": "A basic red rune block.",
+  "spriteKey": "block_red",
+  "color": "#ff0000",
+  "clearEffects": [],
+  "tags": ["basic", "rune"],
+  "enabled": true
+}

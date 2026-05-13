@@ -1,0 +1,28 @@
+{
+  "id": "spl_fireball",
+  "name": "Fireball",
+  "school": "fire",
+  "rarity": "common",
+  "description": "A fast direct-damage spell used to finish weakened enemies.",
+  "iconKey": "icon_fireball",
+  "cost": {
+    "mana": 30,
+    "hp": 0,
+    "gold": 0
+  },
+  "targetType": "enemy",
+  "cooldownLocks": 0,
+  "effects": [
+    "damage_enemy"
+  ],
+  "upgradePath": [
+    "increase_damage",
+    "reduce_cost"
+  ],
+  "tags": [
+    "damage",
+    "single_target",
+    "low_cost"
+  ],
+  "enabled": true
+}

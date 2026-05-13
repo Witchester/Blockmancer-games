@@ -1,0 +1,23 @@
+{
+  "id": "status_vulnerable",
+  "name": "Vulnerable",
+  "category": "debuff",
+  "description": "Enemy takes 25% more damage.",
+  "iconKey": "status_vulnerable",
+  "effectKey": "effect_vulnerable",
+  "durationType": "piece_locks",
+  "defaultDuration": 3,
+  "stacking": {
+    "stackable": true,
+    "maxStacks": 2,
+    "stackBehavior": "add"
+  },
+  "effects": [
+    {
+      "type": "increase_damage_taken_percent",
+      "value": 0.25
+    }
+  ],
+  "tags": ["debuff", "damage"],
+  "enabled": true
+}

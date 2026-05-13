@@ -1,0 +1,29 @@
+{
+  "id": "spl_bomb_rune",
+  "name": "Bomb Rune",
+  "school": "bomb",
+  "rarity": "uncommon",
+  "description": "Explodes through clustered cells and spikes enemy damage.",
+  "iconKey": "icon_bomb_rune",
+  "cost": {
+    "mana": 50,
+    "hp": 0,
+    "gold": 0
+  },
+  "targetType": "area",
+  "cooldownLocks": 0,
+  "effects": [
+    "damage_enemy",
+    "clear_board_area"
+  ],
+  "upgradePath": [
+    "increase_damage",
+    "increase_area"
+  ],
+  "tags": [
+    "damage",
+    "aoe",
+    "board_control"
+  ],
+  "enabled": true
+}

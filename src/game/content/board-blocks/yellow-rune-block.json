@@ -1,0 +1,12 @@
+{
+  "id": "block_yellow",
+  "name": "Yellow Rune Block",
+  "blockType": "normal",
+  "rarity": "common",
+  "description": "A basic yellow rune block.",
+  "spriteKey": "block_yellow",
+  "color": "#ffff00",
+  "clearEffects": [],
+  "tags": ["basic", "rune"],
+  "enabled": true
+}

@@ -1,0 +1,17 @@
+{
+  "id": "curse_blood_magic",
+  "name": "Blood Magic",
+  "rarity": "cursed",
+  "description": "Spells cost 1 HP with 20% chance.",
+  "iconKey": "curse_blood_magic",
+  "effects": [
+    {
+      "type": "spell_hp_cost_chance",
+      "value": 0.2,
+      "hpCost": 1
+    }
+  ],
+  "removeCost": 70,
+  "tags": ["curse", "spell"],
+  "enabled": true
+}

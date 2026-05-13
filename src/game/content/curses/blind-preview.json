@@ -1,0 +1,16 @@
+{
+  "id": "curse_blind_preview",
+  "name": "Blind Preview",
+  "rarity": "cursed",
+  "description": "Cannot see the next piece with 25% chance.",
+  "iconKey": "curse_blind_preview",
+  "effects": [
+    {
+      "type": "hide_next_piece_chance",
+      "value": 0.25
+    }
+  ],
+  "removeCost": 60,
+  "tags": ["curse", "utility"],
+  "enabled": true
+}

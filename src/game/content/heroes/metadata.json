@@ -1,0 +1,308 @@
+{
+  "contentType": "hero",
+  "version": "1.0.0",
+  "idPrefix": "hero_",
+  "displayName": "Heroes",
+  "description": "Schema metadata for playable heroes, their base stats, loadouts, passives, and unlock state.",
+  "idFormat": "hero_<class_or_name>",
+  "exampleIds": [
+    "hero_blockmancer",
+    "hero_pyromancer",
+    "hero_frostbinder",
+    "hero_gravity_knight",
+    "hero_void_scholar",
+    "hero_rune_engineer"
+  ],
+  "requiredFields": [
+    "id",
+    "name",
+    "className",
+    "description",
+    "baseStats",
+    "startingLoadout",
+    "passive",
+    "unlock",
+    "enabled"
+  ],
+  "fields": {
+    "id": {
+      "type": "string",
+      "pattern": "^hero_[a-z0-9]+(?:_[a-z0-9]+)*$"
+    },
+    "name": {
+      "type": "string"
+    },
+    "className": {
+      "type": "enum",
+      "dataList": "className"
+    },
+    "description": {
+      "type": "string"
+    },
+    "portraitKey": {
+      "type": "enum",
+      "dataList": "portraitKey"
+    },
+    "baseStats": {
+      "type": "object",
+      "requiredFields": [
+        "maxHp",
+        "maxMana",
+        "startingGold",
+        "baseLineDamage",
+        "baseFallSpeed",
+        "spellCostModifier",
+        "manaGainModifier"
+      ],
+      "properties": {
+        "maxHp": {
+          "type": "number"
+        },
+        "maxMana": {
+          "type": "number"
+        },
+        "startingGold": {
+          "type": "number"
+        },
+        "baseLineDamage": {
+          "type": "number"
+        },
+        "baseFallSpeed": {
+          "type": "number"
+        },
+        "spellCostModifier": {
+          "type": "number"
+        },
+        "manaGainModifier": {
+          "type": "number"
+        }
+      }
+    },
+    "startingLoadout": {
+      "type": "object",
+      "requiredFields": [
+        "weaponId",
+        "spellIds",
+        "relicIds",
+        "upgradeIds"
+      ],
+      "properties": {
+        "weaponId": {
+          "type": "enum",
+          "dataList": "startingWeapons"
+        },
+        "spellIds": {
+          "type": "array",
+          "itemType": "enum",
+          "dataList": "startingSpells",
+          "uniqueItems": true
+        },
+        "relicIds": {
+          "type": "array",
+          "itemType": "enum",
+          "dataList": "startingRelics",
+          "uniqueItems": true
+        },
+        "upgradeIds": {
+          "type": "array",
+          "itemType": "enum",
+          "dataList": "startingUpgrades",
+          "uniqueItems": true
+        }
+      }
+    },
+    "passive": {
+      "type": "object",
+      "requiredFields": [
+        "id",
+        "name",
+        "description",
+        "effects"
+      ],
+      "properties": {
+        "id": {
+          "type": "enum",
+          "dataList": "passiveIds"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "effects": {
+          "type": "array",
+          "itemType": "object"
+        }
+      }
+    },
+    "unlock": {
+      "type": "object",
+      "requiredFields": [
+        "isUnlockedByDefault",
+        "condition"
+      ],
+      "properties": {
+        "isUnlockedByDefault": {
+          "type": "boolean"
+        },
+        "condition": {
+          "type": "enum",
+          "dataList": "unlockConditions"
+        }
+      }
+    },
+    "tags": {
+      "type": "array",
+      "itemType": "enum",
+      "dataList": "tags",
+      "uniqueItems": true
+    },
+    "enabled": {
+      "type": "boolean"
+    }
+  },
+  "dataList": {
+    "className": [
+      "Blockmancer",
+      "Pyromancer",
+      "Frostbinder",
+      "Gravity Knight",
+      "Void Scholar",
+      "Rune Engineer"
+    ],
+    "portraitKey": [
+      "placeholder_hero",
+      "hero_blockmancer",
+      "hero_pyromancer",
+      "hero_frostbinder",
+      "hero_gravity_knight",
+      "hero_void_scholar",
+      "hero_rune_engineer"
+    ],
+    "startingWeapons": [
+      "wpn_basic_wand",
+      "wpn_apprentice_staff",
+      "wpn_fire_tome",
+      "wpn_gravity_orb",
+      "wpn_rune_blade"
+    ],
+    "startingSpells": [
+      "spl_fireball",
+      "spl_frost_lock",
+      "spl_bomb_rune",
+      "spl_void_cut",
+      "spl_lightning_chain",
+      "spl_gravity_flip",
+      "spl_heal_glyph"
+    ],
+    "startingRelics": [
+      "rel_none",
+      "rel_slime_core",
+      "rel_goblin_coin",
+      "rel_broken_hourglass",
+      "rel_dragon_tooth",
+      "rel_frozen_dice"
+    ],
+    "startingUpgrades": [
+      "upg_none",
+      "upg_line_sharp_edges",
+      "upg_mana_echo",
+      "upg_board_stable_hands",
+      "upg_spell_fire_mastery"
+    ],
+    "passiveIds": [
+      "passive_none",
+      "passive_line_mage",
+      "passive_fire_starter",
+      "passive_frost_control",
+      "passive_gravity_flow",
+      "passive_void_discount",
+      "passive_combo_heart"
+    ],
+    "unlockConditions": [
+      "available_from_start",
+      "defeat_first_boss",
+      "clear_stage_5",
+      "cast_50_spells",
+      "clear_100_lines",
+      "win_with_blockmancer",
+      "find_special_event"
+    ],
+    "tags": [
+      "starter",
+      "advanced",
+      "spell_focused",
+      "line_damage_focused",
+      "combo_focused",
+      "defensive",
+      "high_risk",
+      "mobile_friendly"
+    ]
+  },
+  "commonDataList": {
+    "enabled": [
+      true,
+      false
+    ],
+    "contentStatus": [
+      "draft",
+      "testing",
+      "balanced",
+      "deprecated"
+    ],
+    "source": [
+      "base_game",
+      "event",
+      "shop",
+      "boss_reward",
+      "achievement",
+      "debug"
+    ],
+    "platform": [
+      "web",
+      "android",
+      "ios",
+      "desktop"
+    ],
+    "balanceStatus": [
+      "untested",
+      "needs_buff",
+      "needs_nerf",
+      "stable"
+    ]
+  },
+  "defaults": {
+    "portraitKey": "placeholder_hero",
+    "baseStats": {
+      "maxHp": 30,
+      "maxMana": 100,
+      "startingGold": 50,
+      "baseLineDamage": 5,
+      "baseFallSpeed": 1,
+      "spellCostModifier": 1,
+      "manaGainModifier": 1
+    },
+    "startingLoadout": {
+      "weaponId": "wpn_basic_wand",
+      "spellIds": [
+        "spl_fireball",
+        "spl_frost_lock"
+      ],
+      "relicIds": [],
+      "upgradeIds": []
+    },
+    "passive": {
+      "id": "passive_none",
+      "name": "No Passive",
+      "description": "No special passive assigned.",
+      "effects": []
+    },
+    "unlock": {
+      "isUnlockedByDefault": true,
+      "condition": "available_from_start"
+    },
+    "tags": [],
+    "enabled": true
+  }
+}

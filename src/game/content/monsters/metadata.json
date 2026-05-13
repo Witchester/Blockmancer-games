@@ -1,0 +1,363 @@
+{
+  "contentType": "monster",
+  "version": "1.0.0",
+  "idPrefix": "mon_",
+  "displayName": "Monsters",
+  "description": "Schema metadata for enemy units, encounter behaviors, combat scaling, and reward hooks.",
+  "idFormat": "mon_<biome_or_family>_<name>",
+  "exampleIds": [
+    "mon_dungeon_slime",
+    "mon_dungeon_goblin",
+    "mon_stone_golem",
+    "mon_bat",
+    "mon_witch",
+    "mon_elite_knight",
+    "mon_boss_falling_king"
+  ],
+  "requiredFields": [
+    "id",
+    "name",
+    "rarity",
+    "tier",
+    "role",
+    "stats",
+    "intent",
+    "behaviors",
+    "rewards",
+    "enabled"
+  ],
+  "fields": {
+    "id": {
+      "type": "string",
+      "label": "Monster ID",
+      "pattern": "^mon_[a-z0-9]+(?:_[a-z0-9]+)*$"
+    },
+    "name": {
+      "type": "string",
+      "label": "Name"
+    },
+    "description": {
+      "type": "string",
+      "label": "Description"
+    },
+    "rarity": {
+      "type": "enum",
+      "label": "Rarity",
+      "dataList": "rarity"
+    },
+    "tier": {
+      "type": "enum",
+      "label": "Tier",
+      "dataList": "tier"
+    },
+    "role": {
+      "type": "enum",
+      "label": "Role",
+      "dataList": "role"
+    },
+    "biome": {
+      "type": "enum",
+      "label": "Biome",
+      "dataList": "biome"
+    },
+    "spriteKey": {
+      "type": "string",
+      "label": "Sprite Key"
+    },
+    "stats": {
+      "type": "object",
+      "label": "Stats",
+      "requiredFields": [
+        "hp",
+        "attack",
+        "armor",
+        "attackIntervalLocks"
+      ],
+      "properties": {
+        "hp": {
+          "type": "number",
+          "min": 1
+        },
+        "attack": {
+          "type": "number",
+          "min": 0
+        },
+        "armor": {
+          "type": "number",
+          "min": 0
+        },
+        "attackIntervalLocks": {
+          "type": "number",
+          "min": 1
+        }
+      }
+    },
+    "intent": {
+      "type": "object",
+      "label": "Intent",
+      "requiredFields": [
+        "id",
+        "label",
+        "description"
+      ],
+      "properties": {
+        "id": {
+          "type": "enum",
+          "dataList": "intentIds"
+        },
+        "label": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "behaviors": {
+      "type": "array",
+      "label": "Behaviors",
+      "itemType": "enum",
+      "dataList": "behaviors",
+      "uniqueItems": true
+    },
+    "resistances": {
+      "type": "array",
+      "label": "Resistances",
+      "itemType": "enum",
+      "dataList": "resistances",
+      "uniqueItems": true
+    },
+    "weaknesses": {
+      "type": "array",
+      "label": "Weaknesses",
+      "itemType": "enum",
+      "dataList": "weaknesses",
+      "uniqueItems": true
+    },
+    "scaling": {
+      "type": "object",
+      "label": "Scaling",
+      "properties": {
+        "hpPerStage": {
+          "type": "number"
+        },
+        "attackPerStage": {
+          "type": "number"
+        },
+        "fallSpeedModifier": {
+          "type": "number"
+        }
+      }
+    },
+    "rewards": {
+      "type": "object",
+      "label": "Rewards",
+      "requiredFields": [
+        "goldMin",
+        "goldMax",
+        "rewardRolls",
+        "lootTableId"
+      ],
+      "properties": {
+        "goldMin": {
+          "type": "number",
+          "min": 0
+        },
+        "goldMax": {
+          "type": "number",
+          "min": 0
+        },
+        "rewardRolls": {
+          "type": "number",
+          "min": 0
+        },
+        "lootTableId": {
+          "type": "enum",
+          "dataList": "rewardLootTables"
+        }
+      }
+    },
+    "tags": {
+      "type": "array",
+      "label": "Tags",
+      "itemType": "enum",
+      "dataList": "tags",
+      "uniqueItems": true
+    },
+    "enabled": {
+      "type": "boolean",
+      "label": "Enabled"
+    }
+  },
+  "dataList": {
+    "rarity": [
+      "common",
+      "uncommon",
+      "rare",
+      "elite",
+      "boss"
+    ],
+    "tier": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "role": [
+      "basic",
+      "disruptor",
+      "tank",
+      "caster",
+      "summoner",
+      "elite",
+      "boss"
+    ],
+    "biome": [
+      "dungeon",
+      "crypt",
+      "forest",
+      "volcano",
+      "ice_cave",
+      "void",
+      "royal_ruins"
+    ],
+    "behaviors": [
+      "basic_attack",
+      "spawn_junk",
+      "shake_board",
+      "increase_fall_speed",
+      "hide_next_piece",
+      "reduce_line_damage",
+      "mana_hex",
+      "summon_minion",
+      "heal_self",
+      "armor_up",
+      "burn_board",
+      "freeze_piece",
+      "lock_random_column"
+    ],
+    "intentIds": [
+      "intent_attack",
+      "intent_throw_junk",
+      "intent_guard",
+      "intent_screech",
+      "intent_hex",
+      "intent_heavy_slam",
+      "intent_royal_collapse",
+      "intent_summon",
+      "intent_charge"
+    ],
+    "resistances": [
+      "fire",
+      "frost",
+      "lightning",
+      "bomb",
+      "void",
+      "gravity",
+      "line_damage",
+      "combo_damage",
+      "spell_damage"
+    ],
+    "weaknesses": [
+      "fire",
+      "frost",
+      "lightning",
+      "bomb",
+      "void",
+      "gravity",
+      "line_damage",
+      "combo_damage",
+      "spell_damage"
+    ],
+    "rewardLootTables": [
+      "loot_battle_default",
+      "loot_elite_default",
+      "loot_boss_default",
+      "loot_treasure_default"
+    ],
+    "tags": [
+      "early_game",
+      "mid_game",
+      "late_game",
+      "tutorial",
+      "small",
+      "large",
+      "flying",
+      "armored",
+      "magical",
+      "physical",
+      "board_disruptor",
+      "speed_scaler",
+      "junk_spawner",
+      "boss_phase"
+    ]
+  },
+  "commonDataList": {
+    "enabled": [
+      true,
+      false
+    ],
+    "contentStatus": [
+      "draft",
+      "testing",
+      "balanced",
+      "deprecated"
+    ],
+    "source": [
+      "base_game",
+      "event",
+      "shop",
+      "boss_reward",
+      "achievement",
+      "debug"
+    ],
+    "platform": [
+      "web",
+      "android",
+      "ios",
+      "desktop"
+    ],
+    "balanceStatus": [
+      "untested",
+      "needs_buff",
+      "needs_nerf",
+      "stable"
+    ]
+  },
+  "defaults": {
+    "rarity": "common",
+    "tier": 1,
+    "role": "basic",
+    "biome": "dungeon",
+    "stats": {
+      "hp": 30,
+      "attack": 3,
+      "armor": 0,
+      "attackIntervalLocks": 5
+    },
+    "intent": {
+      "id": "intent_attack",
+      "label": "Attack",
+      "description": "Basic damage intent."
+    },
+    "behaviors": [
+      "basic_attack"
+    ],
+    "resistances": [],
+    "weaknesses": [],
+    "scaling": {
+      "hpPerStage": 8,
+      "attackPerStage": 0.5,
+      "fallSpeedModifier": 0
+    },
+    "rewards": {
+      "goldMin": 10,
+      "goldMax": 25,
+      "rewardRolls": 1,
+      "lootTableId": "loot_battle_default"
+    },
+    "tags": [],
+    "enabled": true
+  }
+}

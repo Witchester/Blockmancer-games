@@ -1,0 +1,24 @@
+{
+  "id": "rel_goblin_coin",
+  "name": "Goblin Coin",
+  "rarity": "common",
+  "description": "A nicked gold token that improves the run economy whenever rewards are resolved.",
+  "iconKey": "icon_goblin_coin",
+  "trigger": "on_room_clear",
+  "effects": [
+    "gain_gold"
+  ],
+  "stacking": {
+    "stackable": false,
+    "maxStacks": 1,
+    "stackBehavior": "none"
+  },
+  "conflictsWith": [
+    "gold_economy"
+  ],
+  "tags": [
+    "economy",
+    "shop"
+  ],
+  "enabled": true
+}

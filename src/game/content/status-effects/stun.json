@@ -1,0 +1,23 @@
+{
+  "id": "status_stun",
+  "name": "Stun",
+  "category": "control",
+  "description": "Enemy cannot act for one turn.",
+  "iconKey": "status_stun",
+  "effectKey": "effect_stun",
+  "durationType": "piece_locks",
+  "defaultDuration": 1,
+  "stacking": {
+    "stackable": false,
+    "maxStacks": 1,
+    "stackBehavior": "refresh"
+  },
+  "effects": [
+    {
+      "type": "prevent_enemy_action",
+      "value": 1
+    }
+  ],
+  "tags": ["control", "disable"],
+  "enabled": true
+}

@@ -1,0 +1,22 @@
+{
+  "id": "rel_dragon_tooth",
+  "name": "Dragon Tooth",
+  "rarity": "rare",
+  "description": "A rare fang that amplifies fire spell damage.",
+  "iconKey": "rel_dragon_tooth",
+  "trigger": "passive",
+  "effects": [
+    {
+      "type": "increase_fire_spell_damage",
+      "value": 10
+    }
+  ],
+  "stacking": {
+    "stackable": false,
+    "maxStacks": 1,
+    "stackBehavior": "none"
+  },
+  "conflictsWith": [],
+  "tags": ["fire", "spell", "rare"],
+  "enabled": true
+}

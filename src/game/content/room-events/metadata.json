@@ -1,0 +1,146 @@
+{
+  "contentType": "roomEvent",
+  "version": "1.0.0",
+  "idPrefix": "evt_",
+  "displayName": "Room Events",
+  "description": "Schema metadata for non-combat dungeon events, their rarity, biome affinity, and choice payloads.",
+  "idFormat": "evt_<event_name>",
+  "exampleIds": [
+    "evt_shrine_of_gravity",
+    "evt_broken_anvil",
+    "evt_strange_mirror",
+    "evt_lost_knight"
+  ],
+  "requiredFields": [
+    "id",
+    "name",
+    "description",
+    "rarity",
+    "choices",
+    "enabled"
+  ],
+  "fields": {
+    "id": {
+      "type": "string",
+      "pattern": "^evt_[a-z0-9]+(?:_[a-z0-9]+)*$"
+    },
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "rarity": {
+      "type": "enum",
+      "dataList": "rarity"
+    },
+    "biome": {
+      "type": "enum",
+      "dataList": "biome"
+    },
+    "choices": {
+      "type": "array",
+      "itemType": "object"
+    },
+    "tags": {
+      "type": "array",
+      "itemType": "enum",
+      "dataList": "tags",
+      "uniqueItems": true
+    },
+    "enabled": {
+      "type": "boolean"
+    }
+  },
+  "dataList": {
+    "rarity": [
+      "common",
+      "uncommon",
+      "rare",
+      "special"
+    ],
+    "biome": [
+      "dungeon",
+      "crypt",
+      "forest",
+      "volcano",
+      "ice_cave",
+      "void",
+      "royal_ruins"
+    ],
+    "choiceEffectTypes": [
+      "heal_player",
+      "damage_player",
+      "gain_gold",
+      "lose_gold",
+      "gain_reward",
+      "gain_relic",
+      "gain_upgrade",
+      "upgrade_spell",
+      "reduce_fall_speed",
+      "increase_fall_speed",
+      "start_elite_fight",
+      "add_curse",
+      "remove_curse",
+      "leave"
+    ],
+    "requirements": [
+      "none",
+      "min_gold",
+      "min_hp",
+      "has_relic",
+      "has_spell",
+      "stage_min",
+      "stage_max"
+    ],
+    "tags": [
+      "risk_reward",
+      "healing",
+      "shop_like",
+      "curse",
+      "spell_upgrade",
+      "gold",
+      "combat",
+      "lore"
+    ]
+  },
+  "commonDataList": {
+    "enabled": [
+      true,
+      false
+    ],
+    "contentStatus": [
+      "draft",
+      "testing",
+      "balanced",
+      "deprecated"
+    ],
+    "source": [
+      "base_game",
+      "event",
+      "shop",
+      "boss_reward",
+      "achievement",
+      "debug"
+    ],
+    "platform": [
+      "web",
+      "android",
+      "ios",
+      "desktop"
+    ],
+    "balanceStatus": [
+      "untested",
+      "needs_buff",
+      "needs_nerf",
+      "stable"
+    ]
+  },
+  "defaults": {
+    "rarity": "common",
+    "biome": "dungeon",
+    "choices": [],
+    "tags": [],
+    "enabled": true
+  }
+}

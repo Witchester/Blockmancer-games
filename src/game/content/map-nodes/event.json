@@ -1,0 +1,16 @@
+{
+  "id": "node_event",
+  "name": "Event",
+  "nodeType": "event",
+  "description": "A mysterious event awaits.",
+  "iconKey": "node_event",
+  "roomScene": "EventScene",
+  "effects": [
+    {
+      "type": "start_event",
+      "pool": "default"
+    }
+  ],
+  "tags": ["event"],
+  "enabled": true
+}

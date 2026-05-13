@@ -1,0 +1,16 @@
+{
+  "id": "status_shield",
+  "name": "Shield",
+  "category": "defense",
+  "durationType": "battle",
+  "defaultDuration": 1,
+  "stacking": {
+    "stackable": false,
+    "maxStacks": 1
+  },
+  "effects": [
+    "shield_player",
+    "reduce_damage_taken"
+  ],
+  "enabled": true
+}

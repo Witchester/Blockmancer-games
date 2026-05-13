@@ -1,0 +1,28 @@
+{
+  "id": "wpn_fire_tome",
+  "name": "Fire Tome",
+  "weaponType": "tome",
+  "rarity": "uncommon",
+  "description": "An ancient tome that amplifies fire spell power.",
+  "iconKey": "wpn_fire_tome",
+  "stats": {
+    "lineDamageBonus": 0,
+    "comboDamageBonus": 0,
+    "spellDamageBonus": 8,
+    "manaGainBonus": 0,
+    "fallSpeedModifier": 0
+  },
+  "effects": [
+    {
+      "type": "increase_fire_spell_damage",
+      "value": 8
+    }
+  ],
+  "allowedHeroes": ["all"],
+  "unlock": {
+    "isUnlockedByDefault": false,
+    "condition": "reward_or_shop"
+  },
+  "tags": ["fire", "spell", "uncommon"],
+  "enabled": true
+}

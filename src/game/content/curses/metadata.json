@@ -1,0 +1,62 @@
+{
+  "contentType": "curse",
+  "version": "1.0.0",
+  "idPrefix": "curse_",
+  "displayName": "Curses",
+  "description": "Negative modifiers that persist throughout a dungeon run.",
+  "idFormat": "curse_<type>",
+  "exampleIds": [
+    "curse_heavy_blocks",
+    "curse_blind_preview",
+    "curse_greedy_goblin",
+    "curse_blood_magic"
+  ],
+  "requiredFields": [
+    "id",
+    "name",
+    "rarity",
+    "description",
+    "effects",
+    "enabled"
+  ],
+  "fields": {
+    "id": {
+      "type": "string",
+      "pattern": "^curse_[a-z0-9]+(?:_[a-z0-9]+)*$"
+    },
+    "name": {
+      "type": "string"
+    },
+    "rarity": {
+      "type": "enum",
+      "values": ["cursed"]
+    },
+    "description": {
+      "type": "string"
+    },
+    "iconKey": {
+      "type": "string"
+    },
+    "effects": {
+      "type": "array",
+      "itemType": "object"
+    },
+    "removeCost": {
+      "type": "number"
+    },
+    "tags": {
+      "type": "array",
+      "itemType": "string"
+    },
+    "enabled": {
+      "type": "boolean"
+    }
+  },
+  "dataList": {},
+  "defaults": {
+    "rarity": "cursed",
+    "enabled": true,
+    "effects": [],
+    "tags": []
+  }
+}

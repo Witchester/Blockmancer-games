@@ -1,0 +1,26 @@
+{
+  "id": "scale_hard",
+  "name": "Hard Mode",
+  "mode": "hard",
+  "stageRules": {
+    "maxStage": 10,
+    "bossStage": 10,
+    "eliteStageInterval": 2
+  },
+  "enemyScaling": {
+    "hpPerStage": 12,
+    "attackPerStage": 0.75,
+    "armorPerStage": 0.1
+  },
+  "boardScaling": {
+    "fallSpeedPerStage": 0.07,
+    "maxFallSpeed": 2.4,
+    "junkChancePerStage": 0.05
+  },
+  "rewardScaling": {
+    "goldPerStage": 4,
+    "rareChancePerStage": 0.015
+  },
+  "tags": ["hard", "challenging"],
+  "enabled": true
+}

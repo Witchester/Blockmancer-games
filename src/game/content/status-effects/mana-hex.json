@@ -1,0 +1,15 @@
+{
+  "id": "status_mana_hex",
+  "name": "Mana Hex",
+  "category": "debuff",
+  "durationType": "piece_locks",
+  "defaultDuration": 2,
+  "stacking": {
+    "stackable": false,
+    "maxStacks": 1
+  },
+  "effects": [
+    "increase_spell_cost"
+  ],
+  "enabled": true
+}

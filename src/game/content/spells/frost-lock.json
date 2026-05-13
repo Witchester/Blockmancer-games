@@ -1,0 +1,29 @@
+{
+  "id": "spl_frost_lock",
+  "name": "Frost Lock",
+  "school": "frost",
+  "rarity": "common",
+  "description": "A slowing glyph that reduces fall speed and buys time against pressure.",
+  "iconKey": "icon_frost_lock",
+  "cost": {
+    "mana": 40,
+    "hp": 0,
+    "gold": 0
+  },
+  "targetType": "board",
+  "cooldownLocks": 0,
+  "effects": [
+    "reduce_fall_speed",
+    "delay_enemy_attack"
+  ],
+  "upgradePath": [
+    "reduce_cost",
+    "add_secondary_effect"
+  ],
+  "tags": [
+    "utility",
+    "board_control",
+    "defense"
+  ],
+  "enabled": true
+}

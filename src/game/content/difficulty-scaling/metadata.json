@@ -1,0 +1,174 @@
+{
+  "contentType": "difficultyScaling",
+  "version": "1.0.0",
+  "idPrefix": "scale_",
+  "displayName": "Difficulty Scaling",
+  "description": "Schema metadata for stage rules, enemy scaling, board pressure, and reward growth profiles.",
+  "idFormat": "scale_<mode_name>",
+  "exampleIds": [
+    "scale_default_run",
+    "scale_easy",
+    "scale_hard",
+    "scale_debug"
+  ],
+  "requiredFields": [
+    "id",
+    "name",
+    "stageRules",
+    "enemyScaling",
+    "boardScaling",
+    "rewardScaling",
+    "enabled"
+  ],
+  "fields": {
+    "id": {
+      "type": "string",
+      "pattern": "^scale_[a-z0-9]+(?:_[a-z0-9]+)*$"
+    },
+    "name": {
+      "type": "string"
+    },
+    "stageRules": {
+      "type": "object",
+      "properties": {
+        "maxStage": {
+          "type": "number",
+          "min": 1
+        },
+        "bossStage": {
+          "type": "number",
+          "min": 1
+        },
+        "eliteStageInterval": {
+          "type": "number",
+          "min": 1
+        }
+      }
+    },
+    "enemyScaling": {
+      "type": "object",
+      "properties": {
+        "hpPerStage": {
+          "type": "number"
+        },
+        "attackPerStage": {
+          "type": "number"
+        },
+        "armorPerStage": {
+          "type": "number"
+        }
+      }
+    },
+    "boardScaling": {
+      "type": "object",
+      "properties": {
+        "fallSpeedPerStage": {
+          "type": "number"
+        },
+        "maxFallSpeed": {
+          "type": "number"
+        },
+        "junkChancePerStage": {
+          "type": "number"
+        }
+      }
+    },
+    "rewardScaling": {
+      "type": "object",
+      "properties": {
+        "goldPerStage": {
+          "type": "number"
+        },
+        "rareChancePerStage": {
+          "type": "number"
+        }
+      }
+    },
+    "enabled": {
+      "type": "boolean"
+    }
+  },
+  "dataList": {
+    "modes": [
+      "easy",
+      "normal",
+      "hard",
+      "debug"
+    ],
+    "stageMilestones": [
+      "early_game",
+      "mid_game",
+      "late_game",
+      "boss_stage"
+    ],
+    "scalingCurve": [
+      "flat",
+      "linear",
+      "soft_exponential",
+      "exponential",
+      "custom"
+    ],
+    "tags": [
+      "default",
+      "testing",
+      "production",
+      "debug",
+      "mobile_friendly",
+      "hard_mode"
+    ]
+  },
+  "commonDataList": {
+    "enabled": [
+      true,
+      false
+    ],
+    "contentStatus": [
+      "draft",
+      "testing",
+      "balanced",
+      "deprecated"
+    ],
+    "source": [
+      "base_game",
+      "event",
+      "shop",
+      "boss_reward",
+      "achievement",
+      "debug"
+    ],
+    "platform": [
+      "web",
+      "android",
+      "ios",
+      "desktop"
+    ],
+    "balanceStatus": [
+      "untested",
+      "needs_buff",
+      "needs_nerf",
+      "stable"
+    ]
+  },
+  "defaults": {
+    "stageRules": {
+      "maxStage": 10,
+      "bossStage": 10,
+      "eliteStageInterval": 3
+    },
+    "enemyScaling": {
+      "hpPerStage": 8,
+      "attackPerStage": 0.5,
+      "armorPerStage": 0
+    },
+    "boardScaling": {
+      "fallSpeedPerStage": 0.05,
+      "maxFallSpeed": 2,
+      "junkChancePerStage": 0.03
+    },
+    "rewardScaling": {
+      "goldPerStage": 5,
+      "rareChancePerStage": 0.02
+    },
+    "enabled": true
+  }
+}

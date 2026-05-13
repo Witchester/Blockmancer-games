@@ -1,0 +1,26 @@
+{
+  "id": "upg_stonebreaker",
+  "name": "Stonebreaker",
+  "category": "combat",
+  "rarity": "rare",
+  "description": "Ignore enemy resistance to line damage.",
+  "iconKey": "upg_stonebreaker",
+  "appliesTo": {
+    "contentType": "global",
+    "ids": [],
+    "tags": []
+  },
+  "effects": [
+    {
+      "type": "ignore_enemy_resistance",
+      "value": "line_damage"
+    }
+  ],
+  "maxLevel": 1,
+  "levelScaling": {
+    "mode": "none",
+    "valuePerLevel": 0
+  },
+  "tags": ["combat", "rare", "piercing"],
+  "enabled": true
+}

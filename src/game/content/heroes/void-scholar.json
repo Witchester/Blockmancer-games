@@ -1,0 +1,46 @@
+{
+  "id": "hero_void_scholar",
+  "name": "Void Scholar",
+  "className": "Risk Mage",
+  "description": "A mysterious scholar wielding void magic for powerful but risky effects.",
+  "portraitKey": "hero_void_scholar",
+  "sprite": {
+    "idle": "hero_void_scholar_idle",
+    "cast": "hero_void_scholar_cast",
+    "hit": "hero_void_scholar_hit",
+    "death": "hero_void_scholar_death"
+  },
+  "baseStats": {
+    "maxHp": 24,
+    "maxMana": 120,
+    "startingGold": 60,
+    "baseLineDamage": 4,
+    "baseFallSpeed": 1.0,
+    "spellCostModifier": 1,
+    "manaGainModifier": 1.0
+  },
+  "startingLoadout": {
+    "weaponId": "wpn_void_grimoire",
+    "spellIds": ["spl_void_cut", "spl_mana_burst", "spl_fireball"],
+    "relicIds": [],
+    "upgradeIds": []
+  },
+  "passive": {
+    "id": "passive_void_discount",
+    "name": "Void Discount",
+    "description": "Void spells cost 10 less mana.",
+    "effects": [
+      {
+        "type": "reduce_spell_cost",
+        "value": 10,
+        "condition": "on_void_spell"
+      }
+    ]
+  },
+  "unlock": {
+    "isUnlockedByDefault": false,
+    "condition": "find_special_event"
+  },
+  "tags": ["void", "high_mana", "unlockable"],
+  "enabled": true
+}

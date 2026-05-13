@@ -1,0 +1,23 @@
+{
+  "id": "rel_void_eye",
+  "name": "Void Eye",
+  "rarity": "rare",
+  "description": "Has a 20% chance to clear an extra cell when lines are cleared.",
+  "iconKey": "rel_void_eye",
+  "trigger": "on_line_clear",
+  "effects": [
+    {
+      "type": "chance_clear_extra_cell",
+      "value": 1,
+      "chance": 0.2
+    }
+  ],
+  "stacking": {
+    "stackable": true,
+    "maxStacks": 2,
+    "stackBehavior": "increase_chance"
+  },
+  "conflictsWith": [],
+  "tags": ["void", "utility", "rare"],
+  "enabled": true
+}

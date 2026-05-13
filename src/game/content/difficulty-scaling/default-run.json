@@ -1,0 +1,24 @@
+{
+  "id": "scale_default_run",
+  "name": "Default Run",
+  "stageRules": {
+    "maxStage": 10,
+    "bossStage": 10,
+    "eliteStageInterval": 3
+  },
+  "enemyScaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "armorPerStage": 0
+  },
+  "boardScaling": {
+    "fallSpeedPerStage": 0.05,
+    "maxFallSpeed": 2,
+    "junkChancePerStage": 0.03
+  },
+  "rewardScaling": {
+    "goldPerStage": 5,
+    "rareChancePerStage": 0.02
+  },
+  "enabled": true
+}

@@ -1,0 +1,56 @@
+{
+  "id": "loot_treasure_default",
+  "name": "Treasure Default",
+  "source": "treasure",
+  "entries": [
+    {
+      "contentType": "gold",
+      "id": "gold_bundle_medium",
+      "weight": 12,
+      "rarity": "common",
+      "amount": 50,
+      "condition": "none"
+    },
+    {
+      "contentType": "relic",
+      "id": "rel_goblin_coin",
+      "weight": 8,
+      "rarity": "common",
+      "condition": "none"
+    },
+    {
+      "contentType": "relic",
+      "id": "rel_bomb_charm",
+      "weight": 6,
+      "rarity": "uncommon",
+      "condition": "none"
+    },
+    {
+      "contentType": "upgrade",
+      "id": "upg_line_sharp_edges",
+      "weight": 7,
+      "rarity": "common",
+      "condition": "none"
+    },
+    {
+      "contentType": "upgrade",
+      "id": "upg_spell_fire_mastery",
+      "weight": 8,
+      "rarity": "uncommon",
+      "condition": "none"
+    },
+    {
+      "contentType": "relic",
+      "id": "rel_broken_hourglass",
+      "weight": 7,
+      "rarity": "rare",
+      "condition": "none"
+    }
+  ],
+  "rollConfig": {
+    "choicesShown": 3,
+    "allowDuplicates": false,
+    "rarityBias": "high"
+  },
+  "enabled": true
+}

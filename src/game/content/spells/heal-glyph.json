@@ -1,0 +1,29 @@
+{
+  "id": "spl_heal_glyph",
+  "name": "Heal Glyph",
+  "school": "healing",
+  "rarity": "uncommon",
+  "description": "Restores player health and grants protection.",
+  "iconKey": "spell_heal_glyph",
+  "effectKey": "effect_heal_glyph",
+  "cost": {
+    "mana": 50,
+    "hp": 0,
+    "gold": 0
+  },
+  "targetType": "self",
+  "cooldownLocks": 0,
+  "effects": [
+    {
+      "type": "heal_player",
+      "value": 8
+    },
+    {
+      "type": "gain_shield",
+      "value": 3
+    }
+  ],
+  "upgradePath": [],
+  "tags": ["healing", "defense"],
+  "enabled": true
+}

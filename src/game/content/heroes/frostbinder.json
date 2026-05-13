@@ -1,0 +1,46 @@
+{
+  "id": "hero_frostbinder",
+  "name": "Frostbinder",
+  "className": "Control Mage",
+  "description": "A wielder of freezing magic that slows enemies and manipulates the board.",
+  "portraitKey": "hero_frostbinder",
+  "sprite": {
+    "idle": "hero_frostbinder_idle",
+    "cast": "hero_frostbinder_cast",
+    "hit": "hero_frostbinder_hit",
+    "death": "hero_frostbinder_death"
+  },
+  "baseStats": {
+    "maxHp": 32,
+    "maxMana": 90,
+    "startingGold": 45,
+    "baseLineDamage": 4,
+    "baseFallSpeed": 0.95,
+    "spellCostModifier": 1,
+    "manaGainModifier": 1.0
+  },
+  "startingLoadout": {
+    "weaponId": "wpn_frost_staff",
+    "spellIds": ["spl_frost_lock", "spl_ice_wall", "spl_void_cut"],
+    "relicIds": [],
+    "upgradeIds": []
+  },
+  "passive": {
+    "id": "passive_frost_control",
+    "name": "Frost Control",
+    "description": "Reduce fall speed by 0.05 at battle start.",
+    "effects": [
+      {
+        "type": "reduce_fall_speed",
+        "value": 0.05,
+        "condition": "on_battle_start"
+      }
+    ]
+  },
+  "unlock": {
+    "isUnlockedByDefault": false,
+    "condition": "clear_stage_5"
+  },
+  "tags": ["frost", "control", "unlockable"],
+  "enabled": true
+}

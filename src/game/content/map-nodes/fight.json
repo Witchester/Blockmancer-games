@@ -1,0 +1,16 @@
+{
+  "id": "node_fight",
+  "name": "Fight",
+  "nodeType": "battle",
+  "description": "A normal monster encounter.",
+  "iconKey": "node_fight",
+  "roomScene": "BattleScene",
+  "effects": [
+    {
+      "type": "start_battle",
+      "enemyPool": "normal"
+    }
+  ],
+  "tags": ["combat"],
+  "enabled": true
+}

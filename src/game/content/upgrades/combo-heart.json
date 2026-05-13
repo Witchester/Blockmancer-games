@@ -1,0 +1,29 @@
+{
+  "id": "upg_combo_heart",
+  "name": "Combo Heart",
+  "category": "combo",
+  "rarity": "rare",
+  "description": "Strong combo chains restore a little life.",
+  "iconKey": "icon_combo_heart",
+  "appliesTo": {
+    "contentType": "global",
+    "ids": [],
+    "tags": [
+      "combo"
+    ]
+  },
+  "effects": [
+    "heal_player",
+    "increase_combo_bonus"
+  ],
+  "maxLevel": 1,
+  "levelScaling": {
+    "mode": "flat",
+    "valuePerLevel": 1
+  },
+  "tags": [
+    "combo",
+    "defense"
+  ],
+  "enabled": true
+}

@@ -1,0 +1,16 @@
+{
+  "id": "status_freeze",
+  "name": "Freeze",
+  "category": "control",
+  "durationType": "piece_locks",
+  "defaultDuration": 2,
+  "stacking": {
+    "stackable": false,
+    "maxStacks": 1
+  },
+  "effects": [
+    "reduce_fall_speed",
+    "freeze_piece"
+  ],
+  "enabled": true
+}

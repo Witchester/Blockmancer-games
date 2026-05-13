@@ -1,0 +1,16 @@
+{
+  "id": "node_shop",
+  "name": "Shop",
+  "nodeType": "shop",
+  "description": "A merchant offers goods and services.",
+  "iconKey": "node_shop",
+  "roomScene": "ShopScene",
+  "effects": [
+    {
+      "type": "open_shop",
+      "lootTableId": "loot_shop_default"
+    }
+  ],
+  "tags": ["economy"],
+  "enabled": true
+}

@@ -1,0 +1,242 @@
+{
+  "contentType": "spell",
+  "version": "1.0.0",
+  "idPrefix": "spl_",
+  "displayName": "Spells",
+  "description": "Schema metadata for castable abilities, costs, targeting, status application, and upgrade routing.",
+  "idFormat": "spl_<school>_<name>",
+  "exampleIds": [
+    "spl_fireball",
+    "spl_frost_lock",
+    "spl_bomb_rune",
+    "spl_void_cut",
+    "spl_lightning_chain",
+    "spl_gravity_flip",
+    "spl_heal_glyph"
+  ],
+  "requiredFields": [
+    "id",
+    "name",
+    "school",
+    "rarity",
+    "cost",
+    "targetType",
+    "effects",
+    "upgradePath",
+    "enabled"
+  ],
+  "fields": {
+    "id": {
+      "type": "string",
+      "pattern": "^spl_[a-z0-9]+(?:_[a-z0-9]+)*$"
+    },
+    "name": {
+      "type": "string"
+    },
+    "school": {
+      "type": "enum",
+      "dataList": "school"
+    },
+    "rarity": {
+      "type": "enum",
+      "dataList": "rarity"
+    },
+    "description": {
+      "type": "string"
+    },
+    "iconKey": {
+      "type": "enum",
+      "dataList": "iconKey"
+    },
+    "cost": {
+      "type": "object",
+      "properties": {
+        "mana": {
+          "type": "number",
+          "min": 0
+        },
+        "hp": {
+          "type": "number",
+          "min": 0
+        },
+        "gold": {
+          "type": "number",
+          "min": 0
+        }
+      }
+    },
+    "targetType": {
+      "type": "enum",
+      "dataList": "targetType"
+    },
+    "cooldownLocks": {
+      "type": "number",
+      "min": 0
+    },
+    "effects": {
+      "type": "array",
+      "itemType": "enum",
+      "dataList": "effectTypes"
+    },
+    "upgradePath": {
+      "type": "array",
+      "itemType": "enum",
+      "dataList": "upgradeModes"
+    },
+    "tags": {
+      "type": "array",
+      "itemType": "enum",
+      "dataList": "tags",
+      "uniqueItems": true
+    },
+    "enabled": {
+      "type": "boolean"
+    }
+  },
+  "dataList": {
+    "school": [
+      "fire",
+      "frost",
+      "lightning",
+      "bomb",
+      "void",
+      "gravity",
+      "arcane",
+      "healing"
+    ],
+    "rarity": [
+      "common",
+      "uncommon",
+      "rare",
+      "epic",
+      "legendary"
+    ],
+    "targetType": [
+      "enemy",
+      "self",
+      "board",
+      "random_filled_cell",
+      "random_empty_cell",
+      "row",
+      "column",
+      "area",
+      "all_enemies"
+    ],
+    "effectTypes": [
+      "damage_enemy",
+      "damage_all_enemies",
+      "heal_player",
+      "gain_shield",
+      "gain_mana",
+      "reduce_fall_speed",
+      "increase_fall_speed",
+      "clear_board_area",
+      "clear_random_row",
+      "clear_random_column",
+      "clear_lowest_row",
+      "spawn_bomb_block",
+      "spawn_magic_block",
+      "convert_blocks",
+      "apply_status",
+      "delay_enemy_attack",
+      "refund_mana",
+      "reroll_piece",
+      "freeze_piece",
+      "shake_board"
+    ],
+    "statusEffects": [
+      "status_burn",
+      "status_freeze",
+      "status_stun",
+      "status_shield",
+      "status_mana_hex",
+      "status_slow",
+      "status_vulnerable"
+    ],
+    "costTypes": [
+      "mana",
+      "hp",
+      "gold"
+    ],
+    "upgradeModes": [
+      "increase_damage",
+      "reduce_cost",
+      "increase_area",
+      "add_status",
+      "add_refund",
+      "reduce_cooldown",
+      "add_secondary_effect"
+    ],
+    "iconKey": [
+      "placeholder_spell",
+      "icon_fireball",
+      "icon_frost_lock",
+      "icon_bomb_rune",
+      "icon_void_cut",
+      "icon_lightning_chain",
+      "icon_gravity_flip",
+      "icon_heal_glyph"
+    ],
+    "tags": [
+      "damage",
+      "board_control",
+      "defense",
+      "utility",
+      "mana",
+      "high_cost",
+      "low_cost",
+      "aoe",
+      "single_target",
+      "emergency",
+      "combo_support"
+    ]
+  },
+  "commonDataList": {
+    "enabled": [
+      true,
+      false
+    ],
+    "contentStatus": [
+      "draft",
+      "testing",
+      "balanced",
+      "deprecated"
+    ],
+    "source": [
+      "base_game",
+      "event",
+      "shop",
+      "boss_reward",
+      "achievement",
+      "debug"
+    ],
+    "platform": [
+      "web",
+      "android",
+      "ios",
+      "desktop"
+    ],
+    "balanceStatus": [
+      "untested",
+      "needs_buff",
+      "needs_nerf",
+      "stable"
+    ]
+  },
+  "defaults": {
+    "school": "arcane",
+    "rarity": "common",
+    "iconKey": "placeholder_spell",
+    "cost": {
+      "mana": 30,
+      "hp": 0,
+      "gold": 0
+    },
+    "targetType": "enemy",
+    "cooldownLocks": 0,
+    "effects": [],
+    "upgradePath": [],
+    "tags": [],
+    "enabled": true
+  }
+}
