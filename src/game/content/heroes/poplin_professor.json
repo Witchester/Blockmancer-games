@@ -1,0 +1,46 @@
+{
+  "id": "hero_poplin_professor",
+  "name": "Professor Poplin",
+  "className": "Professor",
+  "description": "Old wizard inventor of the Block-O-Matic 3000.",
+  "portraitKey": "hero_poplin_professor",
+  "sprite": {
+    "idle": "hero_poplin_professor_idle",
+    "cast": "hero_poplin_professor_cast",
+    "hit": "hero_poplin_professor_hit",
+    "death": "hero_poplin_professor_death"
+  },
+  "baseStats": {
+    "maxHp": 30,
+    "maxMana": 100,
+    "startingGold": 100,
+    "baseLineDamage": 5,
+    "baseFallSpeed": 1.0,
+    "spellCostModifier": 0.9,
+    "manaGainModifier": 1.0
+  },
+  "startingLoadout": {
+    "weaponId": "wpn_basic_wand",
+    "spellIds": ["spl_rainbow_reroll", "spl_goblin_gadget", "spl_clean_cut"],
+    "relicIds": [],
+    "upgradeIds": []
+  },
+  "passive": {
+    "id": "passive_professor_wisdom",
+    "name": "Professor Wisdom",
+    "description": "Spells have a chance to trigger random helpful effects.",
+    "effects": [
+      {
+        "type": "random_spell_bonus",
+        "value": 0.2,
+        "condition": "on_spell_cast"
+      }
+    ]
+  },
+  "unlock": {
+    "isUnlockedByDefault": false,
+    "condition": "finish_normal_ending"
+  },
+  "tags": ["utility", "random", "unlockable"],
+  "enabled": true
+}

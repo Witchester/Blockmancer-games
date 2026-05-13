@@ -1,0 +1,46 @@
+{
+  "id": "hero_lumi_star_witch",
+  "name": "Lumi",
+  "className": "Star Witch",
+  "description": "Dreamy star witch who thinks shiny blocks are friends.",
+  "portraitKey": "hero_lumi_star_witch",
+  "sprite": {
+    "idle": "hero_lumi_star_witch_idle",
+    "cast": "hero_lumi_star_witch_cast",
+    "hit": "hero_lumi_star_witch_hit",
+    "death": "hero_lumi_star_witch_death"
+  },
+  "baseStats": {
+    "maxHp": 28,
+    "maxMana": 110,
+    "startingGold": 50,
+    "baseLineDamage": 4,
+    "baseFallSpeed": 1.0,
+    "spellCostModifier": 1,
+    "manaGainModifier": 1.2
+  },
+  "startingLoadout": {
+    "weaponId": "wpn_star_scepter",
+    "spellIds": ["spl_star_spark", "spl_cascade_cheer", "spl_rainbow_reroll"],
+    "relicIds": [],
+    "upgradeIds": []
+  },
+  "passive": {
+    "id": "passive_star_power",
+    "name": "Star Power",
+    "description": "Cascade combos grant extra mana.",
+    "effects": [
+      {
+        "type": "increase_mana_on_cascade",
+        "value": 5,
+        "condition": "on_cascade"
+      }
+    ]
+  },
+  "unlock": {
+    "isUnlockedByDefault": false,
+    "condition": "trigger_10_cascade_combos"
+  },
+  "tags": ["star", "mana", "cascade", "unlockable"],
+  "enabled": true
+}

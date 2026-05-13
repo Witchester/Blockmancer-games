@@ -6,12 +6,14 @@
   "description": "Schema metadata for playable heroes, their base stats, loadouts, passives, and unlock state.",
   "idFormat": "hero_<class_or_name>",
   "exampleIds": [
-    "hero_blockmancer",
-    "hero_pyromancer",
-    "hero_frostbinder",
-    "hero_gravity_knight",
-    "hero_void_scholar",
-    "hero_rune_engineer"
+    "hero_milo_blockmancer",
+    "hero_pippa_pyromancer",
+    "hero_nixie_frostbinder",
+    "hero_bruk_snack_knight",
+    "hero_zuzu_goblin_engineer",
+    "hero_lumi_star_witch",
+    "hero_poplin_professor",
+    "hero_bloop_slime_friend"
   ],
   "requiredFields": [
     "id",

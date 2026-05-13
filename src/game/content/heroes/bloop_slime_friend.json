@@ -1,0 +1,46 @@
+{
+  "id": "hero_bloop_slime_friend",
+  "name": "Bloop",
+  "className": "Slime Friend",
+  "description": "A friendly slime who follows the player after being defeated or befriended enough times.",
+  "portraitKey": "hero_bloop_slime_friend",
+  "sprite": {
+    "idle": "hero_bloop_slime_friend_idle",
+    "cast": "hero_bloop_slime_friend_cast",
+    "hit": "hero_bloop_slime_friend_hit",
+    "death": "hero_bloop_slime_friend_death"
+  },
+  "baseStats": {
+    "maxHp": 25,
+    "maxMana": 80,
+    "startingGold": 20,
+    "baseLineDamage": 3,
+    "baseFallSpeed": 0.9,
+    "spellCostModifier": 1,
+    "manaGainModifier": 1.0
+  },
+  "startingLoadout": {
+    "weaponId": "wpn_basic_wand",
+    "spellIds": ["spl_jelly_bounce", "spl_bubble_shield"],
+    "relicIds": [],
+    "upgradeIds": []
+  },
+  "passive": {
+    "id": "passive_slime_stick",
+    "name": "Slime Stick",
+    "description": "Sticky blocks give extra mana and shield.",
+    "effects": [
+      {
+        "type": "sticky_bonus",
+        "value": 2,
+        "condition": "on_sticky_clear"
+      }
+    ]
+  },
+  "unlock": {
+    "isUnlockedByDefault": false,
+    "condition": "befriend_20_slimes"
+  },
+  "tags": ["slime", "sticky", "chaos", "unlockable"],
+  "enabled": true
+}
