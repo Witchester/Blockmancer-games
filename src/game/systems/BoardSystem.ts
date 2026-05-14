@@ -392,6 +392,31 @@ export class BoardSystem {
     }
   }
 
+  addPatternJunk(): void {
+    this.grid.shift();
+    const junkRow = Array.from({ length: BOARD_COLS }, (_, index) =>
+      index % 3 === 1 ? 0 : this.createBoardBlockCell('block_crumb_junk')
+    );
+    this.grid.push(junkRow);
+  }
+
+  addRoyalBlocks(count: number): number {
+    return this.addSpecialBlocks('block_royal', count);
+  }
+
+  swapNextAndHold(): boolean {
+    if (!this.holdPieceType) {
+      this.holdPieceType = this.nextPieceType;
+      this.nextPieceType = choice(PIECE_TYPES);
+      return true;
+    }
+
+    const previousNext = this.nextPieceType;
+    this.nextPieceType = this.holdPieceType;
+    this.holdPieceType = previousNext;
+    return true;
+  }
+
   clearRandomCluster(cellCount: number): number {
     const filledCells = this.collectFilledCells();
     let cleared = 0;
@@ -484,5 +509,26 @@ export class BoardSystem {
       }
     }
     return cells;
+  }
+
+  private addSpecialBlocks(blockId: string, count: number): number {
+    const emptyCells: Array<[number, number]> = [];
+    for (let rowIndex = 0; rowIndex < BOARD_ROWS; rowIndex += 1) {
+      for (let columnIndex = 0; columnIndex < BOARD_COLS; columnIndex += 1) {
+        if (this.grid[rowIndex][columnIndex] === 0) {
+          emptyCells.push([rowIndex, columnIndex]);
+        }
+      }
+    }
+
+    let added = 0;
+    for (let index = 0; index < count && emptyCells.length > 0; index += 1) {
+      const selectedIndex = randInt(0, emptyCells.length - 1);
+      const [row, col] = emptyCells.splice(selectedIndex, 1)[0];
+      this.grid[row][col] = this.createBoardBlockCell(blockId);
+      added += 1;
+    }
+
+    return added;
   }
 }

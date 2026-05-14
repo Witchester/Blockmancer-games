@@ -30,6 +30,10 @@ type HeroEntry = {
 };
 
 export class HeroSelectScene extends Phaser.Scene {
+  private selectedHeroId: string | null = null;
+  private previewCard?: Card;
+  private startButton?: Button;
+
   constructor() {
     super('HeroSelectScene');
   }
@@ -37,68 +41,98 @@ export class HeroSelectScene extends Phaser.Scene {
   create(): void {
     const game = this.game as BlockmancerGame;
     const heroes = contentRegistry.listEnabled<HeroEntry>('hero');
-    const hero = heroes[0];
     const compact = isCompactLayout(this);
     const layout = getPortraitLayout(this);
 
     game.runState.runStatus = 'menu';
     this.cameras.main.setBackgroundColor(COLORS.background);
 
-    new Card(this, layout.centerX, layout.centerY, layout.contentWidth, layout.height - 96, {
+    new Card(this, layout.centerX, 50, layout.contentWidth, 70, {
       title: 'Choose Your Hero',
-      subtitle: 'Phase 5 placeholder flow: one hero is playable now, with room for expansion later.',
-      titleFontSize: compact ? '30px' : '34px',
-      subtitleFontSize: compact ? '16px' : '18px',
+      titleFontSize: compact ? '24px' : '28px',
       strokeColor: COLORS.accent
     });
 
-    new Card(this, layout.centerX, 430, layout.contentWidth - 64, 430, {
-      title: hero.name,
-      subtitle: hero.className,
-      body: [
-        hero.description,
-        '',
-        `HP ${hero.baseStats.maxHp}  Mana ${hero.baseStats.maxMana}  Gold ${hero.baseStats.startingGold}`,
-        `Line Damage ${hero.baseStats.baseLineDamage}  Fall Speed ${hero.baseStats.baseFallSpeed.toFixed(2)}x`,
-        '',
-        `Passive: ${hero.passive.name}`,
-        hero.passive.description
-      ].join('\n'),
+    const startY = 140;
+    const btnWidth = (layout.contentWidth / 2) - 10;
+    
+    heroes.forEach((h, index) => {
+      const col = index % 2;
+      const row = Math.floor(index / 2);
+      const x = layout.centerX + (col === 0 ? -(btnWidth/2 + 5) : (btnWidth/2 + 5));
+      const y = startY + row * 65;
+
+      const isUnlocked = game.metaSystem.isHeroUnlocked(h.id);
+      
+      const btn = new Button(this, x, y, btnWidth, 55, h.name, () => {
+        this.selectHero(h.id, isUnlocked, h, game);
+      });
+      
+      if (!isUnlocked) {
+        btn.setDisabled(true);
+        // Dim or tint
+      }
+    });
+
+    // Preview Card
+    this.previewCard = new Card(this, layout.centerX, 500, layout.contentWidth - 32, 400, {
+      title: 'Select a Hero',
+      body: '',
       titleColor: '#ffca6b',
-      bodyFontSize: compact ? '17px' : '19px',
+      bodyFontSize: compact ? '16px' : '18px',
       strokeColor: COLORS.gold
     });
 
-    new Button(this, layout.centerX, 745, 260, 56, 'Select Hero', () => {
-      game.runState.hero = {
-        id: hero.id,
-        name: hero.name,
-        className: hero.className,
-        passiveId: hero.passive.id,
-        unlocked: true
-      };
-      game.runState.weapon.id = hero.startingLoadout.weaponId;
-      game.runState.spells = hero.startingLoadout.spellIds.map((spellId) => {
-        switch (spellId) {
-          case 'spl_fireball':
-            return 'fireball';
-          case 'spl_frost_lock':
-            return 'frost-lock';
-          case 'spl_bomb_rune':
-            return 'bomb-rune';
-          case 'spl_void_cut':
-            return 'void-cut';
-          default:
-            return 'fireball';
-        }
-      });
-      game.runState.runStatus = 'map';
-      game.saveRun();
-      this.scene.start('MapScene');
+    this.startButton = new Button(this, layout.centerX, 760, 260, 56, 'Start Run', () => {
+      if (this.selectedHeroId) {
+        game.newRun(this.selectedHeroId);
+        game.runState.runStatus = 'map';
+        game.saveRun();
+        this.scene.start('MapScene');
+      }
     });
+    this.startButton.setDisabled(true);
 
-    new Button(this, layout.centerX, 818, 260, 52, 'Back To Menu', () => {
+    new Button(this, layout.centerX, 830, 260, 52, 'Back To Menu', () => {
       this.scene.start('MainMenuScene');
+    });
+    
+    // Auto-select milo
+    const milo = heroes.find(h => h.id === 'hero_milo_blockmancer') || heroes[0];
+    if (milo) {
+      this.selectHero(milo.id, game.metaSystem.isHeroUnlocked(milo.id), milo, game);
+    }
+  }
+
+  private selectHero(id: string, isUnlocked: boolean, hero: HeroEntry | any, game: BlockmancerGame): void {
+    this.selectedHeroId = isUnlocked ? id : null;
+    this.startButton?.setDisabled(!isUnlocked);
+    
+    const bodyText = isUnlocked 
+      ? [
+          hero.description,
+          '',
+          `HP ${hero.baseStats.maxHp}  Mana ${hero.baseStats.maxMana}  Gold ${hero.baseStats.startingGold}`,
+          `Line Damage ${hero.baseStats.baseLineDamage}  Fall Speed ${hero.baseStats.baseFallSpeed.toFixed(2)}x`,
+          '',
+          `Passive: ${hero.passive.name}`,
+          hero.passive.description
+        ].join('\n')
+      : [
+          'LOCKED',
+          '',
+          `Unlock condition:`,
+          hero.unlock?.condition || 'Unknown'
+        ].join('\n');
+
+    this.previewCard?.destroy();
+    this.previewCard = new Card(this, getPortraitLayout(this).centerX, 500, getPortraitLayout(this).contentWidth - 32, 400, {
+      title: hero.name,
+      subtitle: isUnlocked ? hero.className : '???',
+      body: bodyText,
+      titleColor: isUnlocked ? '#ffca6b' : '#666666',
+      bodyFontSize: isCompactLayout(this) ? '16px' : '18px',
+      strokeColor: isUnlocked ? COLORS.gold : COLORS.panelAlt
     });
   }
 }

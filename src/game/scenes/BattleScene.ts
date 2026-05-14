@@ -5,11 +5,12 @@ import { BoardSystem, getBoardCellColor } from '../systems/BoardSystem';
 import { CombatSystem } from '../systems/CombatSystem';
 import { InputSystem } from '../systems/InputSystem';
 import { SpellSystem } from '../systems/SpellSystem';
-import type { BoardTickResult, SpellId } from '../types/GameTypes';
+import type { BoardTickResult, EnemyInstance, SpellId } from '../types/GameTypes';
 import { EventLog } from '../ui/EventLog';
 import { Hud } from '../ui/Hud';
 import { MobileControls } from '../ui/MobileControls';
 import { ProgressBar } from '../ui/ProgressBar';
+import { Button } from '../ui/Button';
 import { getPortraitLayout, isCompactLayout } from '../utils/layout';
 import {
   BASE_DROP_MS,
@@ -43,6 +44,8 @@ export class BattleScene extends Phaser.Scene {
   private inventoryText?: Phaser.GameObjects.Text;
   private feverText?: Phaser.GameObjects.Text;
   private inventoryExpanded = false;
+  private inventoryOverlay!: Phaser.GameObjects.Container;
+  private inventoryButtons: Button[] = [];
   private inputSystem?: InputSystem;
   private compactLayout = false;
   private screenWidth = 0;
@@ -119,6 +122,7 @@ export class BattleScene extends Phaser.Scene {
     });
     this.log = new EventLog(this, this.logX, this.logY, this.logWidth, this.logHeight);
     this.createMobileControls();
+    this.createInventoryOverlay();
     this.createInputSystem();
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.handleShutdown, this);
     this.combat.addLog(`Battle started against ${state.activeEnemy.name}.`);
@@ -289,8 +293,8 @@ export class BattleScene extends Phaser.Scene {
       this.controlsY,
       [
         [
-          { label: '<', width: 58, height: 48, onPress: () => this.board.move(-1, 0) && this.renderBoard(), repeat: true, repeatDelayMs: 180, repeatIntervalMs: 90 },
-          { label: '>', width: 58, height: 48, onPress: () => this.board.move(1, 0) && this.renderBoard(), repeat: true, repeatDelayMs: 180, repeatIntervalMs: 90 },
+          { label: '<', width: 58, height: 48, onPress: () => this.moveHorizontal(-1), repeat: true, repeatDelayMs: 180, repeatIntervalMs: 90 },
+          { label: '>', width: 58, height: 48, onPress: () => this.moveHorizontal(1), repeat: true, repeatDelayMs: 180, repeatIntervalMs: 90 },
           { label: 'Rot', width: 64, height: 48, onPress: () => this.board.rotate() && this.renderBoard() },
           { label: 'Soft', width: 66, height: 48, onPress: () => this.resolveTick(this.board.tick()), repeat: true, repeatDelayMs: 120, repeatIntervalMs: 60 },
           { label: 'Drop', width: 70, height: 48, onPress: () => this.resolveTick(this.board.hardDrop()) },
@@ -308,6 +312,36 @@ export class BattleScene extends Phaser.Scene {
       ],
       { title: 'Touch Controls', padding: 14, rowGap: 9, buttonGap: 8 }
     );
+  }
+
+  private createInventoryOverlay(): void {
+    this.inventoryOverlay = this.add.container(0, 0);
+    this.inventoryOverlay.setDepth(100);
+    this.inventoryOverlay.setVisible(false);
+    
+    const middleCenterY = this.topSectionHeight + this.middleSectionHeight / 2;
+    const bg = this.add.rectangle(
+      this.screenWidth / 2,
+      middleCenterY,
+      this.screenWidth - 24,
+      this.middleSectionHeight - 16,
+      COLORS.panel,
+      0.98
+    ).setStrokeStyle(2, COLORS.accentSoft, 0.5);
+    
+    const title = this.add.text(
+      this.screenWidth / 2,
+      this.topSectionHeight + 30,
+      'Inventory (Bag)',
+      {
+        color: '#ffca6b',
+        fontFamily: FONT_FAMILY,
+        fontSize: '22px',
+        fontStyle: 'bold'
+      }
+    ).setOrigin(0.5);
+    
+    this.inventoryOverlay.add([bg, title]);
   }
 
   private handleHold(): void {
@@ -329,8 +363,8 @@ export class BattleScene extends Phaser.Scene {
 
   private createInputSystem(): void {
     this.inputSystem = new InputSystem(this, {
-      moveLeft: () => this.board.move(-1, 0) && this.renderBoard(),
-      moveRight: () => this.board.move(1, 0) && this.renderBoard(),
+      moveLeft: () => this.moveHorizontal(-1),
+      moveRight: () => this.moveHorizontal(1),
       rotate: () => this.board.rotate() && this.renderBoard(),
       softDrop: () => this.resolveTick(this.board.tick()),
       hardDrop: () => this.resolveTick(this.board.hardDrop()),
@@ -344,6 +378,14 @@ export class BattleScene extends Phaser.Scene {
       inventory: () => this.toggleInventory(),
       pause: this.handlePause
     });
+  }
+
+  private moveHorizontal(direction: -1 | 1): void {
+    const enemy = this.sharedGame.runState.activeEnemy;
+    const resolvedDirection = enemy?.reverseControlsTurns ? -direction : direction;
+    if (this.board.move(resolvedDirection, 0)) {
+      this.renderBoard();
+    }
   }
 
   private handleShutdown(): void {
@@ -415,6 +457,24 @@ export class BattleScene extends Phaser.Scene {
     if (enemy.manaHexTurns > 0) {
       enemy.manaHexTurns -= 1;
     }
+    if (enemy.holdHiddenTurns > 0) {
+      enemy.holdHiddenTurns -= 1;
+    }
+    if (enemy.frozenTurns > 0) {
+      enemy.frozenTurns -= 1;
+    }
+    if (enemy.sleepTurns > 0) {
+      enemy.sleepTurns -= 1;
+    }
+    if (enemy.reverseControlsTurns > 0) {
+      enemy.reverseControlsTurns -= 1;
+    }
+    if (enemy.lineDamageBlockedTurns > 0) {
+      enemy.lineDamageBlockedTurns -= 1;
+    }
+    if (this.sharedGame.runState.player.feverActiveLocks > 0) {
+      this.sharedGame.runState.player.feverActiveLocks -= 1;
+    }
   }
 
   private resolveEnemyAttack(): void {
@@ -424,20 +484,53 @@ export class BattleScene extends Phaser.Scene {
       return;
     }
 
+    if (enemy.frozenTurns > 0) {
+      this.combat.addLog(`${enemy.name} is frozen and misses a beat.`);
+      this.combat.resetEnemyCounter();
+      this.renderAll();
+      return;
+    }
+
+    if (enemy.sleepTurns > 0) {
+      this.combat.addLog('You shake off the sleepy tune and skip the damage.');
+      this.combat.resetEnemyCounter();
+      this.renderAll();
+      return;
+    }
+
+    const behavior = this.getNextEnemyBehavior(enemy);
     let damage = enemy.attack;
     this.combat.addLog(`${enemy.name} uses ${enemy.intent}.`);
 
-    switch (enemy.behavior) {
+    switch (behavior) {
+      case 'basic_attack':
+        break;
       case 'spawn_junk':
         this.board.addJunkRows(1);
         this.combat.addLog('Junk blocks rise from below.');
         break;
+      case 'pattern_junk':
+        this.board.addPatternJunk();
+        this.combat.addLog('A patterned junk row marches onto the board.');
+        break;
+      case 'royal_block_spawn': {
+        const added = this.board.addRoyalBlocks(4);
+        this.combat.addLog(`Royal blocks appear in ${added} open spaces.`);
+        break;
+      }
       case 'hide_next_piece':
+      case 'hide_next_block':
         enemy.previewHiddenTurns = 2;
         this.combat.addLog('The next-piece preview gets covered in glitter.');
         break;
+      case 'hide_hold_block':
+        enemy.holdHiddenTurns = 2;
+        this.combat.addLog('The hold box gets hidden behind parade banners.');
+        break;
       case 'mana_hex':
+      case 'mana_zap':
         enemy.manaHexTurns = 2;
+        state.player.mana = Math.max(0, state.player.mana - 12);
         this.combat.addLog('Mana Hex raises spell costs for a short time.');
         break;
       case 'shake_board':
@@ -452,18 +545,44 @@ export class BattleScene extends Phaser.Scene {
         break;
       case 'reduce_line_damage':
       case 'armor_up':
+        enemy.lineDamageBlockedTurns = 2;
+        this.combat.addEnemyShield(6);
         this.combat.addLog('Guarded blocks soften your next clear.');
         break;
+      case 'shield_self':
+        this.combat.addEnemyShield(10);
+        break;
+      case 'heal_self':
+        this.combat.healEnemy(Math.ceil(enemy.maxHp * 0.08));
+        break;
       case 'freeze_piece':
+        enemy.frozenTurns = 1;
+        state.fallSpeed = Math.max(0.75, state.fallSpeed - 0.05);
         this.combat.addLog('Frost gathers around the falling block.');
         break;
+      case 'sleep_player':
+        enemy.sleepTurns = 1;
+        damage = 0;
+        this.combat.addLog('A cozy lullaby makes your next moment sluggish.');
+        break;
+      case 'swap_next_hold':
+        this.board.swapNextAndHold();
+        this.combat.addLog('Next and hold blocks swap in a festival shuffle.');
+        break;
+      case 'reverse_controls':
+        enemy.reverseControlsTurns = 3;
+        this.combat.addLog('Controls are reversed for a few locks.');
+        break;
       default:
+        this.combat.addLog(`${behavior} is handled as a simple festival bonk.`);
         break;
     }
 
     this.cameras.main.shake(140, 0.0035);
-    const defeated = this.combat.applyEnemyDamage(damage);
-    this.combat.addLog(`You take ${damage} damage.`);
+    const defeated = damage > 0 ? this.combat.applyEnemyDamage(damage) : false;
+    if (damage > 0) {
+      this.combat.addLog(`You take ${damage} damage.`);
+    }
     this.combat.resetEnemyCounter();
 
     if (defeated) {
@@ -473,6 +592,14 @@ export class BattleScene extends Phaser.Scene {
 
     this.syncBoardState();
     this.renderAll();
+  }
+
+  private getNextEnemyBehavior(enemy: EnemyInstance): string {
+    const behaviors = enemy.behaviors.length > 0 ? enemy.behaviors : [enemy.behavior || 'basic_attack'];
+    const behavior = behaviors[enemy.behaviorIndex % behaviors.length] ?? 'basic_attack';
+    enemy.behavior = behavior;
+    enemy.behaviorIndex = (enemy.behaviorIndex + 1) % behaviors.length;
+    return behavior;
   }
 
   private logEnemyCountdown(): void {
@@ -606,7 +733,7 @@ export class BattleScene extends Phaser.Scene {
     }
 
     this.enemyNameText?.setText(enemy.name);
-    this.enemyStatsText?.setText(`HP ${enemy.currentHp}/${enemy.maxHp}   ATK ${enemy.attack}`);
+    this.enemyStatsText?.setText(`HP ${enemy.currentHp}/${enemy.maxHp}   SH ${enemy.shield}   ATK ${enemy.attack}`);
     this.enemyIntentText?.setText(
       `${enemy.intent}\n${this.getBehaviorLabel(enemy.behavior)}`
     );
@@ -622,16 +749,37 @@ export class BattleScene extends Phaser.Scene {
         return 'Basic attack';
       case 'spawn_junk':
         return 'Spawn junk';
+      case 'pattern_junk':
+        return 'Pattern junk';
+      case 'royal_block_spawn':
+        return 'Royal blocks';
       case 'shake_board':
         return 'Shake board';
       case 'increase_fall_speed':
         return 'Increase fall speed';
       case 'hide_next_piece':
+      case 'hide_next_block':
         return 'Hide next piece';
+      case 'hide_hold_block':
+        return 'Hide hold';
       case 'reduce_line_damage':
         return 'Reduce line damage';
       case 'mana_hex':
+      case 'mana_zap':
         return 'Mana hex';
+      case 'freeze_piece':
+        return 'Freeze piece';
+      case 'shield_self':
+      case 'armor_up':
+        return 'Shield self';
+      case 'heal_self':
+        return 'Heal self';
+      case 'sleep_player':
+        return 'Sleepy tune';
+      case 'swap_next_hold':
+        return 'Swap next/hold';
+      case 'reverse_controls':
+        return 'Reverse controls';
       default:
         return behavior;
     }
@@ -670,13 +818,69 @@ export class BattleScene extends Phaser.Scene {
 
   private renderMiddleOverlays(): void {
     const state = this.sharedGame.runState;
-    this.holdText?.setText(this.board.holdPieceType ? `Held\n${this.board.holdPieceType}` : 'Hold\nEmpty');
+    const enemy = state.activeEnemy;
+    this.holdText?.setText(
+      enemy?.holdHiddenTurns
+        ? 'Hold\nHidden'
+        : this.board.holdPieceType
+          ? `Held\n${this.board.holdPieceType}`
+          : 'Hold\nEmpty'
+    );
+    
+    const inventorySummary = state.inventory.slice(0, 2).map(stack => `${this.sharedGame.itemSystem.getItem(stack.itemId)?.name} x${stack.count}`).join(', ');
+    const bagText = state.inventory.length ? inventorySummary : 'Bag Empty';
+    
     this.inventoryText?.setText(
       this.inventoryExpanded
-        ? [`Gold ${state.player.gold}`, 'Mini Cupcake x1', 'Mana Lemonade x1'].join('\n')
-        : `Gold ${state.player.gold}  Bag`
+        ? `Bag Open`
+        : `Gold ${state.player.gold}\n${bagText}`
     );
-    this.feverText?.setText(`Fever ${Math.min(100, state.combo * 10)}%\nCombo ${state.combo}`);
+    
+    this.inventoryOverlay.setVisible(this.inventoryExpanded);
+    if (this.inventoryExpanded) {
+      // Clear old buttons
+      this.inventoryButtons.forEach(btn => btn.destroy());
+      this.inventoryButtons = [];
+      
+      const startX = this.screenWidth / 2 - 120;
+      const startY = this.topSectionHeight + 70;
+      
+      state.inventory.forEach((stack, index) => {
+        const itemDef = this.sharedGame.itemSystem.getItem(stack.itemId);
+        if (!itemDef) return;
+        
+        const col = index % 2;
+        const row = Math.floor(index / 2);
+        const x = startX + col * 140;
+        const y = startY + row * 60;
+        
+        const btn = new Button(this, x + 50, y + 25, 130, 50, `${itemDef.name}\n(x${stack.count})`, () => {
+          const msg = this.sharedGame.itemSystem.applyItem(state, stack.itemId, this.board, this.combat);
+          this.combat.addLog(msg);
+          this.sharedGame.inventorySystem.removeItem(state, stack.itemId, 1);
+          this.sharedGame.saveRun();
+          
+          if (state.inventory.length === 0) {
+            this.inventoryExpanded = false;
+          }
+          this.renderAll();
+        });
+        this.inventoryOverlay.add(btn);
+        this.inventoryButtons.push(btn);
+      });
+      
+      const closeBtn = new Button(this, this.screenWidth / 2, this.topSectionHeight + this.middleSectionHeight - 40, 100, 40, 'Close', () => {
+        this.toggleInventory();
+      });
+      this.inventoryOverlay.add(closeBtn);
+      this.inventoryButtons.push(closeBtn);
+    }
+    
+    this.feverText?.setText(
+      state.player.feverActiveLocks > 0
+        ? `Fever ON\n${state.player.feverActiveLocks} locks`
+        : `Fever ${state.player.fever}%\nCombo ${state.combo}`
+    );
   }
 
   private syncBoardState(): void {

@@ -103,8 +103,11 @@ export function createDefaultPlayerState(): PlayerState {
   return {
     maxHp: 30,
     hp: 30,
+    shield: 0,
     maxMana: 100,
     mana: 0,
+    fever: 0,
+    feverActiveLocks: 0,
     gold: 50,
     totalGoldCollected: 50,
     baseLineDamage: 5,
@@ -123,6 +126,7 @@ export function createDefaultPlayerState(): PlayerState {
     emergencyBarrierUsed: false,
     frostLockDelayBonus: false,
     voidCutRefund: false,
-    curses: 0
+    curses: 0,
+    inventoryCapacity: 10
   };
 }

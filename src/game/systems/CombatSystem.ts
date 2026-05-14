@@ -53,11 +53,16 @@ export class CombatSystem {
       return 0;
     }
 
+    let mitigation = enemy.armor;
     if ((enemy.id === 'stone-golem' || enemy.behavior === 'reduce_line_damage') && !this.state.player.stonebreaker) {
-      return 2;
+      mitigation += 2;
     }
 
-    return 0;
+    if (enemy.lineDamageBlockedTurns > 0) {
+      mitigation += 3;
+    }
+
+    return mitigation;
   }
 
   addLog(message: string): void {
@@ -76,6 +81,8 @@ export class CombatSystem {
     });
   }
 
+  private firstLineClearMage = true;
+
   resolveCascadeClear(cascade: CascadeResult): number {
     const enemy = this.state.activeEnemy;
     if (!enemy || cascade.totalLinesCleared <= 0) {
@@ -92,11 +99,14 @@ export class CombatSystem {
       this.state.player.lineDamageBonus +
       lineBonus +
       comboBonus;
-    const damage = Math.max(
+    let damage = Math.max(
       1,
       Math.round(this.getCascadeMultiplier(cascade.cascadeCount) * rawDamage - this.getMitigation(enemy))
     );
-    enemy.currentHp = Math.max(0, enemy.currentHp - damage);
+    if (this.state.player.feverActiveLocks > 0) {
+      damage = Math.round(damage * 1.35);
+    }
+    this.damageEnemy(damage);
 
     const baseMana = this.getLineClearMana(cascade.totalLinesCleared);
     const bonusMana = cascade.cascadeCount > 1 ? Math.floor(baseMana * CASCADE_MANA_BONUS_MULTIPLIER) : 0;
@@ -105,12 +115,21 @@ export class CombatSystem {
       0,
       this.state.player.maxMana
     );
+    
+    // Handle passive_line_mage
+    if (this.state.hero.passiveId === 'passive_line_mage' && this.firstLineClearMage) {
+      this.firstLineClearMage = false;
+      this.state.player.mana = clamp(this.state.player.mana + 15, 0, this.state.player.maxMana);
+      this.addLog('Line Mage grants an initial burst of mana!');
+    }
+
     const specialMessages = this.applySpecialBlockEffects(cascade.specialBlocksTriggered);
 
     if (this.state.player.comboHeart && this.state.combo >= 3) {
       this.state.player.hp = clamp(this.state.player.hp + 1, 0, this.state.player.maxHp);
       this.addLog('Combo Heart restores 1 HP.');
     }
+    this.gainFever(cascade.cascadeCount * 8 + cascade.totalLinesCleared * 3);
 
     this.addLog('Line cleared!');
     if (cascade.cascadeCount > 1) {
@@ -191,16 +210,48 @@ export class CombatSystem {
       return;
     }
 
-    this.state.activeEnemy.currentHp = Math.max(0, this.state.activeEnemy.currentHp - amount);
+    this.damageEnemy(amount);
     this.addLog(`${label} hits for ${amount} damage.`);
+  }
+
+  addPlayerShield(amount: number, label = 'Shield'): void {
+    this.state.player.shield = clamp(this.state.player.shield + amount, 0, 99);
+    this.addLog(`${label} grants ${amount} shield.`);
+  }
+
+  addEnemyShield(amount: number): void {
+    const enemy = this.state.activeEnemy;
+    if (!enemy) {
+      return;
+    }
+
+    enemy.shield = clamp(enemy.shield + amount, 0, 99);
+    this.addLog(`${enemy.name} gains ${amount} shield.`);
+  }
+
+  healEnemy(amount: number): void {
+    const enemy = this.state.activeEnemy;
+    if (!enemy) {
+      return;
+    }
+
+    enemy.currentHp = clamp(enemy.currentHp + amount, 0, enemy.maxHp);
+    this.addLog(`${enemy.name} patches up ${amount} HP.`);
   }
 
   applyEnemyDamage(amount: number): boolean {
     const player = this.state.player;
+    const blocked = Math.min(player.shield, amount);
+    player.shield -= blocked;
+    const remainingDamage = amount - blocked;
+    if (blocked > 0) {
+      this.addLog(`Shield blocks ${blocked} damage.`);
+    }
+
     if (
       player.emergencyBarrier &&
       !player.emergencyBarrierUsed &&
-      player.hp - amount <= 0
+      player.hp - remainingDamage <= 0
     ) {
       player.emergencyBarrierUsed = true;
       player.hp = 1;
@@ -208,8 +259,38 @@ export class CombatSystem {
       return false;
     }
 
-    player.hp = Math.max(0, player.hp - amount);
-    this.relicSystem.applyOnDamageTaken(this.state).forEach((message) => this.addLog(message));
+    if (remainingDamage > 0) {
+      player.hp = Math.max(0, player.hp - remainingDamage);
+      this.relicSystem.applyOnDamageTaken(this.state).forEach((message) => this.addLog(message));
+    }
     return player.hp <= 0;
+  }
+
+  private damageEnemy(amount: number): void {
+    const enemy = this.state.activeEnemy;
+    if (!enemy) {
+      return;
+    }
+
+    const blocked = Math.min(enemy.shield, amount);
+    enemy.shield -= blocked;
+    enemy.currentHp = Math.max(0, enemy.currentHp - (amount - blocked));
+    if (blocked > 0) {
+      this.addLog(`${enemy.name}'s shield blocks ${blocked} damage.`);
+    }
+  }
+
+  private gainFever(amount: number): void {
+    const player = this.state.player;
+    if (player.feverActiveLocks > 0) {
+      return;
+    }
+
+    player.fever = clamp(player.fever + amount, 0, 100);
+    if (player.fever >= 100) {
+      player.fever = 0;
+      player.feverActiveLocks = 5;
+      this.addLog('Fever starts! Cascades hit harder for 5 locks.');
+    }
   }
 }

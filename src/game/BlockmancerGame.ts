@@ -22,6 +22,7 @@ import { AudioSystem } from './systems/AudioSystem';
 import { HeroSystem } from './systems/HeroSystem';
 import { InventorySystem } from './systems/InventorySystem';
 import { ItemSystem } from './systems/ItemSystem';
+import { MetaSystem } from './systems/MetaSystem';
 import { SettingsSystem } from './systems/SettingsSystem';
 import { StageSystem } from './systems/StageSystem';
 import { TutorialSystem } from './systems/TutorialSystem';
@@ -32,9 +33,11 @@ import { createDefaultRunState, normalizeRunState } from './data/defaultRunState
 export class BlockmancerGame extends Phaser.Game {
   readonly saveSystem = new SaveSystem();
   readonly mapSystem = new MapSystem();
+  readonly metaSystem = new MetaSystem(this.saveSystem);
   readonly rewardSystem = new RewardSystem();
   readonly difficultySystem = new DifficultySystem();
-  readonly enemySystem = new EnemySystem(this.difficultySystem);
+  readonly stageSystem = new StageSystem();
+  readonly enemySystem = new EnemySystem(this.difficultySystem, this.stageSystem);
   readonly eventSystem = new EventSystem(this.rewardSystem, this.enemySystem);
   readonly shopSystem = new ShopSystem(this.rewardSystem);
   readonly assetSystem = new AssetSystem();
@@ -43,7 +46,6 @@ export class BlockmancerGame extends Phaser.Game {
   readonly weaponSystem = new WeaponSystem();
   readonly inventorySystem = new InventorySystem();
   readonly itemSystem = new ItemSystem();
-  readonly stageSystem = new StageSystem();
   readonly tutorialSystem = new TutorialSystem();
   readonly settingsSystem = new SettingsSystem();
   runState: RunState;
@@ -77,8 +79,9 @@ export class BlockmancerGame extends Phaser.Game {
     this.runState = createDefaultRunState();
   }
 
-  newRun(): RunState {
+  newRun(heroId: string = 'hero_milo_blockmancer'): RunState {
     this.runState = createDefaultRunState();
+    this.heroSystem.applyHeroToRun(this.runState, heroId);
     this.saveRun();
     return this.runState;
   }

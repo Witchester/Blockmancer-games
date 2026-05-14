@@ -22,7 +22,8 @@ import type {
   RunState,
   SpellId,
   StatusEffectState,
-  WeaponState
+  WeaponState,
+  InventoryStack
 } from '../types/GameTypes';
 import { createDefaultPlayerState } from '../utils/constants';
 
@@ -35,6 +36,7 @@ type PartialRunState = Partial<Omit<RunState, 'player' | 'hero' | 'weapon' | 'bo
   relics?: RewardId[];
   upgrades?: RewardId[];
   statusEffects?: StatusEffectState[];
+  inventory?: InventoryStack[];
   pendingRewards?: RewardDefinition[];
   activeEnemy?: EnemyInstance | null;
   /** @deprecated kept for backward save compatibility */
@@ -45,6 +47,27 @@ type PartialRunState = Partial<Omit<RunState, 'player' | 'hero' | 'weapon' | 'bo
 
 function cloneMap() {
   return MAP_NODES.map((node) => ({ ...node }));
+}
+
+function normalizeEnemy(enemy: EnemyInstance | null | undefined): EnemyInstance | null {
+  if (!enemy) {
+    return null;
+  }
+
+  return {
+    ...enemy,
+    armor: enemy.armor ?? 0,
+    shield: enemy.shield ?? 0,
+    behaviors: enemy.behaviors?.length ? [...enemy.behaviors] : [enemy.behavior || 'basic_attack'],
+    previewHiddenTurns: enemy.previewHiddenTurns ?? 0,
+    holdHiddenTurns: enemy.holdHiddenTurns ?? 0,
+    manaHexTurns: enemy.manaHexTurns ?? 0,
+    frozenTurns: enemy.frozenTurns ?? 0,
+    sleepTurns: enemy.sleepTurns ?? 0,
+    reverseControlsTurns: enemy.reverseControlsTurns ?? 0,
+    lineDamageBlockedTurns: enemy.lineDamageBlockedTurns ?? 0,
+    behaviorIndex: enemy.behaviorIndex ?? 0
+  };
 }
 
 export function createDefaultRunState(): RunState {
@@ -59,6 +82,7 @@ export function createDefaultRunState(): RunState {
     relics: [],
     upgrades: [],
     statusEffects: [],
+    inventory: [],
     currentNodeId: 'start',
     currentRoomType: 'start',
     currentRoomProgress: DEFAULT_ROOM_PROGRESS,
@@ -107,6 +131,7 @@ export function normalizeRunState(input: unknown): RunState {
     relics: raw.relics ? [...raw.relics] : [...defaults.relics],
     upgrades: raw.upgrades ? [...raw.upgrades] : [...defaults.upgrades],
     statusEffects: raw.statusEffects ? [...raw.statusEffects] : [...defaults.statusEffects],
+    inventory: raw.inventory ? raw.inventory.map(i => ({ ...i })) : [...defaults.inventory],
     map: raw.map ? raw.map.map((node) => ({ ...node })) : defaults.map,
     eventLog: raw.eventLog ? [...raw.eventLog] : [...defaults.eventLog],
     pendingRewards: raw.pendingRewards ? [...raw.pendingRewards] : [...defaults.pendingRewards],
@@ -114,7 +139,7 @@ export function normalizeRunState(input: unknown): RunState {
   };
 
   // Backward compatibility: migrate old saves that used currentEnemy
-  merged.activeEnemy = raw.activeEnemy ?? raw.currentEnemy ?? defaults.activeEnemy;
+  merged.activeEnemy = normalizeEnemy(raw.activeEnemy ?? raw.currentEnemy ?? defaults.activeEnemy);
 
   // Backward compatibility: migrate old saves that used currentRoom struct
   if (raw.currentRoom) {

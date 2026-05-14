@@ -11,8 +11,11 @@ export type StatusEffectDurationType = 'turns' | 'piece_locks' | 'seconds' | 'ba
 export interface PlayerState {
   maxHp: number;
   hp: number;
+  shield: number;
   maxMana: number;
   mana: number;
+  fever: number;
+  feverActiveLocks: number;
   gold: number;
   totalGoldCollected: number;
   baseLineDamage: number;
@@ -27,6 +30,7 @@ export interface PlayerState {
   frostLockDelayBonus: boolean;
   voidCutRefund: boolean;
   curses: number;
+  inventoryCapacity: number;
 }
 
 export interface HeroState {
@@ -48,9 +52,11 @@ export interface EnemyDefinition {
   name: string;
   baseHp: number;
   baseAttack: number;
+  armor?: number;
   attackIntervalLocks: number;
   intent: string;
   behavior: string;
+  behaviors?: string[];
   roomType: 'fight' | 'elite' | 'boss';
 }
 
@@ -60,13 +66,22 @@ export interface EnemyInstance {
   currentHp: number;
   maxHp: number;
   attack: number;
+  armor: number;
+  shield: number;
   intent: string;
   behavior: string;
+  behaviors: string[];
   roomType: 'fight' | 'elite' | 'boss';
   attackIntervalLocks: number;
   attackCounter: number;
   previewHiddenTurns: number;
+  holdHiddenTurns: number;
   manaHexTurns: number;
+  frozenTurns: number;
+  sleepTurns: number;
+  reverseControlsTurns: number;
+  lineDamageBlockedTurns: number;
+  behaviorIndex: number;
 }
 
 export interface BoardState {
@@ -152,6 +167,11 @@ export interface BoardTickResult {
   toppedOut: boolean;
 }
 
+export type InventoryStack = {
+  itemId: string;
+  count: number;
+};
+
 export type CurrentRoomProgress = 'idle' | 'entered' | 'cleared' | 'reward' | 'complete';
 
 export interface RunState {
@@ -164,6 +184,7 @@ export interface RunState {
   relics: RewardId[];
   upgrades: RewardId[];
   statusEffects: StatusEffectState[];
+  inventory: InventoryStack[];
   currentNodeId: string;
   currentRoomType: RoomType;
   currentRoomProgress: CurrentRoomProgress;

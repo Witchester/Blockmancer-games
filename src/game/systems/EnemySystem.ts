@@ -2,6 +2,7 @@ import type { EnemyDefinition, EnemyInstance, RoomType } from '../types/GameType
 import { choice } from '../utils/random';
 import { contentRegistry } from './ContentRegistry';
 import { DifficultySystem } from './DifficultySystem';
+import { StageSystem } from './StageSystem';
 
 type MonsterContentEntry = {
   id: string;
@@ -9,6 +10,7 @@ type MonsterContentEntry = {
   stats: {
     hp: number;
     attack: number;
+    armor?: number;
     attackIntervalLocks: number;
   };
   intent: {
@@ -20,19 +22,38 @@ type MonsterContentEntry = {
 };
 
 export class EnemySystem {
-  constructor(private readonly difficultySystem: DifficultySystem = new DifficultySystem()) {}
+  constructor(
+    private readonly difficultySystem: DifficultySystem = new DifficultySystem(),
+    private readonly stageSystem: StageSystem = new StageSystem()
+  ) {}
 
-  private getCandidates(roomType: RoomType): EnemyDefinition[] {
+  private getCandidates(roomType: RoomType, stageIndex: number): EnemyDefinition[] {
+    const stageDef = this.stageSystem.getStageByIndex(stageIndex) as any;
     const contentEnemies = contentRegistry.listEnabled<MonsterContentEntry>('monster').map((entry) => this.toDefinition(entry));
+    
     if (roomType === 'boss') {
+      const bossId = stageDef?.bossId;
+      if (bossId) {
+        const boss = contentEnemies.find(e => e.id === bossId);
+        if (boss) return [boss];
+      }
       return contentEnemies.filter((enemy) => enemy.roomType === 'boss');
     }
 
-    if (roomType === 'elite') {
-      return contentEnemies.filter((enemy) => enemy.roomType === 'elite');
+    let candidates = contentEnemies;
+    if (stageDef?.monsterPool) {
+      candidates = contentEnemies.filter(e => stageDef.monsterPool.includes(e.id));
     }
 
-    return contentEnemies.filter((enemy) => enemy.roomType === 'fight');
+    if (roomType === 'elite') {
+      const elites = candidates.filter((enemy) => enemy.roomType === 'elite');
+      if (elites.length > 0) return elites;
+      return contentEnemies.filter((enemy) => enemy.roomType === 'elite'); // fallback
+    }
+
+    const fights = candidates.filter((enemy) => enemy.roomType === 'fight');
+    if (fights.length > 0) return fights;
+    return contentEnemies.filter((enemy) => enemy.roomType === 'fight'); // fallback
   }
 
   private toDefinition(entry: MonsterContentEntry): EnemyDefinition {
@@ -48,9 +69,11 @@ export class EnemySystem {
       name: entry.name,
       baseHp: entry.stats.hp,
       baseAttack: entry.stats.attack,
+      armor: entry.stats.armor ?? 0,
       attackIntervalLocks: entry.stats.attackIntervalLocks,
       intent: entry.intent.label,
       behavior,
+      behaviors: entry.behaviors.length > 0 ? [...entry.behaviors] : ['basic_attack'],
       roomType
     };
   }
@@ -60,7 +83,7 @@ export class EnemySystem {
       return null;
     }
 
-    const definition = choice(this.getCandidates(roomType));
+    const definition = choice(this.getCandidates(roomType, stage));
     const maxHp = this.difficultySystem.getEnemyMaxHp(definition.baseHp, stage);
     const attack = this.difficultySystem.getEnemyAttack(definition.baseAttack, stage);
 
@@ -70,13 +93,22 @@ export class EnemySystem {
       maxHp,
       currentHp: maxHp,
       attack,
+      armor: definition.armor ?? 0,
+      shield: 0,
       intent: definition.intent,
       behavior: definition.behavior,
+      behaviors: definition.behaviors?.length ? [...definition.behaviors] : [definition.behavior],
       roomType: definition.roomType,
       attackIntervalLocks: definition.attackIntervalLocks,
       attackCounter: definition.attackIntervalLocks,
       previewHiddenTurns: 0,
-      manaHexTurns: 0
+      holdHiddenTurns: 0,
+      manaHexTurns: 0,
+      frozenTurns: 0,
+      sleepTurns: 0,
+      reverseControlsTurns: 0,
+      lineDamageBlockedTurns: 0,
+      behaviorIndex: 0
     };
   }
 }

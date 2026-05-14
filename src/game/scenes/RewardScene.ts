@@ -125,7 +125,27 @@ export class RewardScene extends Phaser.Scene {
     state.pendingRewards = [];
     state.activeEnemy = null;
     state.combo = 0;
-    state.stage += 1;
+    
+    if (state.lastBattleWasBoss) {
+      state.stage += 1;
+      
+      if (state.stage > 6) {
+        state.victory = true;
+        state.runStatus = 'game-over';
+        game.metaSystem.state.normalEndingFinished = true;
+        game.metaSystem.save();
+        game.saveRun();
+        this.scene.start('GameOverScene');
+        return;
+      }
+      
+      // Stage advancement: reset map topology
+      state.map = game.mapSystem.createMap();
+      state.currentNodeId = 'start';
+    } else {
+      game.mapSystem.completeNode(state, state.currentNodeId);
+    }
+    
     state.fallSpeed = Math.min(MAX_FALL_SPEED, state.fallSpeed + 0.05);
     state.currentRoomProgress = 'cleared';
     state.runStatus = 'map';
@@ -133,7 +153,6 @@ export class RewardScene extends Phaser.Scene {
       state.eventLog.unshift(effectMessage);
     });
     state.eventLog = state.eventLog.slice(0, MAX_EVENT_LOG);
-    game.mapSystem.completeNode(state, state.currentNodeId);
     game.saveRun();
     this.scene.start('MapScene');
   }

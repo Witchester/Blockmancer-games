@@ -39,13 +39,15 @@ export class Hud {
   update(state: RunState): void {
     const stats = [
       `HP ${state.player.hp}/${state.player.maxHp}`,
+      `SH ${state.player.shield}`,
       `Mana ${state.player.mana}/${state.player.maxMana}`,
       `Gold ${state.player.gold}`,
       `Stage ${state.stage}`,
       `Fall ${state.fallSpeed.toFixed(2)}x`,
-      `Combo ${state.combo}`
+      `Combo ${state.combo}`,
+      state.player.feverActiveLocks > 0 ? `Fever ON ${state.player.feverActiveLocks}` : `Fever ${state.player.fever}%`
     ];
-    this.text.setText(this.compact ? `${stats.slice(0, 3).join('   ')}\n${stats.slice(3).join('   ')}` : stats.join('   '));
+    this.text.setText(this.compact ? `${stats.slice(0, 4).join('   ')}\n${stats.slice(4).join('   ')}` : stats.join('   '));
   }
 
   destroy(): void {

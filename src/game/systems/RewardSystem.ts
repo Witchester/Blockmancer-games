@@ -4,6 +4,7 @@ import { sampleSize } from '../utils/random';
 import { contentRegistry } from './ContentRegistry';
 import { RelicSystem } from './RelicSystem';
 import { UpgradeSystem } from './UpgradeSystem';
+import { InventorySystem } from './InventorySystem';
 
 type RewardContentEntry = {
   id: string;
@@ -14,6 +15,7 @@ type RewardContentEntry = {
 export class RewardSystem {
   private readonly relicSystem = new RelicSystem();
   private readonly upgradeSystem = new UpgradeSystem();
+  private readonly inventorySystem = new InventorySystem();
 
   getRewardPool(): RewardDefinition[] {
     const upgrades = contentRegistry.listEnabled<RewardContentEntry>('upgrade').map((entry) => ({
@@ -30,10 +32,18 @@ export class RewardSystem {
       description: entry.description ?? 'A helpful relic.',
       persistent: true
     }));
+    const items = contentRegistry.listEnabled<RewardContentEntry>('item').map((entry) => ({
+      id: entry.id,
+      name: entry.name,
+      type: 'Item',
+      description: entry.description ?? 'A helpful consumable item.',
+      persistent: false
+    }));
 
     return [
       ...upgrades,
       ...relics,
+      ...items,
       {
         id: 'gold-cache',
         name: 'Gold Cache',
@@ -79,6 +89,11 @@ export class RewardSystem {
         state.ownedRewards.push(rewardId);
       }
       return this.upgradeSystem.applyUpgrade(state, rewardId);
+    }
+
+    if (reward.type === 'Item') {
+      this.inventorySystem.addItem(state, rewardId);
+      return `${reward.name} added to your bag.`;
     }
 
     if (reward.type === 'Gold') {

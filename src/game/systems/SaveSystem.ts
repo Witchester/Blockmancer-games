@@ -1,7 +1,9 @@
 import { readJsonStorage, removeStorageItem, writeJsonStorage } from '../utils/storage';
 import type { RunState } from '../types/GameTypes';
+import type { MetaState } from '../types/MetaTypes';
 
 const SAVE_KEY = 'blockmancer-dungeon-save';
+const META_SAVE_KEY = 'blockmancer-meta-save';
 export const CURRENT_SAVE_VERSION = 1;
 
 export class SaveSystem {
@@ -28,5 +30,13 @@ export class SaveSystem {
 
   clearRun(): void {
     removeStorageItem(SAVE_KEY);
+  }
+
+  saveMeta(meta: MetaState): void {
+    writeJsonStorage(META_SAVE_KEY, meta);
+  }
+
+  loadMeta(): MetaState | null {
+    return readJsonStorage<MetaState>(META_SAVE_KEY);
   }
 }

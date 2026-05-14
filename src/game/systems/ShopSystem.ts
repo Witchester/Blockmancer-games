@@ -61,6 +61,40 @@ export class ShopSystem {
     };
   }
 
+  buyItem(state: RunState): ShopResolution {
+    if (state.player.gold < 25) {
+      return {
+        transition: 'stay',
+        messages: ['Not enough gold for an item.']
+      };
+    }
+    if (state.inventory.length >= state.player.inventoryCapacity) {
+      return {
+        transition: 'stay',
+        messages: ['Your bag is full!']
+      };
+    }
+    
+    state.player.gold -= 25;
+    state.gold = state.player.gold;
+    
+    // Quick trick to get a random item using RewardSystem pool
+    const items = this.rewardSystem.getRewardPool().filter(r => r.type === 'Item');
+    const reward = items[Math.floor(Math.random() * items.length)];
+    
+    if (reward) {
+      return {
+        transition: 'map',
+        messages: [this.rewardSystem.applyReward(state, reward.id)]
+      };
+    }
+    
+    return {
+      transition: 'stay',
+      messages: ['No items in stock.']
+    };
+  }
+
   leave(): ShopResolution {
     return {
       transition: 'map',

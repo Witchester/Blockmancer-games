@@ -1,39 +1,35 @@
+import type { InventoryStack, RunState } from '../types/GameTypes';
 import { contentRegistry } from './ContentRegistry';
 
-export type InventoryStack = {
-  itemId: string;
-  count: number;
-};
-
 export class InventorySystem {
-  private readonly capacity = 10;
-
   listAvailableItems() {
     return contentRegistry.listEnabled('item');
   }
 
-  addItem(inventory: InventoryStack[], itemId: string, count = 1): InventoryStack[] {
-    const existing = inventory.find((stack) => stack.itemId === itemId);
+  addItem(state: RunState, itemId: string, count = 1): void {
+    const existing = state.inventory.find((stack) => stack.itemId === itemId);
     if (existing) {
       existing.count += count;
-      return inventory;
+      return;
     }
 
-    if (inventory.length >= this.capacity || !contentRegistry.getItem(itemId)) {
-      return inventory;
+    if (state.inventory.length >= state.player.inventoryCapacity || !contentRegistry.getItem(itemId)) {
+      return;
     }
 
-    inventory.push({ itemId, count });
-    return inventory;
+    state.inventory.push({ itemId, count });
   }
 
-  removeItem(inventory: InventoryStack[], itemId: string, count = 1): InventoryStack[] {
-    const existing = inventory.find((stack) => stack.itemId === itemId);
-    if (!existing) {
-      return inventory;
+  removeItem(state: RunState, itemId: string, count = 1): void {
+    const existingIndex = state.inventory.findIndex((stack) => stack.itemId === itemId);
+    if (existingIndex === -1) {
+      return;
     }
 
+    const existing = state.inventory[existingIndex];
     existing.count -= count;
-    return inventory.filter((stack) => stack.count > 0);
+    if (existing.count <= 0) {
+      state.inventory.splice(existingIndex, 1);
+    }
   }
 }
