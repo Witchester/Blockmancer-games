@@ -1,0 +1,25 @@
+{
+  "id": "upg_cascade_choir",
+  "name": "Cascade Choir",
+  "category": "utility",
+  "rarity": "uncommon",
+  "description": "Cascade Choir improves the run with a compact festival perk.",
+  "iconKey": "placeholder_upgrade",
+  "appliesTo": {
+    "contentType": "global",
+    "ids": [],
+    "tags": []
+  },
+  "effects": [
+    "increase_line_damage"
+  ],
+  "maxLevel": 3,
+  "levelScaling": {
+    "mode": "flat",
+    "valuePerLevel": 1
+  },
+  "tags": [
+    "stackable"
+  ],
+  "enabled": true
+}

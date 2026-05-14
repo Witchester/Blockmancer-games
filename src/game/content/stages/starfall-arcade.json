@@ -1,0 +1,14 @@
+{
+  "id": "stage_starfall_arcade",
+  "name": "Starfall Arcade",
+  "description": "A neon arcade where combos become carnival tickets.",
+  "theme": "void",
+  "monsterPool": [
+    "mon_sprinkle_rat",
+    "mon_gadget_goblin",
+    "mon_arcade_spark"
+  ],
+  "bossId": "mon_boss_high_score_hydra",
+  "lootTableId": "loot_battle_default",
+  "enabled": true
+}

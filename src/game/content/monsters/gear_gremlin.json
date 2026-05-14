@@ -1,0 +1,41 @@
+{
+  "id": "mon_gear_gremlin",
+  "name": "Gear Gremlin",
+  "description": "Gear Gremlin joins the festival dungeon with cheerful trouble.",
+  "rarity": "common",
+  "tier": 3,
+  "role": "summoner",
+  "biome": "royal_ruins",
+  "spriteKey": "placeholder_gear_gremlin",
+  "stats": {
+    "hp": 44,
+    "attack": 5,
+    "armor": 0,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_summon",
+    "label": "Gear Scatter",
+    "description": "Gear Gremlin prepares Gear Scatter."
+  },
+  "behaviors": [
+    "spawn_junk"
+  ],
+  "resistances": [],
+  "weaknesses": [],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 10,
+    "goldMax": 28,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "early_game"
+  ],
+  "enabled": true
+}

@@ -1,0 +1,27 @@
+{
+  "id": "loot_stage_starfall_arcade",
+  "name": "stage starfall arcade",
+  "source": "battle",
+  "entries": [
+    {
+      "contentType": "upgrade",
+      "id": "upg_line_sharp_edges",
+      "weight": 10,
+      "rarity": "common",
+      "condition": "none"
+    },
+    {
+      "contentType": "item",
+      "id": "item_mini_cupcake",
+      "weight": 8,
+      "rarity": "common",
+      "condition": "none"
+    }
+  ],
+  "rollConfig": {
+    "choicesShown": 3,
+    "allowDuplicates": false,
+    "rarityBias": "normal"
+  },
+  "enabled": true
+}

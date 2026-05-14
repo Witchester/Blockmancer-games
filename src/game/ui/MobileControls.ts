@@ -1,12 +1,15 @@
 import Phaser from 'phaser';
 import { Button } from './Button';
-import { COLORS } from '../utils/constants';
+import { COLORS, FONT_FAMILY } from '../utils/constants';
 
 export type MobileControlsButtonConfig = {
   label: string;
   onPress: () => void;
   width?: number;
   height?: number;
+  repeat?: boolean;
+  repeatDelayMs?: number;
+  repeatIntervalMs?: number;
 };
 
 export type MobileControlsOptions = {
@@ -50,7 +53,7 @@ export class MobileControls extends Phaser.GameObjects.Container {
     if (options.title) {
       const title = scene.add.text(0, -height / 2 + padding, options.title, {
         color: '#98a0c7',
-        fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
+        fontFamily: FONT_FAMILY,
         fontSize: '18px'
       }).setOrigin(0.5, 0);
       this.add(title);
@@ -74,6 +77,32 @@ export class MobileControls extends Phaser.GameObjects.Container {
           buttonConfig.label,
           buttonConfig.onPress
         );
+        if (buttonConfig.repeat) {
+          let repeatTimer: Phaser.Time.TimerEvent | null = null;
+          const stopRepeat = () => {
+            repeatTimer?.remove(false);
+            repeatTimer = null;
+          };
+
+          button.on('pointerdown', () => {
+            stopRepeat();
+            repeatTimer = scene.time.addEvent({
+              delay: buttonConfig.repeatDelayMs ?? 220,
+              callback: () => {
+                buttonConfig.onPress();
+                repeatTimer = scene.time.addEvent({
+                  delay: buttonConfig.repeatIntervalMs ?? 90,
+                  callback: buttonConfig.onPress,
+                  loop: true
+                });
+              }
+            });
+          });
+          button.on('pointerup', stopRepeat);
+          button.on('pointerout', stopRepeat);
+          button.on('pointerupoutside', stopRepeat);
+          button.once(Phaser.GameObjects.Events.DESTROY, stopRepeat);
+        }
         this.add(button);
         currentX += buttonWidth + buttonGap;
       });

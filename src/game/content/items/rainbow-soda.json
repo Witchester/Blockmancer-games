@@ -1,0 +1,13 @@
+{
+  "id": "item_rainbow_soda",
+  "name": "Rainbow Soda",
+  "description": "Gain mana and a tiny heal.",
+  "effect": {
+    "type": "mana_and_heal",
+    "mana": 25,
+    "heal": 2
+  },
+  "rarity": "common",
+  "iconKey": "item_rainbow_soda",
+  "enabled": true
+}

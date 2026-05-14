@@ -4,7 +4,7 @@ import { contentRegistry } from '../systems/ContentRegistry';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
 import { COLORS } from '../utils/constants';
-import { isCompactLayout } from '../utils/layout';
+import { getPortraitLayout, isCompactLayout } from '../utils/layout';
 
 type HeroEntry = {
   id: string;
@@ -39,19 +39,20 @@ export class HeroSelectScene extends Phaser.Scene {
     const heroes = contentRegistry.listEnabled<HeroEntry>('hero');
     const hero = heroes[0];
     const compact = isCompactLayout(this);
+    const layout = getPortraitLayout(this);
 
     game.runState.runStatus = 'menu';
     this.cameras.main.setBackgroundColor(COLORS.background);
 
-    new Card(this, 640, 400, 1180, 720, {
+    new Card(this, layout.centerX, layout.centerY, layout.contentWidth, layout.height - 96, {
       title: 'Choose Your Hero',
       subtitle: 'Phase 5 placeholder flow: one hero is playable now, with room for expansion later.',
-      titleFontSize: compact ? '32px' : '30px',
-      subtitleFontSize: compact ? '18px' : '20px',
+      titleFontSize: compact ? '30px' : '34px',
+      subtitleFontSize: compact ? '16px' : '18px',
       strokeColor: COLORS.accent
     });
 
-    new Card(this, 640, compact ? 360 : 390, compact ? 820 : 720, compact ? 330 : 360, {
+    new Card(this, layout.centerX, 430, layout.contentWidth - 64, 430, {
       title: hero.name,
       subtitle: hero.className,
       body: [
@@ -64,11 +65,11 @@ export class HeroSelectScene extends Phaser.Scene {
         hero.passive.description
       ].join('\n'),
       titleColor: '#ffca6b',
-      bodyFontSize: compact ? '18px' : '20px',
+      bodyFontSize: compact ? '17px' : '19px',
       strokeColor: COLORS.gold
     });
 
-    new Button(this, 640, compact ? 585 : 575, 260, 56, 'Select Hero', () => {
+    new Button(this, layout.centerX, 745, 260, 56, 'Select Hero', () => {
       game.runState.hero = {
         id: hero.id,
         name: hero.name,
@@ -96,7 +97,7 @@ export class HeroSelectScene extends Phaser.Scene {
       this.scene.start('MapScene');
     });
 
-    new Button(this, 640, compact ? 655 : 650, 260, 52, 'Back To Menu', () => {
+    new Button(this, layout.centerX, 818, 260, 52, 'Back To Menu', () => {
       this.scene.start('MainMenuScene');
     });
   }

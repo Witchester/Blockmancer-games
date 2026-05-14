@@ -1,0 +1,43 @@
+{
+  "id": "mon_boss_cupcake_slime_king",
+  "name": "Cupcake Slime King",
+  "description": "Cupcake Slime King rules a festival stage with loud, silly confidence.",
+  "rarity": "boss",
+  "tier": 5,
+  "role": "boss",
+  "biome": "royal_ruins",
+  "spriteKey": "placeholder_cupcake_slime_king",
+  "stats": {
+    "hp": 150,
+    "attack": 9,
+    "armor": 1,
+    "attackIntervalLocks": 3
+  },
+  "intent": {
+    "id": "intent_royal_collapse",
+    "label": "Sticky Crown",
+    "description": "Cupcake Slime King prepares Sticky Crown."
+  },
+  "behaviors": [
+    "spawn_junk"
+  ],
+  "resistances": [],
+  "weaknesses": [
+    "combo_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 10,
+    "attackPerStage": 1,
+    "fallSpeedModifier": 0.02
+  },
+  "rewards": {
+    "goldMin": 40,
+    "goldMax": 75,
+    "rewardRolls": 2,
+    "lootTableId": "loot_boss_default"
+  },
+  "tags": [
+    "boss_phase"
+  ],
+  "enabled": true
+}

@@ -13,4 +13,8 @@ if ('orientation' in screen && typeof (screen as any).orientation?.lock === 'fun
   });
 }
 
-new BlockmancerGame(app);
+const game = new BlockmancerGame(app);
+
+if (import.meta.env.DEV) {
+  (window as Window & { __blockmancerGame?: BlockmancerGame }).__blockmancerGame = game;
+}

@@ -1,0 +1,18 @@
+{
+  "id": "curse_sugar_crash",
+  "name": "Sugar Crash",
+  "rarity": "cursed",
+  "description": "Mana gains are slightly lower until removed.",
+  "iconKey": "curse_sugar_crash",
+  "effects": [
+    {
+      "type": "minor_drawback",
+      "value": 1
+    }
+  ],
+  "removeCost": 50,
+  "tags": [
+    "curse"
+  ],
+  "enabled": true
+}

@@ -1,0 +1,11 @@
+{
+  "id": "npc_arcade_clerk",
+  "name": "Arcade Clerk",
+  "description": "Arcade Clerk keeps the festival dungeon cheerful.",
+  "role": "shopkeeper",
+  "dialogue": [
+    "Arcade Clerk says hello!",
+    "Keep those blocks falling in style."
+  ],
+  "enabled": true
+}

@@ -1,0 +1,11 @@
+{
+  "id": "npc_map_kid",
+  "name": "Map Kid",
+  "description": "Map Kid keeps the festival dungeon cheerful.",
+  "role": "guide",
+  "dialogue": [
+    "Map Kid says hello!",
+    "Keep those blocks falling in style."
+  ],
+  "enabled": true
+}

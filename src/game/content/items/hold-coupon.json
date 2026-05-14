@@ -1,0 +1,12 @@
+{
+  "id": "item_hold_coupon",
+  "name": "Hold Coupon",
+  "description": "Refresh hold once.",
+  "effect": {
+    "type": "refresh_hold",
+    "value": 1
+  },
+  "rarity": "common",
+  "iconKey": "item_hold_coupon",
+  "enabled": true
+}

@@ -3,7 +3,7 @@ import { BlockmancerGame } from '../BlockmancerGame';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
 import { COLORS, MAX_EVENT_LOG } from '../utils/constants';
-import { isCompactLayout } from '../utils/layout';
+import { getPortraitLayout, isCompactLayout } from '../utils/layout';
 import { clamp } from '../utils/math';
 
 export class RestScene extends Phaser.Scene {
@@ -15,11 +15,12 @@ export class RestScene extends Phaser.Scene {
     const game = this.game as BlockmancerGame;
     const state = game.runState;
     const compact = isCompactLayout(this);
+    const layout = getPortraitLayout(this);
     state.runStatus = 'map';
     state.currentRoomProgress = 'entered';
     this.cameras.main.setBackgroundColor(COLORS.background);
 
-    new Card(this, 640, 400, compact ? 1060 : 980, compact ? 600 : 560, {
+    new Card(this, layout.centerX, layout.centerY, layout.contentWidth, 640, {
       title: 'Rest Site',
       body: [
         'A quiet chamber steadies your hands and restores your breath.',
@@ -31,7 +32,7 @@ export class RestScene extends Phaser.Scene {
       strokeColor: COLORS.success
     });
 
-    new Button(this, 640, compact ? 500 : 470, 260, 56, 'Rest', () => {
+    new Button(this, layout.centerX, 760, 260, 56, 'Rest', () => {
       state.player.hp = clamp(state.player.hp + 10, 0, state.player.maxHp);
       state.fallSpeed = Math.max(0.7, state.fallSpeed - 0.05);
       this.log('The rest site heals you and steadies your hands.');

@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import type { RunState } from '../types/GameTypes';
-import { COLORS } from '../utils/constants';
+import { COLORS, FONT_FAMILY } from '../utils/constants';
 
 export class EventLog {
   private readonly body: Phaser.GameObjects.Text;
@@ -13,13 +13,13 @@ export class EventLog {
 
     scene.add.text(x + 14, y + 10, 'Event Log', {
       color: '#ffca6b',
-      fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
+      fontFamily: FONT_FAMILY,
       fontSize: '20px'
     });
 
     this.body = scene.add.text(x + 14, y + 40, '', {
       color: '#d8deff',
-      fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
+      fontFamily: FONT_FAMILY,
       fontSize: '17px',
       wordWrap: { width: width - 28 },
       lineSpacing: 6

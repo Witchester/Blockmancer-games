@@ -18,6 +18,14 @@ import { DifficultySystem } from './systems/DifficultySystem';
 import { EventSystem } from './systems/EventSystem';
 import { ShopSystem } from './systems/ShopSystem';
 import { AssetSystem } from './systems/AssetSystem';
+import { AudioSystem } from './systems/AudioSystem';
+import { HeroSystem } from './systems/HeroSystem';
+import { InventorySystem } from './systems/InventorySystem';
+import { ItemSystem } from './systems/ItemSystem';
+import { SettingsSystem } from './systems/SettingsSystem';
+import { StageSystem } from './systems/StageSystem';
+import { TutorialSystem } from './systems/TutorialSystem';
+import { WeaponSystem } from './systems/WeaponSystem';
 import type { RunState } from './types/GameTypes';
 import { createDefaultRunState, normalizeRunState } from './data/defaultRunState';
 
@@ -30,6 +38,14 @@ export class BlockmancerGame extends Phaser.Game {
   readonly eventSystem = new EventSystem(this.rewardSystem, this.enemySystem);
   readonly shopSystem = new ShopSystem(this.rewardSystem);
   readonly assetSystem = new AssetSystem();
+  readonly audioSystem = new AudioSystem();
+  readonly heroSystem = new HeroSystem();
+  readonly weaponSystem = new WeaponSystem();
+  readonly inventorySystem = new InventorySystem();
+  readonly itemSystem = new ItemSystem();
+  readonly stageSystem = new StageSystem();
+  readonly tutorialSystem = new TutorialSystem();
+  readonly settingsSystem = new SettingsSystem();
   runState: RunState;
 
   constructor(parent: HTMLElement) {

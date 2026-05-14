@@ -1,0 +1,41 @@
+{
+  "id": "mon_syrup_slug",
+  "name": "Syrup Slug",
+  "description": "Syrup Slug joins the festival dungeon with cheerful trouble.",
+  "rarity": "common",
+  "tier": 2,
+  "role": "basic",
+  "biome": "dungeon",
+  "spriteKey": "placeholder_syrup_slug",
+  "stats": {
+    "hp": 32,
+    "attack": 3,
+    "armor": 1,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_guard",
+    "label": "Sticky Wiggle",
+    "description": "Syrup Slug prepares Sticky Wiggle."
+  },
+  "behaviors": [
+    "reduce_line_damage"
+  ],
+  "resistances": [],
+  "weaknesses": [],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 10,
+    "goldMax": 28,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "early_game"
+  ],
+  "enabled": true
+}

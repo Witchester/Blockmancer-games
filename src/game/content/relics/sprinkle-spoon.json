@@ -1,0 +1,21 @@
+{
+  "id": "rel_sprinkle_spoon",
+  "name": "Sprinkle Spoon",
+  "rarity": "uncommon",
+  "description": "Sprinkle Spoon gives the run a small festival bonus.",
+  "iconKey": "placeholder_relic",
+  "trigger": "on_room_clear",
+  "effects": [
+    "gain_gold"
+  ],
+  "stacking": {
+    "stackable": false,
+    "maxStacks": 1,
+    "stackBehavior": "none"
+  },
+  "conflictsWith": [],
+  "tags": [
+    "economy"
+  ],
+  "enabled": true
+}

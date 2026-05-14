@@ -1,0 +1,26 @@
+{
+  "id": "spl_goblin_gadget",
+  "name": "Goblin Gadget",
+  "school": "arcane",
+  "rarity": "uncommon",
+  "description": "Goblin Gadget adds a cheerful tactical option to the board.",
+  "iconKey": "placeholder_spell",
+  "cost": {
+    "mana": 25,
+    "hp": 0,
+    "gold": 0
+  },
+  "targetType": "board",
+  "cooldownLocks": 0,
+  "effects": [
+    "spawn_bomb_block"
+  ],
+  "upgradePath": [
+    "reduce_cost",
+    "add_secondary_effect"
+  ],
+  "tags": [
+    "utility"
+  ],
+  "enabled": true
+}

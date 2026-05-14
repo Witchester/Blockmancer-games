@@ -6,21 +6,27 @@ export class UpgradeSystem {
 
     switch (rewardId) {
       case 'sharp-edges':
+      case 'upg_line_sharp_edges':
         player.lineDamageBonus += 2;
         return 'Sharp Edges raises line damage by 2.';
       case 'mana-echo':
+      case 'upg_mana_echo':
         player.spellCostReduction += 5;
         return 'Mana Echo reduces spell costs by 5.';
       case 'stable-hands':
+      case 'upg_board_stable_hands':
         state.fallSpeed = Math.max(0.7, state.fallSpeed - 0.05);
         return 'Stable Hands reduces fall speed by 0.05.';
       case 'fire-mastery':
+      case 'upg_spell_fire_mastery':
         player.spellBonuses.fireball += 10;
         return 'Fire Mastery empowers Fireball by 10 damage.';
       case 'bomb-expert':
+      case 'upg_bomb_expert':
         player.spellBonuses['bomb-rune'] += 10;
         return 'Bomb Expert empowers Bomb Rune by 10 damage.';
       case 'combo-heart':
+      case 'upg_combo_heart':
         player.comboHeart = true;
         return 'Combo Heart heals on strong combos.';
       default:

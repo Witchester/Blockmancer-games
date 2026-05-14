@@ -1,0 +1,43 @@
+{
+  "id": "mon_boss_high_score_hydra",
+  "name": "High Score Hydra",
+  "description": "High Score Hydra rules a festival stage with loud, silly confidence.",
+  "rarity": "boss",
+  "tier": 5,
+  "role": "boss",
+  "biome": "royal_ruins",
+  "spriteKey": "placeholder_high_score_hydra",
+  "stats": {
+    "hp": 220,
+    "attack": 12,
+    "armor": 1,
+    "attackIntervalLocks": 3
+  },
+  "intent": {
+    "id": "intent_royal_collapse",
+    "label": "Combo Challenge",
+    "description": "High Score Hydra prepares Combo Challenge."
+  },
+  "behaviors": [
+    "increase_fall_speed"
+  ],
+  "resistances": [],
+  "weaknesses": [
+    "combo_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 10,
+    "attackPerStage": 1,
+    "fallSpeedModifier": 0.02
+  },
+  "rewards": {
+    "goldMin": 40,
+    "goldMax": 75,
+    "rewardRolls": 2,
+    "lootTableId": "loot_boss_default"
+  },
+  "tags": [
+    "boss_phase"
+  ],
+  "enabled": true
+}

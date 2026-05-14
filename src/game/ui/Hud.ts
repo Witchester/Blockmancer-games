@@ -1,9 +1,13 @@
 import Phaser from 'phaser';
 import type { RunState } from '../types/GameTypes';
-import { COLORS } from '../utils/constants';
+import { COLORS, FONT_FAMILY } from '../utils/constants';
 
 type HudOptions = {
   compact?: boolean;
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
 };
 
 export class Hud {
@@ -13,17 +17,17 @@ export class Hud {
 
   constructor(scene: Phaser.Scene, options: HudOptions = {}) {
     this.compact = options.compact ?? false;
-    const width = scene.scale.width - 40;
-    const panelY = this.compact ? 52 : 46;
-    const panelHeight = this.compact ? 86 : 74;
-    const fontSize = this.compact ? '18px' : '22px';
+    const width = options.width ?? scene.scale.width - 40;
+    const panelY = options.y ?? (this.compact ? 52 : 46);
+    const panelHeight = options.height ?? (this.compact ? 86 : 74);
+    const fontSize = this.compact ? '16px' : '20px';
     const panel = scene.add
-      .rectangle(scene.scale.width / 2, panelY, width, panelHeight, COLORS.panel, 0.95)
+      .rectangle(options.x ?? scene.scale.width / 2, panelY, width, panelHeight, COLORS.panel, 0.95)
       .setStrokeStyle(2, COLORS.accent, 0.4);
 
-    this.text = scene.add.text(24, this.compact ? 18 : 24, '', {
+    this.text = scene.add.text((options.x ?? scene.scale.width / 2) - width / 2 + 12, panelY - panelHeight / 2 + 12, '', {
       color: '#f6f7ff',
-      fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
+      fontFamily: FONT_FAMILY,
       fontSize,
       wordWrap: { width: width - 20 },
       lineSpacing: this.compact ? 6 : 0

@@ -1,0 +1,14 @@
+{
+  "id": "stage_pillow_castle",
+  "name": "Pillow Castle",
+  "description": "A soft fortress where sleepy guards patrol blanket halls.",
+  "theme": "royal_ruins",
+  "monsterPool": [
+    "mon_sprinkle_rat",
+    "mon_gadget_goblin",
+    "mon_arcade_spark"
+  ],
+  "bossId": "mon_boss_sir_snore_a_lot",
+  "lootTableId": "loot_battle_default",
+  "enabled": true
+}

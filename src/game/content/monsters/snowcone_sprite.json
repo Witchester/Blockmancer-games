@@ -1,0 +1,41 @@
+{
+  "id": "mon_snowcone_sprite",
+  "name": "Snowcone Sprite",
+  "description": "Snowcone Sprite joins the festival dungeon with cheerful trouble.",
+  "rarity": "common",
+  "tier": 3,
+  "role": "basic",
+  "biome": "ice_cave",
+  "spriteKey": "placeholder_snowcone_sprite",
+  "stats": {
+    "hp": 42,
+    "attack": 4,
+    "armor": 0,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_screech",
+    "label": "Frost Blink",
+    "description": "Snowcone Sprite prepares Frost Blink."
+  },
+  "behaviors": [
+    "hide_next_piece"
+  ],
+  "resistances": [],
+  "weaknesses": [],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 10,
+    "goldMax": 28,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "early_game"
+  ],
+  "enabled": true
+}

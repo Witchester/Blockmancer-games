@@ -53,7 +53,7 @@ export class CombatSystem {
       return 0;
     }
 
-    if (enemy.id === 'stone-golem' && !this.state.player.stonebreaker) {
+    if ((enemy.id === 'stone-golem' || enemy.behavior === 'reduce_line_damage') && !this.state.player.stonebreaker) {
       return 2;
     }
 
@@ -105,6 +105,7 @@ export class CombatSystem {
       0,
       this.state.player.maxMana
     );
+    const specialMessages = this.applySpecialBlockEffects(cascade.specialBlocksTriggered);
 
     if (this.state.player.comboHeart && this.state.combo >= 3) {
       this.state.player.hp = clamp(this.state.player.hp + 1, 0, this.state.player.maxHp);
@@ -127,8 +128,45 @@ export class CombatSystem {
     this.addLog(
       `Cleared ${cascade.totalLinesCleared} line${cascade.totalLinesCleared > 1 ? 's' : ''} for ${damage} damage and mana gain.`
     );
+    specialMessages.forEach((message) => this.addLog(message));
 
     return damage;
+  }
+
+  private applySpecialBlockEffects(triggered: string[]): string[] {
+    const messages: string[] = [];
+    for (const trigger of triggered) {
+      const [, effectType] = trigger.split(':');
+      switch (effectType) {
+        case 'gain_mana':
+          this.state.player.mana = clamp(this.state.player.mana + 5, 0, this.state.player.maxMana);
+          messages.push('Sprinkle block restores mana.');
+          break;
+        case 'heal_player':
+          this.state.player.hp = clamp(this.state.player.hp + 1, 0, this.state.player.maxHp);
+          messages.push('Cupcake block restores 1 HP.');
+          break;
+        case 'boost_cascade':
+          if (this.state.activeEnemy) {
+            this.state.activeEnemy.currentHp = Math.max(0, this.state.activeEnemy.currentHp - 3);
+          }
+          messages.push('Star block adds bonus sparkle damage.');
+          break;
+        case 'random_bonus':
+          this.state.player.gold += 3;
+          this.state.gold = this.state.player.gold;
+          messages.push('Confetti block drops 3 gold.');
+          break;
+        case 'item_charge':
+          this.state.player.mana = clamp(this.state.player.mana + 3, 0, this.state.player.maxMana);
+          messages.push('Toolbox block charges your pack.');
+          break;
+        default:
+          break;
+      }
+    }
+
+    return messages;
   }
 
   countDownEnemyAttack(): boolean {

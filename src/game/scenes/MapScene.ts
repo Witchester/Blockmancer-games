@@ -2,7 +2,8 @@ import Phaser from 'phaser';
 import { BlockmancerGame } from '../BlockmancerGame';
 import type { MapNodeDefinition, RoomType } from '../types/GameTypes';
 import { Button } from '../ui/Button';
-import { COLORS, MAX_EVENT_LOG } from '../utils/constants';
+import { COLORS, FONT_FAMILY, MAX_EVENT_LOG } from '../utils/constants';
+import { getPortraitLayout } from '../utils/layout';
 
 export class MapScene extends Phaser.Scene {
   private infoText?: Phaser.GameObjects.Text;
@@ -15,39 +16,37 @@ export class MapScene extends Phaser.Scene {
 
   create(): void {
     this.gameState.runState.runStatus = 'map';
-    const width = this.scale.width;
-    const height = this.scale.height;
-    const margin = 24;
-    const contentWidth = width - margin * 2;
+    const layout = getPortraitLayout(this);
+    const { width, height, centerX, contentWidth, margin } = layout;
 
     this.cameras.main.setBackgroundColor(COLORS.background);
-    this.add.rectangle(width / 2, height / 2, width, height, COLORS.background, 1);
-    this.add.rectangle(width / 2, 180, contentWidth, 260, COLORS.panel, 0.95).setStrokeStyle(2, COLORS.accent, 0.35);
-    this.add.rectangle(width / 2, height - 260, contentWidth, 340, COLORS.panel, 0.92).setStrokeStyle(2, COLORS.accentSoft, 0.35);
+    this.add.rectangle(centerX, height / 2, width, height, COLORS.background, 1);
+    this.add.rectangle(centerX, 384, contentWidth, 620, COLORS.panel, 0.95).setStrokeStyle(2, COLORS.accent, 0.35);
+    this.add.rectangle(centerX, height - 260, contentWidth, 456, COLORS.panel, 0.92).setStrokeStyle(2, COLORS.accentSoft, 0.35);
 
-    this.add.text(width / 2, 50, 'Dungeon Map', {
+    this.add.text(centerX, 54, 'Dungeon Map', {
       color: '#f6f7ff',
-      fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
-      fontSize: '34px',
+      fontFamily: FONT_FAMILY,
+      fontSize: '32px',
       fontStyle: 'bold'
     }).setOrigin(0.5);
 
-    this.add.text(width / 2, 92, 'Path of the Run', {
+    this.add.text(centerX, 96, 'Path of the Run', {
       color: '#f6f7ff',
-      fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
-      fontSize: '22px',
+      fontFamily: FONT_FAMILY,
+      fontSize: '20px',
       fontStyle: 'bold'
     }).setOrigin(0.5);
 
-    this.infoText = this.add.text(margin + 16, height - 360 + 24, '', {
+    this.infoText = this.add.text(margin + 16, height - 472, '', {
       color: '#d8deff',
-      fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
-      fontSize: '18px',
-      lineSpacing: 8,
+      fontFamily: FONT_FAMILY,
+      fontSize: '16px',
+      lineSpacing: 5,
       wordWrap: { width: contentWidth - 32 }
     });
 
-    new Button(this, width / 2, height - 90, 300, 60, 'Back To Menu', () => {
+    new Button(this, centerX, height - 48, 260, 48, 'Back To Menu', () => {
       this.scene.start('MainMenuScene');
     });
 
@@ -70,17 +69,11 @@ export class MapScene extends Phaser.Scene {
     const state = this.gameState.runState;
     const currentNode = this.gameState.mapSystem.getNode(state.map, state.currentNodeId);
     this.infoText?.setText([
-      `HP: ${state.player.hp}/${state.player.maxHp}`,
-      `Mana: ${state.player.mana}/${state.player.maxMana}`,
-      `Gold: ${state.player.gold}`,
-      `Stage: ${state.stage}`,
-      `Fall Speed: ${state.fallSpeed.toFixed(2)}x`,
+      `HP: ${state.player.hp}/${state.player.maxHp}    Mana: ${state.player.mana}/${state.player.maxMana}    Gold: ${state.player.gold}`,
+      `Stage: ${state.stage}    Fall Speed: ${state.fallSpeed.toFixed(2)}x`,
       `Hero: ${state.hero.name}`,
       `Current Room: ${currentNode?.label ?? 'Unknown'}`,
-      `Relics: ${state.ownedRewards.length ? state.ownedRewards.join(', ') : 'None yet'}`,
-      '',
-      'Recent log:',
-      ...state.eventLog.slice(0, 4)
+      `Relics: ${state.ownedRewards.length ? state.ownedRewards.slice(0, 3).join(', ') : 'None yet'}`
     ]);
   }
 
@@ -92,30 +85,29 @@ export class MapScene extends Phaser.Scene {
       return;
     }
 
-    const width = this.scale.width;
-    const margin = 24;
-    const contentWidth = width - margin * 2;
-    const startY = this.scale.height - 240;
+    const layout = getPortraitLayout(this);
+    const { width, height, margin, contentWidth } = layout;
+    const startY = height - 270;
 
     const availableNodes = this.gameState.mapSystem.getAvailableNodes(this.gameState.runState);
     this.availableRoomsLayer.add(this.add.text(margin + 16, startY, 'Quick Room Select', {
       color: '#ffca6b',
-      fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
+      fontFamily: FONT_FAMILY,
       fontSize: '22px',
       fontStyle: 'bold'
     }));
 
-    this.availableRoomsLayer.add(this.add.text(margin + 16, startY + 34, 'Tap a room to jump ahead if it is available.', {
+    this.availableRoomsLayer.add(this.add.text(margin + 16, startY + 30, 'Tap an available room.', {
       color: '#98a0c7',
-      fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
+      fontFamily: FONT_FAMILY,
       fontSize: '16px',
       wordWrap: { width: contentWidth - 32 }
     }));
 
     if (availableNodes.length === 0) {
-      this.availableRoomsLayer.add(this.add.text(margin + 16, startY + 84, 'No connected rooms are available yet.', {
+      this.availableRoomsLayer.add(this.add.text(margin + 16, startY + 72, 'No connected rooms are available yet.', {
         color: '#d8deff',
-        fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
+        fontFamily: FONT_FAMILY,
         fontSize: '18px',
         wordWrap: { width: contentWidth - 32 }
       }));
@@ -126,9 +118,9 @@ export class MapScene extends Phaser.Scene {
       const button = new Button(
         this,
         width / 2,
-        startY + 92 + index * 70,
+        startY + 66 + index * 50,
         contentWidth - 48,
-        56,
+        42,
         `${node.label} (${node.roomType})`,
         () => this.handleNodeClick(node)
       );
@@ -143,11 +135,11 @@ export class MapScene extends Phaser.Scene {
     const available = new Set(this.gameState.mapSystem.getAvailableNodes(state).map((node) => node.id));
 
     const width = this.scale.width;
-    const margin = 36;
+    const margin = 48;
     const mapWidth = width - margin * 2;
-    const mapHeight = 420;
+    const mapHeight = 440;
     const mapStartX = margin;
-    const mapStartY = 180;
+    const mapStartY = 170;
 
     for (const node of state.map) {
       for (const connection of node.connections) {
@@ -181,13 +173,15 @@ export class MapScene extends Phaser.Scene {
       const circle = this.add.circle(positionX, positionY, 32, fill, 1).setStrokeStyle(3, stroke, 0.8);
       const label = this.add.text(positionX, positionY - 2, node.icon, {
         color: '#0b0d16',
-        fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
+        fontFamily: FONT_FAMILY,
         fontSize: '26px'
       }).setOrigin(0.5);
       const title = this.add.text(positionX, positionY + 48, node.label, {
         color: '#f6f7ff',
-        fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
-        fontSize: '16px'
+        fontFamily: FONT_FAMILY,
+        fontSize: '14px',
+        align: 'center',
+        wordWrap: { width: 88 }
       }).setOrigin(0.5);
 
       if (isAvailable) {

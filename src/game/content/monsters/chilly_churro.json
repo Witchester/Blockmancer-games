@@ -1,0 +1,41 @@
+{
+  "id": "mon_chilly_churro",
+  "name": "Chilly Churro",
+  "description": "Chilly Churro joins the festival dungeon with cheerful trouble.",
+  "rarity": "uncommon",
+  "tier": 3,
+  "role": "caster",
+  "biome": "ice_cave",
+  "spriteKey": "placeholder_chilly_churro",
+  "stats": {
+    "hp": 50,
+    "attack": 5,
+    "armor": 0,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_hex",
+    "label": "Sugar Chill",
+    "description": "Chilly Churro prepares Sugar Chill."
+  },
+  "behaviors": [
+    "mana_hex"
+  ],
+  "resistances": [],
+  "weaknesses": [],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 10,
+    "goldMax": 28,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "early_game"
+  ],
+  "enabled": true
+}

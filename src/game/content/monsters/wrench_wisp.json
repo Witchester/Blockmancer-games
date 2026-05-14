@@ -1,0 +1,41 @@
+{
+  "id": "mon_wrench_wisp",
+  "name": "Wrench Wisp",
+  "description": "Wrench Wisp joins the festival dungeon with cheerful trouble.",
+  "rarity": "common",
+  "tier": 2,
+  "role": "caster",
+  "biome": "royal_ruins",
+  "spriteKey": "placeholder_wrench_wisp",
+  "stats": {
+    "hp": 40,
+    "attack": 4,
+    "armor": 0,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_hex",
+    "label": "Mana Rattle",
+    "description": "Wrench Wisp prepares Mana Rattle."
+  },
+  "behaviors": [
+    "mana_hex"
+  ],
+  "resistances": [],
+  "weaknesses": [],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 10,
+    "goldMax": 28,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "early_game"
+  ],
+  "enabled": true
+}

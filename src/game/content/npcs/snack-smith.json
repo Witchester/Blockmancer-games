@@ -1,0 +1,11 @@
+{
+  "id": "npc_snack_smith",
+  "name": "Snack Smith",
+  "description": "Snack Smith keeps the festival dungeon cheerful.",
+  "role": "shopkeeper",
+  "dialogue": [
+    "Snack Smith says hello!",
+    "Keep those blocks falling in style."
+  ],
+  "enabled": true
+}

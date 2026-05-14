@@ -11,6 +11,8 @@ export type RoomEventChoice = {
   effectType: string;
   value: number;
   requirement: string;
+  description?: string;
+  effects?: Array<{ type: string; value?: number }>;
   costHp?: number;
   costGold?: number;
   bonusGold?: number;
@@ -36,11 +38,47 @@ export class EventSystem {
   ) {}
 
   getRandomEvent(): RoomEventEntry {
-    return choice(contentRegistry.listEnabled<RoomEventEntry>('roomEvent'));
+    return this.normalizeEvent(choice(contentRegistry.listEnabled<RoomEventEntry>('roomEvent')));
   }
 
   getEventById(id: string): RoomEventEntry | null {
-    return contentRegistry.getRoomEvent(id) as RoomEventEntry | null;
+    const eventEntry = contentRegistry.getRoomEvent(id) as RoomEventEntry | null;
+    return eventEntry ? this.normalizeEvent(eventEntry) : null;
+  }
+
+  private normalizeEvent(eventEntry: RoomEventEntry): RoomEventEntry {
+    return {
+      ...eventEntry,
+      choices: eventEntry.choices.map((choiceEntry) => {
+        if (choiceEntry.effectType) {
+          return choiceEntry;
+        }
+
+        const firstEffect = choiceEntry.effects?.[0];
+        return {
+          ...choiceEntry,
+          effectType: this.normalizeEffectType(firstEffect?.type),
+          value: firstEffect?.value ?? choiceEntry.value ?? 0,
+          requirement: choiceEntry.requirement ?? 'none',
+          costHp: choiceEntry.effects?.some((effect) => effect.type === 'damage_player') ? 2 : choiceEntry.costHp
+        };
+      })
+    };
+  }
+
+  private normalizeEffectType(effectType?: string): string {
+    switch (effectType) {
+      case 'gain_gold':
+        return 'gain_gold';
+      case 'gain_random_reward':
+      case 'gain_random_spell':
+        return 'gain_reward';
+      case 'heal_player':
+      case 'restore_mana_full':
+        return 'heal_player';
+      default:
+        return 'leave';
+    }
   }
 
   resolveChoice(state: RunState, eventEntry: RoomEventEntry, choiceEntry: RoomEventChoice): EventResolution {
@@ -73,7 +111,7 @@ export class EventSystem {
           transition: 'map',
           messages: [
             this.applyRandomReward(state),
-            `${eventEntry.name} demands blood for power.`
+            `${eventEntry.name} asks for a dramatic snack-powered trade.`
           ]
         };
       case 'upgrade_spell': {
@@ -104,7 +142,7 @@ export class EventSystem {
         state.gold = state.player.gold;
         return {
           transition: 'map',
-          messages: ['A curse settles in, but your purse grows heavier.']
+          messages: ['A silly oopsie joins the run, but your purse grows heavier.']
         };
       case 'heal_player':
         state.player.hp = clamp(state.player.hp + choiceEntry.value, 0, state.player.maxHp);

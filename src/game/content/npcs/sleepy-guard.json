@@ -1,0 +1,11 @@
+{
+  "id": "npc_sleepy_guard",
+  "name": "Sleepy Guard",
+  "description": "Sleepy Guard keeps the festival dungeon cheerful.",
+  "role": "event",
+  "dialogue": [
+    "Sleepy Guard says hello!",
+    "Keep those blocks falling in style."
+  ],
+  "enabled": true
+}

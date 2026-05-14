@@ -1,0 +1,26 @@
+{
+  "id": "spl_sprinkle_shower",
+  "name": "Sprinkle Shower",
+  "school": "arcane",
+  "rarity": "uncommon",
+  "description": "Sprinkle Shower adds a cheerful tactical option to the board.",
+  "iconKey": "placeholder_spell",
+  "cost": {
+    "mana": 25,
+    "hp": 0,
+    "gold": 0
+  },
+  "targetType": "enemy",
+  "cooldownLocks": 0,
+  "effects": [
+    "gain_mana"
+  ],
+  "upgradePath": [
+    "reduce_cost",
+    "add_secondary_effect"
+  ],
+  "tags": [
+    "utility"
+  ],
+  "enabled": true
+}

@@ -1,0 +1,41 @@
+{
+  "id": "mon_crown_mime",
+  "name": "Crown Mime",
+  "description": "Crown Mime joins the festival dungeon with cheerful trouble.",
+  "rarity": "rare",
+  "tier": 4,
+  "role": "basic",
+  "biome": "royal_ruins",
+  "spriteKey": "placeholder_crown_mime",
+  "stats": {
+    "hp": 78,
+    "attack": 6,
+    "armor": 1,
+    "attackIntervalLocks": 3
+  },
+  "intent": {
+    "id": "intent_guard",
+    "label": "Invisible Wall",
+    "description": "Crown Mime prepares Invisible Wall."
+  },
+  "behaviors": [
+    "reduce_line_damage"
+  ],
+  "resistances": [],
+  "weaknesses": [],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 10,
+    "goldMax": 28,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "early_game"
+  ],
+  "enabled": true
+}

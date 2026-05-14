@@ -1,0 +1,41 @@
+{
+  "id": "mon_cupcake_imp",
+  "name": "Cupcake Imp",
+  "description": "Cupcake Imp joins the festival dungeon with cheerful trouble.",
+  "rarity": "common",
+  "tier": 2,
+  "role": "summoner",
+  "biome": "dungeon",
+  "spriteKey": "placeholder_cupcake_imp",
+  "stats": {
+    "hp": 38,
+    "attack": 4,
+    "armor": 0,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_throw_junk",
+    "label": "Crumb Toss",
+    "description": "Cupcake Imp prepares Crumb Toss."
+  },
+  "behaviors": [
+    "spawn_junk"
+  ],
+  "resistances": [],
+  "weaknesses": [],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 10,
+    "goldMax": 28,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "early_game"
+  ],
+  "enabled": true
+}

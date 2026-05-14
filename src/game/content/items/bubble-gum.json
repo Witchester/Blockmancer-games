@@ -1,0 +1,12 @@
+{
+  "id": "item_bubble_gum",
+  "name": "Bubble Gum",
+  "description": "Gain a little shield.",
+  "effect": {
+    "type": "shield",
+    "value": 4
+  },
+  "rarity": "common",
+  "iconKey": "item_bubble_gum",
+  "enabled": true
+}

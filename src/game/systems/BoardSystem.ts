@@ -18,6 +18,15 @@ type BoardBlockCell = {
 type BoardCell = number | BoardBlockCell;
 
 const PIECE_TYPES: TetrominoType[] = ['I', 'O', 'T', 'S', 'Z', 'J', 'L'];
+const SPECIAL_BLOCK_IDS = [
+  'block_sprinkle',
+  'block_cupcake',
+  'block_bomb',
+  'block_star',
+  'block_confetti',
+  'block_toolbox',
+  'block_royal'
+];
 
 export function getBoardCellColor(cell: BoardCell): number {
   return typeof cell === 'number' ? cell : cell.color;
@@ -27,6 +36,8 @@ export class BoardSystem {
   grid: BoardCell[][];
   currentPiece: PieceState | null;
   nextPieceType: TetrominoType;
+  holdPieceType: TetrominoType | null = null;
+  private holdUsedThisPiece = false;
 
   constructor() {
     this.grid = this.createEmptyGrid();
@@ -39,6 +50,8 @@ export class BoardSystem {
     this.grid = this.createEmptyGrid();
     this.currentPiece = null;
     this.nextPieceType = choice(PIECE_TYPES);
+    this.holdPieceType = null;
+    this.holdUsedThisPiece = false;
     this.spawnPiece();
   }
 
@@ -100,6 +113,7 @@ export class BoardSystem {
   spawnPiece(): boolean {
     const piece = this.makePiece(this.nextPieceType);
     this.nextPieceType = choice(PIECE_TYPES);
+    this.holdUsedThisPiece = false;
 
     if (this.collides(piece.matrix, piece.x, piece.y)) {
       this.currentPiece = piece;
@@ -107,6 +121,32 @@ export class BoardSystem {
     }
 
     this.currentPiece = piece;
+    return true;
+  }
+
+  hold(): boolean {
+    if (!this.currentPiece || this.holdUsedThisPiece) {
+      return false;
+    }
+
+    const currentType = this.currentPiece.type;
+    if (!this.holdPieceType) {
+      this.holdPieceType = currentType;
+      const spawned = this.spawnPiece();
+      this.holdUsedThisPiece = true;
+      return spawned;
+    }
+
+    const nextHeldType = this.holdPieceType;
+    this.holdPieceType = currentType;
+    const piece = this.makePiece(nextHeldType);
+    if (this.collides(piece.matrix, piece.x, piece.y)) {
+      this.holdPieceType = nextHeldType;
+      return false;
+    }
+
+    this.currentPiece = piece;
+    this.holdUsedThisPiece = true;
     return true;
   }
 
@@ -210,7 +250,9 @@ export class BoardSystem {
           continue;
         }
 
-        this.grid[y][x] = this.currentPiece.color;
+        this.grid[y][x] = Math.random() < 0.08
+          ? this.createBoardBlockCell(choice(SPECIAL_BLOCK_IDS))
+          : this.currentPiece.color;
       }
     }
 
@@ -299,6 +341,12 @@ export class BoardSystem {
         case 'damage_enemy':
           // Damage application is handled elsewhere in combat.
           break;
+        case 'gain_mana':
+        case 'heal_player':
+        case 'boost_cascade':
+        case 'random_bonus':
+        case 'item_charge':
+          break;
         default:
           break;
       }
@@ -338,7 +386,7 @@ export class BoardSystem {
       this.grid.shift();
       const gap = randInt(0, BOARD_COLS - 1);
       const junkRow = Array.from({ length: BOARD_COLS }, (_, index) =>
-        index === gap ? 0 : this.createBoardBlockCell('block_junk')
+        index === gap ? 0 : this.createBoardBlockCell(rowCount > 1 ? 'block_royal' : 'block_crumb_junk')
       );
       this.grid.push(junkRow);
     }

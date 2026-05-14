@@ -57,7 +57,7 @@ export class ShopSystem {
     state.player.curses -= 1;
     return {
       transition: 'map',
-      messages: ['A curse is lifted.']
+      messages: ['An oopsie is cleaned up.']
     };
   }
 

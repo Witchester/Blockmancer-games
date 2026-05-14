@@ -1,0 +1,41 @@
+{
+  "id": "mon_combo_crab",
+  "name": "Combo Crab",
+  "description": "Combo Crab joins the festival dungeon with cheerful trouble.",
+  "rarity": "rare",
+  "tier": 4,
+  "role": "basic",
+  "biome": "void",
+  "spriteKey": "placeholder_combo_crab",
+  "stats": {
+    "hp": 70,
+    "attack": 6,
+    "armor": 0,
+    "attackIntervalLocks": 3
+  },
+  "intent": {
+    "id": "intent_charge",
+    "label": "Combo Pinch",
+    "description": "Combo Crab prepares Combo Pinch."
+  },
+  "behaviors": [
+    "increase_fall_speed"
+  ],
+  "resistances": [],
+  "weaknesses": [],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0.02
+  },
+  "rewards": {
+    "goldMin": 10,
+    "goldMax": 28,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "early_game"
+  ],
+  "enabled": true
+}

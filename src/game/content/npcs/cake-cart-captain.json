@@ -1,0 +1,11 @@
+{
+  "id": "npc_cake_cart_captain",
+  "name": "Cake Cart Captain",
+  "description": "Cake Cart Captain keeps the festival dungeon cheerful.",
+  "role": "event",
+  "dialogue": [
+    "Cake Cart Captain says hello!",
+    "Keep those blocks falling in style."
+  ],
+  "enabled": true
+}

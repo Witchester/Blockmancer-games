@@ -1,0 +1,12 @@
+{
+  "id": "item_toolbox",
+  "name": "Toolbox",
+  "description": "Clear a small block cluster.",
+  "effect": {
+    "type": "clear_cluster",
+    "value": 4
+  },
+  "rarity": "common",
+  "iconKey": "item_toolbox",
+  "enabled": true
+}

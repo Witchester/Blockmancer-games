@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { COLORS } from '../utils/constants';
+import { COLORS, FONT_FAMILY } from '../utils/constants';
 
 export type ProgressBarOptions = {
   label?: string;
@@ -29,7 +29,7 @@ export class ProgressBar extends Phaser.GameObjects.Container {
     if (options.label) {
       this.labelText = scene.add.text(0, 0, options.label, {
         color: options.textColor ?? '#f6f7ff',
-        fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
+        fontFamily: FONT_FAMILY,
         fontSize: '18px'
       }).setOrigin(0, 0);
       this.add(this.labelText);
@@ -38,7 +38,7 @@ export class ProgressBar extends Phaser.GameObjects.Container {
     if (showValueText) {
       this.valueText = scene.add.text(this.fillWidth, 0, '', {
         color: options.textColor ?? '#f6f7ff',
-        fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
+        fontFamily: FONT_FAMILY,
         fontSize: '18px'
       }).setOrigin(1, 0);
       this.add(this.valueText);

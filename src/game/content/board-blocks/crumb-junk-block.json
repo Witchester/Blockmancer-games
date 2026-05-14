@@ -1,0 +1,13 @@
+{
+  "id": "block_crumb_junk",
+  "name": "Crumb Junk Block",
+  "blockType": "hazard",
+  "rarity": "common",
+  "spriteKey": "block_crumb_junk",
+  "color": "#ffd166",
+  "clearEffects": [],
+  "tags": [
+    "special"
+  ],
+  "enabled": true
+}

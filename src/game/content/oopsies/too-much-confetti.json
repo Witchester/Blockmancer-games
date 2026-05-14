@@ -1,0 +1,18 @@
+{
+  "id": "curse_too_much_confetti",
+  "name": "Too Much Confetti",
+  "rarity": "cursed",
+  "description": "Sometimes the board gets extra sparkle junk.",
+  "iconKey": "curse_too_much_confetti",
+  "effects": [
+    {
+      "type": "minor_drawback",
+      "value": 1
+    }
+  ],
+  "removeCost": 50,
+  "tags": [
+    "curse"
+  ],
+  "enabled": true
+}

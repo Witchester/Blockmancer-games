@@ -1,0 +1,12 @@
+{
+  "id": "item_block_polish",
+  "name": "Block Polish",
+  "description": "Clean a messy row.",
+  "effect": {
+    "type": "clear_row",
+    "value": 1
+  },
+  "rarity": "common",
+  "iconKey": "item_block_polish",
+  "enabled": true
+}

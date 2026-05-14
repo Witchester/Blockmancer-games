@@ -1,0 +1,18 @@
+{
+  "id": "block_toolbox",
+  "name": "Toolbox Block",
+  "blockType": "special",
+  "rarity": "uncommon",
+  "spriteKey": "block_toolbox",
+  "color": "#ffd166",
+  "clearEffects": [
+    {
+      "type": "item_charge",
+      "value": 1
+    }
+  ],
+  "tags": [
+    "special"
+  ],
+  "enabled": true
+}

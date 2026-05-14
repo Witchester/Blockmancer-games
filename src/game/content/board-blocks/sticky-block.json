@@ -1,0 +1,13 @@
+{
+  "id": "block_sticky",
+  "name": "Sticky Block",
+  "blockType": "hazard",
+  "rarity": "uncommon",
+  "spriteKey": "block_sticky",
+  "color": "#ffd166",
+  "clearEffects": [],
+  "tags": [
+    "special"
+  ],
+  "enabled": true
+}

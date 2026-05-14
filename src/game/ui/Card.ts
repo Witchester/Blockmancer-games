@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { COLORS } from '../utils/constants';
+import { COLORS, FONT_FAMILY } from '../utils/constants';
 
 type TextAlign = 'left' | 'center' | 'right';
 
@@ -53,7 +53,7 @@ export class Card extends Phaser.GameObjects.Container {
     if (options.title) {
       this.titleText = scene.add.text(0, 0, options.title, {
         color: options.titleColor ?? '#f6f7ff',
-        fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
+        fontFamily: FONT_FAMILY,
         fontSize: options.titleFontSize ?? '30px',
         fontStyle: 'bold',
         align: 'center',
@@ -65,7 +65,7 @@ export class Card extends Phaser.GameObjects.Container {
     if (options.subtitle) {
       this.subtitleText = scene.add.text(0, 0, options.subtitle, {
         color: options.subtitleColor ?? '#98a0c7',
-        fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
+        fontFamily: FONT_FAMILY,
         fontSize: options.subtitleFontSize ?? '20px',
         align: 'center',
         wordWrap: { width: width - this.padding * 2 }
@@ -76,7 +76,7 @@ export class Card extends Phaser.GameObjects.Container {
     if (options.body) {
       this.bodyText = scene.add.text(0, 0, options.body, {
         color: options.bodyColor ?? '#d8deff',
-        fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
+        fontFamily: FONT_FAMILY,
         fontSize: options.bodyFontSize ?? '20px',
         align: options.bodyAlign ?? 'center',
         wordWrap: { width: width - this.padding * 2 },

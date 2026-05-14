@@ -1,0 +1,41 @@
+{
+  "id": "mon_frosting_fox",
+  "name": "Frosting Fox",
+  "description": "Frosting Fox joins the festival dungeon with cheerful trouble.",
+  "rarity": "common",
+  "tier": 3,
+  "role": "basic",
+  "biome": "ice_cave",
+  "spriteKey": "placeholder_frosting_fox",
+  "stats": {
+    "hp": 48,
+    "attack": 5,
+    "armor": 0,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_attack",
+    "label": "Cold Snap",
+    "description": "Frosting Fox prepares Cold Snap."
+  },
+  "behaviors": [
+    "basic_attack"
+  ],
+  "resistances": [],
+  "weaknesses": [],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 10,
+    "goldMax": 28,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "early_game"
+  ],
+  "enabled": true
+}

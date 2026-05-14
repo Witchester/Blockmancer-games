@@ -1,0 +1,41 @@
+{
+  "id": "mon_royal_page",
+  "name": "Royal Page",
+  "description": "Royal Page joins the festival dungeon with cheerful trouble.",
+  "rarity": "rare",
+  "tier": 4,
+  "role": "summoner",
+  "biome": "royal_ruins",
+  "spriteKey": "placeholder_royal_page",
+  "stats": {
+    "hp": 76,
+    "attack": 7,
+    "armor": 0,
+    "attackIntervalLocks": 3
+  },
+  "intent": {
+    "id": "intent_throw_junk",
+    "label": "Royal Errand",
+    "description": "Royal Page prepares Royal Errand."
+  },
+  "behaviors": [
+    "spawn_junk"
+  ],
+  "resistances": [],
+  "weaknesses": [],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 10,
+    "goldMax": 28,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "early_game"
+  ],
+  "enabled": true
+}

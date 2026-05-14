@@ -1,0 +1,45 @@
+{
+  "id": "evt_rainbow_fountain",
+  "name": "Rainbow Fountain",
+  "rarity": "common",
+  "description": "Rainbow Fountain offers a bright, risky festival choice.",
+  "iconKey": "evt_rainbow_fountain",
+  "backgroundKey": "bg_event_festival",
+  "biome": "dungeon",
+  "choices": [
+    {
+      "id": "choice_safe",
+      "label": "Take the safe treat",
+      "description": "Gain a small amount of gold.",
+      "requirements": [],
+      "effects": [
+        {
+          "type": "gain_gold",
+          "value": 15
+        }
+      ],
+      "resultText": "A tidy prize drops out."
+    },
+    {
+      "id": "choice_risky",
+      "label": "Try the loud option",
+      "description": "Take a tiny hit for a random reward.",
+      "requirements": [],
+      "effects": [
+        {
+          "type": "damage_player",
+          "value": 2
+        },
+        {
+          "type": "gain_random_reward",
+          "value": 1
+        }
+      ],
+      "resultText": "It was loud, but useful."
+    }
+  ],
+  "tags": [
+    "special"
+  ],
+  "enabled": true
+}

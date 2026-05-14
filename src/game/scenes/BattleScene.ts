@@ -3,22 +3,21 @@ import { BlockmancerGame } from '../BlockmancerGame';
 import { SPELLS } from '../data/spells';
 import { BoardSystem, getBoardCellColor } from '../systems/BoardSystem';
 import { CombatSystem } from '../systems/CombatSystem';
+import { InputSystem } from '../systems/InputSystem';
 import { SpellSystem } from '../systems/SpellSystem';
 import type { BoardTickResult, SpellId } from '../types/GameTypes';
-import { Button } from '../ui/Button';
 import { EventLog } from '../ui/EventLog';
 import { Hud } from '../ui/Hud';
 import { MobileControls } from '../ui/MobileControls';
 import { ProgressBar } from '../ui/ProgressBar';
-import { isCompactLayout } from '../utils/layout';
+import { getPortraitLayout, isCompactLayout } from '../utils/layout';
 import {
   BASE_DROP_MS,
   BOARD_COLS,
-  BOARD_OFFSET_X,
-  BOARD_OFFSET_Y,
   BOARD_ROWS,
   CELL_SIZE,
   COLORS,
+  FONT_FAMILY,
   MAX_FALL_SPEED,
   TETROMINO_COLORS,
   TETROMINO_SHAPES
@@ -40,11 +39,11 @@ export class BattleScene extends Phaser.Scene {
   private previewTiles: Phaser.GameObjects.Rectangle[] = [];
   private previewLabel?: Phaser.GameObjects.Text;
   private previewExtraText?: Phaser.GameObjects.Text;
-  private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
-  private keyA!: Phaser.Input.Keyboard.Key;
-  private keyD!: Phaser.Input.Keyboard.Key;
-  private keyS!: Phaser.Input.Keyboard.Key;
-  private keyW!: Phaser.Input.Keyboard.Key;
+  private holdText?: Phaser.GameObjects.Text;
+  private inventoryText?: Phaser.GameObjects.Text;
+  private feverText?: Phaser.GameObjects.Text;
+  private inventoryExpanded = false;
+  private inputSystem?: InputSystem;
   private compactLayout = false;
   private screenWidth = 0;
   private screenHeight = 0;
@@ -62,22 +61,7 @@ export class BattleScene extends Phaser.Scene {
   private logWidth = 0;
   private logHeight = 0;
   private dropTimer = 0;
-  private horizontalRepeat = 0;
-  private softDropRepeat = 0;
-  private handleRotateUp = () => {
-    this.board.rotate();
-    this.renderBoard();
-  };
-  private handleRotateW = () => {
-    this.board.rotate();
-    this.renderBoard();
-  };
-  private handleHardDrop = () => this.resolveTick(this.board.hardDrop());
-  private handleCastOne = () => this.tryCast('fireball');
-  private handleCastTwo = () => this.tryCast('frost-lock');
-  private handleCastThree = () => this.tryCast('bomb-rune');
-  private handleCastFour = () => this.tryCast('void-cut');
-  private handlePause = () => this.combat.addLog('Pause is a placeholder in this MVP.');
+  private handlePause = () => this.combat.addLog('Pause menu is not open during this battle build.');
 
   constructor() {
     super('BattleScene');
@@ -102,36 +86,40 @@ export class BattleScene extends Phaser.Scene {
     this.boardCells = [];
     this.previewTiles = [];
     this.dropTimer = 0;
-    this.horizontalRepeat = 0;
-    this.softDropRepeat = 0;
     this.board = new BoardSystem();
     this.combat = new CombatSystem(state);
     this.spells = new SpellSystem(state, this.board, this.combat);
 
-    this.screenWidth = this.scale.width;
-    this.screenHeight = this.scale.height;
-    this.topSectionHeight = Math.round(this.screenHeight * 0.2);
-    this.bottomSectionHeight = Math.round(this.screenHeight * 0.2);
-    this.middleSectionHeight = this.screenHeight - this.topSectionHeight - this.bottomSectionHeight;
+    const layout = getPortraitLayout(this);
+    this.screenWidth = layout.width;
+    this.screenHeight = layout.height;
+    this.topSectionHeight = layout.topHeight;
+    this.bottomSectionHeight = layout.bottomHeight;
+    this.middleSectionHeight = layout.middleHeight;
     this.boardOffsetX = Math.round((this.screenWidth - BOARD_COLS * CELL_SIZE) / 2);
-    this.boardOffsetY = this.topSectionHeight + 140;
-    this.previewCenterX = this.screenWidth / 2;
-    this.previewCenterY = this.topSectionHeight + 78;
+    this.boardOffsetY = this.topSectionHeight + 84;
+    this.previewCenterX = this.screenWidth - 88;
+    this.previewCenterY = this.topSectionHeight + 126;
     this.controlsCenterX = this.screenWidth / 2;
-    this.controlsY = this.screenHeight - Math.round(this.bottomSectionHeight / 2) + 4;
-    this.logX = 24;
+    this.controlsY = this.topSectionHeight + this.middleSectionHeight + Math.round(this.bottomSectionHeight / 2) - 4;
     this.logWidth = this.screenWidth - 48;
-    this.logHeight = 140;
-    this.logY = this.topSectionHeight + this.middleSectionHeight - this.logHeight - 14;
+    this.logHeight = 100;
+    this.logX = 24;
+    this.logY = this.topSectionHeight + this.middleSectionHeight - this.logHeight - 12;
 
     this.drawLayout();
     this.buildBoard();
     this.createPreviewPanel();
-    this.hud = new Hud(this, { compact: this.compactLayout });
+    this.hud = new Hud(this, {
+      compact: true,
+      x: this.screenWidth / 2,
+      y: 76,
+      width: this.screenWidth - 64,
+      height: 62
+    });
     this.log = new EventLog(this, this.logX, this.logY, this.logWidth, this.logHeight);
-    this.createSpellButtons();
     this.createMobileControls();
-    this.createInputs();
+    this.createInputSystem();
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.handleShutdown, this);
     this.combat.addLog(`Battle started against ${state.activeEnemy.name}.`);
     this.syncBoardState();
@@ -144,65 +132,107 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private drawLayout(): void {
-    const topPanelWidth = this.screenWidth - 48;
-    const topPanelHeight = this.topSectionHeight - 24;
-    const topPanelCenterY = Math.round(this.topSectionHeight / 2);
+    const topPanelWidth = this.screenWidth - 32;
+    const topPanelHeight = this.topSectionHeight - 18;
+    const topPanelCenterY = Math.round(this.topSectionHeight / 2) + 3;
 
     this.add.rectangle(this.screenWidth / 2, topPanelCenterY, topPanelWidth, topPanelHeight, COLORS.panel, 0.95).setStrokeStyle(2, COLORS.accent, 0.25);
-    this.add.text(36, 26, 'Battlefield', {
+    this.add.text(28, 20, 'Blockmancer Battle', {
       color: '#f6f7ff',
-      fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
-      fontSize: '30px',
+      fontFamily: FONT_FAMILY,
+      fontSize: '24px',
       fontStyle: 'bold'
     });
 
-    const boardPanelHeight = this.middleSectionHeight - 24;
-    const boardPanelCenterY = this.boardOffsetY + Math.round((BOARD_ROWS * CELL_SIZE) / 2) - 14;
-    this.add.rectangle(this.screenWidth / 2, boardPanelCenterY, this.screenWidth - 32, boardPanelHeight, COLORS.panel, 0.95).setStrokeStyle(2, COLORS.accentSoft, 0.25);
-
-    this.enemyNameText = this.add.text(36, 60, '', {
+    this.add.text(this.screenWidth - 28, 24, `Stage ${this.sharedGame.runState.stage}`, {
       color: '#ffca6b',
-      fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
-      fontSize: '26px',
+      fontFamily: FONT_FAMILY,
+      fontSize: '18px',
       fontStyle: 'bold'
-    });
-    this.enemyStatsText = this.add.text(36, 94, '', {
-      color: '#d8deff',
-      fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
-      fontSize: '18px'
-    });
-    this.enemyIntentText = this.add.text(36, 126, '', {
-      color: '#98a0c7',
-      fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
-      fontSize: '17px',
-      wordWrap: { width: topPanelWidth - 72 }
-    });
-    this.enemyCountdownText = this.add.text(36, 178, '', {
-      color: '#ff6673',
-      fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
-      fontSize: '20px',
-      fontStyle: 'bold'
-    });
-    this.enemyHpBar = new ProgressBar(this, 36, 214, {
-      label: 'Enemy Vitality',
-      width: topPanelWidth - 72,
-      height: 18,
-      fillColor: COLORS.danger
-    });
+    }).setOrigin(1, 0);
 
-    this.add.text(36, 252, 'Relics & Upgrades', {
+    const middleCenterY = this.topSectionHeight + this.middleSectionHeight / 2;
+    this.add.rectangle(this.screenWidth / 2, middleCenterY, this.screenWidth - 24, this.middleSectionHeight - 16, COLORS.panel, 0.95).setStrokeStyle(2, COLORS.accentSoft, 0.25);
+
+    const controlsCenterY = this.topSectionHeight + this.middleSectionHeight + this.bottomSectionHeight / 2;
+    this.add.rectangle(this.screenWidth / 2, controlsCenterY, this.screenWidth - 24, this.bottomSectionHeight - 16, COLORS.panel, 0.92).setStrokeStyle(2, COLORS.accent, 0.22);
+
+    this.enemyNameText = this.add.text(28, 112, '', {
       color: '#ffca6b',
-      fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
+      fontFamily: FONT_FAMILY,
       fontSize: '22px',
       fontStyle: 'bold'
     });
-    this.upgradesText = this.add.text(36, 280, '', {
+    this.enemyStatsText = this.add.text(28, 140, '', {
       color: '#d8deff',
-      fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
-      fontSize: '16px',
-      wordWrap: { width: topPanelWidth - 72 },
-      lineSpacing: 6
+      fontFamily: FONT_FAMILY,
+      fontSize: '16px'
     });
+    this.enemyIntentText = this.add.text(28, 164, '', {
+      color: '#98a0c7',
+      fontFamily: FONT_FAMILY,
+      fontSize: '15px',
+      wordWrap: { width: topPanelWidth - 56 }
+    });
+    this.enemyCountdownText = this.add.text(this.screenWidth - 28, 140, '', {
+      color: '#ff6673',
+      fontFamily: FONT_FAMILY,
+      fontSize: '17px',
+      fontStyle: 'bold'
+    }).setOrigin(1, 0);
+    this.enemyHpBar = new ProgressBar(this, 28, 218, {
+      label: 'Enemy HP',
+      width: topPanelWidth - 56,
+      height: 14,
+      fillColor: COLORS.danger
+    });
+
+    this.add.text(28, this.topSectionHeight + 26, 'Hold', {
+      color: '#ffca6b',
+      fontFamily: FONT_FAMILY,
+      fontSize: '17px',
+      fontStyle: 'bold'
+    });
+    this.add.rectangle(88, this.topSectionHeight + 78, 116, 72, COLORS.panelAlt, 0.98).setStrokeStyle(2, COLORS.accent, 0.24);
+    this.holdText = this.add.text(88, this.topSectionHeight + 78, 'Empty', {
+      color: '#d8deff',
+      fontFamily: FONT_FAMILY,
+      fontSize: '16px',
+      align: 'center',
+      wordWrap: { width: 96 }
+    }).setOrigin(0.5);
+
+    this.add.text(28, this.boardOffsetY + BOARD_ROWS * CELL_SIZE + 14, 'Inventory', {
+      color: '#ffca6b',
+      fontFamily: FONT_FAMILY,
+      fontSize: '17px',
+      fontStyle: 'bold'
+    });
+    this.add.rectangle(128, this.boardOffsetY + BOARD_ROWS * CELL_SIZE + 58, 208, 58, COLORS.panelAlt, 0.96).setStrokeStyle(2, COLORS.accentSoft, 0.2);
+    this.inventoryText = this.add.text(128, this.boardOffsetY + BOARD_ROWS * CELL_SIZE + 58, 'Items: compact pack', {
+      color: '#d8deff',
+      fontFamily: FONT_FAMILY,
+      fontSize: '15px',
+      align: 'center',
+      wordWrap: { width: 184 }
+    }).setOrigin(0.5);
+
+    this.feverText = this.add.text(this.screenWidth - 28, this.boardOffsetY + BOARD_ROWS * CELL_SIZE + 30, '', {
+      color: '#65d6a5',
+      fontFamily: FONT_FAMILY,
+      fontSize: '17px',
+      fontStyle: 'bold',
+      align: 'right'
+    }).setOrigin(1, 0);
+
+    this.upgradesText = this.add.text(this.screenWidth - 28, this.boardOffsetY + BOARD_ROWS * CELL_SIZE + 56, '', {
+      color: '#d8deff',
+      fontFamily: FONT_FAMILY,
+      fontSize: '12px',
+      align: 'right',
+      wordWrap: { width: 132 },
+      lineSpacing: 4
+    }).setOrigin(1, 0);
   }
 
   private buildBoard(): void {
@@ -229,8 +259,8 @@ export class BattleScene extends Phaser.Scene {
     this.add.rectangle(this.previewCenterX, this.previewCenterY, 116, 116, COLORS.panelAlt, 0.98).setStrokeStyle(2, COLORS.accent, 0.24);
     this.previewLabel = this.add.text(this.previewCenterX, this.previewCenterY - 62, 'Next', {
       color: '#ffca6b',
-      fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
-      fontSize: '22px'
+      fontFamily: FONT_FAMILY,
+      fontSize: '17px'
     }).setOrigin(0.5);
 
     for (let index = 0; index < 16; index += 1) {
@@ -245,22 +275,11 @@ export class BattleScene extends Phaser.Scene {
 
     this.previewExtraText = this.add.text(this.previewCenterX, this.previewCenterY + 66, '', {
       color: '#98a0c7',
-      fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
-      fontSize: '15px',
+      fontFamily: FONT_FAMILY,
+      fontSize: '13px',
       align: 'center',
-      wordWrap: { width: 320 }
+      wordWrap: { width: 136 }
     }).setOrigin(0.5);
-  }
-
-  private createSpellButtons(): void {
-    const startX = Math.round(this.screenWidth / 2) - 148;
-    const startY = this.logY - 64;
-    SPELLS.forEach((spell, index) => {
-      const x = startX + index * 76;
-      new Button(this, x, startY, 68, 50, spell.key, () => {
-        this.tryCast(spell.id);
-      });
-    });
   }
 
   private createMobileControls(): void {
@@ -270,48 +289,66 @@ export class BattleScene extends Phaser.Scene {
       this.controlsY,
       [
         [
-          { label: '<', width: 58, onPress: () => this.board.move(-1, 0) && this.renderBoard() },
-          { label: '>', width: 58, onPress: () => this.board.move(1, 0) && this.renderBoard() },
-          { label: 'Rot', width: 64, onPress: () => this.board.rotate() && this.renderBoard() },
-          { label: 'Hold', width: 64, onPress: () => this.combat.addLog('Hold block is coming soon.') },
-          { label: 'Drop', width: 70, onPress: () => this.resolveTick(this.board.hardDrop()) }
+          { label: '<', width: 58, height: 48, onPress: () => this.board.move(-1, 0) && this.renderBoard(), repeat: true, repeatDelayMs: 180, repeatIntervalMs: 90 },
+          { label: '>', width: 58, height: 48, onPress: () => this.board.move(1, 0) && this.renderBoard(), repeat: true, repeatDelayMs: 180, repeatIntervalMs: 90 },
+          { label: 'Rot', width: 64, height: 48, onPress: () => this.board.rotate() && this.renderBoard() },
+          { label: 'Soft', width: 66, height: 48, onPress: () => this.resolveTick(this.board.tick()), repeat: true, repeatDelayMs: 120, repeatIntervalMs: 60 },
+          { label: 'Drop', width: 70, height: 48, onPress: () => this.resolveTick(this.board.hardDrop()) },
+          { label: 'Hold', width: 64, height: 48, onPress: () => this.handleHold() }
         ],
-        SPELLS.map((spell) => ({
-          label: spell.key,
-          width: 64,
-          onPress: () => this.tryCast(spell.id)
-        }))
+        [
+          ...SPELLS.map((spell) => ({
+            label: spell.key,
+            width: 58,
+            height: 46,
+            onPress: () => this.tryCast(spell.id)
+          })),
+          { label: 'Bag', width: 64, height: 46, onPress: () => this.toggleInventory() }
+        ]
       ],
-      { title: 'Touch Controls', padding: 16, rowGap: 10, buttonGap: 10 }
+      { title: 'Touch Controls', padding: 14, rowGap: 9, buttonGap: 8 }
     );
   }
 
-  private createInputs(): void {
-    this.cursors = this.input.keyboard!.createCursorKeys();
-    this.keyA = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.A);
-    this.keyD = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.D);
-    this.keyS = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.S);
-    this.keyW = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+  private handleHold(): void {
+    if (this.board.hold()) {
+      this.combat.addLog('Held the current block.');
+      this.syncBoardState();
+      this.renderAll();
+      return;
+    }
 
-    this.input.keyboard!.on('keydown-UP', this.handleRotateUp);
-    this.input.keyboard!.on('keydown-W', this.handleRotateW);
-    this.input.keyboard!.on('keydown-SPACE', this.handleHardDrop);
-    this.input.keyboard!.on('keydown-ONE', this.handleCastOne);
-    this.input.keyboard!.on('keydown-TWO', this.handleCastTwo);
-    this.input.keyboard!.on('keydown-THREE', this.handleCastThree);
-    this.input.keyboard!.on('keydown-FOUR', this.handleCastFour);
-    this.input.keyboard!.on('keydown-ESC', this.handlePause);
+    this.combat.addLog('Hold is already used for this block.');
+    this.renderAll();
+  }
+
+  private toggleInventory(): void {
+    this.inventoryExpanded = !this.inventoryExpanded;
+    this.renderMiddleOverlays();
+  }
+
+  private createInputSystem(): void {
+    this.inputSystem = new InputSystem(this, {
+      moveLeft: () => this.board.move(-1, 0) && this.renderBoard(),
+      moveRight: () => this.board.move(1, 0) && this.renderBoard(),
+      rotate: () => this.board.rotate() && this.renderBoard(),
+      softDrop: () => this.resolveTick(this.board.tick()),
+      hardDrop: () => this.resolveTick(this.board.hardDrop()),
+      hold: () => this.handleHold(),
+      castSpell: (slot) => {
+        const spell = SPELLS[slot];
+        if (spell) {
+          this.tryCast(spell.id);
+        }
+      },
+      inventory: () => this.toggleInventory(),
+      pause: this.handlePause
+    });
   }
 
   private handleShutdown(): void {
-    this.input.keyboard?.off('keydown-UP', this.handleRotateUp);
-    this.input.keyboard?.off('keydown-W', this.handleRotateW);
-    this.input.keyboard?.off('keydown-SPACE', this.handleHardDrop);
-    this.input.keyboard?.off('keydown-ONE', this.handleCastOne);
-    this.input.keyboard?.off('keydown-TWO', this.handleCastTwo);
-    this.input.keyboard?.off('keydown-THREE', this.handleCastThree);
-    this.input.keyboard?.off('keydown-FOUR', this.handleCastFour);
-    this.input.keyboard?.off('keydown-ESC', this.handlePause);
+    this.inputSystem?.destroy();
+    this.inputSystem = undefined;
   }
 
   update(_time: number, delta: number): void {
@@ -323,29 +360,7 @@ export class BattleScene extends Phaser.Scene {
       this.resolveTick(this.board.tick());
     }
 
-    this.handleHeldInput(delta);
-  }
-
-  private handleHeldInput(delta: number): void {
-    this.horizontalRepeat += delta;
-    this.softDropRepeat += delta;
-
-    if ((this.cursors.left.isDown || this.keyA.isDown) && this.horizontalRepeat >= 110) {
-      this.board.move(-1, 0);
-      this.horizontalRepeat = 0;
-      this.renderBoard();
-    }
-
-    if ((this.cursors.right.isDown || this.keyD.isDown) && this.horizontalRepeat >= 110) {
-      this.board.move(1, 0);
-      this.horizontalRepeat = 0;
-      this.renderBoard();
-    }
-
-    if ((this.cursors.down.isDown || this.keyS.isDown) && this.softDropRepeat >= 55) {
-      this.softDropRepeat = 0;
-      this.resolveTick(this.board.tick());
-    }
+    this.inputSystem?.update(delta);
   }
 
   private resolveTick(result: BoardTickResult): void {
@@ -353,7 +368,7 @@ export class BattleScene extends Phaser.Scene {
 
     if (result.toppedOut) {
       state.board.topOut = true;
-      this.combat.addLog('The board reaches the top. The dungeon takes you.');
+      this.combat.addLog('The board reaches the top. The festival machine calls a reset.');
       this.finishRun(false);
       return;
     }
@@ -412,31 +427,35 @@ export class BattleScene extends Phaser.Scene {
     let damage = enemy.attack;
     this.combat.addLog(`${enemy.name} uses ${enemy.intent}.`);
 
-    switch (enemy.id) {
-      case 'goblin':
+    switch (enemy.behavior) {
+      case 'spawn_junk':
         this.board.addJunkRows(1);
-        this.combat.addLog('Goblin junk blocks rise from below.');
+        this.combat.addLog('Junk blocks rise from below.');
         break;
-      case 'bat':
+      case 'hide_next_piece':
         enemy.previewHiddenTurns = 2;
-        this.combat.addLog('The next-piece preview vanishes in the dark.');
+        this.combat.addLog('The next-piece preview gets covered in glitter.');
         break;
-      case 'witch':
+      case 'mana_hex':
         enemy.manaHexTurns = 2;
         this.combat.addLog('Mana Hex raises spell costs for a short time.');
         break;
-      case 'elite-knight':
+      case 'shake_board':
         damage += 2;
         this.cameras.main.shake(220, 0.0075);
         this.combat.addLog('Heavy Slam rattles the board violently.');
         break;
-      case 'falling-king':
+      case 'increase_fall_speed':
         this.board.addJunkRows(2);
         state.fallSpeed = Math.min(MAX_FALL_SPEED, state.fallSpeed + 0.1);
-        this.combat.addLog('Royal Collapse accelerates the board.');
+        this.combat.addLog('The board accelerates.');
         break;
-      case 'stone-golem':
-        this.combat.addLog('Stone Guard shrugs off blunt line pressure.');
+      case 'reduce_line_damage':
+      case 'armor_up':
+        this.combat.addLog('Guarded blocks soften your next clear.');
+        break;
+      case 'freeze_piece':
+        this.combat.addLog('Frost gathers around the falling block.');
         break;
       default:
         break;
@@ -490,7 +509,7 @@ export class BattleScene extends Phaser.Scene {
 
     const enemyName = state.activeEnemy.name;
     state.enemiesDefeated += 1;
-    this.combat.addLog(`${enemyName} falls.`);
+    this.combat.addLog(`${enemyName} tumbles out of the way.`);
 
     if (state.lastBattleWasBoss) {
       this.sharedGame.mapSystem.completeNode(state, state.currentNodeId);
@@ -521,6 +540,7 @@ export class BattleScene extends Phaser.Scene {
     this.renderEnemy();
     this.renderPreview();
     this.renderUpgrades();
+    this.renderMiddleOverlays();
     this.hud.update(this.sharedGame.runState);
     this.log.update(this.sharedGame.runState);
   }
@@ -645,7 +665,18 @@ export class BattleScene extends Phaser.Scene {
 
   private renderUpgrades(): void {
     const owned = this.sharedGame.runState.ownedRewards;
-    this.upgradesText?.setText(owned.length ? owned.map((id) => `- ${id}`).join('\n') : 'No relics claimed yet.');
+    this.upgradesText?.setText(owned.length ? `Relics: ${owned.length}` : 'Relics: none');
+  }
+
+  private renderMiddleOverlays(): void {
+    const state = this.sharedGame.runState;
+    this.holdText?.setText(this.board.holdPieceType ? `Held\n${this.board.holdPieceType}` : 'Hold\nEmpty');
+    this.inventoryText?.setText(
+      this.inventoryExpanded
+        ? [`Gold ${state.player.gold}`, 'Mini Cupcake x1', 'Mana Lemonade x1'].join('\n')
+        : `Gold ${state.player.gold}  Bag`
+    );
+    this.feverText?.setText(`Fever ${Math.min(100, state.combo * 10)}%\nCombo ${state.combo}`);
   }
 
   private syncBoardState(): void {
@@ -654,6 +685,7 @@ export class BattleScene extends Phaser.Scene {
       rows: BOARD_ROWS,
       activePieceType: this.board.currentPiece?.type ?? null,
       nextPieceType: this.board.nextPieceType,
+      holdPieceType: this.board.holdPieceType,
       topOut: false
     };
   }

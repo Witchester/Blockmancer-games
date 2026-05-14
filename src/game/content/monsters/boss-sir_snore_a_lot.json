@@ -1,0 +1,43 @@
+{
+  "id": "mon_boss_sir_snore_a_lot",
+  "name": "Sir Snore-a-Lot",
+  "description": "Sir Snore-a-Lot rules a festival stage with loud, silly confidence.",
+  "rarity": "boss",
+  "tier": 5,
+  "role": "boss",
+  "biome": "royal_ruins",
+  "spriteKey": "placeholder_sir_snore_a_lot",
+  "stats": {
+    "hp": 200,
+    "attack": 10,
+    "armor": 1,
+    "attackIntervalLocks": 3
+  },
+  "intent": {
+    "id": "intent_royal_collapse",
+    "label": "Sleepy Shield",
+    "description": "Sir Snore-a-Lot prepares Sleepy Shield."
+  },
+  "behaviors": [
+    "armor_up"
+  ],
+  "resistances": [],
+  "weaknesses": [
+    "combo_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 10,
+    "attackPerStage": 1,
+    "fallSpeedModifier": 0.02
+  },
+  "rewards": {
+    "goldMin": 40,
+    "goldMax": 75,
+    "rewardRolls": 2,
+    "lootTableId": "loot_boss_default"
+  },
+  "tags": [
+    "boss_phase"
+  ],
+  "enabled": true
+}

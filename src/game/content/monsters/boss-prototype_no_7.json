@@ -1,0 +1,43 @@
+{
+  "id": "mon_boss_prototype_no_7",
+  "name": "Prototype No. 7",
+  "description": "Prototype No. 7 rules a festival stage with loud, silly confidence.",
+  "rarity": "boss",
+  "tier": 5,
+  "role": "boss",
+  "biome": "royal_ruins",
+  "spriteKey": "placeholder_prototype_no_7",
+  "stats": {
+    "hp": 170,
+    "attack": 10,
+    "armor": 1,
+    "attackIntervalLocks": 3
+  },
+  "intent": {
+    "id": "intent_royal_collapse",
+    "label": "Workshop Whirr",
+    "description": "Prototype No. 7 prepares Workshop Whirr."
+  },
+  "behaviors": [
+    "shake_board"
+  ],
+  "resistances": [],
+  "weaknesses": [
+    "combo_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 10,
+    "attackPerStage": 1,
+    "fallSpeedModifier": 0.02
+  },
+  "rewards": {
+    "goldMin": 40,
+    "goldMax": 75,
+    "rewardRolls": 2,
+    "lootTableId": "loot_boss_default"
+  },
+  "tags": [
+    "boss_phase"
+  ],
+  "enabled": true
+}

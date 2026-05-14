@@ -1,0 +1,41 @@
+{
+  "id": "mon_score_specter",
+  "name": "Score Specter",
+  "description": "Score Specter joins the festival dungeon with cheerful trouble.",
+  "rarity": "rare",
+  "tier": 4,
+  "role": "basic",
+  "biome": "void",
+  "spriteKey": "placeholder_score_specter",
+  "stats": {
+    "hp": 74,
+    "attack": 7,
+    "armor": 0,
+    "attackIntervalLocks": 3
+  },
+  "intent": {
+    "id": "intent_screech",
+    "label": "Screen Glitch",
+    "description": "Score Specter prepares Screen Glitch."
+  },
+  "behaviors": [
+    "hide_next_piece"
+  ],
+  "resistances": [],
+  "weaknesses": [],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 10,
+    "goldMax": 28,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "early_game"
+  ],
+  "enabled": true
+}

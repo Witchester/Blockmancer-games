@@ -1,0 +1,18 @@
+{
+  "id": "block_sprinkle",
+  "name": "Sprinkle Block",
+  "blockType": "special",
+  "rarity": "uncommon",
+  "spriteKey": "block_sprinkle",
+  "color": "#ffd166",
+  "clearEffects": [
+    {
+      "type": "gain_mana",
+      "value": 5
+    }
+  ],
+  "tags": [
+    "special"
+  ],
+  "enabled": true
+}

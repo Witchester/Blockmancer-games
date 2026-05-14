@@ -1,0 +1,29 @@
+{
+  "id": "wpn_star_scepter",
+  "name": "Star Scepter",
+  "weaponType": "staff",
+  "rarity": "rare",
+  "description": "Star Scepter makes falling blocks feel like a festival trick.",
+  "iconKey": "placeholder_weapon",
+  "stats": {
+    "lineDamageBonus": 1,
+    "comboDamageBonus": 1,
+    "spellDamageBonus": 1,
+    "manaGainBonus": 1,
+    "fallSpeedModifier": 0
+  },
+  "effects": [
+    "increase_line_damage"
+  ],
+  "allowedHeroes": [
+    "all"
+  ],
+  "unlock": {
+    "isUnlockedByDefault": false,
+    "condition": "unlock_by_progress"
+  },
+  "tags": [
+    "damage"
+  ],
+  "enabled": true
+}

@@ -1,0 +1,13 @@
+{
+  "id": "block_jelly",
+  "name": "Jelly Block",
+  "blockType": "special",
+  "rarity": "common",
+  "spriteKey": "block_jelly",
+  "color": "#ffd166",
+  "clearEffects": [],
+  "tags": [
+    "special"
+  ],
+  "enabled": true
+}

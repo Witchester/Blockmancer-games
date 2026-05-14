@@ -1,0 +1,14 @@
+{
+  "id": "stage_bloxley_block_palace",
+  "name": "Bloxley's Block Palace",
+  "description": "The final palace stacked high with royal blocks.",
+  "theme": "royal_ruins",
+  "monsterPool": [
+    "mon_sprinkle_rat",
+    "mon_gadget_goblin",
+    "mon_arcade_spark"
+  ],
+  "bossId": "mon_boss_king_bloxley",
+  "lootTableId": "loot_battle_default",
+  "enabled": true
+}

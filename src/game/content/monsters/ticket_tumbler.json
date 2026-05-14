@@ -1,0 +1,41 @@
+{
+  "id": "mon_ticket_tumbler",
+  "name": "Ticket Tumbler",
+  "description": "Ticket Tumbler joins the festival dungeon with cheerful trouble.",
+  "rarity": "uncommon",
+  "tier": 4,
+  "role": "summoner",
+  "biome": "void",
+  "spriteKey": "placeholder_ticket_tumbler",
+  "stats": {
+    "hp": 64,
+    "attack": 5,
+    "armor": 0,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_throw_junk",
+    "label": "Ticket Jam",
+    "description": "Ticket Tumbler prepares Ticket Jam."
+  },
+  "behaviors": [
+    "spawn_junk"
+  ],
+  "resistances": [],
+  "weaknesses": [],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 10,
+    "goldMax": 28,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "early_game"
+  ],
+  "enabled": true
+}

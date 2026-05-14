@@ -1,0 +1,12 @@
+{
+  "id": "item_snowcone",
+  "name": "Snowcone",
+  "description": "Delay the next enemy attack.",
+  "effect": {
+    "type": "delay_enemy",
+    "value": 1
+  },
+  "rarity": "common",
+  "iconKey": "item_snowcone",
+  "enabled": true
+}

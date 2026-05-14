@@ -1,0 +1,41 @@
+{
+  "id": "mon_bolt_beetle",
+  "name": "Bolt Beetle",
+  "description": "Bolt Beetle joins the festival dungeon with cheerful trouble.",
+  "rarity": "uncommon",
+  "tier": 3,
+  "role": "basic",
+  "biome": "royal_ruins",
+  "spriteKey": "placeholder_bolt_beetle",
+  "stats": {
+    "hp": 50,
+    "attack": 4,
+    "armor": 1,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_guard",
+    "label": "Shell Guard",
+    "description": "Bolt Beetle prepares Shell Guard."
+  },
+  "behaviors": [
+    "reduce_line_damage"
+  ],
+  "resistances": [],
+  "weaknesses": [],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 10,
+    "goldMax": 28,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "early_game"
+  ],
+  "enabled": true
+}

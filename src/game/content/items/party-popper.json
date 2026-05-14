@@ -1,0 +1,12 @@
+{
+  "id": "item_party_popper",
+  "name": "Party Popper",
+  "description": "Pop a random board area.",
+  "effect": {
+    "type": "clear_area",
+    "value": 1
+  },
+  "rarity": "common",
+  "iconKey": "item_party_popper",
+  "enabled": true
+}

@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { COLORS } from '../utils/constants';
+import { COLORS, FONT_FAMILY } from '../utils/constants';
 
 export class Button extends Phaser.GameObjects.Container {
   private readonly background: Phaser.GameObjects.Rectangle;
@@ -25,7 +25,7 @@ export class Button extends Phaser.GameObjects.Container {
     this.label = scene.add
       .text(0, 0, text, {
         color: '#f6f7ff',
-        fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
+        fontFamily: FONT_FAMILY,
         fontSize: '18px',
         align: 'center',
         wordWrap: { width: width - 18 }

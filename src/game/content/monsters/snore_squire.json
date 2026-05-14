@@ -1,0 +1,41 @@
+{
+  "id": "mon_snore_squire",
+  "name": "Snore Squire",
+  "description": "Snore Squire joins the festival dungeon with cheerful trouble.",
+  "rarity": "uncommon",
+  "tier": 4,
+  "role": "basic",
+  "biome": "royal_ruins",
+  "spriteKey": "placeholder_snore_squire",
+  "stats": {
+    "hp": 66,
+    "attack": 6,
+    "armor": 0,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_guard",
+    "label": "Nap Guard",
+    "description": "Snore Squire prepares Nap Guard."
+  },
+  "behaviors": [
+    "armor_up"
+  ],
+  "resistances": [],
+  "weaknesses": [],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 10,
+    "goldMax": 28,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "early_game"
+  ],
+  "enabled": true
+}

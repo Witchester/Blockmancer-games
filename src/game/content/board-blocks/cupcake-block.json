@@ -1,0 +1,18 @@
+{
+  "id": "block_cupcake",
+  "name": "Cupcake Block",
+  "blockType": "special",
+  "rarity": "uncommon",
+  "spriteKey": "block_cupcake",
+  "color": "#ffd166",
+  "clearEffects": [
+    {
+      "type": "heal_player",
+      "value": 1
+    }
+  ],
+  "tags": [
+    "special"
+  ],
+  "enabled": true
+}

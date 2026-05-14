@@ -1,0 +1,26 @@
+{
+  "id": "spl_confetti_pop",
+  "name": "Confetti Pop",
+  "school": "bomb",
+  "rarity": "uncommon",
+  "description": "Confetti Pop adds a cheerful tactical option to the board.",
+  "iconKey": "placeholder_spell",
+  "cost": {
+    "mana": 25,
+    "hp": 0,
+    "gold": 0
+  },
+  "targetType": "board",
+  "cooldownLocks": 0,
+  "effects": [
+    "clear_board_area"
+  ],
+  "upgradePath": [
+    "reduce_cost",
+    "add_secondary_effect"
+  ],
+  "tags": [
+    "utility"
+  ],
+  "enabled": true
+}

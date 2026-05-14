@@ -1,0 +1,18 @@
+{
+  "id": "block_star",
+  "name": "Star Block",
+  "blockType": "special",
+  "rarity": "rare",
+  "spriteKey": "block_star",
+  "color": "#ffd166",
+  "clearEffects": [
+    {
+      "type": "boost_cascade",
+      "value": 1
+    }
+  ],
+  "tags": [
+    "special"
+  ],
+  "enabled": true
+}

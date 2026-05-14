@@ -10,7 +10,7 @@ const EVENT_CARDS: EventCard[] = [
     choices: [
       { label: 'Anchor', description: 'Reduce fall speed by 0.1.', outcomeKey: 'slow' },
       { label: 'Take Tribute', description: 'Gain 30 gold.', outcomeKey: 'gold' },
-      { label: 'Blood Offering', description: 'Take 3 damage and gain a random reward.', outcomeKey: 'reward' }
+      { label: 'Snack Trade', description: 'Take 3 damage and gain a random reward.', outcomeKey: 'reward' }
     ]
   },
   {
@@ -29,14 +29,14 @@ const EVENT_CARDS: EventCard[] = [
     description: 'Your reflection offers impossible bargains.',
     choices: [
       { label: 'Duplicate Relic', description: 'Gain a copy of a random owned relic benefit.', outcomeKey: 'duplicate' },
-      { label: 'Take Curse', description: 'Gain a curse placeholder and 60 gold.', outcomeKey: 'curse' },
+      { label: 'Take Oopsie', description: 'Gain a silly drawback and 60 gold.', outcomeKey: 'oopsie' },
       { label: 'Leave', description: 'Back away from the mirror.', outcomeKey: 'leave' }
     ]
   },
   {
     id: 'lost-knight',
     title: 'Lost Knight',
-    description: 'A fading knight offers one last pact.',
+    description: 'A sleepy knight offers one last festival favor.',
     choices: [
       { label: 'Bind Wounds', description: 'Heal 5 HP.', outcomeKey: 'heal' },
       { label: 'Honor Duel', description: 'Gain 20 gold and brace for a harder path.', outcomeKey: 'gold' },

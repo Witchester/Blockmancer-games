@@ -2,29 +2,8 @@ export type RoomType = 'start' | 'fight' | 'event' | 'shop' | 'elite' | 'rest' |
 export type TetrominoType = 'I' | 'O' | 'T' | 'S' | 'Z' | 'J' | 'L';
 export type SpellId = 'fireball' | 'frost-lock' | 'bomb-rune' | 'void-cut';
 export type RunStatus = 'menu' | 'map' | 'battle' | 'reward' | 'game-over' | 'victory';
-export type RewardId =
-  | 'sharp-edges'
-  | 'mana-echo'
-  | 'goblin-coin'
-  | 'broken-hourglass'
-  | 'slime-core'
-  | 'stable-hands'
-  | 'fire-mastery'
-  | 'bomb-expert'
-  | 'combo-heart'
-  | 'arcane-preview'
-  | 'stonebreaker'
-  | 'emergency-barrier'
-  | 'gold-cache'
-  | 'healing-glyph';
-export type EnemyId =
-  | 'slime'
-  | 'goblin'
-  | 'stone-golem'
-  | 'bat'
-  | 'witch'
-  | 'elite-knight'
-  | 'falling-king';
+export type RewardId = string;
+export type EnemyId = string;
 export type EventId = 'shrine-of-gravity' | 'broken-anvil' | 'strange-mirror' | 'lost-knight';
 export type MapNodeStatus = 'locked' | 'available' | 'completed' | 'current';
 export type StatusEffectDurationType = 'turns' | 'piece_locks' | 'seconds' | 'battle' | 'permanent';
@@ -95,6 +74,7 @@ export interface BoardState {
   rows: number;
   activePieceType: TetrominoType | null;
   nextPieceType: TetrominoType | null;
+  holdPieceType: TetrominoType | null;
   topOut: boolean;
 }
 

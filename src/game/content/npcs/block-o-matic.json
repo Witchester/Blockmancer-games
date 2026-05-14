@@ -1,0 +1,11 @@
+{
+  "id": "npc_block_o_matic",
+  "name": "Block-O-Matic 3000",
+  "description": "Block-O-Matic 3000 keeps the festival dungeon cheerful.",
+  "role": "machine",
+  "dialogue": [
+    "Block-O-Matic 3000 says hello!",
+    "Keep those blocks falling in style."
+  ],
+  "enabled": true
+}

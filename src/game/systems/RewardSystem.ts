@@ -1,16 +1,54 @@
-import { REWARDS } from '../data/rewards';
 import type { RewardDefinition, RewardId, RunState, SpellId } from '../types/GameTypes';
 import { clamp } from '../utils/math';
 import { sampleSize } from '../utils/random';
+import { contentRegistry } from './ContentRegistry';
 import { RelicSystem } from './RelicSystem';
 import { UpgradeSystem } from './UpgradeSystem';
+
+type RewardContentEntry = {
+  id: string;
+  name: string;
+  description?: string;
+};
 
 export class RewardSystem {
   private readonly relicSystem = new RelicSystem();
   private readonly upgradeSystem = new UpgradeSystem();
 
   getRewardPool(): RewardDefinition[] {
-    return REWARDS.map((reward) => ({ ...reward }));
+    const upgrades = contentRegistry.listEnabled<RewardContentEntry>('upgrade').map((entry) => ({
+      id: entry.id,
+      name: entry.name,
+      type: 'Upgrade',
+      description: entry.description ?? 'A helpful upgrade.',
+      persistent: true
+    }));
+    const relics = contentRegistry.listEnabled<RewardContentEntry>('relic').map((entry) => ({
+      id: entry.id,
+      name: entry.name,
+      type: 'Relic',
+      description: entry.description ?? 'A helpful relic.',
+      persistent: true
+    }));
+
+    return [
+      ...upgrades,
+      ...relics,
+      {
+        id: 'gold-cache',
+        name: 'Gold Cache',
+        type: 'Gold',
+        description: 'Gain 40 gold immediately.',
+        persistent: false
+      },
+      {
+        id: 'healing-glyph',
+        name: 'Healing Glyph',
+        type: 'Heal',
+        description: 'Recover 8 HP immediately.',
+        persistent: false
+      }
+    ];
   }
 
   getRandomRewards(count = 3): RewardDefinition[] {

@@ -24,6 +24,17 @@ export const MANA_GAIN: Record<number, number> = {
 
 export const CASCADE_MANA_BONUS_MULTIPLIER = 0.5;
 
+export const FONT_FAMILY = [
+  '"VT323"',
+  '"CaskaydiaCove Nerd Font Mono"',
+  '"Cascadia Code"',
+  '"Cascadia Mono"',
+  '"JetBrains Mono"',
+  '"Fira Code"',
+  '"Courier New"',
+  'monospace'
+].join(', ');
+
 export const COLORS = {
   background: 0x090b13,
   panel: 0x12172b,

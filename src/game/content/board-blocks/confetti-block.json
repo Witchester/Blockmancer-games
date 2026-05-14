@@ -1,0 +1,18 @@
+{
+  "id": "block_confetti",
+  "name": "Confetti Block",
+  "blockType": "special",
+  "rarity": "rare",
+  "spriteKey": "block_confetti",
+  "color": "#ffd166",
+  "clearEffects": [
+    {
+      "type": "random_bonus",
+      "value": 1
+    }
+  ],
+  "tags": [
+    "special"
+  ],
+  "enabled": true
+}

@@ -1,0 +1,11 @@
+{
+  "id": "npc_professor_poplin",
+  "name": "Professor Poplin",
+  "description": "Professor Poplin keeps the festival dungeon cheerful.",
+  "role": "mentor",
+  "dialogue": [
+    "Professor Poplin says hello!",
+    "Keep those blocks falling in style."
+  ],
+  "enabled": true
+}

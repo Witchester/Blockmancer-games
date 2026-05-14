@@ -2,8 +2,8 @@ import Phaser from 'phaser';
 import { BlockmancerGame } from '../BlockmancerGame';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
-import { COLORS, MAX_EVENT_LOG } from '../utils/constants';
-import { isCompactLayout } from '../utils/layout';
+import { COLORS, FONT_FAMILY, MAX_EVENT_LOG } from '../utils/constants';
+import { getPortraitLayout, isCompactLayout } from '../utils/layout';
 
 export class ShopScene extends Phaser.Scene {
   constructor() {
@@ -13,44 +13,52 @@ export class ShopScene extends Phaser.Scene {
   create(): void {
     const game = this.game as BlockmancerGame;
     const compact = isCompactLayout(this);
+    const layout = getPortraitLayout(this);
     game.runState.runStatus = 'map';
     game.runState.currentRoomProgress = 'entered';
     this.cameras.main.setBackgroundColor(COLORS.background);
 
-    new Card(this, 640, 400, compact ? 1100 : 1040, 660, {
+    new Card(this, layout.centerX, layout.centerY, layout.contentWidth, layout.height - 96, {
       title: 'Dungeon Shop',
-      body: 'A crooked merchant offers immediate bargains and questionable remedies.',
       titleColor: '#ffca6b',
-      bodyFontSize: compact ? '20px' : '22px',
       strokeColor: COLORS.accent
     });
+    this.add.text(layout.centerX, 220, 'A snack merchant offers bright bargains and questionable remedies.', {
+      color: '#d8deff',
+      fontFamily: FONT_FAMILY,
+      fontSize: compact ? '18px' : '20px',
+      align: 'center',
+      wordWrap: { width: layout.contentWidth - 80 },
+      lineSpacing: 6
+    }).setOrigin(0.5);
 
-    this.createOption(compact, compact ? 280 : 300, 'Heal 8 HP', 'Cost: 30 gold', () => {
+    this.createOption(compact, 320, 'Heal 8 HP', 'Cost: 30 gold', () => {
       this.resolveShopAction(game.shopSystem.healForGold(game.runState));
     });
 
-    this.createOption(compact, compact ? 390 : 430, 'Buy Random Reward', 'Cost: 60 gold', () => {
+    this.createOption(compact, 452, 'Buy Random Reward', 'Cost: 60 gold', () => {
       this.resolveShopAction(game.shopSystem.buyRandomReward(game.runState));
     });
 
-    this.createOption(compact, compact ? 500 : 560, 'Remove Curse', 'Cost: 50 gold', () => {
+    this.createOption(compact, 584, 'Remove Oopsie', 'Cost: 50 gold', () => {
       this.resolveShopAction(game.shopSystem.removeCurse(game.runState));
     });
 
-    this.createOption(compact, compact ? 610 : 690, 'Leave', 'Keep your gold.', () => {
+    this.createOption(compact, 716, 'Leave', 'Keep your gold.', () => {
       this.resolveShopAction(game.shopSystem.leave());
     });
   }
 
   private createOption(compact: boolean, y: number, title: string, subtitle: string, action: () => void): void {
-    new Card(this, compact ? 600 : 640, y, compact ? 760 : 760, compact ? 84 : 90, {
+    const layout = getPortraitLayout(this);
+    new Card(this, layout.centerX - 64, y, layout.contentWidth - 180, 104, {
       title,
       body: subtitle,
       titleFontSize: compact ? '22px' : '26px',
       bodyFontSize: compact ? '16px' : '18px',
       strokeColor: COLORS.gold
     });
-    new Button(this, compact ? 1020 : 950, y, compact ? 132 : 140, 44, 'Select', action);
+    new Button(this, layout.width - 92, y, 116, 48, 'Select', action);
   }
 
   private exitToMap(): void {

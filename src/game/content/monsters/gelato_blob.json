@@ -1,0 +1,41 @@
+{
+  "id": "mon_gelato_blob",
+  "name": "Gelato Blob",
+  "description": "Gelato Blob joins the festival dungeon with cheerful trouble.",
+  "rarity": "uncommon",
+  "tier": 3,
+  "role": "basic",
+  "biome": "ice_cave",
+  "spriteKey": "placeholder_gelato_blob",
+  "stats": {
+    "hp": 56,
+    "attack": 4,
+    "armor": 1,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_guard",
+    "label": "Gelato Guard",
+    "description": "Gelato Blob prepares Gelato Guard."
+  },
+  "behaviors": [
+    "reduce_line_damage"
+  ],
+  "resistances": [],
+  "weaknesses": [],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 10,
+    "goldMax": 28,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "early_game"
+  ],
+  "enabled": true
+}

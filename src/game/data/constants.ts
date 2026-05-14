@@ -42,6 +42,7 @@ export function createDefaultBoardState(): BoardState {
     rows: BOARD_ROWS,
     activePieceType: null,
     nextPieceType: null,
+    holdPieceType: null,
     topOut: false
   };
 }
