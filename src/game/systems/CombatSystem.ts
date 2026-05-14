@@ -5,6 +5,19 @@ import { OopsieSystem } from './OopsieSystem';
 import { RelicSystem } from './RelicSystem';
 import { FeverSystem } from './FeverSystem';
 
+export type EnemyAttackResult = {
+  defeated: boolean;
+  hpDamage: number;
+  shieldBlocked: number;
+};
+
+export type CombatResolveResult = {
+  damage: number;
+  specialDamage: number;
+  feverGained: number;
+  feverTriggered: boolean;
+};
+
 export class CombatSystem {
   private readonly relicSystem = new RelicSystem();
   private readonly oopsieSystem = new OopsieSystem();
@@ -82,12 +95,12 @@ export class CombatSystem {
       blocksDropped: 0,
       specialBlocksTriggered: [],
       causedCombo: false
-    });
+    }).damage;
   }
 
   private firstLineClearMage = true;
 
-  resolveCascadeClear(cascade: CascadeResult): number {
+  resolveCascadeClear(cascade: CascadeResult): CombatResolveResult {
     const enemy = this.state.activeEnemy;
     if (!enemy || cascade.totalLinesCleared <= 0) {
       this.state.combo = 0;
@@ -98,7 +111,7 @@ export class CombatSystem {
         this.addEnemyShield(5);
         this.addLog('High Score Hydra banks a small shield when the combo drops.');
       }
-      return 0;
+      return { damage: 0, specialDamage: 0, feverGained: 0, feverTriggered: false };
     }
 
     this.state.combo += cascade.cascadeCount;
@@ -140,7 +153,7 @@ export class CombatSystem {
       this.addLog('Line Mage grants an initial burst of mana!');
     }
 
-    const specialMessages = this.applySpecialBlockEffects(cascade.specialBlocksTriggered);
+    const specialResult = this.applySpecialBlockEffects(cascade.specialBlocksTriggered);
 
     if (this.state.player.comboHeart && this.state.combo >= 3) {
       this.state.player.hp = clamp(this.state.player.hp + 1, 0, this.state.player.maxHp);
@@ -173,45 +186,61 @@ export class CombatSystem {
     this.addLog(
       `Cleared ${cascade.totalLinesCleared} line${cascade.totalLinesCleared > 1 ? 's' : ''} for ${damage} damage and mana gain.`
     );
-    specialMessages.forEach((message) => this.addLog(message));
+    specialResult.messages.forEach((message) => this.addLog(message));
 
-    return damage;
+    return {
+      damage: damage + specialResult.damage,
+      specialDamage: specialResult.damage,
+      feverGained: feverGain.gained,
+      feverTriggered: feverGain.triggered
+    };
   }
 
-  private applySpecialBlockEffects(triggered: string[]): string[] {
+  private applySpecialBlockEffects(triggered: string[]): { messages: string[]; damage: number } {
     const messages: string[] = [];
+    let totalDamage = 0;
     for (const trigger of triggered) {
-      const [, effectType] = trigger.split(':');
+      const [blockId, effectType, rawValue] = trigger.split(':');
+      const value = Number.isFinite(Number(rawValue)) ? Number(rawValue) : undefined;
       switch (effectType) {
         case 'gain_mana':
-          this.state.player.mana = clamp(this.state.player.mana + 5, 0, this.state.player.maxMana);
-          messages.push('Sprinkle block restores mana.');
+          this.state.player.mana = clamp(this.state.player.mana + (value ?? 5), 0, this.state.player.maxMana);
+          messages.push(`${this.getBlockName(blockId)} restores mana.`);
           break;
         case 'heal_player':
-          this.state.player.hp = clamp(this.state.player.hp + 1, 0, this.state.player.maxHp);
-          messages.push('Cupcake block restores 1 HP.');
+          this.state.player.hp = clamp(this.state.player.hp + (value ?? 1), 0, this.state.player.maxHp);
+          messages.push(`${this.getBlockName(blockId)} restores ${value ?? 1} HP.`);
           break;
+        case 'damage_enemy': {
+          const bonusDamage = value ?? 3;
+          this.damageEnemy(bonusDamage);
+          totalDamage += bonusDamage;
+          messages.push(`${this.getBlockName(blockId)} adds ${bonusDamage} bonus damage.`);
+          break;
+        }
         case 'boost_cascade':
           if (this.state.activeEnemy) {
-            this.state.activeEnemy.currentHp = Math.max(0, this.state.activeEnemy.currentHp - 3);
+            const bonusDamage = value ?? 3;
+            this.damageEnemy(bonusDamage);
+            totalDamage += bonusDamage;
           }
-          messages.push('Star block adds bonus sparkle damage.');
+          messages.push(`${this.getBlockName(blockId)} boosts cascade damage.`);
           break;
         case 'random_bonus':
-          this.state.player.gold += 3;
+          this.state.player.gold += value ?? 3;
           this.state.gold = this.state.player.gold;
-          messages.push('Confetti block drops 3 gold.');
+          messages.push(`${this.getBlockName(blockId)} drops ${value ?? 3} gold.`);
           break;
         case 'item_charge':
-          this.state.player.mana = clamp(this.state.player.mana + 3, 0, this.state.player.maxMana);
-          messages.push('Toolbox block charges your pack.');
+          this.state.player.mana = clamp(this.state.player.mana + (value ?? 3), 0, this.state.player.maxMana);
+          messages.push(`${this.getBlockName(blockId)} charges your pack.`);
           break;
         default:
           break;
       }
     }
 
-    return messages;
+    return { messages, damage: totalDamage };
   }
 
   countDownEnemyAttack(): boolean {
@@ -269,7 +298,12 @@ export class CombatSystem {
   }
 
   applyEnemyDamage(amount: number): boolean {
+    return this.applyEnemyAttack(amount).defeated;
+  }
+
+  applyEnemyAttack(amount: number): EnemyAttackResult {
     const player = this.state.player;
+    const hpBefore = player.hp;
     const blocked = Math.min(player.shield, amount);
     player.shield -= blocked;
     const remainingDamage = amount - blocked;
@@ -285,14 +319,17 @@ export class CombatSystem {
       player.emergencyBarrierUsed = true;
       player.hp = 1;
       this.addLog('Emergency Barrier prevents lethal damage.');
-      return false;
+      return { defeated: false, hpDamage: Math.max(0, hpBefore - 1), shieldBlocked: blocked };
     }
 
+    let hpDamage = 0;
     if (remainingDamage > 0) {
       player.hp = Math.max(0, player.hp - remainingDamage);
+      hpDamage = remainingDamage;
+      this.state.runStats.damageTaken += remainingDamage;
       this.relicSystem.applyOnDamageTaken(this.state).forEach((message) => this.addLog(message));
     }
-    return player.hp <= 0;
+    return { defeated: player.hp <= 0, hpDamage, shieldBlocked: blocked };
   }
 
   private damageEnemy(amount: number): void {
@@ -307,6 +344,11 @@ export class CombatSystem {
     if (blocked > 0) {
       this.addLog(`${enemy.name}'s shield blocks ${blocked} damage.`);
     }
+  }
+
+  private getBlockName(blockId: string): string {
+    const parts = blockId.split('_').filter(Boolean);
+    return parts.length ? parts.map((part) => part[0].toUpperCase() + part.slice(1)).join(' ') : 'Special block';
   }
 
 }

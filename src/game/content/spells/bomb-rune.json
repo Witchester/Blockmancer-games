@@ -6,7 +6,7 @@
   "description": "A burst of colorful confetti that clears the board and surprises foes.",
   "iconKey": "icon_confetti_bomb",
   "cost": {
-    "mana": 50,
+    "mana": 48,
     "hp": 0,
     "gold": 0
   },

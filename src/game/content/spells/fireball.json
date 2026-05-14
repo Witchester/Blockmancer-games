@@ -6,7 +6,7 @@
   "description": "A cheerful blaze of festival sprinkles that pops into a direct hit.",
   "iconKey": "icon_sprinkle_spark",
   "cost": {
-    "mana": 30,
+    "mana": 28,
     "hp": 0,
     "gold": 0
   },

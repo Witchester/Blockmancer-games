@@ -2,23 +2,23 @@
   "id": "scale_default_run",
   "name": "Default Run",
   "stageRules": {
-    "maxStage": 10,
-    "bossStage": 10,
-    "eliteStageInterval": 3
+    "maxStage": 6,
+    "bossStage": 6,
+    "eliteStageInterval": 2
   },
   "enemyScaling": {
-    "hpPerStage": 8,
-    "attackPerStage": 0.5,
+    "hpPerStage": 6,
+    "attackPerStage": 0.35,
     "armorPerStage": 0
   },
   "boardScaling": {
-    "fallSpeedPerStage": 0.05,
-    "maxFallSpeed": 2,
-    "junkChancePerStage": 0.03
+    "fallSpeedPerStage": 0.035,
+    "maxFallSpeed": 1.85,
+    "junkChancePerStage": 0.02
   },
   "rewardScaling": {
-    "goldPerStage": 5,
-    "rareChancePerStage": 0.02
+    "goldPerStage": 7,
+    "rareChancePerStage": 0.025
   },
   "enabled": true
 }

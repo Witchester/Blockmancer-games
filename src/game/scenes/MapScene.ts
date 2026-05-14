@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { BlockmancerGame } from '../BlockmancerGame';
+import { contentRegistry } from '../systems/ContentRegistry';
 import type { MapNodeDefinition, RoomType } from '../types/GameTypes';
 import { Button } from '../ui/Button';
 import { COLORS, FONT_FAMILY, MAX_EVENT_LOG } from '../utils/constants';
@@ -16,11 +17,32 @@ export class MapScene extends Phaser.Scene {
 
   create(): void {
     this.gameState.runState.runStatus = 'map';
+    const stageStoryId = this.gameState.stageSystem.getStageStoryId(this.gameState.runState.stage);
+    if (stageStoryId && !this.gameState.storySystem.hasSeen(stageStoryId)) {
+      const beat = this.gameState.storySystem.getStageIntro(stageStoryId);
+      if (beat) {
+        this.scene.start('StoryScene', {
+          beat,
+          beatId: stageStoryId,
+          returnScene: 'MapScene'
+        });
+        return;
+      }
+    }
+
     const layout = getPortraitLayout(this);
     const { width, height, centerX, contentWidth, margin } = layout;
 
     this.cameras.main.setBackgroundColor(COLORS.background);
-    this.add.rectangle(centerX, height / 2, width, height, COLORS.background, 1);
+    const background = this.gameState.assetSystem.addImage(
+      this,
+      centerX,
+      height / 2,
+      this.gameState.stageSystem.getStageBackgroundKey(this.gameState.runState.stage),
+      'background'
+    );
+    background.setDisplaySize(width, height).setAlpha(0.16);
+    this.add.rectangle(centerX, height / 2, width, height, COLORS.background, 0.72);
     this.add.rectangle(centerX, 384, contentWidth, 620, COLORS.panel, 0.95).setStrokeStyle(2, COLORS.accent, 0.35);
     this.add.rectangle(centerX, height - 260, contentWidth, 456, COLORS.panel, 0.92).setStrokeStyle(2, COLORS.accentSoft, 0.35);
 
@@ -41,8 +63,8 @@ export class MapScene extends Phaser.Scene {
     this.infoText = this.add.text(margin + 16, height - 472, '', {
       color: '#d8deff',
       fontFamily: FONT_FAMILY,
-      fontSize: '16px',
-      lineSpacing: 5,
+      fontSize: '18px',
+      lineSpacing: 7,
       wordWrap: { width: contentWidth - 32 }
     });
 
@@ -103,7 +125,7 @@ export class MapScene extends Phaser.Scene {
     this.availableRoomsLayer.add(this.add.text(margin + 16, startY + 30, 'Tap an available room.', {
       color: '#98a0c7',
       fontFamily: FONT_FAMILY,
-      fontSize: '16px',
+      fontSize: '18px',
       wordWrap: { width: contentWidth - 32 }
     }));
 
@@ -121,9 +143,9 @@ export class MapScene extends Phaser.Scene {
       const button = new Button(
         this,
         width / 2,
-        startY + 66 + index * 50,
+        startY + 76 + index * 62,
         contentWidth - 48,
-        42,
+        54,
         `${node.label} (${node.roomType})`,
         () => this.handleNodeClick(node)
       );
@@ -174,15 +196,17 @@ export class MapScene extends Phaser.Scene {
       const stroke = isAvailable ? COLORS.gold : 0x616a93;
 
       const circle = this.add.circle(positionX, positionY, 32, fill, 1).setStrokeStyle(3, stroke, 0.8);
+      const iconKey = (contentRegistry.getMapNode(`node_${node.roomType}`) as { iconKey?: string } | null)?.iconKey;
+      const icon = this.gameState.assetSystem.addImage(this, positionX, positionY, iconKey, 'icon').setDisplaySize(30, 30);
       const label = this.add.text(positionX, positionY - 2, node.icon, {
         color: '#0b0d16',
         fontFamily: FONT_FAMILY,
         fontSize: '26px'
-      }).setOrigin(0.5);
+      }).setOrigin(0.5).setAlpha(iconKey ? 0 : 1);
       const title = this.add.text(positionX, positionY + 48, node.label, {
         color: '#f6f7ff',
         fontFamily: FONT_FAMILY,
-        fontSize: '14px',
+        fontSize: '16px',
         align: 'center',
         wordWrap: { width: 88 }
       }).setOrigin(0.5);
@@ -192,7 +216,7 @@ export class MapScene extends Phaser.Scene {
         title.setColor('#ffca6b');
       }
 
-      this.mapLayer.add([circle, label, title]);
+      this.mapLayer.add([circle, icon, label, title]);
     }
   }
 

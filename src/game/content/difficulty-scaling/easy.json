@@ -3,17 +3,17 @@
   "name": "Easy Mode",
   "mode": "easy",
   "stageRules": {
-    "maxStage": 10,
-    "bossStage": 10,
+    "maxStage": 6,
+    "bossStage": 6,
     "eliteStageInterval": 4
   },
   "enemyScaling": {
-    "hpPerStage": 5,
-    "attackPerStage": 0.25,
+    "hpPerStage": 4,
+    "attackPerStage": 0.2,
     "armorPerStage": 0
   },
   "boardScaling": {
-    "fallSpeedPerStage": 0.03,
+    "fallSpeedPerStage": 0.025,
     "maxFallSpeed": 1.6,
     "junkChancePerStage": 0.02
   },

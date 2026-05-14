@@ -6,7 +6,7 @@
   "description": "Cuts a bright rainbow path through the board and dazzles your foe.",
   "iconKey": "icon_rainbow_slice",
   "cost": {
-    "mana": 70,
+    "mana": 62,
     "hp": 0,
     "gold": 0
   },

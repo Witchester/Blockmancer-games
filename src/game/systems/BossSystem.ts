@@ -83,7 +83,7 @@ export class BossSystem {
     enemy.behaviors = [...config.phase2Behaviors];
     enemy.behavior = enemy.behaviors[0] ?? enemy.behavior;
     enemy.behaviorIndex = 0;
-    enemy.shield += 8;
+    enemy.shield += 6;
     enemy.attackCounter = Math.max(1, Math.min(enemy.attackCounter, enemy.attackIntervalLocks - 1));
     return config.phase2;
   }

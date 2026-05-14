@@ -6,7 +6,7 @@
   "description": "A chilly rune that slows the board so the player can keep the festival flow.",
   "iconKey": "icon_frost_lock",
   "cost": {
-    "mana": 40,
+    "mana": 34,
     "hp": 0,
     "gold": 0
   },

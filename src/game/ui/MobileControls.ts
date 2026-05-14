@@ -10,6 +10,9 @@ export type MobileControlsButtonConfig = {
   repeat?: boolean;
   repeatDelayMs?: number;
   repeatIntervalMs?: number;
+  iconKey?: string | null;
+  disabled?: boolean;
+  onCreate?: (button: Button) => void;
 };
 
 export type MobileControlsOptions = {
@@ -75,8 +78,11 @@ export class MobileControls extends Phaser.GameObjects.Container {
           buttonWidth,
           buttonHeight,
           buttonConfig.label,
-          buttonConfig.onPress
+          buttonConfig.onPress,
+          { iconKey: buttonConfig.iconKey }
         );
+        button.setDisabled(Boolean(buttonConfig.disabled));
+        buttonConfig.onCreate?.(button);
         if (buttonConfig.repeat) {
           let repeatTimer: Phaser.Time.TimerEvent | null = null;
           const stopRepeat = () => {

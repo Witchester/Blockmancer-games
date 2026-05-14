@@ -1,31 +1,9 @@
-export type GameSettings = {
-  masterVolume: number;
-  sfxVolume: number;
-  musicVolume: number;
-  vibration: boolean;
-  screenShake: boolean;
-  reducedFlashing: boolean;
-  colorblindSymbols: boolean;
-  textSpeed: 'slow' | 'normal' | 'fast';
-  leftHandedControls: boolean;
-  buttonSize: 'normal' | 'large';
-  showGrid: boolean;
-};
+import { DEFAULT_SETTINGS, type GameSettings } from '../types/SettingsTypes';
+
+export type { GameSettings };
 
 export class SettingsSystem {
-  readonly defaults: GameSettings = {
-    masterVolume: 1,
-    sfxVolume: 1,
-    musicVolume: 0.8,
-    vibration: true,
-    screenShake: true,
-    reducedFlashing: false,
-    colorblindSymbols: false,
-    textSpeed: 'normal',
-    leftHandedControls: false,
-    buttonSize: 'normal',
-    showGrid: true
-  };
+  readonly defaults: GameSettings = DEFAULT_SETTINGS;
 
   load(storage = globalThis.localStorage): GameSettings {
     const raw = storage?.getItem('blockmancer:settings');

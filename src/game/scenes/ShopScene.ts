@@ -26,7 +26,7 @@ export class ShopScene extends Phaser.Scene {
     this.add.text(layout.centerX, 220, 'A snack merchant offers bright bargains and questionable remedies.', {
       color: '#d8deff',
       fontFamily: FONT_FAMILY,
-      fontSize: compact ? '18px' : '20px',
+      fontSize: compact ? '20px' : '22px',
       align: 'center',
       wordWrap: { width: layout.contentWidth - 80 },
       lineSpacing: 6
@@ -35,7 +35,7 @@ export class ShopScene extends Phaser.Scene {
     this.add.text(layout.centerX, 270, `Gold ${game.runState.player.gold}   HP ${game.runState.player.hp}/${game.runState.player.maxHp}   Bag ${game.runState.inventory.length}/${game.runState.player.inventoryCapacity}   Oopsies ${game.runState.player.oopsies.length}`, {
       color: '#ffca6b',
       fontFamily: FONT_FAMILY,
-      fontSize: compact ? '18px' : '20px',
+      fontSize: compact ? '20px' : '22px',
       align: 'center'
     }).setOrigin(0.5);
 
@@ -65,11 +65,11 @@ export class ShopScene extends Phaser.Scene {
     new Card(this, layout.centerX - 64, y, layout.contentWidth - 180, 104, {
       title,
       body: subtitle,
-      titleFontSize: compact ? '22px' : '26px',
-      bodyFontSize: compact ? '16px' : '18px',
+      titleFontSize: compact ? '24px' : '26px',
+      bodyFontSize: compact ? '18px' : '20px',
       strokeColor: COLORS.gold
     });
-    new Button(this, layout.width - 92, y, 116, 48, 'Select', action);
+    new Button(this, layout.width - 92, y, 116, 56, 'Select', action);
   }
 
   private exitToMap(): void {
@@ -82,13 +82,17 @@ export class ShopScene extends Phaser.Scene {
   }
 
   private resolveShopAction(resolution: { transition: 'stay' | 'map'; messages: string[] }): void {
+    const game = this.game as BlockmancerGame;
     resolution.messages.forEach((message) => this.log(message));
+    if (resolution.transition === 'stay') {
+      game.audioSystem.play('shop_purchase', this);
+    }
     if (resolution.transition === 'map') {
       this.exitToMap();
       return;
     }
 
-    (this.game as BlockmancerGame).saveRun();
+    game.saveRun();
     this.scene.restart();
   }
 

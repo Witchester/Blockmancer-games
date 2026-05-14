@@ -6,20 +6,21 @@ export const CELL_SIZE = 24;
 export const BOARD_OFFSET_X = 36;
 export const BOARD_OFFSET_Y = 118;
 export const MAX_EVENT_LOG = 8;
-export const BASE_DROP_MS = 900;
-export const MAX_FALL_SPEED = 2.0;
+export const BASE_DROP_MS = 940;
+export const MAX_FALL_SPEED = 1.85;
+export const POST_BATTLE_FALL_SPEED_STEP = 0.035;
 export const LINE_CLEAR_BONUS: Record<number, number> = {
   1: 0,
-  2: 8,
-  3: 18,
-  4: 35
+  2: 9,
+  3: 21,
+  4: 40
 };
 
 export const MANA_GAIN: Record<number, number> = {
-  1: 10,
-  2: 25,
-  3: 45,
-  4: 70
+  1: 12,
+  2: 28,
+  3: 50,
+  4: 76
 };
 
 export const CASCADE_MANA_BONUS_MULTIPLIER = 0.5;

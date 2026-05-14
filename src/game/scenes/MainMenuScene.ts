@@ -41,6 +41,16 @@ export class MainMenuScene extends Phaser.Scene {
     }).setOrigin(0.5);
 
     new Button(this, centerX, 310, 280, 62, 'Start Game', () => {
+      const nextScene = !game.tutorialSystem.isComplete(game.metaSystem.state) ? 'TutorialScene' : 'HeroSelectScene';
+      if (!game.storySystem.hasSeen('opening')) {
+        this.scene.start('StoryScene', {
+          beat: game.storySystem.getOpening(),
+          beatId: 'opening',
+          returnScene: nextScene
+        });
+        return;
+      }
+
       if (!game.tutorialSystem.isComplete(game.metaSystem.state)) {
         this.scene.start('TutorialScene');
         return;
@@ -65,6 +75,16 @@ export class MainMenuScene extends Phaser.Scene {
     new Button(this, centerX, 548, 280, 58, 'Help', () => {
       this.scene.start('HelpScene');
     });
+
+    new Button(this, centerX, 620, 280, 58, 'Settings', () => {
+      this.scene.start('SettingsScene');
+    });
+
+    if (import.meta.env.DEV) {
+      new Button(this, centerX, 694, 280, 52, 'QA Debug', () => {
+        this.scene.start('DebugScene');
+      });
+    }
 
     this.add.text(centerX, height - 42, 'Built with Vite, TypeScript, Phaser 3, and Capacitor.', {
       color: '#98a0c7',

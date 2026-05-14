@@ -1,22 +1,16 @@
-import type { BoardTickResult, CascadeResult, PieceState, RunState, TetrominoType } from '../types/GameTypes';
+import type {
+  BoardBlockCell,
+  BoardCell,
+  BoardTickResult,
+  CascadeResult,
+  PieceState,
+  RunState,
+  TetrominoType
+} from '../types/GameTypes';
 import { BOARD_COLS, BOARD_ROWS, TETROMINO_COLORS, TETROMINO_SHAPES } from '../utils/constants';
 import { choice, randInt } from '../utils/random';
 import { contentRegistry } from './ContentRegistry';
 import { OopsieSystem } from './OopsieSystem';
-
-type BoardBlockClearEffect = {
-  type: string;
-  value?: number;
-};
-
-type BoardBlockCell = {
-  color: number;
-  blockId: string;
-  blockType: 'normal' | 'special' | 'heavy' | 'hazard';
-  clearEffects: BoardBlockClearEffect[];
-};
-
-type BoardCell = number | BoardBlockCell;
 
 const PIECE_TYPES: TetrominoType[] = ['I', 'O', 'T', 'S', 'Z', 'J', 'L'];
 const SPECIAL_BLOCK_IDS = [
@@ -38,14 +32,16 @@ export class BoardSystem {
   currentPiece: PieceState | null;
   nextPieceType: TetrominoType;
   holdPieceType: TetrominoType | null = null;
-  private holdUsedThisPiece = false;
+  holdUsedThisPiece = false;
+  private readonly completedLineBuffer: number[] = [];
+  private readonly filledCellBuffer: Array<[number, number]> = [];
   private readonly oopsieSystem = new OopsieSystem();
 
   constructor(private readonly state?: RunState) {
     this.grid = this.createEmptyGrid();
     this.currentPiece = null;
     this.nextPieceType = this.rollPieceType();
-    this.reset();
+    this.restoreFromState();
   }
 
   reset(): void {
@@ -78,6 +74,29 @@ export class BoardSystem {
 
   private cloneGrid(matrix: BoardCell[][]): BoardCell[][] {
     return matrix.map((row) => row.map((cell) => this.cloneCell(cell)));
+  }
+
+  private restoreFromState(): void {
+    const board = this.state?.board;
+    if (!board?.grid?.length) {
+      this.reset();
+      return;
+    }
+
+    this.grid = this.cloneGrid(board.grid);
+    this.currentPiece = board.currentPiece
+      ? {
+          ...board.currentPiece,
+          matrix: this.cloneMatrix(board.currentPiece.matrix)
+        }
+      : null;
+    this.nextPieceType = board.nextPieceType ?? this.rollPieceType();
+    this.holdPieceType = board.holdPieceType ?? null;
+    this.holdUsedThisPiece = board.holdUsedThisPiece;
+
+    if (!this.currentPiece && !this.spawnPiece()) {
+      this.currentPiece = this.makePiece(this.nextPieceType);
+    }
   }
 
   private createBoardBlockCell(blockId: string): BoardBlockCell {
@@ -274,72 +293,66 @@ export class BoardSystem {
     };
   }
 
-  private detectCompletedLines(): number[] {
-    const completedLines: number[] = [];
+  private detectCompletedLines(out: number[]): void {
+    out.length = 0;
 
     for (let rowIndex = 0; rowIndex < BOARD_ROWS; rowIndex += 1) {
-      if (this.grid[rowIndex].every((cell) => cell !== 0)) {
-        completedLines.push(rowIndex);
+      let complete = true;
+      for (let columnIndex = 0; columnIndex < BOARD_COLS; columnIndex += 1) {
+        if (this.grid[rowIndex][columnIndex] === 0) {
+          complete = false;
+          break;
+        }
+      }
+
+      if (complete) {
+        out.push(rowIndex);
       }
     }
-
-    return completedLines;
   }
 
-  private removeCompletedLines(rowIndices: number[]): string[] {
-    const triggered: string[] = [];
-
+  private removeCompletedLines(rowIndices: number[], triggered: string[]): void {
     for (const rowIndex of rowIndices) {
       for (let columnIndex = 0; columnIndex < BOARD_COLS; columnIndex += 1) {
         const cellValue = this.grid[rowIndex][columnIndex];
         if (cellValue !== 0) {
-          triggered.push(...this.handleSpecialBlockClear(rowIndex, columnIndex, cellValue));
+          this.handleSpecialBlockClear(rowIndex, columnIndex, cellValue, triggered);
           this.grid[rowIndex][columnIndex] = 0;
         }
       }
     }
-
-    return triggered;
   }
 
   private applyCascadeGravity(): number {
     let blocksDropped = 0;
 
     for (let columnIndex = 0; columnIndex < BOARD_COLS; columnIndex += 1) {
-      const columnCells: Array<{ row: number; value: BoardCell }> = [];
-
+      let targetRow = BOARD_ROWS - 1;
       for (let rowIndex = BOARD_ROWS - 1; rowIndex >= 0; rowIndex -= 1) {
         const value = this.grid[rowIndex][columnIndex];
         if (value !== 0) {
-          columnCells.push({ row: rowIndex, value });
+          if (rowIndex !== targetRow) {
+            this.grid[targetRow][columnIndex] = this.cloneCell(value);
+            this.grid[rowIndex][columnIndex] = 0;
+            blocksDropped += targetRow - rowIndex;
+          }
+          targetRow -= 1;
         }
-      }
-
-      let targetRow = BOARD_ROWS - 1;
-      for (const cell of columnCells) {
-        if (cell.row !== targetRow) {
-          blocksDropped += targetRow - cell.row;
-        }
-        this.grid[targetRow][columnIndex] = this.cloneCell(cell.value);
-        targetRow -= 1;
-      }
-
-      for (let rowIndex = targetRow; rowIndex >= 0; rowIndex -= 1) {
-        this.grid[rowIndex][columnIndex] = 0;
       }
     }
 
     return blocksDropped;
   }
 
-  private handleSpecialBlockClear(row: number, column: number, cellValue: BoardCell): string[] {
+  private handleSpecialBlockClear(row: number, column: number, cellValue: BoardCell, triggered: string[]): void {
     if (!this.isBoardBlock(cellValue)) {
-      return [];
+      return;
     }
 
-    const triggered: string[] = [cellValue.blockId];
+    triggered.push(cellValue.blockId);
     for (const effect of cellValue.clearEffects) {
-      triggered.push(`${cellValue.blockId}:${effect.type}`);
+      const valueSuffix = typeof effect.value === 'number' ? `:${effect.value}` : '';
+      triggered.push(`${cellValue.blockId}:${effect.type}${valueSuffix}`);
       switch (effect.type) {
         case 'clear_board_area':
           this.clearArea(row, column, effect.value ?? 1);
@@ -357,8 +370,6 @@ export class BoardSystem {
           break;
       }
     }
-
-    return [...new Set(triggered)];
   }
 
   private clearLinesCascade(): CascadeResult {
@@ -371,16 +382,17 @@ export class BoardSystem {
       causedCombo: false
     };
 
-    let completedLines = this.detectCompletedLines();
+    const completedLines = this.completedLineBuffer;
+    this.detectCompletedLines(completedLines);
     while (completedLines.length > 0) {
       result.cascadeCount += 1;
       result.clearedLinesPerCascade.push(completedLines.length);
       result.totalLinesCleared += completedLines.length;
 
-      result.specialBlocksTriggered.push(...this.removeCompletedLines(completedLines));
+      this.removeCompletedLines(completedLines, result.specialBlocksTriggered);
       result.blocksDropped += this.applyCascadeGravity();
 
-      completedLines = this.detectCompletedLines();
+      this.detectCompletedLines(completedLines);
     }
 
     result.causedCombo = result.cascadeCount > 1;
@@ -457,7 +469,12 @@ export class BoardSystem {
     let bestRow = -1;
     let bestCount = 0;
     for (let rowIndex = 0; rowIndex < BOARD_ROWS; rowIndex += 1) {
-      const count = this.grid[rowIndex].filter((cell) => cell !== 0).length;
+      let count = 0;
+      for (let columnIndex = 0; columnIndex < BOARD_COLS; columnIndex += 1) {
+        if (this.grid[rowIndex][columnIndex] !== 0) {
+          count += 1;
+        }
+      }
       if (count > bestCount) {
         bestCount = count;
         bestRow = rowIndex;
@@ -468,9 +485,10 @@ export class BoardSystem {
       return 0;
     }
 
-    const cleared = this.grid[bestRow].filter((cell) => cell !== 0).length;
-    this.grid[bestRow] = Array.from({ length: BOARD_COLS }, () => 0);
-    return cleared;
+    for (let columnIndex = 0; columnIndex < BOARD_COLS; columnIndex += 1) {
+      this.grid[bestRow][columnIndex] = 0;
+    }
+    return bestCount;
   }
 
   getGhostPreviewTypes(): TetrominoType[] {
@@ -514,7 +532,8 @@ export class BoardSystem {
   }
 
   private collectFilledCells(): Array<[number, number]> {
-    const cells: Array<[number, number]> = [];
+    const cells = this.filledCellBuffer;
+    cells.length = 0;
     for (let rowIndex = 0; rowIndex < BOARD_ROWS; rowIndex += 1) {
       for (let columnIndex = 0; columnIndex < BOARD_COLS; columnIndex += 1) {
         if (this.grid[rowIndex][columnIndex] !== 0) {
@@ -545,4 +564,5 @@ export class BoardSystem {
 
     return added;
   }
+
 }

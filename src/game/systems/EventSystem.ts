@@ -1,4 +1,5 @@
 import type { RewardId, RunState, SpellId } from '../types/GameTypes';
+import { MAX_FALL_SPEED } from '../utils/constants';
 import { clamp } from '../utils/math';
 import { choice } from '../utils/random';
 import { contentRegistry } from './ContentRegistry';
@@ -318,7 +319,7 @@ export class EventSystem {
         state.fallSpeed = Math.max(0.7, state.fallSpeed - value);
         return [`${eventEntry.name} steadies the falling blocks.`];
       case 'increase_fall_speed':
-        state.fallSpeed = Math.min(2, state.fallSpeed + value);
+        state.fallSpeed = Math.min(MAX_FALL_SPEED, state.fallSpeed + value);
         return [`${eventEntry.name} makes the blocks a little bouncier.`];
       default:
         return [`${eventEntry.name} sparkles, but nothing major changes.`];

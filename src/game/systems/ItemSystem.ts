@@ -7,6 +7,7 @@ import type { CombatSystem } from './CombatSystem';
 type ItemEntry = {
   id: string;
   name: string;
+  iconKey?: string;
   effect?: {
     type?: string;
     mana?: number;

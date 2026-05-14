@@ -1,9 +1,16 @@
 import type { MetaState } from '../types/MetaTypes';
+import type { RunState } from '../types/GameTypes';
+import { DEFAULT_SETTINGS } from '../types/SettingsTypes';
+import { CURRENT_SAVE_VERSION } from './SaveSystem';
 import { SaveSystem } from './SaveSystem';
 
 const DEFAULT_META_STATE: MetaState = {
+  saveVersion: CURRENT_SAVE_VERSION,
   unlockedHeroes: [],
   totalGoldCollected: 0,
+  totalCascades: 0,
+  bossesDefeated: [],
+  endingsUnlocked: [],
   stage1BossDefeated: false,
   stage2BossDefeated: false,
   normalEndingFinished: false,
@@ -11,7 +18,8 @@ const DEFAULT_META_STATE: MetaState = {
   slimesBefriended: 0,
   roomsClearedWithoutDamage: 0,
   tutorialCompleted: false,
-  tutorialLessonIndex: 0
+  tutorialLessonIndex: 0,
+  settings: DEFAULT_SETTINGS
 };
 
 export class MetaSystem {
@@ -19,7 +27,17 @@ export class MetaSystem {
   
   constructor(private readonly saveSystem: SaveSystem) {
     const loaded = this.saveSystem.loadMeta();
-    this.meta = { ...DEFAULT_META_STATE, ...(loaded || {}) };
+    this.meta = {
+      ...DEFAULT_META_STATE,
+      ...(loaded || {}),
+      settings: {
+        ...DEFAULT_META_STATE.settings,
+        ...(loaded?.settings || {})
+      },
+      unlockedHeroes: loaded?.unlockedHeroes ? [...loaded.unlockedHeroes] : [],
+      bossesDefeated: loaded?.bossesDefeated ? [...loaded.bossesDefeated] : [],
+      endingsUnlocked: loaded?.endingsUnlocked ? [...loaded.endingsUnlocked] : []
+    };
     
     // Ensure milo is always unlocked
     if (!this.meta.unlockedHeroes.includes('hero_milo_blockmancer')) {
@@ -47,6 +65,46 @@ export class MetaSystem {
     }
   }
 
+  recordBossDefeated(bossId: string, stage: number): void {
+    if (!this.meta.bossesDefeated.includes(bossId)) {
+      this.meta.bossesDefeated.push(bossId);
+    }
+    if (stage === 1) {
+      this.meta.stage1BossDefeated = true;
+    }
+    if (stage === 2) {
+      this.meta.stage2BossDefeated = true;
+    }
+    this.checkUnlockConditions();
+    this.save();
+  }
+
+  recordRunEnd(runState: RunState, victory: boolean): void {
+    this.meta.totalGoldCollected += Math.max(0, runState.player.totalGoldCollected);
+    this.meta.totalCascades += Math.max(0, runState.runStats.cascadesTriggered);
+    this.meta.totalCascadeCombos = this.meta.totalCascades;
+    for (const bossId of runState.runStats.bossesDefeated) {
+      if (!this.meta.bossesDefeated.includes(bossId)) {
+        this.meta.bossesDefeated.push(bossId);
+      }
+    }
+    if (victory) {
+      this.meta.normalEndingFinished = true;
+      if (!this.meta.endingsUnlocked.includes('normal')) {
+        this.meta.endingsUnlocked.push('normal');
+      }
+    }
+    this.checkUnlockConditions();
+    this.save();
+  }
+
+  unlockTrueEnding(): void {
+    if (!this.meta.endingsUnlocked.includes('true')) {
+      this.meta.endingsUnlocked.push('true');
+    }
+    this.save();
+  }
+
   // Hook helpers to check unlock conditions dynamically
   checkUnlockConditions(): void {
     let changed = false;
@@ -59,7 +117,7 @@ export class MetaSystem {
       this.meta.unlockedHeroes.push('hero_lumi_star_witch');
       changed = true;
     }
-    if (!this.isHeroUnlocked('hero_nixie_frostbinder') && this.meta.roomsClearedWithoutDamage >= 3) {
+    if (!this.isHeroUnlocked('hero_nixie_frostbinder') && this.meta.totalCascades >= 6) {
       this.meta.unlockedHeroes.push('hero_nixie_frostbinder');
       changed = true;
     }
@@ -75,7 +133,7 @@ export class MetaSystem {
       this.meta.unlockedHeroes.push('hero_poplin_professor');
       changed = true;
     }
-    if (!this.isHeroUnlocked('hero_bloop_slime_friend') && this.meta.slimesBefriended >= 20) {
+    if (!this.isHeroUnlocked('hero_bloop_slime_friend') && this.meta.bossesDefeated.length >= 4) {
       this.meta.unlockedHeroes.push('hero_bloop_slime_friend');
       changed = true;
     }

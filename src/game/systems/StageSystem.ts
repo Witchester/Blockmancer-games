@@ -5,6 +5,7 @@ export type StageEntry = {
   name: string;
   description: string;
   theme: string;
+  backgroundKey?: string;
   monsterPool: string[];
   bossId: string;
   lootTableId: string;
@@ -37,6 +38,15 @@ export class StageSystem {
 
   isFinalStage(index: number): boolean {
     return index >= this.getStageCount();
+  }
+
+  getStageBackgroundKey(index: number): string {
+    const stage = this.getStageByIndex(index);
+    return stage?.backgroundKey ?? (stage?.theme ? `bg_${stage.theme}` : 'asset_missing_background');
+  }
+
+  getStageStoryId(index: number): string | null {
+    return this.getStageByIndex(index)?.id ?? null;
   }
 
   private getStageOrder(stageId: string): number {

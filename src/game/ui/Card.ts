@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { BlockmancerGame } from '../BlockmancerGame';
 import { COLORS, FONT_FAMILY } from '../utils/constants';
 
 type TextAlign = 'left' | 'center' | 'right';
@@ -18,6 +19,9 @@ export type CardOptions = {
   fillColor?: number;
   fillAlpha?: number;
   padding?: number;
+  imageKey?: string | null;
+  imageKind?: 'sprite' | 'icon' | 'background' | 'ui';
+  imageSize?: number;
 };
 
 export class Card extends Phaser.GameObjects.Container {
@@ -28,6 +32,7 @@ export class Card extends Phaser.GameObjects.Container {
   private readonly titleText?: Phaser.GameObjects.Text;
   private readonly subtitleText?: Phaser.GameObjects.Text;
   private readonly bodyText?: Phaser.GameObjects.Text;
+  private readonly image?: Phaser.GameObjects.Image;
 
   constructor(
     scene: Phaser.Scene,
@@ -49,6 +54,14 @@ export class Card extends Phaser.GameObjects.Container {
       .setStrokeStyle(2, options.strokeColor ?? COLORS.accent, 0.25);
 
     this.add(this.background);
+
+    if (options.imageKey) {
+      const size = options.imageSize ?? 96;
+      this.image = (scene.game as BlockmancerGame).assetSystem
+        .addImage(scene, 0, 0, options.imageKey, options.imageKind ?? 'sprite')
+        .setDisplaySize(size, size);
+      this.add(this.image);
+    }
 
     if (options.title) {
       this.titleText = scene.add.text(0, 0, options.title, {
@@ -110,6 +123,12 @@ export class Card extends Phaser.GameObjects.Container {
     if (this.titleText) {
       this.titleText.setPosition(0, top);
       top += this.titleText.height + 12;
+    }
+
+    if (this.image) {
+      const imageSize = this.image.displayHeight;
+      this.image.setPosition(0, top + imageSize / 2);
+      top += imageSize + 14;
     }
 
     if (this.subtitleText) {

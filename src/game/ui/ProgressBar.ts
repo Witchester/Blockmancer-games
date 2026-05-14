@@ -22,7 +22,7 @@ export class ProgressBar extends Phaser.GameObjects.Container {
     super(scene, x, y);
 
     this.fillWidth = options.width ?? 400;
-    const height = options.height ?? 16;
+    const height = options.height ?? 18;
     const showValueText = options.showValueText ?? true;
     const barY = options.label ? 26 : 0;
 
@@ -30,7 +30,8 @@ export class ProgressBar extends Phaser.GameObjects.Container {
       this.labelText = scene.add.text(0, 0, options.label, {
         color: options.textColor ?? '#f6f7ff',
         fontFamily: FONT_FAMILY,
-        fontSize: '18px'
+        fontSize: '19px',
+        fontStyle: 'bold'
       }).setOrigin(0, 0);
       this.add(this.labelText);
     }
@@ -39,14 +40,16 @@ export class ProgressBar extends Phaser.GameObjects.Container {
       this.valueText = scene.add.text(this.fillWidth, 0, '', {
         color: options.textColor ?? '#f6f7ff',
         fontFamily: FONT_FAMILY,
-        fontSize: '18px'
+        fontSize: '19px',
+        fontStyle: 'bold'
       }).setOrigin(1, 0);
       this.add(this.valueText);
     }
 
     this.track = scene.add
       .rectangle(0, barY, this.fillWidth, height, options.trackColor ?? 0x2f3652, 1)
-      .setOrigin(0, 0);
+      .setOrigin(0, 0)
+      .setStrokeStyle(1, 0x6570a8, 0.8);
     this.fill = scene.add
       .rectangle(0, barY, this.fillWidth, height, options.fillColor ?? COLORS.danger, 1)
       .setOrigin(0, 0);

@@ -11,6 +11,7 @@ type HeroEntry = {
   name: string;
   className: string;
   description: string;
+  portraitKey?: string;
   baseStats: {
     maxHp: number;
     maxMana: number;
@@ -66,7 +67,7 @@ export class HeroSelectScene extends Phaser.Scene {
       
       const btn = new Button(this, x, y, btnWidth, 55, h.name, () => {
         this.selectHero(h.id, isUnlocked, h, game);
-      });
+      }, { iconKey: h.portraitKey ?? h.id });
       
       if (!isUnlocked) {
         btn.setDisabled(true);
@@ -130,6 +131,9 @@ export class HeroSelectScene extends Phaser.Scene {
       title: hero.name,
       subtitle: isUnlocked ? hero.className : '???',
       body: bodyText,
+      imageKey: hero.portraitKey ?? hero.id,
+      imageKind: 'sprite',
+      imageSize: 92,
       titleColor: isUnlocked ? '#ffca6b' : '#666666',
       bodyFontSize: isCompactLayout(this) ? '16px' : '18px',
       strokeColor: isUnlocked ? COLORS.gold : COLORS.panelAlt

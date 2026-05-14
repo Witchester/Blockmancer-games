@@ -1,9 +1,16 @@
 import Phaser from 'phaser';
+import { BlockmancerGame } from '../BlockmancerGame';
 import { COLORS, FONT_FAMILY } from '../utils/constants';
+
+type ButtonOptions = {
+  iconKey?: string | null;
+  fontSize?: string;
+};
 
 export class Button extends Phaser.GameObjects.Container {
   private readonly background: Phaser.GameObjects.Rectangle;
   private readonly label: Phaser.GameObjects.Text;
+  private readonly icon?: Phaser.GameObjects.Image;
   private disabled = false;
 
   constructor(
@@ -13,7 +20,8 @@ export class Button extends Phaser.GameObjects.Container {
     width: number,
     height: number,
     text: string,
-    onClick: () => void
+    onClick: () => void,
+    options: ButtonOptions = {}
   ) {
     super(scene, x, y);
 
@@ -22,17 +30,29 @@ export class Button extends Phaser.GameObjects.Container {
       .setStrokeStyle(2, COLORS.accent, 0.7)
       .setOrigin(0.5);
 
+    if (options.iconKey) {
+      const compactIcon = width < 90;
+      this.icon = (scene.game as BlockmancerGame).assetSystem
+        .addImage(scene, compactIcon ? 0 : -width / 2 + 28, compactIcon ? -9 : 0, options.iconKey, 'icon')
+        .setDisplaySize(Math.min(compactIcon ? 20 : 28, height - 16), Math.min(compactIcon ? 20 : 28, height - 16));
+    }
+
+    const compactIcon = Boolean(this.icon && width < 90);
+    const labelX = compactIcon ? 0 : this.icon ? 12 : 0;
+    const labelY = compactIcon ? 13 : 0;
+    const labelWidth = compactIcon ? width - 8 : this.icon ? width - 58 : width - 18;
     this.label = scene.add
-      .text(0, 0, text, {
+      .text(labelX, labelY, text, {
         color: '#f6f7ff',
         fontFamily: FONT_FAMILY,
-        fontSize: '18px',
+        fontSize: options.fontSize ?? (compactIcon ? '14px' : '18px'),
         align: 'center',
-        wordWrap: { width: width - 18 }
+        wordWrap: { width: Math.max(20, labelWidth) },
+        lineSpacing: -2
       })
       .setOrigin(0.5);
 
-    this.add([this.background, this.label]);
+    this.add(this.icon ? [this.background, this.icon, this.label] : [this.background, this.label]);
     this.setSize(width, height);
     this.setInteractive(
       new Phaser.Geom.Rectangle(-width / 2, -height / 2, width, height),
@@ -53,6 +73,7 @@ export class Button extends Phaser.GameObjects.Container {
 
     this.on('pointerdown', () => {
       if (!this.disabled) {
+        (scene.game as BlockmancerGame).audioSystem.play('button_tap', scene);
         onClick();
       }
     });
@@ -61,14 +82,20 @@ export class Button extends Phaser.GameObjects.Container {
   }
 
   setDisabled(disabled: boolean): this {
+    if (this.disabled === disabled) {
+      return this;
+    }
     this.disabled = disabled;
     this.background.setFillStyle(disabled ? 0x34384e : COLORS.panelAlt, 0.98);
     this.background.setStrokeStyle(2, disabled ? 0x555a75 : COLORS.accent, 0.7);
     this.label.setAlpha(disabled ? 0.55 : 1);
+    this.icon?.setAlpha(disabled ? 0.55 : 1);
     return this;
   }
 
   setText(text: string): void {
-    this.label.setText(text);
+    if (this.label.text !== text) {
+      this.label.setText(text);
+    }
   }
 }

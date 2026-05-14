@@ -230,3 +230,47 @@ Before every release candidate:
 [ ] Bosses are beatable with at least three build types
 [ ] Unlocks trigger correctly after run summary
 ```
+
+## 14. Release 1.0 dev-only QA debug tools
+
+Debug tools are available only in Vite dev mode through the main menu `QA Debug` button. They must not appear in production builds.
+
+```text
+[ ] `npm run dev` shows QA Debug on the main menu
+[ ] `npm run build` production build does not expose QA Debug on the main menu
+[ ] Opening DebugScene outside dev returns to MainMenuScene
+[ ] Give 100 Gold updates run gold and save data
+[ ] Give Item adds an enabled item to inventory
+[ ] Give Relic applies a relic reward
+[ ] Give Upgrade applies an upgrade reward
+[ ] Spawn Monster starts a battle with a regular monster
+[ ] Trigger Boss starts a boss battle for the current stage
+[ ] Force Reward opens RewardScene with debug reward choices
+[ ] Force Cascade Test opens a battle with a cascade-ready board
+[ ] Jump To Stage resets the map and sets the selected stage
+[ ] Clear Run Save removes the current run save and starts a fresh debug run
+```
+
+## 15. Release 1.0 smoke test checklist
+
+Run this after content, balance, save, UI, or debug changes.
+
+```text
+[ ] npm run validate:content
+[ ] npm run build
+[ ] Start dev server
+[ ] Start a new run
+[ ] Enter first battle
+[ ] Move, rotate, soft drop, hard drop
+[ ] Clear one line
+[ ] Verify cascade-capable board behavior
+[ ] Cast a spell
+[ ] Defeat monster
+[ ] Choose a reward
+[ ] Move on map
+[ ] Refresh browser
+[ ] Continue restores the run
+[ ] Open Settings and change one option
+[ ] Refresh and confirm setting persists
+[ ] In dev mode, use QA Debug to force reward, boss, stage jump, and cascade board
+```

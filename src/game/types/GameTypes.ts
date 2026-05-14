@@ -95,6 +95,9 @@ export interface BoardState {
   nextPieceType: TetrominoType | null;
   holdPieceType: TetrominoType | null;
   topOut: boolean;
+  grid: BoardCell[][];
+  currentPiece: PieceState | null;
+  holdUsedThisPiece: boolean;
 }
 
 export interface SpellDefinition {
@@ -158,6 +161,20 @@ export interface PieceState {
   y: number;
 }
 
+export type BoardBlockClearEffect = {
+  type: string;
+  value?: number;
+};
+
+export type BoardBlockCell = {
+  color: number;
+  blockId: string;
+  blockType: 'normal' | 'special' | 'heavy' | 'hazard';
+  clearEffects: BoardBlockClearEffect[];
+};
+
+export type BoardCell = number | BoardBlockCell;
+
 export interface CascadeResult {
   totalLinesCleared: number;
   cascadeCount: number;
@@ -181,6 +198,19 @@ export type InventoryStack = {
 };
 
 export type CurrentRoomProgress = 'idle' | 'entered' | 'cleared' | 'reward' | 'complete';
+
+export interface RunStats {
+  piecesLocked: number;
+  linesCleared: number;
+  cascadesTriggered: number;
+  maxCascade: number;
+  damageDealt: number;
+  damageTaken: number;
+  spellsCast: number;
+  itemsUsed: number;
+  roomsCleared: number;
+  bossesDefeated: string[];
+}
 
 export interface RunState {
   player: PlayerState;
@@ -214,5 +244,6 @@ export interface RunState {
   lastBattleWasBoss: boolean;
   pendingStageAdvance: boolean;
   victory: boolean;
+  runStats: RunStats;
   saveVersion: number;
 }

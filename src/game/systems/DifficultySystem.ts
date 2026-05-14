@@ -28,10 +28,10 @@ type DifficultyScalingEntry = {
 const DEFAULT_SCALING: DifficultyScalingEntry = {
   id: 'scale_default_run',
   name: 'Default Run',
-  stageRules: { maxStage: 10, bossStage: 10, eliteStageInterval: 3 },
-  enemyScaling: { hpPerStage: 8, attackPerStage: 0.5, armorPerStage: 0 },
-  boardScaling: { fallSpeedPerStage: 0.05, maxFallSpeed: 2, junkChancePerStage: 0.03 },
-  rewardScaling: { goldPerStage: 5, rareChancePerStage: 0.02 }
+  stageRules: { maxStage: 6, bossStage: 6, eliteStageInterval: 2 },
+  enemyScaling: { hpPerStage: 6, attackPerStage: 0.35, armorPerStage: 0 },
+  boardScaling: { fallSpeedPerStage: 0.035, maxFallSpeed: 1.85, junkChancePerStage: 0.02 },
+  rewardScaling: { goldPerStage: 7, rareChancePerStage: 0.025 }
 };
 
 export class DifficultySystem {
@@ -44,17 +44,20 @@ export class DifficultySystem {
 
   /** Calculate enemy max HP for a given stage */
   getEnemyMaxHp(baseHp: number, stage: number): number {
-    return baseHp + stage * this.scaling.enemyScaling.hpPerStage;
+    const stageIndex = this.getStageIndex(stage);
+    return baseHp + stageIndex * this.scaling.enemyScaling.hpPerStage;
   }
 
   /** Calculate enemy attack for a given stage */
   getEnemyAttack(baseAttack: number, stage: number): number {
-    return Number((baseAttack + stage * this.scaling.enemyScaling.attackPerStage).toFixed(1));
+    const stageIndex = this.getStageIndex(stage);
+    return Number((baseAttack + stageIndex * this.scaling.enemyScaling.attackPerStage).toFixed(1));
   }
 
   /** Calculate fall speed increase for a given stage */
   getFallSpeedForStage(baseFallSpeed: number, stage: number): number {
-    const speed = baseFallSpeed + stage * this.scaling.boardScaling.fallSpeedPerStage;
+    const stageIndex = this.getStageIndex(stage);
+    const speed = baseFallSpeed + stageIndex * this.scaling.boardScaling.fallSpeedPerStage;
     return Math.min(speed, this.scaling.boardScaling.maxFallSpeed);
   }
 
@@ -65,17 +68,17 @@ export class DifficultySystem {
 
   /** Get bonus gold per stage */
   getGoldBonusForStage(stage: number): number {
-    return stage * this.scaling.rewardScaling.goldPerStage;
+    return this.getStageIndex(stage) * this.scaling.rewardScaling.goldPerStage;
   }
 
   /** Get junk row chance for a given stage (0.0 - 1.0) */
   getJunkChanceForStage(stage: number): number {
-    return Math.min(1, stage * this.scaling.boardScaling.junkChancePerStage);
+    return Math.min(1, this.getStageIndex(stage) * this.scaling.boardScaling.junkChancePerStage);
   }
 
   /** Get rare reward chance for a given stage (0.0 - 1.0) */
   getRareChanceForStage(stage: number): number {
-    return Math.min(1, stage * this.scaling.rewardScaling.rareChancePerStage);
+    return Math.min(1, this.getStageIndex(stage) * this.scaling.rewardScaling.rareChancePerStage);
   }
 
   /** Check if a stage should be an elite stage */
@@ -96,5 +99,9 @@ export class DifficultySystem {
   /** Get the raw scaling config for inspection */
   getScalingConfig(): DifficultyScalingEntry {
     return this.scaling;
+  }
+
+  private getStageIndex(stage: number): number {
+    return Math.max(0, stage - 1);
   }
 }

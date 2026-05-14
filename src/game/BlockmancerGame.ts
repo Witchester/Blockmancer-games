@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { BootScene } from './scenes/BootScene';
 import { MainMenuScene } from './scenes/MainMenuScene';
+import { StoryScene } from './scenes/StoryScene';
 import { TutorialScene } from './scenes/TutorialScene';
 import { HelpScene } from './scenes/HelpScene';
 import { HeroSelectScene } from './scenes/HeroSelectScene';
@@ -11,7 +12,10 @@ import { EventScene } from './scenes/EventScene';
 import { ShopScene } from './scenes/ShopScene';
 import { RestScene } from './scenes/RestScene';
 import { TreasureScene } from './scenes/TreasureScene';
+import { SettingsScene } from './scenes/SettingsScene';
 import { GameOverScene } from './scenes/GameOverScene';
+import { VictoryScene } from './scenes/VictoryScene';
+import { DebugScene } from './scenes/DebugScene';
 import { MapSystem } from './systems/MapSystem';
 import { SaveSystem } from './systems/SaveSystem';
 import { RewardSystem } from './systems/RewardSystem';
@@ -29,9 +33,11 @@ import { MetaSystem } from './systems/MetaSystem';
 import { OopsieSystem } from './systems/OopsieSystem';
 import { SettingsSystem } from './systems/SettingsSystem';
 import { StageSystem } from './systems/StageSystem';
+import { StorySystem } from './systems/StorySystem';
 import { TutorialSystem } from './systems/TutorialSystem';
 import { WeaponSystem } from './systems/WeaponSystem';
 import type { RunState } from './types/GameTypes';
+import type { GameSettings } from './types/SettingsTypes';
 import { createDefaultRunState, normalizeRunState } from './data/defaultRunState';
 
 export class BlockmancerGame extends Phaser.Game {
@@ -52,6 +58,7 @@ export class BlockmancerGame extends Phaser.Game {
   readonly oopsieSystem = new OopsieSystem();
   readonly eventSystem = new EventSystem(this.rewardSystem, this.enemySystem, this.inventorySystem, this.oopsieSystem);
   readonly shopSystem = new ShopSystem(this.rewardSystem, this.oopsieSystem);
+  readonly storySystem = new StorySystem();
   readonly tutorialSystem = new TutorialSystem();
   readonly settingsSystem = new SettingsSystem();
   runState: RunState;
@@ -70,6 +77,7 @@ export class BlockmancerGame extends Phaser.Game {
       scene: [
         BootScene,
         MainMenuScene,
+        StoryScene,
         TutorialScene,
         HelpScene,
         HeroSelectScene,
@@ -80,7 +88,10 @@ export class BlockmancerGame extends Phaser.Game {
         ShopScene,
         RestScene,
         TreasureScene,
-        GameOverScene
+        SettingsScene,
+        GameOverScene,
+        VictoryScene,
+        DebugScene
       ]
     });
 
@@ -100,7 +111,13 @@ export class BlockmancerGame extends Phaser.Game {
       return false;
     }
 
-    this.runState = normalizeRunState(save);
+    try {
+      this.runState = normalizeRunState(save);
+    } catch {
+      this.saveSystem.clearRun();
+      this.runState = createDefaultRunState();
+      return false;
+    }
     return true;
   }
 
@@ -111,5 +128,23 @@ export class BlockmancerGame extends Phaser.Game {
 
   clearSave(): void {
     this.saveSystem.clearRun();
+  }
+
+  getSettings(): GameSettings {
+    return {
+      ...this.settingsSystem.defaults,
+      ...this.settingsSystem.load(),
+      ...this.metaSystem.state.settings
+    };
+  }
+
+  saveSettings(settings: GameSettings): void {
+    const normalized = {
+      ...this.settingsSystem.defaults,
+      ...settings
+    };
+    this.metaSystem.state.settings = normalized;
+    this.metaSystem.save();
+    this.settingsSystem.save(normalized);
   }
 }

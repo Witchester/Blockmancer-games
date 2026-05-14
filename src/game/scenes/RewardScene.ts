@@ -1,8 +1,9 @@
 import Phaser from 'phaser';
 import { BlockmancerGame } from '../BlockmancerGame';
 import type { RewardId } from '../types/GameTypes';
+import { contentRegistry } from '../systems/ContentRegistry';
 import { Button } from '../ui/Button';
-import { COLORS, FONT_FAMILY, MAX_EVENT_LOG, MAX_FALL_SPEED } from '../utils/constants';
+import { COLORS, FONT_FAMILY, MAX_EVENT_LOG, MAX_FALL_SPEED, POST_BATTLE_FALL_SPEED_STEP } from '../utils/constants';
 import { getPortraitLayout, isCompactLayout } from '../utils/layout';
 
 export class RewardScene extends Phaser.Scene {
@@ -53,52 +54,58 @@ export class RewardScene extends Phaser.Scene {
     this.children.removeAll(true);
     this.createCompactLayoutFrame();
 
-    this.add.text(layout.centerX, 248, `Reward ${this.rewardIndex + 1} / ${game.runState.pendingRewards.length}`, {
-      color: '#98a0c7',
-      fontFamily: FONT_FAMILY,
-      fontSize: '18px'
-    }).setOrigin(0.5);
-
-    this.add.text(layout.centerX, 278, `Rerolls: ${game.runState.rewardRerolls}`, {
-      color: game.runState.rewardRerolls > 0 ? '#65d6a5' : '#98a0c7',
-      fontFamily: FONT_FAMILY,
-      fontSize: '18px'
-    }).setOrigin(0.5);
-
-    this.add.rectangle(layout.centerX, 480, layout.contentWidth - 72, 384, COLORS.panelAlt, 0.98).setStrokeStyle(2, COLORS.accent, 0.35);
-    this.add.text(layout.centerX, 352, reward.name, {
-      color: '#ffca6b',
-      fontFamily: FONT_FAMILY,
-      fontSize: '30px',
-      fontStyle: 'bold',
-      align: 'center',
-      wordWrap: { width: layout.contentWidth - 112 }
-    }).setOrigin(0.5);
-    this.add.text(layout.centerX, 410, reward.type, {
+    this.add.text(layout.centerX, 236, `Reward ${this.rewardIndex + 1} / ${game.runState.pendingRewards.length}`, {
       color: '#98a0c7',
       fontFamily: FONT_FAMILY,
       fontSize: '20px'
     }).setOrigin(0.5);
-    this.add.text(layout.centerX, 500, reward.description, {
-      color: '#d8deff',
+
+    this.add.text(layout.centerX, 268, `Rerolls: ${game.runState.rewardRerolls}`, {
+      color: game.runState.rewardRerolls > 0 ? '#65d6a5' : '#98a0c7',
       fontFamily: FONT_FAMILY,
-      fontSize: '21px',
-      align: 'center',
-      wordWrap: { width: layout.contentWidth - 120 },
-      lineSpacing: 8
+      fontSize: '20px',
+      fontStyle: 'bold'
     }).setOrigin(0.5);
 
-    new Button(this, layout.centerX - 150, 765, 180, 54, 'Previous', () => {
+    this.add.rectangle(layout.centerX, 500, layout.contentWidth - 72, 430, COLORS.panelAlt, 0.98).setStrokeStyle(3, COLORS.accent, 0.45);
+    this.gameAsBlockmancer.assetSystem
+      .addImage(this, layout.centerX, 330, this.getRewardIconKey(reward), 'icon')
+      .setDisplaySize(68, 68);
+    this.add.text(layout.centerX, 398, reward.name, {
+      color: '#ffca6b',
+      fontFamily: FONT_FAMILY,
+      fontSize: '34px',
+      fontStyle: 'bold',
+      align: 'center',
+      wordWrap: { width: layout.contentWidth - 112 }
+    }).setOrigin(0.5);
+    this.add.rectangle(layout.centerX, 456, 190, 36, COLORS.panel, 0.95).setStrokeStyle(2, COLORS.gold, 0.45);
+    this.add.text(layout.centerX, 456, `${reward.type}${reward.rarity ? ` - ${reward.rarity}` : ''}`, {
+      color: '#f6f7ff',
+      fontFamily: FONT_FAMILY,
+      fontSize: '21px',
+      fontStyle: 'bold'
+    }).setOrigin(0.5);
+    this.add.text(layout.centerX, 560, reward.description, {
+      color: '#d8deff',
+      fontFamily: FONT_FAMILY,
+      fontSize: '24px',
+      align: 'center',
+      wordWrap: { width: layout.contentWidth - 120 },
+      lineSpacing: 10
+    }).setOrigin(0.5);
+
+    new Button(this, layout.centerX - 150, 785, 180, 58, 'Previous', () => {
       this.rewardIndex = (this.rewardIndex + game.runState.pendingRewards.length - 1) % game.runState.pendingRewards.length;
       this.renderCompactRewardCard();
     }).setDisabled(game.runState.pendingRewards.length <= 1);
 
-    new Button(this, layout.centerX + 150, 765, 180, 54, 'Next', () => {
+    new Button(this, layout.centerX + 150, 785, 180, 58, 'Next', () => {
       this.rewardIndex = (this.rewardIndex + 1) % game.runState.pendingRewards.length;
       this.renderCompactRewardCard();
     }).setDisabled(game.runState.pendingRewards.length <= 1);
 
-    new Button(this, layout.centerX, 702, 220, 50, 'Reroll', () => {
+    new Button(this, layout.centerX, 720, 220, 56, 'Reroll', () => {
       const message = game.rewardSystem.rerollRewards(game.runState);
       game.runState.eventLog.unshift(message);
       game.runState.eventLog = game.runState.eventLog.slice(0, MAX_EVENT_LOG);
@@ -106,7 +113,7 @@ export class RewardScene extends Phaser.Scene {
       this.renderCompactRewardCard();
     }).setDisabled(game.runState.rewardRerolls <= 0);
 
-    new Button(this, layout.centerX, 852, 260, 56, 'Take Reward', () => {
+    new Button(this, layout.centerX, 874, 280, 62, 'Take Reward', () => {
       this.claimReward(reward.id);
     });
   }
@@ -146,28 +153,55 @@ export class RewardScene extends Phaser.Scene {
       if (result === 'final-victory') {
         state.victory = true;
         state.runStatus = 'victory';
-        game.metaSystem.state.normalEndingFinished = true;
-        game.metaSystem.save();
+        const endingKind = game.storySystem.getEndingKind(game.metaSystem.state);
+        const beforeUnlocks = [...game.metaSystem.state.unlockedHeroes];
+        game.metaSystem.recordRunEnd(state, true);
+        if (endingKind === 'true') {
+          game.metaSystem.unlockTrueEnding();
+        }
+        const heroUnlocks = game.storySystem.getHeroUnlockMessages(beforeUnlocks, game.metaSystem.state.unlockedHeroes);
+        game.audioSystem.play('victory', this);
         game.clearSave();
-        this.scene.start('GameOverScene', { victory: true });
+        this.scene.start('VictoryScene', { endingKind, heroUnlocks });
         return;
       }
     } else {
       game.mapSystem.completeNode(state, state.currentNodeId);
     }
     
-    state.fallSpeed = Math.min(MAX_FALL_SPEED, state.fallSpeed + 0.05);
+    state.fallSpeed = Math.min(MAX_FALL_SPEED, state.fallSpeed + POST_BATTLE_FALL_SPEED_STEP);
     state.currentRoomProgress = advancingStage ? 'idle' : 'cleared';
     state.runStatus = 'map';
     game.rewardSystem.applyPostBattleEffects(state).forEach((effectMessage) => {
       state.eventLog.unshift(effectMessage);
     });
     state.eventLog = state.eventLog.slice(0, MAX_EVENT_LOG);
+    game.audioSystem.play('reward_pick', this);
     game.saveRun();
     this.scene.start('MapScene');
   }
 
   private isCompactLayout(): boolean {
     return isCompactLayout(this);
+  }
+
+  private get gameAsBlockmancer(): BlockmancerGame {
+    return this.game as BlockmancerGame;
+  }
+
+  private getRewardIconKey(reward: { id: string; contentType?: string; type: string }): string {
+    if (reward.contentType === 'item') {
+      return ((contentRegistry.getItem(reward.id) as { iconKey?: string } | null)?.iconKey) ?? 'placeholder_item';
+    }
+    if (reward.contentType === 'relic') {
+      return ((contentRegistry.getRelic(reward.id) as { iconKey?: string } | null)?.iconKey) ?? 'placeholder_relic';
+    }
+    if (reward.contentType === 'upgrade') {
+      return ((contentRegistry.getUpgrade(reward.id) as { iconKey?: string } | null)?.iconKey) ?? 'placeholder_upgrade';
+    }
+    if (reward.contentType === 'oopsie') {
+      return ((contentRegistry.getOopsie(reward.id) as { iconKey?: string } | null)?.iconKey) ?? 'placeholder_oopsie';
+    }
+    return reward.type === 'Gold' ? 'currency_candy_coin' : 'asset_missing_icon';
   }
 }

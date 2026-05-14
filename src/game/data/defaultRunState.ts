@@ -14,11 +14,13 @@ import {
 } from './constants';
 import type {
   BoardState,
+  BoardCell,
   CurrentRoomProgress,
   EnemyInstance,
   HeroState,
   RewardDefinition,
   RewardId,
+  RunStats,
   RunState,
   SpellId,
   StatusEffectState,
@@ -46,8 +48,53 @@ type PartialRunState = Partial<Omit<RunState, 'player' | 'hero' | 'weapon' | 'bo
   currentRoom?: { nodeId?: string; roomType?: string; state?: string };
 };
 
+function createDefaultRunStats(): RunStats {
+  return {
+    piecesLocked: 0,
+    linesCleared: 0,
+    cascadesTriggered: 0,
+    maxCascade: 0,
+    damageDealt: 0,
+    damageTaken: 0,
+    spellsCast: 0,
+    itemsUsed: 0,
+    roomsCleared: 0,
+    bossesDefeated: []
+  };
+}
+
 function cloneMap() {
   return MAP_NODES.map((node) => ({ ...node }));
+}
+
+function cloneBoardCell(cell: unknown): BoardCell {
+  if (typeof cell === 'number' && Number.isFinite(cell)) {
+    return cell;
+  }
+  if (cell && typeof cell === 'object') {
+    const raw = cell as Partial<Extract<BoardCell, object>>;
+    return {
+      color: typeof raw.color === 'number' ? raw.color : 0x888888,
+      blockId: typeof raw.blockId === 'string' ? raw.blockId : 'block_unknown',
+      blockType: raw.blockType ?? 'special',
+      clearEffects: Array.isArray(raw.clearEffects) ? raw.clearEffects.map((effect) => ({ ...effect })) : []
+    };
+  }
+  return 0;
+}
+
+function normalizeBoardGrid(input: unknown, defaults: BoardState): BoardCell[][] {
+  if (!Array.isArray(input)) {
+    return defaults.grid.map((row) => [...row]);
+  }
+
+  return defaults.grid.map((defaultRow, rowIndex) => {
+    const rawRow = input[rowIndex];
+    if (!Array.isArray(rawRow)) {
+      return [...defaultRow];
+    }
+    return defaultRow.map((_, columnIndex) => cloneBoardCell(rawRow[columnIndex]));
+  });
 }
 
 function normalizeEnemy(enemy: EnemyInstance | null | undefined): EnemyInstance | null {
@@ -109,6 +156,7 @@ export function createDefaultRunState(): RunState {
     lastBattleWasBoss: false,
     pendingStageAdvance: false,
     victory: false,
+    runStats: createDefaultRunStats(),
     saveVersion: SAVE_VERSION
   };
 }
@@ -138,7 +186,13 @@ export function normalizeRunState(input: unknown): RunState {
     },
     board: {
       ...defaults.board,
-      ...(raw.board ?? {})
+      ...(raw.board ?? {}),
+      grid: normalizeBoardGrid(raw.board?.grid, defaults.board),
+      currentPiece: raw.board?.currentPiece && Array.isArray(raw.board.currentPiece.matrix) ? {
+        ...raw.board.currentPiece,
+        matrix: raw.board.currentPiece.matrix.map((row) => Array.isArray(row) ? [...row] : [])
+      } : defaults.board.currentPiece,
+      holdUsedThisPiece: Boolean(raw.board?.holdUsedThisPiece ?? defaults.board.holdUsedThisPiece)
     },
     spells: raw.spells ? [...raw.spells] : [...defaults.spells],
     relics: raw.relics ? [...raw.relics] : [...defaults.relics],
@@ -150,7 +204,12 @@ export function normalizeRunState(input: unknown): RunState {
     pendingRewards: raw.pendingRewards ? [...raw.pendingRewards] : [...defaults.pendingRewards],
     pendingRewardSource: raw.pendingRewardSource ?? defaults.pendingRewardSource,
     rewardRerolls: raw.rewardRerolls ?? defaults.rewardRerolls,
-    ownedRewards: raw.ownedRewards ? [...raw.ownedRewards] : [...defaults.ownedRewards]
+    ownedRewards: raw.ownedRewards ? [...raw.ownedRewards] : [...defaults.ownedRewards],
+    runStats: {
+      ...defaults.runStats,
+      ...(raw.runStats ?? {}),
+      bossesDefeated: raw.runStats?.bossesDefeated ? [...raw.runStats.bossesDefeated] : []
+    }
   };
 
   // Backward compatibility: migrate old saves that used currentEnemy
@@ -167,6 +226,7 @@ export function normalizeRunState(input: unknown): RunState {
   merged.lastCascadeLevel = Math.max(0, raw.lastCascadeLevel ?? defaults.lastCascadeLevel);
   merged.lastCascadeLines = Math.max(0, raw.lastCascadeLines ?? defaults.lastCascadeLines);
   merged.currentEventId = typeof raw.currentEventId === 'string' ? raw.currentEventId : null;
+  merged.saveVersion = SAVE_VERSION;
   oopsieSystem.normalizeState(merged);
 
   return merged;

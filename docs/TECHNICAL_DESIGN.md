@@ -124,27 +124,19 @@ Current game state lives on the custom `BlockmancerGame` instance as a mutable `
 Current model includes:
 
 - Player stats
+- Selected hero, weapon, spells, relics, upgrades, items, and oopsies
 - Stage and fall speed
 - Combo
 - Enemies defeated
 - Current node and room type
 - Map node state
 - Active enemy
+- Board grid, active piece, next piece, hold piece, and hold state
 - Event log
 - Pending rewards
 - Owned rewards
+- Run stats
 - Victory flag
-
-Target expansion for the full state model:
-
-- Selected hero
-- Equipped weapon
-- Known spells
-- Owned relics and upgrades separated by type
-- Status effects
-- Full room-state payloads
-- Run status
-- More explicit save versioning
 
 Design requirement:
 
@@ -208,22 +200,33 @@ Current enemy disruption examples:
 Current save flow:
 
 1. New run creates a default run state.
-2. `SaveSystem` serializes the run state to localStorage.
+2. `SaveSystem` serializes the current run to `blockmancer-dungeon-save`.
 3. Save writes occur on important transitions such as room changes, reward changes, and battle state changes.
 4. Main menu checks whether a save exists.
 5. Continue loads the save and routes to the correct scene based on run state.
 6. Terminal run states clear the save.
+7. Meta progression is serialized separately to `blockmancer-meta-save`.
+
+Save schema:
+
+- `saveVersion` is required on current-run and meta saves.
+- Current-run saves include player state, hero, weapon, spells, relics, upgrades, inventory, oopsies, board state, active enemy, map/current room, stage, event log, pending rewards, and run stats.
+- Meta saves include unlocked heroes, total gold, total cascades, bosses defeated, endings unlocked, tutorial completion, and settings.
+- Settings are stored inside meta progression; legacy `blockmancer:settings` data is migrated into meta when present.
+
+Migration and fallback:
+
+- Version `0`/unversioned saves are treated as legacy saves.
+- Legacy `currentEnemy` and `currentRoom` fields migrate into `activeEnemy`, `currentNodeId`, `currentRoomType`, and `currentRoomProgress`.
+- Version `1` saves gain `runStats`, board grid/current-piece fields are normalized, and meta saves gain generalized boss/endings/settings fields.
+- Corrupt or invalid JSON is removed and falls back to no continue save rather than crashing.
 
 Current strengths:
 
 - Good enough for run continuation
 - Simple and easy to inspect
-
-Current limitations:
-
-- No save schema versioning yet
-- No migration path yet
-- No granular board replay state
+- Versioned save migration exists
+- Battle board state is persisted for refresh/continue
 
 ## 9. Mobile Build Flow
 
@@ -254,5 +257,4 @@ Key extension points for future work:
 - Add `HeroSelectScene` and hero-specific passive systems
 - Add dedicated `RelicSystem`, `UpgradeSystem`, and `DifficultySystem`
 - Add `AudioSystem` for placeholder beeps first, then full sound design later
-- Expand the save model with versioning and migration
 - Add utilities for validation, balance tuning, and content import
