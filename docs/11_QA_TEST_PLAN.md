@@ -192,13 +192,13 @@ Before every release candidate:
 
 ## 10. Bug severity
 
-| Severity | Meaning |
-|---|---|
-| Blocker | Crash, cannot start/finish game, data loss. |
+| Severity | Meaning                                                     |
+| -------- | ----------------------------------------------------------- |
+| Blocker  | Crash, cannot start/finish game, data loss.                 |
 | Critical | Major system broken, frequent softlock, severe input issue. |
-| Major | Important feature broken but workaround exists. |
-| Minor | Visual/audio/text issue. |
-| Tuning | Balance issue. |
+| Major    | Important feature broken but workaround exists.             |
+| Minor    | Visual/audio/text issue.                                    |
+| Tuning   | Balance issue.                                              |
 
 ## 12. V2 portrait mobile QA checklist
 

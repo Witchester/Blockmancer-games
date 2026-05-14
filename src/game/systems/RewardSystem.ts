@@ -5,6 +5,7 @@ import { contentRegistry } from './ContentRegistry';
 import { RelicSystem } from './RelicSystem';
 import { UpgradeSystem } from './UpgradeSystem';
 import { InventorySystem } from './InventorySystem';
+import { OopsieSystem } from './OopsieSystem';
 
 type RewardContentEntry = {
   id: string;
@@ -69,6 +70,7 @@ export class RewardSystem {
   private readonly relicSystem = new RelicSystem();
   private readonly upgradeSystem = new UpgradeSystem();
   private readonly inventorySystem = new InventorySystem();
+  private readonly oopsieSystem = new OopsieSystem();
 
   getRewardPool(): RewardDefinition[] {
     const upgrades = contentRegistry.listEnabled<RewardContentEntry>('upgrade').map((entry) => ({
@@ -183,6 +185,18 @@ export class RewardSystem {
     if (reward.type === 'Item') {
       this.inventorySystem.addItem(state, rewardId);
       return `${reward.name} added to your bag.`;
+    }
+
+    if (reward.type === 'Oopsie') {
+      const oopsie = this.oopsieSystem.getOopsie(rewardId);
+      if (!oopsie) {
+        return 'The oopsie basket is empty.';
+      }
+      if (!state.player.oopsies.includes(oopsie.id)) {
+        state.player.oopsies.push(oopsie.id);
+      }
+      state.player.curses = state.player.oopsies.length;
+      return `${oopsie.name} joins the run.`;
     }
 
     if (reward.type === 'Gold') {
@@ -305,7 +319,29 @@ export class RewardSystem {
       return this.fromContentEntry('upgrade', entry, 'Upgrade', lootTableId);
     }
 
+    if (entry.contentType === 'oopsie') {
+      return this.fromOopsieEntry(entry, lootTableId);
+    }
+
     return null;
+  }
+
+  private fromOopsieEntry(entry: LootEntry, lootTableId: string): RewardDefinition | null {
+    const content = contentRegistry.getOptionalById<RewardContentEntry>('oopsie', entry.id);
+    if (!content) {
+      return null;
+    }
+
+    return {
+      id: content.id,
+      name: content.name,
+      type: 'Oopsie',
+      description: content.description ?? 'A silly drawback.',
+      persistent: true,
+      rarity: entry.rarity ?? content.rarity,
+      contentType: 'oopsie',
+      source: lootTableId
+    };
   }
 
   private fromContentEntry(
@@ -346,6 +382,10 @@ export class RewardSystem {
       const relic = contentRegistry.getOptionalById<RewardContentEntry>('relic', reward.id);
       const maxStacks = relic?.stacking?.stackable ? relic.stacking.maxStacks ?? 1 : 1;
       return this.countOwned(state.relics, reward.id) < maxStacks;
+    }
+
+    if (reward.type === 'Oopsie') {
+      return !state.player.oopsies.includes(reward.id);
     }
 
     return true;

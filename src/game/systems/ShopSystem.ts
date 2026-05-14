@@ -1,6 +1,7 @@
 import type { RunState } from '../types/GameTypes';
 import { clamp } from '../utils/math';
 import { choice } from '../utils/random';
+import { OopsieSystem } from './OopsieSystem';
 import { RewardSystem } from './RewardSystem';
 
 export type ShopResolution = {
@@ -9,34 +10,39 @@ export type ShopResolution = {
 };
 
 export class ShopSystem {
-  constructor(private readonly rewardSystem: RewardSystem = new RewardSystem()) {}
+  constructor(
+    private readonly rewardSystem: RewardSystem = new RewardSystem(),
+    private readonly oopsieSystem: OopsieSystem = new OopsieSystem()
+  ) {}
 
   healForGold(state: RunState): ShopResolution {
-    if (state.player.gold < 30) {
+    const cost = this.oopsieSystem.adjustShopPrice(state, 30);
+    if (state.player.gold < cost) {
       return {
         transition: 'stay',
         messages: ['Not enough gold for healing.']
       };
     }
 
-    state.player.gold -= 30;
+    state.player.gold -= cost;
     state.gold = state.player.gold;
     state.player.hp = clamp(state.player.hp + 8, 0, state.player.maxHp);
     return {
       transition: 'stay',
-      messages: ['You buy fizzy healing draughts for 30 gold.']
+      messages: [`You buy fizzy healing draughts for ${cost} gold.`]
     };
   }
 
   buyRandomReward(state: RunState): ShopResolution {
-    if (state.player.gold < 60) {
+    const cost = this.oopsieSystem.adjustShopPrice(state, 60);
+    if (state.player.gold < cost) {
       return {
         transition: 'stay',
         messages: ['Not enough gold for a relic.']
       };
     }
 
-    state.player.gold -= 60;
+    state.player.gold -= cost;
     state.gold = state.player.gold;
     const reward = this.rewardSystem.getRandomRewards(1, state, 'shop')[0];
     state.pendingRewards = [reward];
@@ -48,25 +54,32 @@ export class ShopSystem {
     };
   }
 
-  removeCurse(state: RunState): ShopResolution {
-    if (state.player.gold < 50 || state.player.curses <= 0) {
+  removeOopsie(state: RunState): ShopResolution {
+    const cost = this.oopsieSystem.getRemovalCost(state);
+    if (state.player.gold < cost || state.player.oopsies.length <= 0) {
       return {
         transition: 'stay',
-        messages: ['The merchant shrugs. No deal to make.']
+        messages: ['The merchant has no oopsie cleanup to do.']
       };
     }
 
-    state.player.gold -= 50;
+    state.player.gold -= cost;
     state.gold = state.player.gold;
-    state.player.curses -= 1;
+    const removed = this.oopsieSystem.removeOopsie(state);
     return {
       transition: 'stay',
-      messages: ['An oopsie is cleaned up.']
+      messages: [removed ? `${removed.name} is cleaned up.` : 'An oopsie is cleaned up.']
     };
   }
 
+  /** @deprecated use removeOopsie */
+  removeCurse(state: RunState): ShopResolution {
+    return this.removeOopsie(state);
+  }
+
   buyItem(state: RunState): ShopResolution {
-    if (state.player.gold < 25) {
+    const cost = this.oopsieSystem.adjustShopPrice(state, 25);
+    if (state.player.gold < cost) {
       return {
         transition: 'stay',
         messages: ['Not enough gold for an item.']
@@ -79,7 +92,7 @@ export class ShopSystem {
       };
     }
     
-    state.player.gold -= 25;
+    state.player.gold -= cost;
     state.gold = state.player.gold;
     
     const items = this.rewardSystem.getRewardPool().filter(r => r.type === 'Item');

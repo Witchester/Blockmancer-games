@@ -17,7 +17,7 @@ All game content is defined as JSON data files in `src/game/content/`. This allo
 - **status-effects/**: Buffs and debuffs applied during combat
 - **board-blocks/**: Special block types with unique behaviors
 - **room-events/**: Interactive encounters and choices
-- **curses/**: Negative modifiers that persist during a run
+- **oopsies/**: Cheerful silly drawbacks that persist during a run
 - **loot-tables/**: Reward pools for different encounter types
 - **difficulty-scaling/**: Difficulty mode configurations
 - **map-nodes/**: Map tile definitions and room types
@@ -26,21 +26,21 @@ All game content is defined as JSON data files in `src/game/content/`. This allo
 
 Each content piece has a unique ID using lowercase kebab-case with a type prefix:
 
-| Content Type | Prefix | Example |
-|---|---|---|
-| Heroes | `hero_` | `hero_blockmancer` |
-| Weapons | `wpn_` | `wpn_fire_tome` |
-| Monsters | `mon_` | `mon_dungeon_slime` |
-| Spells | `spl_` | `spl_fireball` |
-| Relics | `rel_` | `rel_goblin_coin` |
-| Upgrades | `upg_` | `upg_sharp_edges` |
-| Status Effects | `status_` | `status_burn` |
-| Board Blocks | `block_` | `block_magic` |
-| Room Events | `evt_` | `evt_shrine_of_gravity` |
-| Curses | `curse_` | `curse_heavy_blocks` |
-| Loot Tables | `loot_` | `loot_battle_default` |
-| Difficulty Scaling | `scale_` | `scale_easy` |
-| Map Nodes | `node_` | `node_fight` |
+| Content Type       | Prefix    | Example                 |
+| ------------------ | --------- | ----------------------- |
+| Heroes             | `hero_`   | `hero_blockmancer`      |
+| Weapons            | `wpn_`    | `wpn_fire_tome`         |
+| Monsters           | `mon_`    | `mon_dungeon_slime`     |
+| Spells             | `spl_`    | `spl_fireball`          |
+| Relics             | `rel_`    | `rel_goblin_coin`       |
+| Upgrades           | `upg_`    | `upg_sharp_edges`       |
+| Status Effects     | `status_` | `status_burn`           |
+| Board Blocks       | `block_`  | `block_magic`           |
+| Room Events        | `evt_`    | `evt_shrine_of_gravity` |
+| Oopsies            | `oops_`   | `oops_heavy_blocks`     |
+| Loot Tables        | `loot_`   | `loot_battle_default`   |
+| Difficulty Scaling | `scale_`  | `scale_easy`            |
+| Map Nodes          | `node_`   | `node_fight`            |
 
 ## Asset Key References
 
@@ -58,6 +58,7 @@ Assets can be added later by replacing these keys with actual art.
 1. Create a file: `src/game/content/monsters/my-monster.json`
 
 2. Use this template:
+
 ```json
 {
   "id": "mon_my_monster",
@@ -105,6 +106,7 @@ Assets can be added later by replacing these keys with actual art.
 ```
 
 3. Add the import and entry to `src/game/systems/ContentRegistry.ts`:
+
 ```typescript
 import myMonster from '../content/monsters/my-monster.json';
 // In constructor:
@@ -118,6 +120,7 @@ monsters: [...existing, myMonster],
 1. Create a file: `src/game/content/spells/my-spell.json`
 
 2. Use this template:
+
 ```json
 {
   "id": "spl_my_spell",
@@ -154,6 +157,7 @@ monsters: [...existing, myMonster],
 1. Create a file: `src/game/content/relics/my-relic.json`
 
 2. Use this template:
+
 ```json
 {
   "id": "rel_my_relic",
@@ -187,6 +191,7 @@ monsters: [...existing, myMonster],
 1. Create a file: `src/game/content/upgrades/my-upgrade.json`
 
 2. Use this template:
+
 ```json
 {
   "id": "upg_my_upgrade",
@@ -231,6 +236,7 @@ Loot tables define what rewards are available in different scenarios. Each entry
 - `condition`: When this entry is available (optional)
 
 Example entry:
+
 ```json
 {
   "contentType": "upgrade",
@@ -268,6 +274,7 @@ npm run build
 ```
 
 The validator checks:
+
 - All JSON files parse correctly
 - All content has `id`, `name`, and `enabled` fields
 - ID prefixes match the content type folder
@@ -279,21 +286,23 @@ The validator checks:
 Use the `ContentRegistry` to access content at runtime:
 
 ```typescript
-import { contentRegistry } from '../systems/ContentRegistry';
+import { contentRegistry } from "../systems/ContentRegistry";
 
 // Get a specific hero
-const hero = contentRegistry.getHero('hero_blockmancer');
+const hero = contentRegistry.getHero("hero_blockmancer");
 
 // List all enabled spells
-const spells = contentRegistry.listEnabled('spell');
+const spells = contentRegistry.listEnabled("spell");
 
 // Check if content exists
-if (contentRegistry.has('monster', 'mon_dungeon_slime')) {
+if (contentRegistry.has("monster", "mon_dungeon_slime")) {
   // ...
 }
 
 // Get with fallback
-const monster = contentRegistry.getMonster('mon_unknown') ?? contentRegistry.getMonster('mon_dungeon_slime');
+const monster =
+  contentRegistry.getMonster("mon_unknown") ??
+  contentRegistry.getMonster("mon_dungeon_slime");
 ```
 
 ## Best Practices

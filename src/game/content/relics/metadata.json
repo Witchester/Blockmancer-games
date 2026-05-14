@@ -95,7 +95,7 @@
       "rare",
       "epic",
       "legendary",
-      "cursed"
+      "oopsie"
     ],
     "trigger": [
       "passive",
@@ -133,8 +133,8 @@
       "discount_shop",
       "prevent_lethal_damage",
       "double_reward_chance",
-      "add_curse",
-      "remove_curse",
+      "add_oopsie",
+      "remove_oopsie",
       "delay_enemy_attack"
     ],
     "stackBehavior": [
@@ -159,7 +159,7 @@
       "spell_cost_control",
       "gold_economy",
       "high_risk_high_reward",
-      "curse_modifier"
+      "oopsie_modifier"
     ],
     "tags": [
       "damage",
@@ -169,7 +169,7 @@
       "board_control",
       "combo",
       "spell",
-      "curse",
+      "oopsie",
       "risky",
       "boss_reward",
       "shop",

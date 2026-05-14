@@ -29,6 +29,8 @@ export interface PlayerState {
   emergencyBarrierUsed: boolean;
   frostLockDelayBonus: boolean;
   voidCutRefund: boolean;
+  oopsies: string[];
+  /** @deprecated migrated to named oopsies */
   curses: number;
   inventoryCapacity: number;
 }

@@ -4,6 +4,7 @@ import { choice } from '../utils/random';
 import { contentRegistry } from './ContentRegistry';
 import { EnemySystem } from './EnemySystem';
 import { InventorySystem } from './InventorySystem';
+import { OopsieSystem } from './OopsieSystem';
 import { RewardSystem } from './RewardSystem';
 
 type RoomEventEffect = { type: string; value?: number };
@@ -39,7 +40,8 @@ export class EventSystem {
   constructor(
     private readonly rewardSystem: RewardSystem = new RewardSystem(),
     private readonly enemySystem: EnemySystem = new EnemySystem(),
-    private readonly inventorySystem: InventorySystem = new InventorySystem()
+    private readonly inventorySystem: InventorySystem = new InventorySystem(),
+    private readonly oopsieSystem: OopsieSystem = new OopsieSystem()
   ) {}
 
   getRandomEvent(stage = 1): RoomEventEntry {
@@ -88,7 +90,11 @@ export class EventSystem {
       case 'reduce_fall_speed':
         return 'reduce_fall_speed';
       case 'gain_random_curse':
-        return 'add_curse';
+      case 'gain_random_oopsie':
+        return 'add_oopsie';
+      case 'remove_curse':
+      case 'remove_oopsie':
+        return 'remove_oopsie';
       default:
         return 'leave';
     }
@@ -157,14 +163,27 @@ export class EventSystem {
         };
       }
       case 'add_curse':
-        state.player.curses += 1;
+      case 'add_oopsie': {
+        const oopsie = this.oopsieSystem.addRandomOopsie(state);
         state.player.gold += choiceEntry.bonusGold ?? 0;
         state.player.totalGoldCollected += choiceEntry.bonusGold ?? 0;
         state.gold = state.player.gold;
         return {
           transition: 'map',
-          messages: ['A silly oopsie joins the run, but your purse grows heavier.']
+          messages: [
+            oopsie
+              ? `${oopsie.name} joins the run, but your purse grows heavier.`
+              : 'The oopsie basket is empty, so you just pocket the gold.'
+          ]
         };
+      }
+      case 'remove_oopsie': {
+        const removed = this.oopsieSystem.removeOopsie(state);
+        return {
+          transition: 'map',
+          messages: [removed ? `${removed.name} gets polished away.` : 'No oopsie needed cleaning.']
+        };
+      }
       case 'heal_player':
         state.player.hp = clamp(state.player.hp + choiceEntry.value, 0, state.player.maxHp);
         return {
@@ -261,12 +280,32 @@ export class EventSystem {
         return [this.applyRandomReward(state)];
       case 'gain_random_curse':
       case 'add_curse':
-        state.player.curses += Math.max(1, value || 1);
-        return ['A silly oopsie joins the run.'];
+      case 'gain_random_oopsie':
+      case 'add_oopsie': {
+        const gained: string[] = [];
+        const count = Math.max(1, value || 1);
+        for (let index = 0; index < count; index += 1) {
+          const oopsie = this.oopsieSystem.addRandomOopsie(state);
+          if (oopsie) {
+            gained.push(oopsie.name);
+          }
+        }
+        return [gained.length ? `Oopsie gained: ${gained.join(', ')}.` : 'The oopsie basket is empty.'];
+      }
       case 'remove_curse': {
-        const removed = Math.min(state.player.curses, Math.max(1, value || 1));
-        state.player.curses -= removed;
-        return [removed > 0 ? 'An oopsie gets polished away.' : 'No oopsie needed cleaning.'];
+        const removedNames: string[] = [];
+        const count = Math.max(1, value || 1);
+        for (let index = 0; index < count; index += 1) {
+          const removed = this.oopsieSystem.removeOopsie(state);
+          if (removed) {
+            removedNames.push(removed.name);
+          }
+        }
+        return [removedNames.length ? `${removedNames.join(', ')} gets polished away.` : 'No oopsie needed cleaning.'];
+      }
+      case 'remove_oopsie': {
+        const removed = this.oopsieSystem.removeOopsie(state);
+        return [removed ? `${removed.name} gets polished away.` : 'No oopsie needed cleaning.'];
       }
       case 'gain_random_item': {
         const items = contentRegistry.listEnabled<{ id: string }>('item');

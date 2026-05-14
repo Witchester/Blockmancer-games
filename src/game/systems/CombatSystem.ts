@@ -1,10 +1,12 @@
 import type { CascadeResult, EnemyInstance, RunState } from '../types/GameTypes';
 import { CASCADE_MANA_BONUS_MULTIPLIER, LINE_CLEAR_BONUS, MANA_GAIN, MAX_EVENT_LOG } from '../utils/constants';
 import { clamp } from '../utils/math';
+import { OopsieSystem } from './OopsieSystem';
 import { RelicSystem } from './RelicSystem';
 
 export class CombatSystem {
   private readonly relicSystem = new RelicSystem();
+  private readonly oopsieSystem = new OopsieSystem();
 
   constructor(private readonly state: RunState) {}
 
@@ -108,13 +110,12 @@ export class CombatSystem {
     }
     this.damageEnemy(damage);
 
-    const baseMana = this.getLineClearMana(cascade.totalLinesCleared);
-    const bonusMana = cascade.cascadeCount > 1 ? Math.floor(baseMana * CASCADE_MANA_BONUS_MULTIPLIER) : 0;
-    this.state.player.mana = clamp(
-      this.state.player.mana + baseMana + bonusMana,
-      0,
-      this.state.player.maxMana
+    const baseMana = this.oopsieSystem.adjustManaGain(
+      this.state,
+      this.getLineClearMana(cascade.totalLinesCleared)
     );
+    const bonusMana = cascade.cascadeCount > 1 ? Math.floor(baseMana * CASCADE_MANA_BONUS_MULTIPLIER) : 0;
+    this.state.player.mana = clamp(this.state.player.mana + baseMana + bonusMana, 0, this.state.player.maxMana);
     
     // Handle passive_line_mage
     if (this.state.hero.passiveId === 'passive_line_mage' && this.firstLineClearMage) {
@@ -202,7 +203,10 @@ export class CombatSystem {
       return;
     }
 
-    this.state.activeEnemy.attackCounter = this.state.activeEnemy.attackIntervalLocks;
+    this.state.activeEnemy.attackCounter = this.oopsieSystem.adjustEnemyAttackInterval(
+      this.state,
+      this.state.activeEnemy.attackIntervalLocks
+    );
   }
 
   applyDirectDamage(amount: number, label: string): void {

@@ -6,21 +6,21 @@ This document defines how game content should be written, named, balanced, and e
 
 ## 2. ID rules
 
-| Content type | Prefix | Example |
-|---|---|---|
-| Hero | `hero_` | `hero_blockmancer` |
-| Weapon | `wpn_` | `wpn_basic_wand` |
-| Monster | `mon_` | `mon_dungeon_slime` |
-| Spell | `spl_` | `spl_fireball` |
-| Relic | `rel_` | `rel_slime_core` |
-| Upgrade | `upg_` | `upg_line_sharp_edges` |
-| Status | `status_` | `status_burn` |
-| Block | `block_` | `block_magic` |
-| Event | `evt_` | `evt_shrine_of_gravity` |
-| Curse | `curse_` | `curse_heavy_blocks` |
-| Loot Table | `loot_` | `loot_battle_default` |
-| Scaling | `scale_` | `scale_default_run` |
-| Map Node | `node_` | `node_fight` |
+| Content type | Prefix    | Example                 |
+| ------------ | --------- | ----------------------- |
+| Hero         | `hero_`   | `hero_blockmancer`      |
+| Weapon       | `wpn_`    | `wpn_basic_wand`        |
+| Monster      | `mon_`    | `mon_dungeon_slime`     |
+| Spell        | `spl_`    | `spl_fireball`          |
+| Relic        | `rel_`    | `rel_slime_core`        |
+| Upgrade      | `upg_`    | `upg_line_sharp_edges`  |
+| Status       | `status_` | `status_burn`           |
+| Block        | `block_`  | `block_magic`           |
+| Event        | `evt_`    | `evt_shrine_of_gravity` |
+| Curse        | `curse_`  | `curse_heavy_blocks`    |
+| Loot Table   | `loot_`   | `loot_battle_default`   |
+| Scaling      | `scale_`  | `scale_default_run`     |
+| Map Node     | `node_`   | `node_fight`            |
 
 ## 3. Content quality bar
 
@@ -67,14 +67,14 @@ Each monster should have:
 
 ### Monster families
 
-| Family | Gameplay identity |
-|---|---|
-| Slime | Basic attacks, forgiving. |
-| Goblin | Junk block pressure. |
-| Bat | Preview/control disruption. |
-| Golem | Armor and damage reduction. |
-| Witch | Mana/spell disruption. |
-| Royal | Boss mechanics and board collapse. |
+| Family | Gameplay identity                  |
+| ------ | ---------------------------------- |
+| Slime  | Basic attacks, forgiving.          |
+| Goblin | Junk block pressure.               |
+| Bat    | Preview/control disruption.        |
+| Golem  | Armor and damage reduction.        |
+| Witch  | Mana/spell disruption.             |
+| Royal  | Boss mechanics and board collapse. |
 
 ## 6. Spell design rules
 
@@ -225,58 +225,58 @@ The release version should have enough monster variety to make each act feel dif
 
 ### Act 1 — Cracked Dungeon
 
-| ID | Name | Role | Main mechanic |
-|---|---|---|---|
-| `mon_dungeon_slime` | Slime | basic | Simple attack |
-| `mon_moss_slime` | Moss Slime | sustain | Heals small amount |
-| `mon_cracked_bat` | Cracked Bat | disruptor | Hides next block briefly |
-| `mon_rune_rat` | Rune Rat | speed | Attacks quickly |
-| `mon_candle_wisp` | Candle Wisp | caster | Applies burn |
-| `mon_slime_barrel` | Slime Barrel | hazard | Splits or spawns slime junk |
+| ID                  | Name         | Role      | Main mechanic               |
+| ------------------- | ------------ | --------- | --------------------------- |
+| `mon_dungeon_slime` | Slime        | basic     | Simple attack               |
+| `mon_moss_slime`    | Moss Slime   | sustain   | Heals small amount          |
+| `mon_cracked_bat`   | Cracked Bat  | disruptor | Hides next block briefly    |
+| `mon_rune_rat`      | Rune Rat     | speed     | Attacks quickly             |
+| `mon_candle_wisp`   | Candle Wisp  | caster    | Applies burn                |
+| `mon_slime_barrel`  | Slime Barrel | hazard    | Splits or spawns slime junk |
 
 ### Act 2 — Goblin Scrapworks
 
-| ID | Name | Role | Main mechanic |
-|---|---|---|---|
-| `mon_dungeon_goblin` | Goblin | disruptor | Throws junk |
-| `mon_scrap_goblin` | Scrap Goblin | junk | Adds metal junk blocks |
-| `mon_goblin_bomber` | Goblin Bomber | burst | Places bomb/junk mix |
-| `mon_coin_thief` | Coin Thief | economy | Steals gold unless defeated quickly |
-| `mon_junk_totem` | Junk Totem | summoner | Periodic junk columns |
-| `mon_goblin_shaman` | Goblin Shaman | caster | Buffs junk durability |
+| ID                   | Name          | Role      | Main mechanic                       |
+| -------------------- | ------------- | --------- | ----------------------------------- |
+| `mon_dungeon_goblin` | Goblin        | disruptor | Throws junk                         |
+| `mon_scrap_goblin`   | Scrap Goblin  | junk      | Adds metal junk blocks              |
+| `mon_goblin_bomber`  | Goblin Bomber | burst     | Places bomb/junk mix                |
+| `mon_coin_thief`     | Coin Thief    | economy   | Steals gold unless defeated quickly |
+| `mon_junk_totem`     | Junk Totem    | summoner  | Periodic junk columns               |
+| `mon_goblin_shaman`  | Goblin Shaman | caster    | Buffs junk durability               |
 
 ### Act 3 — Frost Crypt
 
-| ID | Name | Role | Main mechanic |
-|---|---|---|---|
-| `mon_crypt_bat` | Crypt Bat | disruptor | Preview blind |
-| `mon_ice_slime` | Ice Slime | control | Slippery/ice blocks |
-| `mon_frost_witch` | Frost Witch | caster | Freeze / slow |
-| `mon_snow_golem` | Snow Golem | tank | Armor + frozen junk |
-| `mon_bone_mage` | Bone Mage | debuff | Mana hex |
-| `mon_crypt_guard` | Crypt Guard | elite-lite | Column lock |
+| ID                | Name        | Role       | Main mechanic       |
+| ----------------- | ----------- | ---------- | ------------------- |
+| `mon_crypt_bat`   | Crypt Bat   | disruptor  | Preview blind       |
+| `mon_ice_slime`   | Ice Slime   | control    | Slippery/ice blocks |
+| `mon_frost_witch` | Frost Witch | caster     | Freeze / slow       |
+| `mon_snow_golem`  | Snow Golem  | tank       | Armor + frozen junk |
+| `mon_bone_mage`   | Bone Mage   | debuff     | Mana hex            |
+| `mon_crypt_guard` | Crypt Guard | elite-lite | Column lock         |
 
 ### Act 4 — Gravity Ruins
 
-| ID | Name | Role | Main mechanic |
-|---|---|---|---|
-| `mon_stone_golem` | Stone Golem | tank | Reduces line damage |
-| `mon_gravity_imp` | Gravity Imp | disruptor | Speed spikes |
-| `mon_ruin_sentinel` | Ruin Sentinel | armor | Locks a column |
-| `mon_orb_watcher` | Orb Watcher | caster | Alters next queue |
-| `mon_heavy_knight` | Heavy Knight | bruiser | Heavy attacks after timer |
-| `mon_falling_statue` | Falling Statue | hazard | Drops stone blocks |
+| ID                   | Name           | Role      | Main mechanic             |
+| -------------------- | -------------- | --------- | ------------------------- |
+| `mon_stone_golem`    | Stone Golem    | tank      | Reduces line damage       |
+| `mon_gravity_imp`    | Gravity Imp    | disruptor | Speed spikes              |
+| `mon_ruin_sentinel`  | Ruin Sentinel  | armor     | Locks a column            |
+| `mon_orb_watcher`    | Orb Watcher    | caster    | Alters next queue         |
+| `mon_heavy_knight`   | Heavy Knight   | bruiser   | Heavy attacks after timer |
+| `mon_falling_statue` | Falling Statue | hazard    | Drops stone blocks        |
 
 ### Act 5 — Royal Void Keep
 
-| ID | Name | Role | Main mechanic |
-|---|---|---|---|
-| `mon_dungeon_witch` | Witch | caster | Mana hex |
-| `mon_void_acolyte` | Void Acolyte | void | Deletes/warps cells |
-| `mon_mirror_duelist` | Mirror Duelist | counter | Copies last spell effect |
-| `mon_cursed_knight` | Cursed Knight | bruiser | Applies curse pressure |
-| `mon_royal_guard` | Royal Guard | elite-lite | Armor + junk |
-| `mon_collapse_mage` | Collapse Mage | boss-support | Increases fall speed |
+| ID                   | Name           | Role         | Main mechanic            |
+| -------------------- | -------------- | ------------ | ------------------------ |
+| `mon_dungeon_witch`  | Witch          | caster       | Mana hex                 |
+| `mon_void_acolyte`   | Void Acolyte   | void         | Deletes/warps cells      |
+| `mon_mirror_duelist` | Mirror Duelist | counter      | Copies last spell effect |
+| `mon_cursed_knight`  | Cursed Knight  | bruiser      | Applies curse pressure   |
+| `mon_royal_guard`    | Royal Guard    | elite-lite   | Armor + junk             |
+| `mon_collapse_mage`  | Collapse Mage  | boss-support | Increases fall speed     |
 
 ## 14. Boss design target
 
@@ -292,14 +292,14 @@ reward identity
 story clue
 ```
 
-| Boss | Act | Core mechanic | Counterplay |
-|---|---:|---|---|
-| Slime Baron | 1 | Floods board with soft slime blocks | Bombs, fast line clears |
-| Junkmaster Gob | 2 | Junk economy, scrap columns | Void Cut, Bomb Rune, shop prep |
-| Cryo Lich | 3 | Freezes blocks and hides next queue | Frost resistance, hold block planning |
-| Stone Titan | 4 | Armor, heavy blocks, locked columns | Stonebreaker, bomb/void builds |
-| Mirror Witch | 5 optional | Copies spells and applies curses | Low-cost spells, cleanse, timing |
-| Falling King | Final | Speed, junk, shake, void collapse | Full build mastery |
+| Boss           |        Act | Core mechanic                       | Counterplay                           |
+| -------------- | ---------: | ----------------------------------- | ------------------------------------- |
+| Slime Baron    |          1 | Floods board with soft slime blocks | Bombs, fast line clears               |
+| Junkmaster Gob |          2 | Junk economy, scrap columns         | Void Cut, Bomb Rune, shop prep        |
+| Cryo Lich      |          3 | Freezes blocks and hides next queue | Frost resistance, hold block planning |
+| Stone Titan    |          4 | Armor, heavy blocks, locked columns | Stonebreaker, bomb/void builds        |
+| Mirror Witch   | 5 optional | Copies spells and applies curses    | Low-cost spells, cleanse, timing      |
+| Falling King   |      Final | Speed, junk, shake, void collapse   | Full build mastery                    |
 
 ## 15. Hero unlock and story requirements
 

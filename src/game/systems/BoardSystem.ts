@@ -1,7 +1,8 @@
-import type { BoardTickResult, CascadeResult, PieceState, TetrominoType } from '../types/GameTypes';
+import type { BoardTickResult, CascadeResult, PieceState, RunState, TetrominoType } from '../types/GameTypes';
 import { BOARD_COLS, BOARD_ROWS, TETROMINO_COLORS, TETROMINO_SHAPES } from '../utils/constants';
 import { choice, randInt } from '../utils/random';
 import { contentRegistry } from './ContentRegistry';
+import { OopsieSystem } from './OopsieSystem';
 
 type BoardBlockClearEffect = {
   type: string;
@@ -38,18 +39,19 @@ export class BoardSystem {
   nextPieceType: TetrominoType;
   holdPieceType: TetrominoType | null = null;
   private holdUsedThisPiece = false;
+  private readonly oopsieSystem = new OopsieSystem();
 
-  constructor() {
+  constructor(private readonly state?: RunState) {
     this.grid = this.createEmptyGrid();
     this.currentPiece = null;
-    this.nextPieceType = choice(PIECE_TYPES);
+    this.nextPieceType = this.rollPieceType();
     this.reset();
   }
 
   reset(): void {
     this.grid = this.createEmptyGrid();
     this.currentPiece = null;
-    this.nextPieceType = choice(PIECE_TYPES);
+    this.nextPieceType = this.rollPieceType();
     this.holdPieceType = null;
     this.holdUsedThisPiece = false;
     this.spawnPiece();
@@ -106,13 +108,17 @@ export class BoardSystem {
     };
   }
 
+  private rollPieceType(): TetrominoType {
+    return choice(this.state ? this.oopsieSystem.getPiecePool(this.state, PIECE_TYPES) : PIECE_TYPES);
+  }
+
   private rotateMatrix(matrix: number[][]): number[][] {
     return matrix[0].map((_, columnIndex) => matrix.map((row) => row[columnIndex]).reverse());
   }
 
   spawnPiece(): boolean {
     const piece = this.makePiece(this.nextPieceType);
-    this.nextPieceType = choice(PIECE_TYPES);
+    this.nextPieceType = this.rollPieceType();
     this.holdUsedThisPiece = false;
 
     if (this.collides(piece.matrix, piece.x, piece.y)) {
@@ -404,10 +410,18 @@ export class BoardSystem {
     return this.addSpecialBlocks('block_royal', count);
   }
 
+  addConfettiBlocks(count: number): number {
+    return this.addSpecialBlocks('block_confetti', count);
+  }
+
+  addStickyBlocks(count: number): number {
+    return this.addSpecialBlocks('block_sticky', count);
+  }
+
   swapNextAndHold(): boolean {
     if (!this.holdPieceType) {
       this.holdPieceType = this.nextPieceType;
-      this.nextPieceType = choice(PIECE_TYPES);
+      this.nextPieceType = this.rollPieceType();
       return true;
     }
 
@@ -460,7 +474,7 @@ export class BoardSystem {
   }
 
   getGhostPreviewTypes(): TetrominoType[] {
-    return [this.nextPieceType, choice(PIECE_TYPES)];
+    return [this.nextPieceType, this.rollPieceType()];
   }
 
   getGhostPiece(): PieceState | null {

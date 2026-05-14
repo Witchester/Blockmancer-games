@@ -1,9 +1,9 @@
 {
-  "id": "curse_heavy_blocks",
+  "id": "oops_heavy_blocks",
   "name": "Heavy Blocks",
-  "rarity": "cursed",
-  "description": "Blocks fall much faster.",
-  "iconKey": "curse_heavy_blocks",
+  "rarity": "oopsie",
+  "description": "Blocks fall a little faster until this oopsie is cleaned up.",
+  "iconKey": "oops_heavy_blocks",
   "effects": [
     {
       "type": "increase_fall_speed",
@@ -11,6 +11,6 @@
     }
   ],
   "removeCost": 50,
-  "tags": ["curse", "fall_speed"],
+  "tags": ["oopsie", "fall_speed"],
   "enabled": true
 }

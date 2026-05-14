@@ -32,27 +32,27 @@ export class ShopScene extends Phaser.Scene {
       lineSpacing: 6
     }).setOrigin(0.5);
 
-    this.add.text(layout.centerX, 270, `Gold ${game.runState.player.gold}   HP ${game.runState.player.hp}/${game.runState.player.maxHp}   Bag ${game.runState.inventory.length}/${game.runState.player.inventoryCapacity}`, {
+    this.add.text(layout.centerX, 270, `Gold ${game.runState.player.gold}   HP ${game.runState.player.hp}/${game.runState.player.maxHp}   Bag ${game.runState.inventory.length}/${game.runState.player.inventoryCapacity}   Oopsies ${game.runState.player.oopsies.length}`, {
       color: '#ffca6b',
       fontFamily: FONT_FAMILY,
       fontSize: compact ? '18px' : '20px',
       align: 'center'
     }).setOrigin(0.5);
 
-    this.createOption(compact, 340, 'Heal 8 HP', 'Cost: 30 gold', () => {
+    this.createOption(compact, 340, 'Heal 8 HP', `Cost: ${game.oopsieSystem.adjustShopPrice(game.runState, 30)} gold`, () => {
       this.resolveShopAction(game.shopSystem.healForGold(game.runState));
     });
 
-    this.createOption(compact, 456, 'Buy Random Reward', 'Cost: 60 gold', () => {
+    this.createOption(compact, 456, 'Buy Random Reward', `Cost: ${game.oopsieSystem.adjustShopPrice(game.runState, 60)} gold`, () => {
       this.resolveShopAction(game.shopSystem.buyRandomReward(game.runState));
     });
 
-    this.createOption(compact, 572, 'Buy Item', 'Cost: 25 gold', () => {
+    this.createOption(compact, 572, 'Buy Item', `Cost: ${game.oopsieSystem.adjustShopPrice(game.runState, 25)} gold`, () => {
       this.resolveShopAction(game.shopSystem.buyItem(game.runState));
     });
 
-    this.createOption(compact, 688, 'Remove Oopsie', 'Cost: 50 gold', () => {
-      this.resolveShopAction(game.shopSystem.removeCurse(game.runState));
+    this.createOption(compact, 688, 'Remove Oopsie', `Cost: ${game.oopsieSystem.getRemovalCost(game.runState)} gold`, () => {
+      this.resolveShopAction(game.shopSystem.removeOopsie(game.runState));
     });
 
     this.createOption(compact, 804, 'Leave', 'Return to the map.', () => {

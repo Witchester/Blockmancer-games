@@ -260,19 +260,19 @@ for (const [file, id, name, description, effect] of items) {
 }
 
 const oopsies = [
-  ['too-much-confetti', 'curse_too_much_confetti', 'Too Much Confetti', 'Sometimes the board gets extra sparkle junk.'],
-  ['sugar-crash', 'curse_sugar_crash', 'Sugar Crash', 'Mana gains are slightly lower until removed.']
+  ['too-much-confetti', 'oops_too_much_confetti', 'Too Much Confetti', 'Sometimes the board gets extra sparkle junk.'],
+  ['sugar-crash', 'oops_sugar_crash', 'Sugar Crash', 'Mana gains are slightly lower until removed.']
 ];
 for (const [file, id, name, description] of oopsies) {
   writeJson(`oopsies/${file}.json`, {
     id,
     name,
-    rarity: 'cursed',
+    rarity: 'oopsie',
     description,
     iconKey: id,
     effects: [{ type: 'minor_drawback', value: 1 }],
     removeCost: 50,
-    tags: ['curse'],
+    tags: ['oopsie'],
     enabled: true
   });
 }

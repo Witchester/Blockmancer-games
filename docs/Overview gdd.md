@@ -70,27 +70,27 @@ PROJECT STRUCTURE TARGET
 Create or evolve the project toward this structure:
 
 blockmancer-dungeon/
-  package.json
-  index.html
-  vite.config.ts
-  tsconfig.json
-  capacitor.config.ts
-  README.md
+package.json
+index.html
+vite.config.ts
+tsconfig.json
+capacitor.config.ts
+README.md
 
-  docs/
-    GDD.md
-    PHASE_PLAN.md
-    TECHNICAL_DESIGN.md
-    CONTENT_SYSTEM.md
-    BUILD_APK.md
-    ROADMAP.md
+docs/
+GDD.md
+PHASE_PLAN.md
+TECHNICAL_DESIGN.md
+CONTENT_SYSTEM.md
+BUILD_APK.md
+ROADMAP.md
 
-  scripts/
-    validate-content-metadata.mjs
+scripts/
+validate-content-metadata.mjs
 
-  src/
-    main.ts
-    styles.css
+src/
+main.ts
+styles.css
 
     game/
       BlockmancerGame.ts
@@ -480,7 +480,7 @@ Recommended:
 
 Create/update:
 
-src/game/content/*/metadata.json
+src/game/content/\*/metadata.json
 scripts/validate-content-metadata.mjs
 package.json
 
@@ -534,6 +534,7 @@ Create basic content entries for the first playable MVP.
 Create/update:
 
 monsters:
+
 - slime
 - goblin
 - stone-golem
@@ -543,23 +544,28 @@ monsters:
 - falling-king
 
 heroes:
+
 - blockmancer
 
 weapons:
+
 - basic-wand
 
 spells:
+
 - fireball
 - frost-lock
 - bomb-rune
 - void-cut
 
 relics:
+
 - goblin-coin
 - broken-hourglass
 - slime-core
 
 upgrades:
+
 - sharp-edges
 - mana-echo
 - stable-hands
@@ -568,18 +574,21 @@ upgrades:
 - combo-heart
 
 status-effects:
+
 - burn
 - freeze
 - shield
 - mana-hex
 
 room-events:
+
 - shrine-of-gravity
 - broken-anvil
 - strange-mirror
 - lost-knight
 
 loot-tables:
+
 - battle-default
 - elite-default
 - boss-default
@@ -587,6 +596,7 @@ loot-tables:
 - treasure-default
 
 difficulty-scaling:
+
 - default-run
 
 Create/update:
@@ -735,7 +745,7 @@ Implement simple node map progression.
 Create/update:
 
 src/game/systems/MapSystem.ts
-src/game/content/loot-tables/*
+src/game/content/loot-tables/\*
 src/game/scenes/MapScene.ts
 
 Map node types:

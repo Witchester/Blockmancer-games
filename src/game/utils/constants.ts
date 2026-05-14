@@ -126,6 +126,7 @@ export function createDefaultPlayerState(): PlayerState {
     emergencyBarrierUsed: false,
     frostLockDelayBonus: false,
     voidCutRefund: false,
+    oopsies: [],
     curses: 0,
     inventoryCapacity: 10
   };

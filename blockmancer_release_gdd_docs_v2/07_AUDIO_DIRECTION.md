@@ -8,15 +8,15 @@ Audio should make board actions feel powerful and make combat readable without b
 
 Suggested tracks:
 
-| Track | Use |
-|---|---|
-| Main Theme | Main menu / title. |
-| Dungeon Loop | Normal battles/map. |
-| Elite Battle | Elite fights. |
-| Boss Theme | Falling King and other bosses. |
-| Victory Theme | Run victory. |
-| Defeat Theme | Game over. |
-| Shop/Event Ambience | Non-combat rooms. |
+| Track               | Use                            |
+| ------------------- | ------------------------------ |
+| Main Theme          | Main menu / title.             |
+| Dungeon Loop        | Normal battles/map.            |
+| Elite Battle        | Elite fights.                  |
+| Boss Theme          | Falling King and other bosses. |
+| Victory Theme       | Run victory.                   |
+| Defeat Theme        | Game over.                     |
+| Shop/Event Ambience | Non-combat rooms.              |
 
 ## 3. SFX list
 

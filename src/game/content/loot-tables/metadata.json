@@ -73,7 +73,7 @@
       "weapon",
       "gold",
       "heal",
-      "curse",
+      "oopsie",
       "statusEffect"
     ],
     "rarity": [
@@ -82,7 +82,7 @@
       "rare",
       "epic",
       "legendary",
-      "cursed"
+      "oopsie"
     ],
     "rarityBias": [
       "low",

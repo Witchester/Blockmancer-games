@@ -24,6 +24,7 @@ import { HeroSystem } from './systems/HeroSystem';
 import { InventorySystem } from './systems/InventorySystem';
 import { ItemSystem } from './systems/ItemSystem';
 import { MetaSystem } from './systems/MetaSystem';
+import { OopsieSystem } from './systems/OopsieSystem';
 import { SettingsSystem } from './systems/SettingsSystem';
 import { StageSystem } from './systems/StageSystem';
 import { TutorialSystem } from './systems/TutorialSystem';
@@ -39,8 +40,6 @@ export class BlockmancerGame extends Phaser.Game {
   readonly difficultySystem = new DifficultySystem();
   readonly stageSystem = new StageSystem();
   readonly enemySystem = new EnemySystem(this.difficultySystem, this.stageSystem);
-  readonly eventSystem = new EventSystem(this.rewardSystem, this.enemySystem);
-  readonly shopSystem = new ShopSystem(this.rewardSystem);
   readonly assetSystem = new AssetSystem();
   readonly audioSystem = new AudioSystem();
   readonly bossSystem = new BossSystem();
@@ -48,6 +47,9 @@ export class BlockmancerGame extends Phaser.Game {
   readonly weaponSystem = new WeaponSystem();
   readonly inventorySystem = new InventorySystem();
   readonly itemSystem = new ItemSystem();
+  readonly oopsieSystem = new OopsieSystem();
+  readonly eventSystem = new EventSystem(this.rewardSystem, this.enemySystem, this.inventorySystem, this.oopsieSystem);
+  readonly shopSystem = new ShopSystem(this.rewardSystem, this.oopsieSystem);
   readonly tutorialSystem = new TutorialSystem();
   readonly settingsSystem = new SettingsSystem();
   runState: RunState;

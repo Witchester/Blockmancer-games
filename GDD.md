@@ -67,51 +67,51 @@ PROJECT STRUCTURE
 Create this structure:
 
 blockmancer-dungeon/
-  package.json
-  index.html
-  vite.config.ts
-  tsconfig.json
-  capacitor.config.ts
-  README.md
-  docs/
-    GDD.md
-    TECHNICAL_DESIGN.md
-    BUILD_APK.md
-    ROADMAP.md
-  src/
-    main.ts
-    styles.css
-    game/
-      BlockmancerGame.ts
-      scenes/
-        BootScene.ts
-        MainMenuScene.ts
-        BattleScene.ts
-        MapScene.ts
-        RewardScene.ts
-        GameOverScene.ts
-      systems/
-        BoardSystem.ts
-        CombatSystem.ts
-        EnemySystem.ts
-        SpellSystem.ts
-        RewardSystem.ts
-        MapSystem.ts
-        SaveSystem.ts
-      data/
-        enemies.ts
-        spells.ts
-        rewards.ts
-        mapNodes.ts
-      types/
-        GameTypes.ts
-      ui/
-        Hud.ts
-        EventLog.ts
-        Button.ts
-      utils/
-        random.ts
-        constants.ts
+package.json
+index.html
+vite.config.ts
+tsconfig.json
+capacitor.config.ts
+README.md
+docs/
+GDD.md
+TECHNICAL_DESIGN.md
+BUILD_APK.md
+ROADMAP.md
+src/
+main.ts
+styles.css
+game/
+BlockmancerGame.ts
+scenes/
+BootScene.ts
+MainMenuScene.ts
+BattleScene.ts
+MapScene.ts
+RewardScene.ts
+GameOverScene.ts
+systems/
+BoardSystem.ts
+CombatSystem.ts
+EnemySystem.ts
+SpellSystem.ts
+RewardSystem.ts
+MapSystem.ts
+SaveSystem.ts
+data/
+enemies.ts
+spells.ts
+rewards.ts
+mapNodes.ts
+types/
+GameTypes.ts
+ui/
+Hud.ts
+EventLog.ts
+Button.ts
+utils/
+random.ts
+constants.ts
 
 Also create Android support using Capacitor.
 
@@ -194,9 +194,9 @@ GAME SCENES
 
 Implement these scenes.
 
---------------------------------------------------
-BootScene
---------------------------------------------------
+---
+
+## BootScene
 
 Responsibilities:
 
@@ -206,9 +206,9 @@ Responsibilities:
 
 No external assets required.
 
---------------------------------------------------
-MainMenuScene
---------------------------------------------------
+---
+
+## MainMenuScene
 
 Show:
 
@@ -221,9 +221,9 @@ Show:
 
 Start Game begins a new run.
 
---------------------------------------------------
-MapScene
---------------------------------------------------
+---
+
+## MapScene
 
 Show a simple roguelike node map.
 
@@ -250,11 +250,12 @@ Map layout example:
        \       /
         Rest
       /  |  \
-   Shop Elite Event
-    /    |     \
+
+Shop Elite Event
+/ | \
  Fight Event Fight
-      \  |  /
-       Start
+\ | /
+Start
 
 Rules:
 
@@ -263,15 +264,16 @@ Rules:
 - Current node should be highlighted.
 - Boss ends the run if defeated.
 
---------------------------------------------------
-BattleScene
---------------------------------------------------
+---
+
+## BattleScene
 
 This is the main playable scene.
 
 Screen layout:
 
 Top:
+
 - HP
 - Mana
 - Gold
@@ -280,9 +282,11 @@ Top:
 - Combo
 
 Left/center:
+
 - Tetris-like board
 
 Right:
+
 - Enemy card
 - Enemy HP bar
 - Enemy intent
@@ -290,6 +294,7 @@ Right:
 - Upgrade/relic list
 
 Bottom:
+
 - Event log
 - Controls hint
 
@@ -336,9 +341,9 @@ Add on-screen buttons:
 Important:
 The game must be playable on desktop and mobile.
 
---------------------------------------------------
-RewardScene
---------------------------------------------------
+---
+
+## RewardScene
 
 After battle victory, show 3 reward choices.
 
@@ -352,9 +357,9 @@ Reward types:
 
 Player chooses one reward, then returns to MapScene.
 
---------------------------------------------------
-GameOverScene
---------------------------------------------------
+---
+
+## GameOverScene
 
 Show:
 
@@ -473,42 +478,49 @@ ENEMY SYSTEM
 Create these enemies.
 
 1. Slime
+
 - HP: 30
 - Attack: 3
 - Behavior: basic attack
 - Intent: "Bounce Attack"
 
 2. Goblin
+
 - HP: 45
 - Attack: 4
 - Behavior: adds junk blocks
 - Intent: "Throw Junk"
 
 3. Stone Golem
+
 - HP: 75
 - Attack: 6
 - Behavior: reduces line damage by 2
 - Intent: "Stone Guard"
 
 4. Bat
+
 - HP: 25
 - Attack: 3
 - Behavior: briefly hides next piece preview
 - Intent: "Blind Screech"
 
 5. Witch
+
 - HP: 55
 - Attack: 5
 - Behavior: increases mana cost temporarily
 - Intent: "Mana Hex"
 
 6. Elite Knight
+
 - HP: 95
 - Attack: 8
 - Behavior: attacks harder and spawns junk
 - Intent: "Heavy Slam"
 
 7. Falling King Boss
+
 - HP: 160
 - Attack: 10
 - Behavior:
@@ -519,7 +531,7 @@ Create these enemies.
 
 Enemy scaling:
 
-enemyHp = baseHp + stage * 8
+enemyHp = baseHp + stage \* 8
 enemyAttack = baseAttack + floor(stage / 2)
 
 Boss should be much harder.
@@ -531,6 +543,7 @@ SPELL SYSTEM
 Implement four spells.
 
 1. Fireball
+
 - Key: 1
 - Cost: 30 mana
 - Damage: 22
@@ -538,6 +551,7 @@ Implement four spells.
 - Upgrade: +10 damage
 
 2. Frost Lock
+
 - Key: 2
 - Cost: 40 mana
 - Damage: 0
@@ -545,6 +559,7 @@ Implement four spells.
 - Upgrade: also delay enemy attack counter
 
 3. Bomb Rune
+
 - Key: 3
 - Cost: 50 mana
 - Damage: 35
@@ -552,6 +567,7 @@ Implement four spells.
 - Upgrade: +10 damage and larger explosion
 
 4. Void Cut
+
 - Key: 4
 - Cost: 70 mana
 - Damage: 15
@@ -574,33 +590,43 @@ After each battle, show 3 random rewards.
 Rewards:
 
 1. Sharp Edges
+
 - Line damage +2
 
 2. Mana Echo
+
 - Spell cost -5, minimum 10
 
 3. Goblin Coin
+
 - Gain +50 gold
 
 4. Stable Hands
+
 - Fall speed -0.05
 
 5. Fire Mastery
+
 - Fireball damage +10
 
 6. Bomb Expert
+
 - Bomb Rune damage +10
 
 7. Combo Heart
+
 - Heal 1 HP when combo reaches 3+
 
 8. Arcane Preview
+
 - Show extra next piece placeholder
 
 9. Stonebreaker
+
 - Ignore Stone Golem damage reduction
 
 10. Emergency Barrier
+
 - Once per battle, prevent lethal damage
 
 Reward UI:
@@ -625,25 +651,29 @@ Implement simple random events.
 Event room examples:
 
 1. Shrine of Gravity
-Choices:
+   Choices:
+
 - Reduce fall speed by 0.1
 - Gain 30 gold
 - Take 3 damage and gain a random reward
 
 2. Broken Anvil
-Choices:
+   Choices:
+
 - Upgrade random spell
 - Pay 30 gold to upgrade selected spell
 - Leave
 
 3. Strange Mirror
-Choices:
+   Choices:
+
 - Duplicate a random relic
 - Gain curse placeholder
 - Leave
 
 4. Lost Knight
-Choices:
+   Choices:
+
 - Heal 5 HP
 - Fight elite
 - Gain 20 gold

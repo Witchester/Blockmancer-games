@@ -34,10 +34,10 @@
       "condition": "none"
     },
     {
-      "contentType": "curse",
-      "id": "curse_heavy_blocks",
+      "contentType": "oopsie",
+      "id": "oops_heavy_blocks",
       "weight": 4,
-      "rarity": "cursed",
+      "rarity": "oopsie",
       "condition": "none"
     }
   ],

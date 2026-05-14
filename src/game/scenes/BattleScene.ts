@@ -4,6 +4,7 @@ import { SPELLS } from '../data/spells';
 import { BoardSystem, getBoardCellColor } from '../systems/BoardSystem';
 import { CombatSystem } from '../systems/CombatSystem';
 import { InputSystem } from '../systems/InputSystem';
+import { OopsieSystem } from '../systems/OopsieSystem';
 import { SpellSystem } from '../systems/SpellSystem';
 import type { BoardTickResult, EnemyInstance, SpellId } from '../types/GameTypes';
 import { EventLog } from '../ui/EventLog';
@@ -28,6 +29,7 @@ export class BattleScene extends Phaser.Scene {
   private board!: BoardSystem;
   private combat!: CombatSystem;
   private spells!: SpellSystem;
+  private oopsies!: OopsieSystem;
   private hud!: Hud;
   private log!: EventLog;
   private boardCells: Phaser.GameObjects.Rectangle[][] = [];
@@ -84,12 +86,15 @@ export class BattleScene extends Phaser.Scene {
         return;
       }
       state.activeEnemy = enemy;
+      state.activeEnemy.attackCounter = game.oopsieSystem.adjustEnemyAttackInterval(state, enemy.attackIntervalLocks);
     }
 
     this.boardCells = [];
     this.previewTiles = [];
     this.dropTimer = 0;
-    this.board = new BoardSystem();
+    this.oopsies = game.oopsieSystem;
+    this.oopsies.normalizeState(state);
+    this.board = new BoardSystem(state);
     this.combat = new CombatSystem(state);
     this.spells = new SpellSystem(state, this.board, this.combat);
 
@@ -385,7 +390,11 @@ export class BattleScene extends Phaser.Scene {
 
   private moveHorizontal(direction: -1 | 1): void {
     const enemy = this.sharedGame.runState.activeEnemy;
-    const resolvedDirection = enemy?.reverseControlsTurns ? -direction : direction;
+    const slipped = this.sharedGame.oopsieSystem.shouldSlipButton(this.sharedGame.runState);
+    const resolvedDirection = enemy?.reverseControlsTurns || slipped ? -direction : direction;
+    if (slipped) {
+      this.combat.addLog('Slippery Buttons wiggles the move the other way.');
+    }
     if (this.board.move(resolvedDirection, 0)) {
       this.renderBoard();
     }
@@ -396,9 +405,30 @@ export class BattleScene extends Phaser.Scene {
     this.inputSystem = undefined;
   }
 
+  private applyOopsieBoardEffects(linesCleared: number): void {
+    const state = this.sharedGame.runState;
+    if (this.sharedGame.oopsieSystem.shouldAddConfettiJunk(state)) {
+      const added = this.board.addConfettiBlocks(1);
+      if (added > 0) {
+        this.combat.addLog('Too Much Confetti adds a sparkle block.');
+      }
+    }
+
+    if (linesCleared === 0 && this.sharedGame.oopsieSystem.shouldAddStickyJunk(state)) {
+      const added = this.board.addStickyBlocks(1);
+      if (added > 0) {
+        this.combat.addLog('Sticky Floor leaves one sticky block behind.');
+      }
+    }
+  }
+
   update(_time: number, delta: number): void {
     this.dropTimer += delta;
-    const dropInterval = Math.max(120, BASE_DROP_MS / this.sharedGame.runState.fallSpeed);
+    const effectiveFallSpeed = this.sharedGame.oopsieSystem.adjustFallSpeed(
+      this.sharedGame.runState,
+      this.sharedGame.runState.fallSpeed
+    );
+    const dropInterval = Math.max(120, BASE_DROP_MS / effectiveFallSpeed);
 
     if (this.dropTimer >= dropInterval) {
       this.dropTimer = 0;
@@ -430,6 +460,7 @@ export class BattleScene extends Phaser.Scene {
       };
 
       this.combat.resolveCascadeClear(cascade);
+      this.applyOopsieBoardEffects(cascade.totalLinesCleared);
 
       if (state.activeEnemy && state.activeEnemy.currentHp <= 0) {
         this.handleVictory();
@@ -819,7 +850,7 @@ export class BattleScene extends Phaser.Scene {
       return;
     }
 
-    const hidden = enemy.previewHiddenTurns > 0;
+    const hidden = enemy.previewHiddenTurns > 0 || this.sharedGame.oopsieSystem.shouldHidePreview(this.sharedGame.runState);
     const nextType = this.board.nextPieceType;
     const matrix = TETROMINO_SHAPES[nextType];
     this.previewLabel?.setText(hidden ? 'Preview Hexed' : 'Next');
@@ -841,7 +872,10 @@ export class BattleScene extends Phaser.Scene {
 
   private renderUpgrades(): void {
     const owned = this.sharedGame.runState.ownedRewards;
-    this.upgradesText?.setText(owned.length ? `Relics: ${owned.length}` : 'Relics: none');
+    const oopsieCount = this.sharedGame.runState.player.oopsies.length;
+    this.upgradesText?.setText(
+      `${owned.length ? `Relics: ${owned.length}` : 'Relics: none'}\n${oopsieCount ? `Oopsies: ${oopsieCount}` : 'Oopsies: none'}`
+    );
   }
 
   private renderMiddleOverlays(): void {

@@ -8,7 +8,7 @@
   "biome": "dungeon",
   "choices": [
     {
-      "id": "choice_heal_full_curse",
+      "id": "choice_heal_full_oopsie",
       "label": "Drink fully",
       "description": "Restore all health but gain a silly oopsie.",
       "requirements": [],
@@ -18,7 +18,7 @@
           "value": 1
         },
         {
-          "type": "gain_random_curse",
+          "type": "gain_random_oopsie",
           "value": 1
         }
       ],

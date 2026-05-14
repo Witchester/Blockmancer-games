@@ -47,26 +47,26 @@ CreditsScene
 
 ## 4. Systems
 
-| System | Responsibility |
-|---|---|
-| BoardSystem | Grid, pieces, collision, line clears. |
-| CombatSystem | Damage, mana, HP, battle flow. |
-| EnemySystem | Enemy creation, scaling, intents, behaviors. |
-| SpellSystem | Spell casting and effects. |
-| RewardSystem | Reward rolls and application. |
-| RelicSystem | Passive triggers. |
-| UpgradeSystem | Upgrade stacking and modifiers. |
-| HeroSystem | Hero selection and starting loadout. |
-| WeaponSystem | Weapon effects. |
-| MapSystem | Node generation/progression. |
-| EventSystem | Event choices and effects. |
-| ShopSystem | Shop inventory/purchases. |
-| DifficultySystem | Stage scaling. |
-| SaveSystem | Save/load/clear run. |
-| AudioSystem | Music/SFX wrapper. |
-| InputSystem | Keyboard, touch, mobile controls. |
-| ContentRegistry | Load and query JSON content. |
-| AnalyticsSystem | Optional event tracking. |
+| System           | Responsibility                               |
+| ---------------- | -------------------------------------------- |
+| BoardSystem      | Grid, pieces, collision, line clears.        |
+| CombatSystem     | Damage, mana, HP, battle flow.               |
+| EnemySystem      | Enemy creation, scaling, intents, behaviors. |
+| SpellSystem      | Spell casting and effects.                   |
+| RewardSystem     | Reward rolls and application.                |
+| RelicSystem      | Passive triggers.                            |
+| UpgradeSystem    | Upgrade stacking and modifiers.              |
+| HeroSystem       | Hero selection and starting loadout.         |
+| WeaponSystem     | Weapon effects.                              |
+| MapSystem        | Node generation/progression.                 |
+| EventSystem      | Event choices and effects.                   |
+| ShopSystem       | Shop inventory/purchases.                    |
+| DifficultySystem | Stage scaling.                               |
+| SaveSystem       | Save/load/clear run.                         |
+| AudioSystem      | Music/SFX wrapper.                           |
+| InputSystem      | Keyboard, touch, mobile controls.            |
+| ContentRegistry  | Load and query JSON content.                 |
+| AnalyticsSystem  | Optional event tracking.                     |
 
 ## 5. Data flow
 
@@ -114,17 +114,17 @@ Board system should be deterministic enough for testing.
 Recommended APIs:
 
 ```ts
-spawnPiece()
-movePiece(dx)
-rotatePiece()
-softDrop()
-hardDrop()
-lockPiece()
-clearLines()
-addJunk(count)
-clearArea(x, y, radius)
-clearRow(row)
-isTopOut()
+spawnPiece();
+movePiece(dx);
+rotatePiece();
+softDrop();
+hardDrop();
+lockPiece();
+clearLines();
+addJunk(count);
+clearArea(x, y, radius);
+clearRow(row);
+isTopOut();
 ```
 
 ## 8. Effect system
@@ -153,13 +153,13 @@ Google Play publishing should use Android App Bundle (`.aab`) for store release.
 
 ## 10. Performance targets
 
-| Target | Minimum |
-|---|---:|
-| Desktop FPS | 60 |
-| Mobile FPS | 45–60 |
-| Initial load | < 5 seconds target |
-| Memory | Avoid large texture waste |
-| Save operation | < 50 ms |
+| Target         |                   Minimum |
+| -------------- | ------------------------: |
+| Desktop FPS    |                        60 |
+| Mobile FPS     |                     45–60 |
+| Initial load   |        < 5 seconds target |
+| Memory         | Avoid large texture waste |
+| Save operation |                   < 50 ms |
 
 ## 11. Error handling
 
@@ -257,11 +257,11 @@ UI should never read private BoardSystem state directly.
 Run state should expose compact inventory data:
 
 ```ts
-currentWeaponId
-relicIds
-upgradeIds
-curseIds
-consumableIds // optional
+currentWeaponId;
+relicIds;
+upgradeIds;
+curseIds;
+consumableIds; // optional
 ```
 
 Battle UI should show icons only. Details belong in a tooltip, pause screen, or full inventory screen.

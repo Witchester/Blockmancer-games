@@ -929,4 +929,3 @@ The top battle screen shows the result of the puzzle battle. The middle board is
 ```text
 A cheerful falling-block roguelike RPG where a clumsy apprentice mage clears rune lines, triggers magical cascades, casts silly spells, and saves a festival from the world’s most overexcited block machine.
 ```
-

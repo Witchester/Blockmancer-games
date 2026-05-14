@@ -12,26 +12,26 @@ Place these files under:
 
 ## Document map
 
-| File | Purpose |
-|---|---|
-| `01_GDD_MASTER.md` | Main game design document and product vision. |
-| `02_GAMEPLAY_SYSTEMS.md` | Detailed gameplay systems: board, combat, spells, enemies, rewards. |
-| `03_CONTENT_BIBLE.md` | Content rules, naming, IDs, content categories, expansion guidelines. |
-| `04_BALANCE_AND_PROGRESSION.md` | Numbers, curves, run length, difficulty, reward economy. |
-| `05_UI_UX_SPEC.md` | Screen flows, HUD, mobile controls, accessibility, user experience. |
-| `06_ART_DIRECTION.md` | Visual identity, sprite needs, UI asset guide, animation priorities. |
-| `07_AUDIO_DIRECTION.md` | Music/SFX direction and placeholder-to-final pipeline. |
-| `08_TECHNICAL_DESIGN.md` | Architecture, systems, data loading, save, mobile build. |
-| `09_ASSET_PIPELINE.md` | Asset folders, naming, import rules, texture atlas roadmap. |
-| `10_PRODUCTION_ROADMAP.md` | Milestones from MVP to release candidate. |
-| `11_QA_TEST_PLAN.md` | Functional, regression, device, balance, performance QA. |
-| `12_RELEASE_CHECKLIST.md` | Release readiness checklist for web, Android, Steam/PC. |
-| `13_STORE_AND_MARKETING.md` | Store assets, page copy, launch plan, screenshots, trailer. |
-| `14_LEGAL_IP_RISK.md` | Practical IP/copyright/trademark risk reduction notes. |
-| `15_MONETIZATION_AND_ANALYTICS.md` | Ethical monetization options and analytics events. |
-| `16_LIVEOPS_POST_RELEASE.md` | Patches, events, content drops, telemetry-driven balancing. |
-| `17_DEFINITION_OF_DONE.md` | Release gates and acceptance criteria. |
-| `18_CREDITS_AND_LICENSES.md` | Credits, third-party license tracking, attribution template. |
+| File                               | Purpose                                                               |
+| ---------------------------------- | --------------------------------------------------------------------- |
+| `01_GDD_MASTER.md`                 | Main game design document and product vision.                         |
+| `02_GAMEPLAY_SYSTEMS.md`           | Detailed gameplay systems: board, combat, spells, enemies, rewards.   |
+| `03_CONTENT_BIBLE.md`              | Content rules, naming, IDs, content categories, expansion guidelines. |
+| `04_BALANCE_AND_PROGRESSION.md`    | Numbers, curves, run length, difficulty, reward economy.              |
+| `05_UI_UX_SPEC.md`                 | Screen flows, HUD, mobile controls, accessibility, user experience.   |
+| `06_ART_DIRECTION.md`              | Visual identity, sprite needs, UI asset guide, animation priorities.  |
+| `07_AUDIO_DIRECTION.md`            | Music/SFX direction and placeholder-to-final pipeline.                |
+| `08_TECHNICAL_DESIGN.md`           | Architecture, systems, data loading, save, mobile build.              |
+| `09_ASSET_PIPELINE.md`             | Asset folders, naming, import rules, texture atlas roadmap.           |
+| `10_PRODUCTION_ROADMAP.md`         | Milestones from MVP to release candidate.                             |
+| `11_QA_TEST_PLAN.md`               | Functional, regression, device, balance, performance QA.              |
+| `12_RELEASE_CHECKLIST.md`          | Release readiness checklist for web, Android, Steam/PC.               |
+| `13_STORE_AND_MARKETING.md`        | Store assets, page copy, launch plan, screenshots, trailer.           |
+| `14_LEGAL_IP_RISK.md`              | Practical IP/copyright/trademark risk reduction notes.                |
+| `15_MONETIZATION_AND_ANALYTICS.md` | Ethical monetization options and analytics events.                    |
+| `16_LIVEOPS_POST_RELEASE.md`       | Patches, events, content drops, telemetry-driven balancing.           |
+| `17_DEFINITION_OF_DONE.md`         | Release gates and acceptance criteria.                                |
+| `18_CREDITS_AND_LICENSES.md`       | Credits, third-party license tracking, attribution template.          |
 
 ## Current project assumption
 

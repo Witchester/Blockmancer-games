@@ -80,7 +80,10 @@ export class EventScene extends Phaser.Scene {
       case 'upgrade_spell':
         return choiceEntry.costGold ? `Pay ${choiceEntry.costGold} gold to empower a spell.` : 'Upgrade a random spell.';
       case 'add_curse':
+      case 'add_oopsie':
         return `Gain a silly oopsie and ${choiceEntry.bonusGold ?? 0} gold.`;
+      case 'remove_oopsie':
+        return 'Polish away one oopsie.';
       case 'heal_player':
         return `Heal ${choiceEntry.value} HP.`;
       case 'start_elite_fight':

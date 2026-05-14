@@ -3,8 +3,11 @@ import { SPELLS } from '../data/spells';
 import { clamp } from '../utils/math';
 import { CombatSystem } from './CombatSystem';
 import { BoardSystem } from './BoardSystem';
+import { OopsieSystem } from './OopsieSystem';
 
 export class SpellSystem {
+  private readonly oopsieSystem = new OopsieSystem();
+
   constructor(
     private readonly state: RunState,
     private readonly board: BoardSystem,
@@ -35,6 +38,11 @@ export class SpellSystem {
     }
 
     this.state.player.mana -= cost;
+    const hpCost = this.oopsieSystem.getSpellHpCost(this.state);
+    if (hpCost > 0) {
+      this.state.player.hp = Math.max(1, this.state.player.hp - hpCost);
+      this.combat.addLog(`An oopsie nibbles ${hpCost} HP from the spell.`);
+    }
 
     switch (spellId) {
       case 'fireball':

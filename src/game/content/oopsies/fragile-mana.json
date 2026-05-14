@@ -1,16 +1,16 @@
 {
-  "id": "curse_fragile_mana",
-  "name": "Fragile Mana",
-  "rarity": "cursed",
-  "description": "Gain 15% less mana from line clears.",
-  "iconKey": "curse_fragile_mana",
+  "id": "oops_snack_tax",
+  "name": "Snack Tax",
+  "rarity": "oopsie",
+  "description": "Shop prices rise while the snack fund is collecting.",
+  "iconKey": "oops_snack_tax",
   "effects": [
     {
-      "type": "reduce_mana_gain_percent",
-      "value": 0.15
+      "type": "shop_price_increase_percent",
+      "value": 0.2
     }
   ],
   "removeCost": 55,
-  "tags": ["curse", "mana"],
+  "tags": ["oopsie", "shop"],
   "enabled": true
 }

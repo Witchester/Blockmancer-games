@@ -26,6 +26,7 @@ import type {
   InventoryStack
 } from '../types/GameTypes';
 import { createDefaultPlayerState } from '../utils/constants';
+import { OopsieSystem } from '../systems/OopsieSystem';
 
 type PartialRunState = Partial<Omit<RunState, 'player' | 'hero' | 'weapon' | 'board'>> & {
   player?: Partial<RunState['player']>;
@@ -72,6 +73,8 @@ function normalizeEnemy(enemy: EnemyInstance | null | undefined): EnemyInstance 
   };
 }
 
+const oopsieSystem = new OopsieSystem();
+
 export function createDefaultRunState(): RunState {
   const player = createDefaultPlayerState();
   return {
@@ -115,6 +118,9 @@ export function normalizeRunState(input: unknown): RunState {
     ...defaults.player,
     ...(raw.player ?? {})
   };
+  if (!Array.isArray(player.oopsies)) {
+    player.oopsies = [];
+  }
 
   const merged: RunState = {
     ...defaults,
@@ -157,6 +163,7 @@ export function normalizeRunState(input: unknown): RunState {
 
   merged.gold = player.gold;
   merged.currentEventId = typeof raw.currentEventId === 'string' ? raw.currentEventId : null;
+  oopsieSystem.normalizeState(merged);
 
   return merged;
 }

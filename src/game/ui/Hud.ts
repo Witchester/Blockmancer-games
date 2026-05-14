@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import type { RunState } from '../types/GameTypes';
+import { OopsieSystem } from '../systems/OopsieSystem';
 import { COLORS, FONT_FAMILY } from '../utils/constants';
 
 type HudOptions = {
@@ -14,6 +15,7 @@ export class Hud {
   private readonly root: Phaser.GameObjects.Container;
   private readonly text: Phaser.GameObjects.Text;
   private readonly compact: boolean;
+  private readonly oopsieSystem = new OopsieSystem();
 
   constructor(scene: Phaser.Scene, options: HudOptions = {}) {
     this.compact = options.compact ?? false;
@@ -45,7 +47,8 @@ export class Hud {
       `Stage ${state.stage}`,
       `Fall ${state.fallSpeed.toFixed(2)}x`,
       `Combo ${state.combo}`,
-      state.player.feverActiveLocks > 0 ? `Fever ON ${state.player.feverActiveLocks}` : `Fever ${state.player.fever}%`
+      state.player.feverActiveLocks > 0 ? `Fever ON ${state.player.feverActiveLocks}` : `Fever ${state.player.fever}%`,
+      this.oopsieSystem.getSummary(state)
     ];
     this.text.setText(this.compact ? `${stats.slice(0, 4).join('   ')}\n${stats.slice(4).join('   ')}` : stats.join('   '));
   }

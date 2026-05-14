@@ -1,4 +1,3 @@
-
 # Blockmancer Dungeon — Vibe Coding Plan for Full Game Release 1.0
 
 This document is a practical **vibe coding plan** for turning the current fun MVP into a complete **Release 1.0** game.
@@ -303,12 +302,12 @@ Make Cascade Gravity the core board identity.
 ### System Functions
 
 ```ts
-detectCompletedLines()
-removeCompletedLines()
-applyCascadeGravity()
-resolveCascadeClears()
-calculateCascadeReward()
-getCascadeResult()
+detectCompletedLines();
+removeCompletedLines();
+applyCascadeGravity();
+resolveCascadeClears();
+calculateCascadeReward();
+getCascadeResult();
 ```
 
 ### Data Type

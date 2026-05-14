@@ -80,8 +80,8 @@
       "reduce_fall_speed",
       "increase_fall_speed",
       "start_elite_fight",
-      "add_curse",
-      "remove_curse",
+      "add_oopsie",
+      "remove_oopsie",
       "leave"
     ],
     "requirements": [
@@ -97,7 +97,7 @@
       "risk_reward",
       "healing",
       "shop_like",
-      "curse",
+      "oopsie",
       "spell_upgrade",
       "gold",
       "combat",

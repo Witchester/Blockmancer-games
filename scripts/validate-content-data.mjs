@@ -14,7 +14,7 @@ const idPrefixes = {
   'status-effects': 'status_',
   'board-blocks': 'block_',
   'room-events': 'evt_',
-  curses: 'curse_',
+  oopsies: 'oops_',
   'loot-tables': 'loot_',
   'difficulty-scaling': 'scale_',
   'map-nodes': 'node_',

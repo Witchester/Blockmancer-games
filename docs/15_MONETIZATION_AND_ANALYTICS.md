@@ -80,15 +80,15 @@ If any analytics or crash reporting is added:
 
 ## 5. Key product metrics
 
-| Metric | Meaning |
-|---|---|
-| First-run stage reached | Onboarding difficulty. |
-| Day-1 return | Fun/retention signal. |
-| Average run length | Session fit. |
-| Spell usage rate | Spell system clarity. |
+| Metric                   | Meaning                |
+| ------------------------ | ---------------------- |
+| First-run stage reached  | Onboarding difficulty. |
+| Day-1 return             | Fun/retention signal.  |
+| Average run length       | Session fit.           |
+| Spell usage rate         | Spell system clarity.  |
 | Reward pick distribution | Balance/build variety. |
-| Death reasons | Difficulty fairness. |
-| Boss win rate | Endgame tuning. |
+| Death reasons            | Difficulty fairness.   |
+| Boss win rate            | Endgame tuning.        |
 
 ## 6. Balance dashboard idea
 

@@ -6,25 +6,25 @@ This document lists release-target content additions beyond the current MVP.
 
 ## 2. Heroes
 
-| ID | Name | Role | Unlock |
-|---|---|---|---|
-| `hero_blockmancer` | Blockmancer | Balanced starter | Start unlocked |
-| `hero_pyromancer` | Pyromancer | Fire damage | Defeat Slime Baron |
-| `hero_frostbinder` | Frostbinder | Control/survival | Defeat Junkmaster Gob |
+| ID                    | Name           | Role             | Unlock                                |
+| --------------------- | -------------- | ---------------- | ------------------------------------- |
+| `hero_blockmancer`    | Blockmancer    | Balanced starter | Start unlocked                        |
+| `hero_pyromancer`     | Pyromancer     | Fire damage      | Defeat Slime Baron                    |
+| `hero_frostbinder`    | Frostbinder    | Control/survival | Defeat Junkmaster Gob                 |
 | `hero_gravity_knight` | Gravity Knight | Heavy drop/armor | Clear 100 lines or defeat Stone Titan |
-| `hero_void_scholar` | Void Scholar | Void/curses | Reach Act 5 or accept 3 curses |
-| `hero_rune_engineer` | Rune Engineer | Bombs/tools | Cast Bomb Rune 50 times |
+| `hero_void_scholar`   | Void Scholar   | Void/curses      | Reach Act 5 or accept 3 curses        |
+| `hero_rune_engineer`  | Rune Engineer  | Bombs/tools      | Cast Bomb Rune 50 times               |
 
 ## 3. Bosses
 
-| ID | Name | Act | Mechanic |
-|---|---|---:|---|
-| `mon_boss_slime_baron` | Slime Baron | 1 | Slime flood |
-| `mon_boss_junkmaster_gob` | Junkmaster Gob | 2 | Junk columns |
-| `mon_boss_cryo_lich` | Cryo Lich | 3 | Freeze / preview blind |
-| `mon_boss_stone_titan` | Stone Titan | 4 | Heavy blocks / locked columns |
-| `mon_boss_mirror_witch` | Mirror Witch | 5 optional | Curses / spell copy |
-| `mon_boss_falling_king` | The Falling King | 5 final | Speed / junk / void collapse |
+| ID                        | Name             |        Act | Mechanic                      |
+| ------------------------- | ---------------- | ---------: | ----------------------------- |
+| `mon_boss_slime_baron`    | Slime Baron      |          1 | Slime flood                   |
+| `mon_boss_junkmaster_gob` | Junkmaster Gob   |          2 | Junk columns                  |
+| `mon_boss_cryo_lich`      | Cryo Lich        |          3 | Freeze / preview blind        |
+| `mon_boss_stone_titan`    | Stone Titan      |          4 | Heavy blocks / locked columns |
+| `mon_boss_mirror_witch`   | Mirror Witch     | 5 optional | Curses / spell copy           |
+| `mon_boss_falling_king`   | The Falling King |    5 final | Speed / junk / void collapse  |
 
 ## 4. Normal and elite monsters
 

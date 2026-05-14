@@ -1,16 +1,16 @@
 {
-  "id": "curse_greedy_goblin",
-  "name": "Greedy Goblin",
-  "rarity": "cursed",
-  "description": "All shop items cost 20% more.",
-  "iconKey": "curse_greedy_goblin",
+  "id": "oops_overexcited_machine",
+  "name": "Overexcited Machine",
+  "rarity": "oopsie",
+  "description": "Enemies get ready one block sooner, but never faster than every block.",
+  "iconKey": "oops_overexcited_machine",
   "effects": [
     {
-      "type": "shop_price_increase_percent",
-      "value": 0.2
+      "type": "enemy_attack_interval_penalty",
+      "value": 1
     }
   ],
-  "removeCost": 45,
-  "tags": ["curse", "economy"],
+  "removeCost": 65,
+  "tags": ["oopsie", "enemy"],
   "enabled": true
 }

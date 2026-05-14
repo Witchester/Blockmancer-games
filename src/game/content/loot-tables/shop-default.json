@@ -41,10 +41,10 @@
     },
     {
       "contentType": "service",
-      "id": "remove_curse",
+      "id": "remove_oopsie",
       "weight": 5,
       "rarity": "uncommon",
-      "condition": "has_curse"
+      "condition": "has_oopsie"
     }
   ],
   "rollConfig": {

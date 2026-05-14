@@ -1,16 +1,16 @@
 {
-  "id": "curse_blind_preview",
-  "name": "Blind Preview",
-  "rarity": "cursed",
-  "description": "Cannot see the next piece with 25% chance.",
-  "iconKey": "curse_blind_preview",
+  "id": "oops_square_only",
+  "name": "Square Parade",
+  "rarity": "oopsie",
+  "description": "The Block-O-Matic gets extra fond of square blocks.",
+  "iconKey": "oops_square_only",
   "effects": [
     {
-      "type": "hide_next_piece_chance",
-      "value": 0.25
+      "type": "favor_square_blocks",
+      "value": 1
     }
   ],
   "removeCost": 60,
-  "tags": ["curse", "utility"],
+  "tags": ["oopsie", "pieces"],
   "enabled": true
 }

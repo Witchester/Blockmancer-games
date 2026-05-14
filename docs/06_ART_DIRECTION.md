@@ -62,34 +62,34 @@ splash screen
 
 ## 4. Sprite size guide
 
-| Asset | Size |
-|---|---:|
-| Board blocks | 32x32 or 48x48 |
-| Spell/relic/upgrade icons | 64x64 |
-| Monster sprites | 128x128 or 192x192 |
-| Hero portraits | 256x256 |
-| Map nodes | 64x64 |
-| UI buttons | 256x64 |
-| Panels | 512x256 or scalable 9-slice |
-| Effects | 128x128 or 256x256 |
-| App icon | 1024x1024 source |
+| Asset                     |                        Size |
+| ------------------------- | --------------------------: |
+| Board blocks              |              32x32 or 48x48 |
+| Spell/relic/upgrade icons |                       64x64 |
+| Monster sprites           |          128x128 or 192x192 |
+| Hero portraits            |                     256x256 |
+| Map nodes                 |                       64x64 |
+| UI buttons                |                      256x64 |
+| Panels                    | 512x256 or scalable 9-slice |
+| Effects                   |          128x128 or 256x256 |
+| App icon                  |            1024x1024 source |
 
 ## 5. Block design
 
 Each block must be readable at small sizes.
 
-| Block | Visual direction |
-|---|---|
-| Red Rune | red-orange rune glow |
-| Blue Rune | blue arcane symbol |
-| Green Rune | emerald glyph |
-| Yellow Rune | golden tile |
-| Magic | purple star/rune |
-| Bomb | dark core with red fuse |
-| Stone | cracked grey chunk |
-| Ice | pale blue shine |
-| Junk | dirty dark scrap |
-| Void | black center, purple edge |
+| Block       | Visual direction          |
+| ----------- | ------------------------- |
+| Red Rune    | red-orange rune glow      |
+| Blue Rune   | blue arcane symbol        |
+| Green Rune  | emerald glyph             |
+| Yellow Rune | golden tile               |
+| Magic       | purple star/rune          |
+| Bomb        | dark core with red fuse   |
+| Stone       | cracked grey chunk        |
+| Ice         | pale blue shine           |
+| Junk        | dirty dark scrap          |
+| Void        | black center, purple edge |
 
 ## 6. Monster visual direction
 
@@ -236,13 +236,13 @@ For bosses, the boss sprite can occupy more horizontal width, but must not make 
 
 ## 12. Act visual themes
 
-| Act | Palette | Motifs |
-|---:|---|---|
-| 1 Cracked Dungeon | grey, purple, moss green | stone, slime, runes |
-| 2 Goblin Scrapworks | rusty orange, brass, dirty green | scrap, gears, junk |
-| 3 Frost Crypt | dark blue, cyan, bone white | ice, bones, candles |
-| 4 Gravity Ruins | indigo, gold, slate | floating stones, orbs |
-| 5 Royal Void Keep | black, violet, royal red, gold | crowns, void cracks, cursed banners |
+|                 Act | Palette                          | Motifs                              |
+| ------------------: | -------------------------------- | ----------------------------------- |
+|   1 Cracked Dungeon | grey, purple, moss green         | stone, slime, runes                 |
+| 2 Goblin Scrapworks | rusty orange, brass, dirty green | scrap, gears, junk                  |
+|       3 Frost Crypt | dark blue, cyan, bone white      | ice, bones, candles                 |
+|     4 Gravity Ruins | indigo, gold, slate              | floating stones, orbs               |
+|   5 Royal Void Keep | black, violet, royal red, gold   | crowns, void cracks, cursed banners |
 
 ## 13. Required release asset additions
 

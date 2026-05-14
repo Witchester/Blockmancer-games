@@ -13,7 +13,7 @@
     },
     {
       "label": "Take Oopsie",
-      "effectType": "add_curse",
+      "effectType": "add_oopsie",
       "value": 1,
       "bonusGold": 60,
       "requirement": "none"
@@ -26,7 +26,7 @@
     }
   ],
   "tags": [
-    "curse",
+    "oopsie",
     "risk_reward",
     "lore"
   ],

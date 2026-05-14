@@ -36,7 +36,10 @@ Thumbs.db
 artifacts/
 
 # Generated agent and BMAD artifacts
+.agents/
 .claude/
+_bmad/
+_bmad-output/
 
 # Local environment files
 .env

@@ -30,7 +30,7 @@ const CONTENT_FOLDERS: ContentFolderConfig[] = [
   { category: 'lootTable', folder: 'loot-tables', fallbackId: 'loot_battle_default' },
   { category: 'difficultyScaling', folder: 'difficulty-scaling', fallbackId: 'scale_default_run' },
   { category: 'boardBlock', folder: 'board-blocks', fallbackId: 'block_red' },
-  { category: 'curse', folder: 'oopsies', fallbackId: 'curse_heavy_blocks' },
+  { category: 'oopsie', folder: 'oopsies', fallbackId: 'oops_heavy_blocks' },
   { category: 'mapNode', folder: 'map-nodes', fallbackId: 'node_fight' },
   { category: 'item', folder: 'items', fallbackId: 'item_mana_lemonade' },
   { category: 'stage', folder: 'stages', fallbackId: 'stage_sprinkle_sewers' },
@@ -187,8 +187,8 @@ export class ContentRegistry {
     return this.getById('npc', id);
   }
 
-  getCurse(id: string) {
-    return this.getById('curse', id);
+  getOopsie(id: string) {
+    return this.getById('oopsie', id);
   }
 
   getMapNode(id: string) {

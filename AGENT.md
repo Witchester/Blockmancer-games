@@ -13,6 +13,7 @@ This file defines the project context, coding rules, architecture expectations, 
 **Genre:** Cheerful falling-block roguelike RPG
 
 **Platform Target:**
+
 - Primary: Mobile portrait web game
 - Secondary: Android APK/AAB through Capacitor
 - Development preview: Desktop browser

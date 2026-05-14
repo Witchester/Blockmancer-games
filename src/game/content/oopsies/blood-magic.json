@@ -1,17 +1,16 @@
 {
-  "id": "curse_blood_magic",
-  "name": "Blood Magic",
-  "rarity": "cursed",
-  "description": "Spells cost 1 HP with 20% chance.",
-  "iconKey": "curse_blood_magic",
+  "id": "oops_slippery_buttons",
+  "name": "Slippery Buttons",
+  "rarity": "oopsie",
+  "description": "Move buttons sometimes wiggle the falling block the other way.",
+  "iconKey": "oops_slippery_buttons",
   "effects": [
     {
-      "type": "spell_hp_cost_chance",
-      "value": 0.2,
-      "hpCost": 1
+      "type": "slippery_button_chance",
+      "value": 0.12
     }
   ],
-  "removeCost": 70,
-  "tags": ["curse", "spell"],
+  "removeCost": 55,
+  "tags": ["oopsie", "controls"],
   "enabled": true
 }

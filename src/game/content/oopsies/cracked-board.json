@@ -1,16 +1,16 @@
 {
-  "id": "curse_cracked_board",
-  "name": "Cracked Board",
-  "rarity": "cursed",
-  "description": "Enemies spawn 10% more junk blocks.",
-  "iconKey": "curse_cracked_board",
+  "id": "oops_sticky_floor",
+  "name": "Sticky Floor",
+  "rarity": "oopsie",
+  "description": "When a block locks without clearing a line, sticky blocks may appear.",
+  "iconKey": "oops_sticky_floor",
   "effects": [
     {
-      "type": "increase_enemy_junk_chance",
-      "value": 0.1
+      "type": "sticky_junk_chance",
+      "value": 0.18
     }
   ],
   "removeCost": 50,
-  "tags": ["curse", "board"],
+  "tags": ["oopsie", "board"],
   "enabled": true
 }

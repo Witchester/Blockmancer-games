@@ -1,15 +1,15 @@
 {
-  "contentType": "curse",
+  "contentType": "oopsie",
   "version": "1.0.0",
-  "idPrefix": "curse_",
-  "displayName": "Curses",
-  "description": "Negative modifiers that persist throughout a dungeon run.",
-  "idFormat": "curse_<type>",
+  "idPrefix": "oops_",
+  "displayName": "Oopsies",
+  "description": "Cheerful silly drawbacks that persist throughout a dungeon run until removed.",
+  "idFormat": "oops_<type>",
   "exampleIds": [
-    "curse_heavy_blocks",
-    "curse_blind_preview",
-    "curse_greedy_goblin",
-    "curse_blood_magic"
+    "oops_heavy_blocks",
+    "oops_slippery_buttons",
+    "oops_too_much_confetti",
+    "oops_sugar_crash"
   ],
   "requiredFields": [
     "id",
@@ -22,14 +22,14 @@
   "fields": {
     "id": {
       "type": "string",
-      "pattern": "^curse_[a-z0-9]+(?:_[a-z0-9]+)*$"
+      "pattern": "^oops_[a-z0-9]+(?:_[a-z0-9]+)*$"
     },
     "name": {
       "type": "string"
     },
     "rarity": {
       "type": "enum",
-      "values": ["cursed"]
+      "values": ["oopsie"]
     },
     "description": {
       "type": "string"
@@ -54,7 +54,7 @@
   },
   "dataList": {},
   "defaults": {
-    "rarity": "cursed",
+    "rarity": "oopsie",
     "enabled": true,
     "effects": [],
     "tags": []

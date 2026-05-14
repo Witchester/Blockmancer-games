@@ -10,7 +10,7 @@ export type ContentCategory =
   | 'lootTable'
   | 'difficultyScaling'
   | 'boardBlock'
-  | 'curse'
+  | 'oopsie'
   | 'mapNode'
   | 'item'
   | 'stage'

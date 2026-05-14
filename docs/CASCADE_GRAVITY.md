@@ -7,36 +7,44 @@ The **Cascade Gravity System** is the core falling-block clearing mechanic in Bl
 ## How It Works
 
 ### 1. Line Clear Phase
+
 After a piece locks, the board scans all rows to identify **completed rows** (rows where every cell contains a block).
 
 ### 2. Cascade Loop
+
 For each cascade iteration:
+
 - **Detect** all completed rows
 - **Remove** all blocks in those rows
 - **Apply Gravity** by collapsing blocks in each column downward
 - **Repeat** until no completed rows remain
 
 ### 3. Result
+
 A single lock action can trigger **multiple cascades**, each clearing more rows as blocks fall into new positions below.
 
 ## Key Design Principles
 
 ### ✓ Deterministic
+
 - No randomness in gravity behavior
 - Each block falls straight down in its column
 - Same board state always produces the same cascade result
 
 ### ✓ Grid-Based (Not Physics)
+
 - No real physics engine
 - Fast and mobile-friendly
 - Predictable for balance tuning
 
 ### ✓ Fair
+
 - Cascades are earned through skill, not luck
 - Combo scaling rewards careful play
 - Special blocks (future) can extend interactions without breaking balance
 
 ### ✓ Engaging
+
 - Multiple cascades from one move create satisfying moments
 - Cascade count directly increases damage and mana
 - Event log messages communicate cascade progress to the player
@@ -44,6 +52,7 @@ A single lock action can trigger **multiple cascades**, each clearing more rows 
 ## Combat Integration
 
 ### Cascade Damage Multiplier
+
 ```
 Cascade 1 (initial clear):    100% base damage
 Cascade 2:                    125% base damage
@@ -52,15 +61,18 @@ Cascade 4+:                   200% base damage
 ```
 
 ### Cascade Mana Bonus
+
 - Initial line clear grants **baseline mana** (from `MANA_GAIN` constants)
 - Each cascade beyond the first grants **50% bonus mana** on top of baseline
 
 ### Cascade Combo
+
 - Each cascade increments the **combo counter**
 - Combo bonus stacks on top of damage calculations
 - No line clear resets combo (only works if cascade clears 0 lines)
 
 ### Event Log Messages
+
 ```
 Line cleared!
 Cascade Gravity triggered!
@@ -79,7 +91,7 @@ export const MANA_GAIN: Record<number, number> = {
   1: 10,
   2: 25,
   3: 45,
-  4: 70
+  4: 70,
 };
 
 // Line clear damage bonuses (per lines cleared)
@@ -87,7 +99,7 @@ export const LINE_CLEAR_BONUS: Record<number, number> = {
   1: 0,
   2: 8,
   3: 18,
-  4: 35
+  4: 35,
 };
 
 // Combo bonus (cumulative damage bonus)
@@ -100,34 +112,41 @@ export const CASCADE_MANA_BONUS_MULTIPLIER = 0.5; // 50% of baseline
 ## Technical Implementation
 
 ### CascadeResult Type
+
 ```typescript
 type CascadeResult = {
-  totalLinesCleared: number;        // Sum of all lines across all cascades
-  cascadeCount: number;             // How many cascade iterations occurred
+  totalLinesCleared: number; // Sum of all lines across all cascades
+  cascadeCount: number; // How many cascade iterations occurred
   clearedLinesPerCascade: number[]; // Array of line counts per cascade
-  blocksDropped: number;            // Total cells that moved downward
-  causedCombo: boolean;             // true if cascadeCount > 1
+  blocksDropped: number; // Total cells that moved downward
+  causedCombo: boolean; // true if cascadeCount > 1
 };
 ```
 
 ### BoardSystem Methods
 
 #### `detectCompletedLines(): number[]`
+
 Scans all rows and returns indices of completed rows.
 
 #### `removeCompletedLines(rowIndices: number[]): void`
+
 Clears blocks from specified rows. Calls `handleSpecialBlockClear()` for each block (future hook).
 
 #### `applyCascadeGravity(): number`
+
 Collapses blocks in each column downward, filling empty spaces. Returns total blocks moved.
 
 #### `clearLinesCascade(): CascadeResult`
+
 Orchestrates the full cascade loop until board stabilizes.
 
 ### CombatSystem Methods
 
 #### `resolveCascadeClear(cascade: CascadeResult): number`
+
 Applies cascade result to combat:
+
 - Increments combo by `cascadeCount`
 - Applies cascade damage multiplier
 - Adds baseline + bonus mana
@@ -135,7 +154,9 @@ Applies cascade result to combat:
 - Returns total damage dealt
 
 #### `getCascadeMultiplier(cascadeCount: number): number`
+
 Returns damage multiplier for cascade iteration:
+
 ```
 1 → 1.0x
 2 → 1.25x

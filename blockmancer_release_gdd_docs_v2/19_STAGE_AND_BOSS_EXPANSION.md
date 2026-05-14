@@ -216,11 +216,11 @@ Boss monster entries should include:
 
 ## 10. Release boss list
 
-| ID | Name | Act | Theme | Main mechanic |
-|---|---|---:|---|---|
-| `mon_boss_slime_baron` | Slime Baron | 1 | Dungeon | Slime flood |
-| `mon_boss_junkmaster_gob` | Junkmaster Gob | 2 | Scrapworks | Junk columns |
-| `mon_boss_cryo_lich` | Cryo Lich | 3 | Frost Crypt | Freeze / preview blind |
-| `mon_boss_stone_titan` | Stone Titan | 4 | Gravity Ruins | Armor / locked columns |
-| `mon_boss_mirror_witch` | Mirror Witch | 5 optional | Void Keep | Spell copy / curses |
-| `mon_boss_falling_king` | The Falling King | 5 final | Royal Void | Speed / junk / void collapse |
+| ID                        | Name             |        Act | Theme         | Main mechanic                |
+| ------------------------- | ---------------- | ---------: | ------------- | ---------------------------- |
+| `mon_boss_slime_baron`    | Slime Baron      |          1 | Dungeon       | Slime flood                  |
+| `mon_boss_junkmaster_gob` | Junkmaster Gob   |          2 | Scrapworks    | Junk columns                 |
+| `mon_boss_cryo_lich`      | Cryo Lich        |          3 | Frost Crypt   | Freeze / preview blind       |
+| `mon_boss_stone_titan`    | Stone Titan      |          4 | Gravity Ruins | Armor / locked columns       |
+| `mon_boss_mirror_witch`   | Mirror Witch     | 5 optional | Void Keep     | Spell copy / curses          |
+| `mon_boss_falling_king`   | The Falling King |    5 final | Royal Void    | Speed / junk / void collapse |

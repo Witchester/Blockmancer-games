@@ -34,14 +34,14 @@ Required piece families:
 
 ### Core board actions
 
-| Action | Desktop | Mobile |
-|---|---|---|
-| Move left | Left / A | Left button / swipe |
-| Move right | Right / D | Right button / swipe |
-| Rotate | Up / W | Rotate button / tap gesture |
-| Soft drop | Down / S | Down/hold button |
-| Hard drop | Space | Drop button |
-| Cast spell | 1–4 | Spell buttons |
+| Action     | Desktop   | Mobile                      |
+| ---------- | --------- | --------------------------- |
+| Move left  | Left / A  | Left button / swipe         |
+| Move right | Right / D | Right button / swipe        |
+| Rotate     | Up / W    | Rotate button / tap gesture |
+| Soft drop  | Down / S  | Down/hold button            |
+| Hard drop  | Space     | Drop button                 |
+| Cast spell | 1–4       | Spell buttons               |
 
 ### Line clear output
 
@@ -65,20 +65,20 @@ finalDamage = baseLineDamage + lineClearBonus + comboBonus + weaponBonus + upgra
 ### Line clear bonus
 
 | Lines cleared | Bonus damage | Mana gain |
-|---:|---:|---:|
-| 1 | 0 | 10 |
-| 2 | 8 | 25 |
-| 3 | 18 | 45 |
-| 4 | 35 | 70 |
+| ------------: | -----------: | --------: |
+|             1 |            0 |        10 |
+|             2 |            8 |        25 |
+|             3 |           18 |        45 |
+|             4 |           35 |        70 |
 
 ### Combo bonus
 
 | Combo | Bonus |
-|---:|---:|
-| 1 | 0 |
-| 2 | 3 |
-| 3 | 7 |
-| 4+ | 12 |
+| ----: | ----: |
+|     1 |     0 |
+|     2 |     3 |
+|     3 |     7 |
+|    4+ |    12 |
 
 ### Enemy attack timing
 
@@ -98,12 +98,12 @@ Every enemy must display intent before acting.
 
 Intent examples:
 
-| Intent | Effect |
-|---|---|
-| Bounce Attack | Damage player. |
-| Throw Junk | Damage player and add junk blocks. |
-| Stone Guard | Damage player and reduce line damage. |
-| Mana Hex | Increase spell costs temporarily. |
+| Intent         | Effect                                      |
+| -------------- | ------------------------------------------- |
+| Bounce Attack  | Damage player.                              |
+| Throw Junk     | Damage player and add junk blocks.          |
+| Stone Guard    | Damage player and reduce line damage.       |
+| Mana Hex       | Increase spell costs temporarily.           |
 | Royal Collapse | Shake board, add junk, increase fall speed. |
 
 ## 4. Spell system
@@ -117,16 +117,16 @@ Intent examples:
 
 ### Spell schools
 
-| School | Role |
-|---|---|
-| Fire | Damage over time and burst damage. |
-| Frost | Fall speed and enemy timing control. |
-| Bomb | Board clearing and area damage. |
-| Void | Row/column deletion and risky control. |
-| Lightning | Combo scaling and chain damage. |
-| Gravity | Hard drop, board manipulation, delay. |
-| Healing | Survival and shield. |
-| Arcane | Mana conversion and utility. |
+| School    | Role                                   |
+| --------- | -------------------------------------- |
+| Fire      | Damage over time and burst damage.     |
+| Frost     | Fall speed and enemy timing control.   |
+| Bomb      | Board clearing and area damage.        |
+| Void      | Row/column deletion and risky control. |
+| Lightning | Combo scaling and chain damage.        |
+| Gravity   | Hard drop, board manipulation, delay.  |
+| Healing   | Survival and shield.                   |
+| Arcane    | Mana conversion and utility.           |
 
 ## 5. Relic system
 
@@ -169,30 +169,30 @@ hero
 
 Special blocks give the game its identity.
 
-| Block | Role |
-|---|---|
-| Magic Block | Extra mana on clear. |
-| Bomb Block | Explodes and damages enemy. |
-| Stone Block | Heavy/hazard block. |
-| Ice Block | Frost/control interaction. |
-| Junk Block | Enemy-generated hazard. |
-| Void Block | Clears nearby cell. |
-| Curse Block | Bad effect if not cleared. |
-| Gold Block | Gives gold when cleared. |
+| Block       | Role                        |
+| ----------- | --------------------------- |
+| Magic Block | Extra mana on clear.        |
+| Bomb Block  | Explodes and damages enemy. |
+| Stone Block | Heavy/hazard block.         |
+| Ice Block   | Frost/control interaction.  |
+| Junk Block  | Enemy-generated hazard.     |
+| Void Block  | Clears nearby cell.         |
+| Curse Block | Bad effect if not cleared.  |
+| Gold Block  | Gives gold when cleared.    |
 
 ## 8. Status effect system
 
 Status effects can apply to player, enemy, board, or active piece.
 
-| Status | Target | Effect |
-|---|---|---|
-| Burn | Enemy | Damage over time. |
-| Freeze | Enemy/board | Delay enemy or slow fall. |
-| Stun | Enemy | Skip action. |
-| Shield | Player | Absorb damage. |
-| Mana Hex | Player | Spell costs increase. |
-| Vulnerable | Enemy | Takes more damage. |
-| Slow | Board | Reduced fall speed. |
+| Status     | Target      | Effect                    |
+| ---------- | ----------- | ------------------------- |
+| Burn       | Enemy       | Damage over time.         |
+| Freeze     | Enemy/board | Delay enemy or slow fall. |
+| Stun       | Enemy       | Skip action.              |
+| Shield     | Player      | Absorb damage.            |
+| Mana Hex   | Player      | Spell costs increase.     |
+| Vulnerable | Enemy       | Takes more damage.        |
+| Slow       | Board       | Reduced fall speed.       |
 
 ## 9. Room systems
 

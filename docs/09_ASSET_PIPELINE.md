@@ -42,11 +42,11 @@ src/game/data/assets.ts
 The manifest should export:
 
 ```ts
-IMAGE_ASSETS
-SPRITESHEET_ASSETS
-AUDIO_ASSETS
-hasAssetKey()
-getAssetKey()
+IMAGE_ASSETS;
+SPRITESHEET_ASSETS;
+AUDIO_ASSETS;
+hasAssetKey();
+getAssetKey();
 ```
 
 ## 3. Content references
@@ -75,15 +75,15 @@ never crash release build
 
 ## 5. Naming convention
 
-| Type | Example key |
-|---|---|
-| Monster idle | `mon_slime_idle` |
-| Spell icon | `spell_fireball` |
-| Relic icon | `rel_goblin_coin` |
-| Upgrade icon | `upg_sharp_edges` |
-| Block sprite | `block_magic` |
-| UI panel | `ui_panel_default` |
-| Map node | `node_boss` |
+| Type         | Example key        |
+| ------------ | ------------------ |
+| Monster idle | `mon_slime_idle`   |
+| Spell icon   | `spell_fireball`   |
+| Relic icon   | `rel_goblin_coin`  |
+| Upgrade icon | `upg_sharp_edges`  |
+| Block sprite | `block_magic`      |
+| UI panel     | `ui_panel_default` |
+| Map node     | `node_boss`        |
 
 ## 6. PNG vs spritesheet
 
