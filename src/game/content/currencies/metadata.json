@@ -1,0 +1,21 @@
+{
+  "contentType": "currency",
+  "version": "1.0.0",
+  "idPrefix": "currency_",
+  "displayName": "Currencies",
+  "description": "Currency types used for shop purchases, relic acquisition, and meta rewards.",
+  "idFormat": "currency_<name>",
+  "exampleIds": ["currency_gold", "currency_token"],
+  "requiredFields": ["id", "name", "description", "iconKey", "enabled"],
+  "fields": {
+    "id": { "type": "string", "pattern": "^currency_[a-z0-9]+(?:_[a-z0-9]+)*$" },
+    "name": { "type": "string" },
+    "description": { "type": "string" },
+    "iconKey": { "type": "string" },
+    "enabled": { "type": "boolean" }
+  },
+  "dataList": {},
+  "defaults": {
+    "enabled": true
+  }
+}

@@ -8,11 +8,14 @@ import eliteKnight from '../content/monsters/elite-knight.json';
 import fallingKing from '../content/monsters/falling-king.json';
 
 import heroMetadata from '../content/heroes/metadata.json';
-import blockmancer from '../content/heroes/blockmancer.json';
-import pyromancer from '../content/heroes/pyromancer.json';
-import frostbinder from '../content/heroes/frostbinder.json';
-import gravityKnight from '../content/heroes/gravity-knight.json';
-import voidScholar from '../content/heroes/void-scholar.json';
+import miloBlockmancer from '../content/heroes/milo_blockmancer.json';
+import pippaPyromancer from '../content/heroes/pippa_pyromancer.json';
+import nixieFrostbinder from '../content/heroes/nixie_frostbinder.json';
+import brukSnackKnight from '../content/heroes/bruk_snack_knight.json';
+import zuzuGoblinEngineer from '../content/heroes/zuzu_goblin_engineer.json';
+import lumiStarWitch from '../content/heroes/lumi_star_witch.json';
+import poplinProfessor from '../content/heroes/poplin_professor.json';
+import bloopSlimeFriend from '../content/heroes/bloop_slime_friend.json';
 
 import weaponMetadata from '../content/weapons/metadata.json';
 import basicWand from '../content/weapons/basic-wand.json';
@@ -105,13 +108,13 @@ import iceBlock from '../content/board-blocks/ice-block.json';
 import junkBlock from '../content/board-blocks/junk-block.json';
 import voidBlock from '../content/board-blocks/void-block.json';
 
-import curseMetadata from '../content/curses/metadata.json';
-import heavyBlocks from '../content/curses/heavy-blocks.json';
-import blindPreview from '../content/curses/blind-preview.json';
-import greedyGoblin from '../content/curses/greedy-goblin.json';
-import fragileMana from '../content/curses/fragile-mana.json';
-import crackedBoard from '../content/curses/cracked-board.json';
-import bloodMagic from '../content/curses/blood-magic.json';
+import curseMetadata from '../content/oopsies/metadata.json';
+import heavyBlocks from '../content/oopsies/heavy-blocks.json';
+import blindPreview from '../content/oopsies/blind-preview.json';
+import greedyGoblin from '../content/oopsies/greedy-goblin.json';
+import fragileMana from '../content/oopsies/fragile-mana.json';
+import crackedBoard from '../content/oopsies/cracked-board.json';
+import bloodMagic from '../content/oopsies/blood-magic.json';
 
 import mapNodeMetadata from '../content/map-nodes/metadata.json';
 import nodeStart from '../content/map-nodes/start.json';
@@ -122,6 +125,23 @@ import nodeElite from '../content/map-nodes/elite.json';
 import nodeRest from '../content/map-nodes/rest.json';
 import nodeTreasure from '../content/map-nodes/treasure.json';
 import nodeBoss from '../content/map-nodes/boss.json';
+
+import itemMetadata from '../content/items/metadata.json';
+import manaLemonade from '../content/items/mana-lemonade.json';
+import miniCupcake from '../content/items/mini-cupcake.json';
+
+import stageMetadata from '../content/stages/metadata.json';
+import sprinkleSewers from '../content/stages/sprinkle-sewers.json';
+import goblinWorkshop from '../content/stages/goblin-workshop.json';
+
+import currencyMetadata from '../content/currencies/metadata.json';
+import candyCoin from '../content/currencies/candy-coin.json';
+
+import collectibleMetadata from '../content/collectibles/metadata.json';
+import festivalToken from '../content/collectibles/festival-token.json';
+
+import npcMetadata from '../content/npcs/metadata.json';
+import festivalGuide from '../content/npcs/festival-guide.json';
 
 import type { ContentCategory, ContentMetadataDescriptor } from '../types/ContentTypes';
 
@@ -164,12 +184,15 @@ export class ContentRegistry {
         fallingKing
       ], 'mon_dungeon_slime'),
       hero: createCollection(heroMetadata as ContentMetadataDescriptor, [
-        blockmancer,
-        pyromancer,
-        frostbinder,
-        gravityKnight,
-        voidScholar
-      ], 'hero_blockmancer'),
+        miloBlockmancer,
+        pippaPyromancer,
+        nixieFrostbinder,
+        brukSnackKnight,
+        zuzuGoblinEngineer,
+        lumiStarWitch,
+        poplinProfessor,
+        bloopSlimeFriend
+      ], 'hero_milo_blockmancer'),
       weapon: createCollection(weaponMetadata as ContentMetadataDescriptor, [
         basicWand,
         apprenticeStaff,
@@ -278,7 +301,24 @@ export class ContentRegistry {
         nodeRest,
         nodeTreasure,
         nodeBoss
-      ], 'node_fight')
+      ], 'node_fight'),
+      item: createCollection(itemMetadata as ContentMetadataDescriptor, [
+        manaLemonade,
+        miniCupcake
+      ], 'item_mana_lemonade'),
+      stage: createCollection(stageMetadata as ContentMetadataDescriptor, [
+        sprinkleSewers,
+        goblinWorkshop
+      ], 'stage_sprinkle_sewers'),
+      currency: createCollection(currencyMetadata as ContentMetadataDescriptor, [
+        candyCoin
+      ], 'currency_candy_coin'),
+      collectible: createCollection(collectibleMetadata as ContentMetadataDescriptor, [
+        festivalToken
+      ], 'collectible_festival_token'),
+      npc: createCollection(npcMetadata as ContentMetadataDescriptor, [
+        festivalGuide
+      ], 'npc_festival_guide')
     };
   }
 
@@ -362,6 +402,26 @@ export class ContentRegistry {
 
   getBoardBlock(id: string) {
     return this.getById('boardBlock', id);
+  }
+
+  getItem(id: string) {
+    return this.getById('item', id);
+  }
+
+  getStage(id: string) {
+    return this.getById('stage', id);
+  }
+
+  getCurrency(id: string) {
+    return this.getById('currency', id);
+  }
+
+  getCollectible(id: string) {
+    return this.getById('collectible', id);
+  }
+
+  getNpc(id: string) {
+    return this.getById('npc', id);
   }
 
   getCurse(id: string) {

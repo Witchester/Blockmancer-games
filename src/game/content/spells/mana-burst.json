@@ -1,10 +1,10 @@
 {
   "id": "spl_mana_burst",
-  "name": "Mana Burst",
+  "name": "Mana Pop",
   "school": "arcane",
   "rarity": "common",
-  "description": "A quick arcane spell that deals damage and refunds mana on kill.",
-  "iconKey": "spell_mana_burst",
+  "description": "A fizzing pop of mana that hits enemies and feeds your next spell.",
+  "iconKey": "spell_mana_pop",
   "effectKey": "effect_mana_burst",
   "cost": {
     "mana": 20,

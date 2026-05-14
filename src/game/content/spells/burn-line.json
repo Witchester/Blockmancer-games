@@ -1,10 +1,10 @@
 {
   "id": "spl_burn_line",
-  "name": "Burn Line",
+  "name": "Glaze Line",
   "school": "fire",
   "rarity": "uncommon",
-  "description": "Damages enemies across a line and applies burn status.",
-  "iconKey": "spell_burn_line",
+  "description": "Sprinkles a sugary line that damages enemies and leaves a sticky burn.",
+  "iconKey": "spell_glaze_line",
   "effectKey": "effect_burn_line",
   "cost": {
     "mana": 45,

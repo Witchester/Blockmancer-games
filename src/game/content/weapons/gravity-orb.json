@@ -1,10 +1,10 @@
 {
   "id": "wpn_gravity_orb",
-  "name": "Gravity Orb",
+  "name": "Cascade Orb",
   "weaponType": "orb",
   "rarity": "rare",
-  "description": "A rare orb that enhances combo damage and hard drop effects.",
-  "iconKey": "wpn_gravity_orb",
+  "description": "A bouncy orb that encourages joyous block cascades.",
+  "iconKey": "wpn_cascade_orb",
   "stats": {
     "lineDamageBonus": 0,
     "comboDamageBonus": 2,

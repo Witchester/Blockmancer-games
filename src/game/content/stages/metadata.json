@@ -1,0 +1,24 @@
+{
+  "contentType": "stage",
+  "version": "1.0.0",
+  "idPrefix": "stage_",
+  "displayName": "Stages",
+  "description": "Stage definitions for the roguelike run, including theme, monster pools, and boss encounters.",
+  "idFormat": "stage_<name>",
+  "exampleIds": ["stage_sprinkle_sewers", "stage_goblin_workshop"],
+  "requiredFields": ["id", "name", "description", "theme", "monsterPool", "bossId", "lootTableId", "enabled"],
+  "fields": {
+    "id": { "type": "string", "pattern": "^stage_[a-z0-9]+(?:_[a-z0-9]+)*$" },
+    "name": { "type": "string" },
+    "description": { "type": "string" },
+    "theme": { "type": "string" },
+    "monsterPool": { "type": "array", "itemType": "string" },
+    "bossId": { "type": "string" },
+    "lootTableId": { "type": "string" },
+    "enabled": { "type": "boolean" }
+  },
+  "dataList": {},
+  "defaults": {
+    "enabled": true
+  }
+}

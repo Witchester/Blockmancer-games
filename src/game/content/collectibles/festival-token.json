@@ -1,0 +1,8 @@
+{
+  "id": "collectible_festival_token",
+  "name": "Festival Token",
+  "description": "A shiny token from the Festival of Falling Stars. Collect enough to unlock an extra hero or reward.",
+  "value": 1,
+  "iconKey": "collectible_festival_token",
+  "enabled": true
+}

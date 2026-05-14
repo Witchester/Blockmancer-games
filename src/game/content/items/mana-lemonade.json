@@ -1,0 +1,12 @@
+{
+  "id": "item_mana_lemonade",
+  "name": "Mana Lemonade",
+  "description": "A fizzy drink that restores a quick burst of mana when used.",
+  "effect": {
+    "type": "restoreMana",
+    "amount": 30
+  },
+  "rarity": "common",
+  "iconKey": "item_mana_lemonade",
+  "enabled": true
+}

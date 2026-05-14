@@ -13,18 +13,19 @@ export class Hud {
 
   constructor(scene: Phaser.Scene, options: HudOptions = {}) {
     this.compact = options.compact ?? false;
+    const width = scene.scale.width - 40;
     const panelY = this.compact ? 52 : 46;
     const panelHeight = this.compact ? 86 : 74;
     const fontSize = this.compact ? '18px' : '22px';
     const panel = scene.add
-      .rectangle(640, panelY, 1220, panelHeight, COLORS.panel, 0.95)
+      .rectangle(scene.scale.width / 2, panelY, width, panelHeight, COLORS.panel, 0.95)
       .setStrokeStyle(2, COLORS.accent, 0.4);
 
-    this.text = scene.add.text(42, this.compact ? 18 : 24, '', {
+    this.text = scene.add.text(24, this.compact ? 18 : 24, '', {
       color: '#f6f7ff',
       fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
       fontSize,
-      wordWrap: this.compact ? { width: 1180 } : undefined,
+      wordWrap: { width: width - 20 },
       lineSpacing: this.compact ? 6 : 0
     });
 

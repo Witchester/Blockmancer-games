@@ -17,6 +17,7 @@ import { EnemySystem } from './systems/EnemySystem';
 import { DifficultySystem } from './systems/DifficultySystem';
 import { EventSystem } from './systems/EventSystem';
 import { ShopSystem } from './systems/ShopSystem';
+import { AssetSystem } from './systems/AssetSystem';
 import type { RunState } from './types/GameTypes';
 import { createDefaultRunState, normalizeRunState } from './data/defaultRunState';
 
@@ -28,14 +29,15 @@ export class BlockmancerGame extends Phaser.Game {
   readonly enemySystem = new EnemySystem(this.difficultySystem);
   readonly eventSystem = new EventSystem(this.rewardSystem, this.enemySystem);
   readonly shopSystem = new ShopSystem(this.rewardSystem);
+  readonly assetSystem = new AssetSystem();
   runState: RunState;
 
   constructor(parent: HTMLElement) {
     super({
       type: Phaser.AUTO,
       parent,
-      width: 1280,
-      height: 800,
+      width: 720,
+      height: 1280,
       backgroundColor: '#090b13',
       scale: {
         mode: Phaser.Scale.FIT,

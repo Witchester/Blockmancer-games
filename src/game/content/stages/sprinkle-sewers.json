@@ -1,0 +1,10 @@
+{
+  "id": "stage_sprinkle_sewers",
+  "name": "Sprinkle Sewers",
+  "description": "A syrupy first stage where goblins and slime minions spill out under dripping pipes.",
+  "theme": "sprinkle_sewers",
+  "monsterPool": ["mon_dungeon_slime", "mon_goblin"],
+  "bossId": "mon_falling_king",
+  "lootTableId": "loot_battle_default",
+  "enabled": true
+}

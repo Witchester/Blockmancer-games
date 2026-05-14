@@ -1,10 +1,10 @@
 {
   "id": "wpn_fire_tome",
-  "name": "Fire Tome",
+  "name": "Baker's Cookbook",
   "weaponType": "tome",
   "rarity": "uncommon",
-  "description": "An ancient tome that amplifies fire spell power.",
-  "iconKey": "wpn_fire_tome",
+  "description": "A sweet cookbook that turns flame spells into oven-hot treats.",
+  "iconKey": "wpn_bakers_cookbook",
   "stats": {
     "lineDamageBonus": 0,
     "comboDamageBonus": 0,

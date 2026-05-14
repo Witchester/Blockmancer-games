@@ -17,7 +17,12 @@ const idPrefixes = {
   curses: 'curse_',
   'loot-tables': 'loot_',
   'difficulty-scaling': 'scale_',
-  'map-nodes': 'node_'
+  'map-nodes': 'node_',
+  items: 'item_',
+  stages: 'stage_',
+  currencies: 'currency_',
+  collectibles: 'collectible_',
+  npcs: 'npc_'
 };
 
 async function findContentFiles(dir) {

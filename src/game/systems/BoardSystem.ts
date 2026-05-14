@@ -1,11 +1,30 @@
 import type { BoardTickResult, CascadeResult, PieceState, TetrominoType } from '../types/GameTypes';
 import { BOARD_COLS, BOARD_ROWS, TETROMINO_COLORS, TETROMINO_SHAPES } from '../utils/constants';
 import { choice, randInt } from '../utils/random';
+import { contentRegistry } from './ContentRegistry';
+
+type BoardBlockClearEffect = {
+  type: string;
+  value?: number;
+};
+
+type BoardBlockCell = {
+  color: number;
+  blockId: string;
+  blockType: 'normal' | 'special' | 'heavy' | 'hazard';
+  clearEffects: BoardBlockClearEffect[];
+};
+
+type BoardCell = number | BoardBlockCell;
 
 const PIECE_TYPES: TetrominoType[] = ['I', 'O', 'T', 'S', 'Z', 'J', 'L'];
 
+export function getBoardCellColor(cell: BoardCell): number {
+  return typeof cell === 'number' ? cell : cell.color;
+}
+
 export class BoardSystem {
-  grid: number[][];
+  grid: BoardCell[][];
   currentPiece: PieceState | null;
   nextPieceType: TetrominoType;
 
@@ -23,12 +42,44 @@ export class BoardSystem {
     this.spawnPiece();
   }
 
-  private createEmptyGrid(): number[][] {
-    return Array.from({ length: BOARD_ROWS }, () => Array.from({ length: BOARD_COLS }, () => 0));
+  private createEmptyGrid(): BoardCell[][] {
+    return Array.from({ length: BOARD_ROWS }, () => Array.from({ length: BOARD_COLS }, () => 0 as BoardCell));
   }
 
   private cloneMatrix(matrix: number[][]): number[][] {
     return matrix.map((row) => [...row]);
+  }
+
+  private cloneCell(cell: BoardCell): BoardCell {
+    if (typeof cell === 'number') {
+      return cell;
+    }
+
+    return {
+      ...cell,
+      clearEffects: cell.clearEffects.map((effect) => ({ ...effect }))
+    };
+  }
+
+  private cloneGrid(matrix: BoardCell[][]): BoardCell[][] {
+    return matrix.map((row) => row.map((cell) => this.cloneCell(cell)));
+  }
+
+  private createBoardBlockCell(blockId: string): BoardBlockCell {
+    const block = contentRegistry.getBoardBlock(blockId);
+    const defaultColor = 0x888888;
+    const color = typeof block?.color === 'string' ? parseInt(block.color.replace('#', ''), 16) : defaultColor;
+
+    return {
+      color,
+      blockId: (typeof block?.id === 'string' ? block.id : blockId),
+      blockType: (block?.blockType as BoardBlockCell['blockType']) ?? 'special',
+      clearEffects: Array.isArray(block?.clearEffects) ? block.clearEffects.map((effect) => ({ ...effect })) : [],
+    };
+  }
+
+  private isBoardBlock(cell: BoardCell): cell is BoardBlockCell {
+    return typeof cell !== 'number';
   }
 
   private makePiece(type: TetrominoType): PieceState {
@@ -187,22 +238,27 @@ export class BoardSystem {
     return completedLines;
   }
 
-  private removeCompletedLines(rowIndices: number[]): void {
+  private removeCompletedLines(rowIndices: number[]): string[] {
+    const triggered: string[] = [];
+
     for (const rowIndex of rowIndices) {
       for (let columnIndex = 0; columnIndex < BOARD_COLS; columnIndex += 1) {
-        if (this.grid[rowIndex][columnIndex] !== 0) {
-          this.handleSpecialBlockClear(this.grid[rowIndex][columnIndex]);
+        const cellValue = this.grid[rowIndex][columnIndex];
+        if (cellValue !== 0) {
+          triggered.push(...this.handleSpecialBlockClear(rowIndex, columnIndex, cellValue));
           this.grid[rowIndex][columnIndex] = 0;
         }
       }
     }
+
+    return triggered;
   }
 
   private applyCascadeGravity(): number {
     let blocksDropped = 0;
 
     for (let columnIndex = 0; columnIndex < BOARD_COLS; columnIndex += 1) {
-      const columnCells: Array<{ row: number; value: number }> = [];
+      const columnCells: Array<{ row: number; value: BoardCell }> = [];
 
       for (let rowIndex = BOARD_ROWS - 1; rowIndex >= 0; rowIndex -= 1) {
         const value = this.grid[rowIndex][columnIndex];
@@ -216,7 +272,7 @@ export class BoardSystem {
         if (cell.row !== targetRow) {
           blocksDropped += targetRow - cell.row;
         }
-        this.grid[targetRow][columnIndex] = cell.value;
+        this.grid[targetRow][columnIndex] = this.cloneCell(cell.value);
         targetRow -= 1;
       }
 
@@ -228,15 +284,27 @@ export class BoardSystem {
     return blocksDropped;
   }
 
-  private handleSpecialBlockClear(cellValue: number): void {
-    // Placeholder hook for future special block types.
-    // Special block values can be reserved separately from tetromino colors.
-    // For example:
-    // - block_magic: bonus mana when cleared
-    // - block_bomb: clears nearby cells then triggers another cascade
-    // - block_stone: heavy block placeholder
-    // - block_ice: future slide/freeze behavior
-    // - block_void: deletes nearby blocks
+  private handleSpecialBlockClear(row: number, column: number, cellValue: BoardCell): string[] {
+    if (!this.isBoardBlock(cellValue)) {
+      return [];
+    }
+
+    const triggered: string[] = [cellValue.blockId];
+    for (const effect of cellValue.clearEffects) {
+      triggered.push(`${cellValue.blockId}:${effect.type}`);
+      switch (effect.type) {
+        case 'clear_board_area':
+          this.clearArea(row, column, effect.value ?? 1);
+          break;
+        case 'damage_enemy':
+          // Damage application is handled elsewhere in combat.
+          break;
+        default:
+          break;
+      }
+    }
+
+    return [...new Set(triggered)];
   }
 
   private clearLinesCascade(): CascadeResult {
@@ -245,6 +313,7 @@ export class BoardSystem {
       cascadeCount: 0,
       clearedLinesPerCascade: [],
       blocksDropped: 0,
+      specialBlocksTriggered: [],
       causedCombo: false
     };
 
@@ -254,7 +323,7 @@ export class BoardSystem {
       result.clearedLinesPerCascade.push(completedLines.length);
       result.totalLinesCleared += completedLines.length;
 
-      this.removeCompletedLines(completedLines);
+      result.specialBlocksTriggered.push(...this.removeCompletedLines(completedLines));
       result.blocksDropped += this.applyCascadeGravity();
 
       completedLines = this.detectCompletedLines();
@@ -268,7 +337,9 @@ export class BoardSystem {
     for (let row = 0; row < rowCount; row += 1) {
       this.grid.shift();
       const gap = randInt(0, BOARD_COLS - 1);
-      const junkRow = Array.from({ length: BOARD_COLS }, (_, index) => (index === gap ? 0 : 0x3f466f));
+      const junkRow = Array.from({ length: BOARD_COLS }, (_, index) =>
+        index === gap ? 0 : this.createBoardBlockCell('block_junk')
+      );
       this.grid.push(junkRow);
     }
   }

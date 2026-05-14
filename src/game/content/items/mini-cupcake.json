@@ -1,0 +1,13 @@
+{
+  "id": "item_mini_cupcake",
+  "name": "Mini Cupcake",
+  "description": "A sweet snack that heals a little HP and brightens your next attack.",
+  "effect": {
+    "type": "healAndBoost",
+    "healAmount": 12,
+    "damageBonus": 1
+  },
+  "rarity": "common",
+  "iconKey": "item_mini_cupcake",
+  "enabled": true
+}

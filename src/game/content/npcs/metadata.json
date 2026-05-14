@@ -1,0 +1,22 @@
+{
+  "contentType": "npc",
+  "version": "1.0.0",
+  "idPrefix": "npc_",
+  "displayName": "NPCs",
+  "description": "Non-playable characters with dialogue, quests, and stage interactions.",
+  "idFormat": "npc_<name>",
+  "exampleIds": ["npc_festival_guide"],
+  "requiredFields": ["id", "name", "description", "role", "dialogue", "enabled"],
+  "fields": {
+    "id": { "type": "string", "pattern": "^npc_[a-z0-9]+(?:_[a-z0-9]+)*$" },
+    "name": { "type": "string" },
+    "description": { "type": "string" },
+    "role": { "type": "string" },
+    "dialogue": { "type": "array", "itemType": "string" },
+    "enabled": { "type": "boolean" }
+  },
+  "dataList": {},
+  "defaults": {
+    "enabled": true
+  }
+}

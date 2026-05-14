@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { BlockmancerGame } from '../BlockmancerGame';
 import { SPELLS } from '../data/spells';
-import { BoardSystem } from '../systems/BoardSystem';
+import { BoardSystem, getBoardCellColor } from '../systems/BoardSystem';
 import { CombatSystem } from '../systems/CombatSystem';
 import { SpellSystem } from '../systems/SpellSystem';
 import type { BoardTickResult, SpellId } from '../types/GameTypes';
@@ -46,6 +46,21 @@ export class BattleScene extends Phaser.Scene {
   private keyS!: Phaser.Input.Keyboard.Key;
   private keyW!: Phaser.Input.Keyboard.Key;
   private compactLayout = false;
+  private screenWidth = 0;
+  private screenHeight = 0;
+  private topSectionHeight = 0;
+  private middleSectionHeight = 0;
+  private bottomSectionHeight = 0;
+  private boardOffsetX = 0;
+  private boardOffsetY = 0;
+  private previewCenterX = 0;
+  private previewCenterY = 0;
+  private controlsCenterX = 0;
+  private controlsY = 0;
+  private logX = 0;
+  private logY = 0;
+  private logWidth = 0;
+  private logHeight = 0;
   private dropTimer = 0;
   private horizontalRepeat = 0;
   private softDropRepeat = 0;
@@ -93,16 +108,28 @@ export class BattleScene extends Phaser.Scene {
     this.combat = new CombatSystem(state);
     this.spells = new SpellSystem(state, this.board, this.combat);
 
+    this.screenWidth = this.scale.width;
+    this.screenHeight = this.scale.height;
+    this.topSectionHeight = Math.round(this.screenHeight * 0.2);
+    this.bottomSectionHeight = Math.round(this.screenHeight * 0.2);
+    this.middleSectionHeight = this.screenHeight - this.topSectionHeight - this.bottomSectionHeight;
+    this.boardOffsetX = Math.round((this.screenWidth - BOARD_COLS * CELL_SIZE) / 2);
+    this.boardOffsetY = this.topSectionHeight + 140;
+    this.previewCenterX = this.screenWidth / 2;
+    this.previewCenterY = this.topSectionHeight + 78;
+    this.controlsCenterX = this.screenWidth / 2;
+    this.controlsY = this.screenHeight - Math.round(this.bottomSectionHeight / 2) + 4;
+    this.logX = 24;
+    this.logWidth = this.screenWidth - 48;
+    this.logHeight = 140;
+    this.logY = this.topSectionHeight + this.middleSectionHeight - this.logHeight - 14;
+
     this.drawLayout();
     this.buildBoard();
     this.createPreviewPanel();
     this.hud = new Hud(this, { compact: this.compactLayout });
-    this.log = this.compactLayout
-      ? new EventLog(this, 760, 468, 430, 150)
-      : new EventLog(this, 600, 560, 620, 180);
-    if (!this.compactLayout) {
-      this.createSpellButtons();
-    }
+    this.log = new EventLog(this, this.logX, this.logY, this.logWidth, this.logHeight);
+    this.createSpellButtons();
     this.createMobileControls();
     this.createInputs();
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.handleShutdown, this);
@@ -117,87 +144,64 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private drawLayout(): void {
-    this.add.rectangle(260, 402, 476, 610, COLORS.panel, 0.95).setStrokeStyle(2, COLORS.accent, 0.25);
-    this.add.rectangle(
-      this.compactLayout ? 955 : 920,
-      this.compactLayout ? 258 : 300,
-      this.compactLayout ? 490 : 560,
-      this.compactLayout ? 320 : 406,
-      COLORS.panel,
-      0.95
-    ).setStrokeStyle(2, COLORS.accentSoft, 0.25);
-    this.add.text(56, 88, 'Battlefield', {
+    const topPanelWidth = this.screenWidth - 48;
+    const topPanelHeight = this.topSectionHeight - 24;
+    const topPanelCenterY = Math.round(this.topSectionHeight / 2);
+
+    this.add.rectangle(this.screenWidth / 2, topPanelCenterY, topPanelWidth, topPanelHeight, COLORS.panel, 0.95).setStrokeStyle(2, COLORS.accent, 0.25);
+    this.add.text(36, 26, 'Battlefield', {
       color: '#f6f7ff',
       fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
-      fontSize: '34px',
-      fontStyle: 'bold'
-    });
-    this.add.text(690, 88, 'Enemy & Arcana', {
-      color: '#f6f7ff',
-      fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
-      fontSize: '34px',
+      fontSize: '30px',
       fontStyle: 'bold'
     });
 
-    this.add.rectangle(
-      this.compactLayout ? 960 : 930,
-      this.compactLayout ? 168 : 190,
-      this.compactLayout ? 430 : 470,
-      this.compactLayout ? 120 : 140,
-      COLORS.panelAlt,
-      0.98
-    ).setStrokeStyle(2, COLORS.danger, 0.22);
-    this.enemyNameText = this.add.text(this.compactLayout ? 756 : 710, this.compactLayout ? 126 : 140, '', {
+    const boardPanelHeight = this.middleSectionHeight - 24;
+    const boardPanelCenterY = this.boardOffsetY + Math.round((BOARD_ROWS * CELL_SIZE) / 2) - 14;
+    this.add.rectangle(this.screenWidth / 2, boardPanelCenterY, this.screenWidth - 32, boardPanelHeight, COLORS.panel, 0.95).setStrokeStyle(2, COLORS.accentSoft, 0.25);
+
+    this.enemyNameText = this.add.text(36, 60, '', {
       color: '#ffca6b',
       fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
-      fontSize: this.compactLayout ? '25px' : '30px',
+      fontSize: '26px',
       fontStyle: 'bold'
     });
-    this.enemyStatsText = this.add.text(this.compactLayout ? 756 : 710, this.compactLayout ? 160 : 182, '', {
+    this.enemyStatsText = this.add.text(36, 94, '', {
       color: '#d8deff',
       fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
-      fontSize: this.compactLayout ? '18px' : '21px'
+      fontSize: '18px'
     });
-    this.enemyIntentText = this.add.text(this.compactLayout ? 756 : 710, this.compactLayout ? 190 : 216, '', {
+    this.enemyIntentText = this.add.text(36, 126, '', {
       color: '#98a0c7',
       fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
-      fontSize: this.compactLayout ? '17px' : '19px',
-      wordWrap: { width: this.compactLayout ? 380 : 410 }
+      fontSize: '17px',
+      wordWrap: { width: topPanelWidth - 72 }
     });
-    this.enemyCountdownText = this.add.text(this.compactLayout ? 756 : 710, this.compactLayout ? 272 : 282, '', {
+    this.enemyCountdownText = this.add.text(36, 178, '', {
       color: '#ff6673',
       fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
-      fontSize: this.compactLayout ? '21px' : '24px',
-      fontStyle: 'bold',
-      wordWrap: { width: this.compactLayout ? 380 : 410 }
+      fontSize: '20px',
+      fontStyle: 'bold'
     });
-    this.enemyHpBar = new ProgressBar(this, this.compactLayout ? 758 : 712, this.compactLayout ? 236 : 244, {
+    this.enemyHpBar = new ProgressBar(this, 36, 214, {
       label: 'Enemy Vitality',
-      width: this.compactLayout ? 360 : 400,
-      height: 16,
+      width: topPanelWidth - 72,
+      height: 18,
       fillColor: COLORS.danger
     });
 
-    this.upgradesText = this.add.text(this.compactLayout ? 756 : 710, this.compactLayout ? 364 : 442, '', {
-      color: '#d8deff',
-      fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
-      fontSize: this.compactLayout ? '16px' : '18px',
-      wordWrap: { width: this.compactLayout ? 370 : 430 },
-      lineSpacing: this.compactLayout ? 6 : 8
-    });
-
-    this.add.text(this.compactLayout ? 756 : 710, this.compactLayout ? 334 : 406, 'Relics & Upgrades', {
+    this.add.text(36, 252, 'Relics & Upgrades', {
       color: '#ffca6b',
       fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
-      fontSize: this.compactLayout ? '21px' : '24px',
+      fontSize: '22px',
       fontStyle: 'bold'
     });
-
-    this.add.text(56, this.compactLayout ? 700 : 730, this.compactLayout ? 'Keys 1-4 cast spells. Touch bar handles movement and spells.' : 'Keyboard: arrows/WASD move, rotate, and drop. Keys 1-4 cast spells.', {
-      color: '#98a0c7',
+    this.upgradesText = this.add.text(36, 280, '', {
+      color: '#d8deff',
       fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
-      fontSize: this.compactLayout ? '15px' : '16px',
-      wordWrap: this.compactLayout ? { width: 420 } : undefined
+      fontSize: '16px',
+      wordWrap: { width: topPanelWidth - 72 },
+      lineSpacing: 6
     });
   }
 
@@ -207,8 +211,8 @@ export class BattleScene extends Phaser.Scene {
       for (let col = 0; col < BOARD_COLS; col += 1) {
         const cell = this.add
           .rectangle(
-            BOARD_OFFSET_X + col * CELL_SIZE + CELL_SIZE / 2,
-            BOARD_OFFSET_Y + row * CELL_SIZE + CELL_SIZE / 2,
+            this.boardOffsetX + col * CELL_SIZE + CELL_SIZE / 2,
+            this.boardOffsetY + row * CELL_SIZE + CELL_SIZE / 2,
             CELL_SIZE - 2,
             CELL_SIZE - 2,
             COLORS.boardEmpty,
@@ -222,10 +226,8 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private createPreviewPanel(): void {
-    const previewCenterX = this.compactLayout ? 420 : 420;
-    const previewCenterY = this.compactLayout ? 176 : 170;
-    this.add.rectangle(previewCenterX, previewCenterY, 96, 96, COLORS.panelAlt, 0.98).setStrokeStyle(2, COLORS.accent, 0.24);
-    this.previewLabel = this.add.text(previewCenterX, this.compactLayout ? 112 : 106, 'Next', {
+    this.add.rectangle(this.previewCenterX, this.previewCenterY, 116, 116, COLORS.panelAlt, 0.98).setStrokeStyle(2, COLORS.accent, 0.24);
+    this.previewLabel = this.add.text(this.previewCenterX, this.previewCenterY - 62, 'Next', {
       color: '#ffca6b',
       fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
       fontSize: '22px'
@@ -235,25 +237,27 @@ export class BattleScene extends Phaser.Scene {
       const col = index % 4;
       const row = Math.floor(index / 4);
       const tile = this.add
-        .rectangle((previewCenterX - 30) + col * 20, (previewCenterY - 28) + row * 20, 18, 18, COLORS.boardEmpty, 1)
+        .rectangle(this.previewCenterX - 42 + col * 20, this.previewCenterY - 42 + row * 20, 18, 18, COLORS.boardEmpty, 1)
         .setStrokeStyle(1, COLORS.boardGrid, 0.8)
         .setOrigin(0, 0);
       this.previewTiles.push(tile);
     }
 
-    this.previewExtraText = this.add.text(previewCenterX, this.compactLayout ? 234 : 226, '', {
+    this.previewExtraText = this.add.text(this.previewCenterX, this.previewCenterY + 66, '', {
       color: '#98a0c7',
       fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
       fontSize: '15px',
-      align: 'center'
+      align: 'center',
+      wordWrap: { width: 320 }
     }).setOrigin(0.5);
   }
 
   private createSpellButtons(): void {
+    const startX = Math.round(this.screenWidth / 2) - 148;
+    const startY = this.logY - 64;
     SPELLS.forEach((spell, index) => {
-      const x = 820 + (index % 2) * 190;
-      const y = 320 + Math.floor(index / 2) * 72;
-      new Button(this, x, y, 168, 50, `${spell.key}. ${spell.label}`, () => {
+      const x = startX + index * 76;
+      new Button(this, x, startY, 68, 50, spell.key, () => {
         this.tryCast(spell.id);
       });
     });
@@ -262,14 +266,15 @@ export class BattleScene extends Phaser.Scene {
   private createMobileControls(): void {
     new MobileControls(
       this,
-      this.compactLayout ? 252 : 930,
-      this.compactLayout ? 694 : 758,
+      this.controlsCenterX,
+      this.controlsY,
       [
         [
-          { label: '<', width: 68, onPress: () => this.board.move(-1, 0) && this.renderBoard() },
-          { label: '>', width: 68, onPress: () => this.board.move(1, 0) && this.renderBoard() },
-          { label: 'Rot', width: 72, onPress: () => this.board.rotate() && this.renderBoard() },
-          { label: 'Drop', width: 86, onPress: () => this.resolveTick(this.board.hardDrop()) }
+          { label: '<', width: 58, onPress: () => this.board.move(-1, 0) && this.renderBoard() },
+          { label: '>', width: 58, onPress: () => this.board.move(1, 0) && this.renderBoard() },
+          { label: 'Rot', width: 64, onPress: () => this.board.rotate() && this.renderBoard() },
+          { label: 'Hold', width: 64, onPress: () => this.combat.addLog('Hold block is coming soon.') },
+          { label: 'Drop', width: 70, onPress: () => this.resolveTick(this.board.hardDrop()) }
         ],
         SPELLS.map((spell) => ({
           label: spell.key,
@@ -277,7 +282,7 @@ export class BattleScene extends Phaser.Scene {
           onPress: () => this.tryCast(spell.id)
         }))
       ],
-      this.compactLayout ? { title: 'Touch Controls', padding: 14, rowGap: 10, buttonGap: 8 } : { title: 'Touch Controls' }
+      { title: 'Touch Controls', padding: 16, rowGap: 10, buttonGap: 10 }
     );
   }
 
@@ -360,6 +365,7 @@ export class BattleScene extends Phaser.Scene {
         cascadeCount: result.clearedLines > 0 ? 1 : 0,
         clearedLinesPerCascade: result.clearedLines > 0 ? [result.clearedLines] : [],
         blocksDropped: 0,
+        specialBlocksTriggered: [],
         causedCombo: false
       };
 
@@ -566,7 +572,8 @@ export class BattleScene extends Phaser.Scene {
 
     for (let row = 0; row < BOARD_ROWS; row += 1) {
       for (let col = 0; col < BOARD_COLS; col += 1) {
-        const color = boardState[row][col] || COLORS.boardEmpty;
+        const cell = boardState[row][col];
+        const color = cell === 0 ? COLORS.boardEmpty : getBoardCellColor(cell);
         this.boardCells[row][col].setFillStyle(color, alphaState[row][col]);
       }
     }

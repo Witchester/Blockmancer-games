@@ -1,10 +1,10 @@
 {
   "id": "wpn_void_grimoire",
-  "name": "Void Grimoire",
+  "name": "Gadget Grimoire",
   "weaponType": "tome",
   "rarity": "rare",
-  "description": "A powerful grimoire that reduces the cost of void spells.",
-  "iconKey": "wpn_void_grimoire",
+  "description": "A quirky manual of festival gadgets and poppy bomb tricks.",
+  "iconKey": "wpn_gadget_grimoire",
   "stats": {
     "lineDamageBonus": 0,
     "comboDamageBonus": 0,

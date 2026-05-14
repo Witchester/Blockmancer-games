@@ -1,10 +1,10 @@
 {
   "id": "wpn_stone_hammer",
-  "name": "Stone Hammer",
+  "name": "Pillow Hammer",
   "weaponType": "hammer",
   "rarity": "uncommon",
-  "description": "A heavy hammer that crushes blocks and enemies.",
-  "iconKey": "wpn_stone_hammer",
+  "description": "A soft but mighty hammer that squashes blocks with bouncy force.",
+  "iconKey": "wpn_pillow_hammer",
   "stats": {
     "lineDamageBonus": 1,
     "comboDamageBonus": 0,

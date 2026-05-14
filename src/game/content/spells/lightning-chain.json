@@ -1,10 +1,10 @@
 {
   "id": "spl_lightning_chain",
-  "name": "Lightning Chain",
+  "name": "Spark Chain",
   "school": "lightning",
   "rarity": "uncommon",
-  "description": "Sends a chain of lightning that increases damage with combos.",
-  "iconKey": "spell_lightning_chain",
+  "description": "Zips a string of sparky hits that love cascade combos.",
+  "iconKey": "spell_spark_chain",
   "effectKey": "effect_lightning_chain",
   "cost": {
     "mana": 45,

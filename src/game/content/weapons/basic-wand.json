@@ -1,10 +1,10 @@
 {
   "id": "wpn_basic_wand",
-  "name": "Basic Wand",
+  "name": "Festival Wand",
   "weaponType": "wand",
   "rarity": "common",
-  "description": "A practical beginner focus with no drawbacks and a slight line-damage lean.",
-  "iconKey": "icon_wand",
+  "description": "A cheerful wand made from glow sticks and ribbon for beginner spellcasters.",
+  "iconKey": "icon_festival_wand",
   "stats": {
     "lineDamageBonus": 1,
     "comboDamageBonus": 0,

@@ -11,7 +11,12 @@ export type ContentCategory =
   | 'difficultyScaling'
   | 'boardBlock'
   | 'curse'
-  | 'mapNode';
+  | 'mapNode'
+  | 'item'
+  | 'stage'
+  | 'currency'
+  | 'collectible'
+  | 'npc';
 
 export interface ContentReference<TId extends string = string> {
   id: TId;

@@ -1,10 +1,10 @@
 {
   "id": "spl_gravity_flip",
-  "name": "Gravity Flip",
+  "name": "Cascade Gravity",
   "school": "gravity",
   "rarity": "rare",
-  "description": "Reverses gravity and delays enemy actions while boosting hard drop damage.",
-  "iconKey": "spell_gravity_flip",
+  "description": "Turns the board into a joyful waterfall of blocks and delays enemy moves.",
+  "iconKey": "spell_cascade_gravity",
   "effectKey": "effect_gravity_flip",
   "cost": {
     "mana": 60,

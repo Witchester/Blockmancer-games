@@ -1,0 +1,7 @@
+{
+  "id": "currency_candy_coin",
+  "name": "Candy Coin",
+  "description": "Sweet tokens used in the festival bazaar and shop stands.",
+  "iconKey": "currency_candy_coin",
+  "enabled": true
+}

@@ -1,0 +1,22 @@
+{
+  "contentType": "collectible",
+  "version": "1.0.0",
+  "idPrefix": "collectible_",
+  "displayName": "Collectibles",
+  "description": "Collectible run items that unlock rewards, characters, or story beats.",
+  "idFormat": "collectible_<name>",
+  "exampleIds": ["collectible_festival_token"],
+  "requiredFields": ["id", "name", "description", "value", "iconKey", "enabled"],
+  "fields": {
+    "id": { "type": "string", "pattern": "^collectible_[a-z0-9]+(?:_[a-z0-9]+)*$" },
+    "name": { "type": "string" },
+    "description": { "type": "string" },
+    "value": { "type": "number" },
+    "iconKey": { "type": "string" },
+    "enabled": { "type": "boolean" }
+  },
+  "dataList": {},
+  "defaults": {
+    "enabled": true
+  }
+}

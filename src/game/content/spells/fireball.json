@@ -1,10 +1,10 @@
 {
   "id": "spl_fireball",
-  "name": "Fireball",
-  "school": "fire",
+  "name": "Sprinkle Spark",
+  "school": "flame",
   "rarity": "common",
-  "description": "A fast direct-damage spell used to finish weakened enemies.",
-  "iconKey": "icon_fireball",
+  "description": "A cheerful blaze of festival sprinkles that pops into a direct hit.",
+  "iconKey": "icon_sprinkle_spark",
   "cost": {
     "mana": 30,
     "hp": 0,

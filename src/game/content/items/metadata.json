@@ -1,0 +1,25 @@
+{
+  "contentType": "item",
+  "version": "1.0.0",
+  "idPrefix": "item_",
+  "displayName": "Items",
+  "description": "Consumable items that can be used during a run to trigger one-off effects.",
+  "idFormat": "item_<name>",
+  "exampleIds": ["item_mini_cupcake", "item_mana_lemonade"],
+  "requiredFields": ["id", "name", "description", "effect", "rarity", "iconKey", "enabled"],
+  "fields": {
+    "id": { "type": "string", "pattern": "^item_[a-z0-9]+(?:_[a-z0-9]+)*$" },
+    "name": { "type": "string" },
+    "description": { "type": "string" },
+    "effect": { "type": "object" },
+    "rarity": { "type": "enum", "dataList": "rarity" },
+    "iconKey": { "type": "string" },
+    "enabled": { "type": "boolean" }
+  },
+  "dataList": {
+    "rarity": ["common", "uncommon", "rare", "legendary"]
+  },
+  "defaults": {
+    "enabled": true
+  }
+}

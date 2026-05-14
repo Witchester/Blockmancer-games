@@ -1,0 +1,10 @@
+{
+  "id": "stage_goblin_workshop",
+  "name": "Goblin Workshop",
+  "description": "An inventive factory floor filled with noisy machines and mischievous goblin engineers.",
+  "theme": "goblin_workshop",
+  "monsterPool": ["mon_goblin", "mon_elite_knight"],
+  "bossId": "mon_falling_king",
+  "lootTableId": "loot_battle_default",
+  "enabled": true
+}

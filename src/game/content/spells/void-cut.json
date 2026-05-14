@@ -1,10 +1,10 @@
 {
   "id": "spl_void_cut",
-  "name": "Void Cut",
+  "name": "Rainbow Slice",
   "school": "void",
   "rarity": "rare",
-  "description": "Slices a row out of reality while carving into the enemy.",
-  "iconKey": "icon_void_cut",
+  "description": "Cuts a bright rainbow path through the board and dazzles your foe.",
+  "iconKey": "icon_rainbow_slice",
   "cost": {
     "mana": 70,
     "hp": 0,

@@ -1,0 +1,12 @@
+{
+  "id": "npc_festival_guide",
+  "name": "Festival Guide",
+  "description": "A cheerful helper who points players toward the next stage, shops, and oddities.",
+  "role": "guide",
+  "dialogue": [
+    "Welcome to the Festival of Falling Stars!",
+    "Clear blocks, collect goodies, and keep your mana bright.",
+    "Visit the shop if you want extra treats or safe heals."
+  ],
+  "enabled": true
+}

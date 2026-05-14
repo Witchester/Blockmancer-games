@@ -1,10 +1,10 @@
 {
   "id": "spl_ice_wall",
-  "name": "Ice Wall",
+  "name": "Snowcone Shield",
   "school": "frost",
   "rarity": "uncommon",
-  "description": "Creates a protective ice barrier and freezes the current piece.",
-  "iconKey": "spell_ice_wall",
+  "description": "Raises a frosty wall that protects and chills the board.",
+  "iconKey": "spell_snowcone_shield",
   "effectKey": "effect_ice_wall",
   "cost": {
     "mana": 45,

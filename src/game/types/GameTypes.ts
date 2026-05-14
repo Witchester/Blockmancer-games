@@ -160,6 +160,7 @@ export interface CascadeResult {
   cascadeCount: number;
   clearedLinesPerCascade: number[];
   blocksDropped: number;
+  specialBlocksTriggered: string[];
   causedCombo: boolean;
 }
 

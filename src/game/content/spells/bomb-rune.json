@@ -1,10 +1,10 @@
 {
   "id": "spl_bomb_rune",
-  "name": "Bomb Rune",
+  "name": "Confetti Bomb",
   "school": "bomb",
   "rarity": "uncommon",
-  "description": "Explodes through clustered cells and spikes enemy damage.",
-  "iconKey": "icon_bomb_rune",
+  "description": "A burst of colorful confetti that clears the board and surprises foes.",
+  "iconKey": "icon_confetti_bomb",
   "cost": {
     "mana": 50,
     "hp": 0,

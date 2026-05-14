@@ -71,6 +71,7 @@ export class CombatSystem {
       cascadeCount: lines > 0 ? 1 : 0,
       clearedLinesPerCascade: lines > 0 ? [lines] : [],
       blocksDropped: 0,
+      specialBlocksTriggered: [],
       causedCombo: false
     });
   }
@@ -116,6 +117,9 @@ export class CombatSystem {
       this.addLog(`Cascade x${cascade.cascadeCount}!`);
       if (cascade.blocksDropped > 0) {
         this.addLog('Blocks collapsed into a new line!');
+      }
+      if (cascade.specialBlocksTriggered.length > 0) {
+        this.addLog(`Special blocks triggered: ${cascade.specialBlocksTriggered.join(', ')}.`);
       }
       this.addLog('Cascade combo dealt bonus damage!');
     }

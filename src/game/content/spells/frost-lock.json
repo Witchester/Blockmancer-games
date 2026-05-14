@@ -3,7 +3,7 @@
   "name": "Frost Lock",
   "school": "frost",
   "rarity": "common",
-  "description": "A slowing glyph that reduces fall speed and buys time against pressure.",
+  "description": "A chilly rune that slows the board so the player can keep the festival flow.",
   "iconKey": "icon_frost_lock",
   "cost": {
     "mana": 40,
