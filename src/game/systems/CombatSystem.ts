@@ -3,10 +3,12 @@ import { CASCADE_MANA_BONUS_MULTIPLIER, LINE_CLEAR_BONUS, MANA_GAIN, MAX_EVENT_L
 import { clamp } from '../utils/math';
 import { OopsieSystem } from './OopsieSystem';
 import { RelicSystem } from './RelicSystem';
+import { FeverSystem } from './FeverSystem';
 
 export class CombatSystem {
   private readonly relicSystem = new RelicSystem();
   private readonly oopsieSystem = new OopsieSystem();
+  private readonly feverSystem = new FeverSystem();
 
   constructor(private readonly state: RunState) {}
 
@@ -89,11 +91,19 @@ export class CombatSystem {
     const enemy = this.state.activeEnemy;
     if (!enemy || cascade.totalLinesCleared <= 0) {
       this.state.combo = 0;
+      this.state.lastCascadeLevel = 0;
+      this.state.lastCascadeLines = 0;
       this.addLog('The piece locks without a line clear. Combo resets.');
+      if (enemy?.id === 'mon_boss_high_score_hydra') {
+        this.addEnemyShield(5);
+        this.addLog('High Score Hydra banks a small shield when the combo drops.');
+      }
       return 0;
     }
 
     this.state.combo += cascade.cascadeCount;
+    this.state.lastCascadeLevel = cascade.cascadeCount;
+    this.state.lastCascadeLines = cascade.totalLinesCleared;
     const comboBonus = this.getComboBonus(this.state.combo);
     const lineBonus = this.getLineClearBonus(cascade.totalLinesCleared);
     const rawDamage =
@@ -105,8 +115,13 @@ export class CombatSystem {
       1,
       Math.round(this.getCascadeMultiplier(cascade.cascadeCount) * rawDamage - this.getMitigation(enemy))
     );
-    if (this.state.player.feverActiveLocks > 0) {
-      damage = Math.round(damage * 1.35);
+    const feverMultiplier = this.feverSystem.getDamageMultiplier(this.state);
+    if (feverMultiplier > 1) {
+      damage = Math.round(damage * feverMultiplier);
+    }
+    if (this.feverSystem.isHydraComboWeaknessActive(this.state)) {
+      damage = Math.round(damage * 1.2);
+      this.addLog('High Score Hydra flashes: combo fever hits its weak spot!');
     }
     this.damageEnemy(damage);
 
@@ -115,7 +130,8 @@ export class CombatSystem {
       this.getLineClearMana(cascade.totalLinesCleared)
     );
     const bonusMana = cascade.cascadeCount > 1 ? Math.floor(baseMana * CASCADE_MANA_BONUS_MULTIPLIER) : 0;
-    this.state.player.mana = clamp(this.state.player.mana + baseMana + bonusMana, 0, this.state.player.maxMana);
+    const feverMana = this.feverSystem.getManaBonus(this.state, baseMana + bonusMana);
+    this.state.player.mana = clamp(this.state.player.mana + baseMana + bonusMana + feverMana, 0, this.state.player.maxMana);
     
     // Handle passive_line_mage
     if (this.state.hero.passiveId === 'passive_line_mage' && this.firstLineClearMage) {
@@ -130,7 +146,16 @@ export class CombatSystem {
       this.state.player.hp = clamp(this.state.player.hp + 1, 0, this.state.player.maxHp);
       this.addLog('Combo Heart restores 1 HP.');
     }
-    this.gainFever(cascade.cascadeCount * 8 + cascade.totalLinesCleared * 3);
+    const feverGain = this.feverSystem.gainFromCascade(this.state, cascade);
+    if (feverGain.gained > 0) {
+      this.addLog(`Fever +${feverGain.gained}.`);
+    }
+    if (feverGain.triggered) {
+      this.addLog(`Fever starts! Cascades hit harder for ${feverGain.activeLocks} locks.`);
+    }
+    if (feverMana > 0) {
+      this.addLog(`Fever adds ${feverMana} bonus mana.`);
+    }
 
     this.addLog('Line cleared!');
     if (cascade.cascadeCount > 1) {
@@ -284,17 +309,4 @@ export class CombatSystem {
     }
   }
 
-  private gainFever(amount: number): void {
-    const player = this.state.player;
-    if (player.feverActiveLocks > 0) {
-      return;
-    }
-
-    player.fever = clamp(player.fever + amount, 0, 100);
-    if (player.fever >= 100) {
-      player.fever = 0;
-      player.feverActiveLocks = 5;
-      this.addLog('Fever starts! Cascades hit harder for 5 locks.');
-    }
-  }
 }

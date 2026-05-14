@@ -242,6 +242,7 @@
       "sleep_player",
       "swap_next_hold",
       "reverse_controls",
+      "hydra_combo_check",
       "pattern_junk",
       "royal_block_spawn",
       "lock_random_column"

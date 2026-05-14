@@ -9,7 +9,9 @@ const DEFAULT_META_STATE: MetaState = {
   normalEndingFinished: false,
   totalCascadeCombos: 0,
   slimesBefriended: 0,
-  roomsClearedWithoutDamage: 0
+  roomsClearedWithoutDamage: 0,
+  tutorialCompleted: false,
+  tutorialLessonIndex: 0
 };
 
 export class MetaSystem {

@@ -200,6 +200,8 @@ export interface RunState {
   stage: number;
   fallSpeed: number;
   combo: number;
+  lastCascadeLevel: number;
+  lastCascadeLines: number;
   gold: number;
   enemiesDefeated: number;
   runStatus: RunStatus;

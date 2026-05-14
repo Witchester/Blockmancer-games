@@ -3,6 +3,7 @@ import { BlockmancerGame } from '../BlockmancerGame';
 import { SPELLS } from '../data/spells';
 import { BoardSystem, getBoardCellColor } from '../systems/BoardSystem';
 import { CombatSystem } from '../systems/CombatSystem';
+import { FeverSystem } from '../systems/FeverSystem';
 import { InputSystem } from '../systems/InputSystem';
 import { OopsieSystem } from '../systems/OopsieSystem';
 import { SpellSystem } from '../systems/SpellSystem';
@@ -28,6 +29,7 @@ import {
 export class BattleScene extends Phaser.Scene {
   private board!: BoardSystem;
   private combat!: CombatSystem;
+  private fever!: FeverSystem;
   private spells!: SpellSystem;
   private oopsies!: OopsieSystem;
   private hud!: Hud;
@@ -45,6 +47,8 @@ export class BattleScene extends Phaser.Scene {
   private holdText?: Phaser.GameObjects.Text;
   private inventoryText?: Phaser.GameObjects.Text;
   private feverText?: Phaser.GameObjects.Text;
+  private feverBarFill?: Phaser.GameObjects.Rectangle;
+  private cascadeText?: Phaser.GameObjects.Text;
   private inventoryExpanded = false;
   private inventoryOverlay!: Phaser.GameObjects.Container;
   private inventoryButtons: Button[] = [];
@@ -96,6 +100,7 @@ export class BattleScene extends Phaser.Scene {
     this.oopsies.normalizeState(state);
     this.board = new BoardSystem(state);
     this.combat = new CombatSystem(state);
+    this.fever = new FeverSystem();
     this.spells = new SpellSystem(state, this.board, this.combat);
 
     const layout = getPortraitLayout(this);
@@ -235,6 +240,19 @@ export class BattleScene extends Phaser.Scene {
       fontSize: '17px',
       fontStyle: 'bold',
       align: 'right'
+    }).setOrigin(1, 0);
+
+    this.add.rectangle(this.screenWidth - 94, this.boardOffsetY + BOARD_ROWS * CELL_SIZE + 86, 132, 12, COLORS.boardEmpty, 1)
+      .setStrokeStyle(1, COLORS.accent, 0.55);
+    this.feverBarFill = this.add.rectangle(this.screenWidth - 160, this.boardOffsetY + BOARD_ROWS * CELL_SIZE + 86, 0, 8, COLORS.success, 1)
+      .setOrigin(0, 0.5);
+    this.cascadeText = this.add.text(this.screenWidth - 28, this.boardOffsetY + BOARD_ROWS * CELL_SIZE + 98, '', {
+      color: '#ffca6b',
+      fontFamily: FONT_FAMILY,
+      fontSize: '14px',
+      fontStyle: 'bold',
+      align: 'right',
+      wordWrap: { width: 150 }
     }).setOrigin(1, 0);
 
     this.upgradesText = this.add.text(this.screenWidth - 28, this.boardOffsetY + BOARD_ROWS * CELL_SIZE + 56, '', {
@@ -508,8 +526,8 @@ export class BattleScene extends Phaser.Scene {
     if (enemy.lineDamageBlockedTurns > 0) {
       enemy.lineDamageBlockedTurns -= 1;
     }
-    if (this.sharedGame.runState.player.feverActiveLocks > 0) {
-      this.sharedGame.runState.player.feverActiveLocks -= 1;
+    if (this.fever.tickActiveLock(this.sharedGame.runState)) {
+      this.combat.addLog('Fever cools down.');
     }
   }
 
@@ -578,6 +596,17 @@ export class BattleScene extends Phaser.Scene {
         this.board.addJunkRows(2);
         state.fallSpeed = Math.min(MAX_FALL_SPEED, state.fallSpeed + 0.1);
         this.combat.addLog('The board accelerates.');
+        break;
+      case 'hydra_combo_check':
+        if (state.combo >= 3 || state.player.feverActiveLocks > 0) {
+          damage = Math.max(0, damage - 4);
+          state.player.fever = Math.min(100, state.player.fever + 8);
+          this.combat.addLog('High Score Hydra awards a fever ticket for keeping the combo alive.');
+        } else {
+          damage += 3;
+          this.board.addConfettiBlocks(2);
+          this.combat.addLog('High Score Hydra taxes the low combo with flashy blocks.');
+        }
         break;
       case 'reduce_line_damage':
       case 'armor_up':
@@ -839,6 +868,8 @@ export class BattleScene extends Phaser.Scene {
         return 'Swap next/hold';
       case 'reverse_controls':
         return 'Reverse controls';
+      case 'hydra_combo_check':
+        return 'Combo challenge';
       default:
         return behavior;
     }
@@ -942,6 +973,13 @@ export class BattleScene extends Phaser.Scene {
       state.player.feverActiveLocks > 0
         ? `Fever ON\n${state.player.feverActiveLocks} locks`
         : `Fever ${state.player.fever}%\nCombo ${state.combo}`
+    );
+    this.feverBarFill?.setSize(Math.max(0, Math.min(1, state.player.fever / 100)) * 132, 8);
+    this.feverBarFill?.setFillStyle(state.player.feverActiveLocks > 0 ? COLORS.gold : COLORS.success, 1);
+    this.cascadeText?.setText(
+      state.lastCascadeLevel > 0
+        ? `Cascade x${state.lastCascadeLevel} / ${state.lastCascadeLines} line${state.lastCascadeLines === 1 ? '' : 's'}`
+        : 'Cascade x0'
     );
   }
 

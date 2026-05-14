@@ -95,6 +95,8 @@ export function createDefaultRunState(): RunState {
     stage: DEFAULT_STAGE,
     fallSpeed: DEFAULT_FALL_SPEED,
     combo: 0,
+    lastCascadeLevel: 0,
+    lastCascadeLines: 0,
     gold: DEFAULT_GOLD,
     enemiesDefeated: 0,
     runStatus: DEFAULT_RUN_STATUS,
@@ -162,6 +164,8 @@ export function normalizeRunState(input: unknown): RunState {
   }
 
   merged.gold = player.gold;
+  merged.lastCascadeLevel = Math.max(0, raw.lastCascadeLevel ?? defaults.lastCascadeLevel);
+  merged.lastCascadeLines = Math.max(0, raw.lastCascadeLines ?? defaults.lastCascadeLines);
   merged.currentEventId = typeof raw.currentEventId === 'string' ? raw.currentEventId : null;
   oopsieSystem.normalizeState(merged);
 

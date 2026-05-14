@@ -49,8 +49,8 @@ const BOSS_CONFIGS: Record<string, BossConfig> = {
   },
   mon_boss_high_score_hydra: {
     intro: 'High Score Hydra lights up the arcade cabinet and counts your combos.',
-    phase2: 'High Score Hydra starts a bonus round at double speed.',
-    phase2Behaviors: ['increase_fall_speed', 'reverse_controls', 'mana_zap'],
+    phase2: 'High Score Hydra starts a bonus round and dares you to keep Fever running.',
+    phase2Behaviors: ['hydra_combo_check', 'increase_fall_speed', 'reverse_controls', 'mana_zap'],
     rewardGold: 85,
     rewardChoices: 5
   },

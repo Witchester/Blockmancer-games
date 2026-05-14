@@ -7,4 +7,6 @@ export interface MetaState {
   totalCascadeCombos: number;
   slimesBefriended: number;
   roomsClearedWithoutDamage: number;
+  tutorialCompleted: boolean;
+  tutorialLessonIndex: number;
 }

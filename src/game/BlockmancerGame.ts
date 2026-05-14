@@ -1,6 +1,8 @@
 import Phaser from 'phaser';
 import { BootScene } from './scenes/BootScene';
 import { MainMenuScene } from './scenes/MainMenuScene';
+import { TutorialScene } from './scenes/TutorialScene';
+import { HelpScene } from './scenes/HelpScene';
 import { HeroSelectScene } from './scenes/HeroSelectScene';
 import { MapScene } from './scenes/MapScene';
 import { BattleScene } from './scenes/BattleScene';
@@ -68,6 +70,8 @@ export class BlockmancerGame extends Phaser.Game {
       scene: [
         BootScene,
         MainMenuScene,
+        TutorialScene,
+        HelpScene,
         HeroSelectScene,
         MapScene,
         BattleScene,

@@ -5,8 +5,6 @@ import { COLORS, FONT_FAMILY } from '../utils/constants';
 import { isCompactLayout } from '../utils/layout';
 
 export class MainMenuScene extends Phaser.Scene {
-  private controlsText?: Phaser.GameObjects.Text;
-
   constructor() {
     super('MainMenuScene');
   }
@@ -43,8 +41,11 @@ export class MainMenuScene extends Phaser.Scene {
     }).setOrigin(0.5);
 
     new Button(this, centerX, 310, 280, 62, 'Start Game', () => {
-      game.newRun();
-      game.runState.runStatus = 'menu';
+      if (!game.tutorialSystem.isComplete(game.metaSystem.state)) {
+        this.scene.start('TutorialScene');
+        return;
+      }
+
       this.scene.start('HeroSelectScene');
     });
 
@@ -57,28 +58,13 @@ export class MainMenuScene extends Phaser.Scene {
     });
     continueButton.setDisabled(!game.saveSystem.hasSave());
 
-    new Button(this, centerX, 474, 280, 62, 'Controls', () => {
-      this.controlsText?.setVisible(!this.controlsText.visible);
+    new Button(this, centerX, 474, 280, 62, 'Tutorial', () => {
+      this.scene.start('TutorialScene');
     });
 
-    this.controlsText = this.add.text(
-      centerX,
-      530,
-      [
-        'Desktop: A/D or arrows move, W or Up rotates, S or Down soft drops, Space hard drops.',
-        'Spells: 1 Fireball, 2 Frost Lock, 3 Bomb Rune, 4 Void Cut.',
-        'Mobile: use the on-screen buttons in battle.'
-      ].join('\n'),
-      {
-        color: '#d8deff',
-        fontFamily: FONT_FAMILY,
-        fontSize: compact ? '18px' : '20px',
-        align: 'center',
-        wordWrap: { width: contentWidth - 80 },
-        lineSpacing: 8
-      }
-    ).setOrigin(0.5);
-    this.controlsText.setVisible(false);
+    new Button(this, centerX, 548, 280, 58, 'Help', () => {
+      this.scene.start('HelpScene');
+    });
 
     this.add.text(centerX, height - 42, 'Built with Vite, TypeScript, Phaser 3, and Capacitor.', {
       color: '#98a0c7',
