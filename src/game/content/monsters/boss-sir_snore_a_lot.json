@@ -19,7 +19,8 @@
     "description": "Sir Snore-a-Lot prepares Sleepy Shield."
   },
   "behaviors": [
-    "armor_up"
+    "armor_up",
+    "sleep_player"
   ],
   "resistances": [],
   "weaknesses": [

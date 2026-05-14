@@ -19,6 +19,7 @@ import { EventSystem } from './systems/EventSystem';
 import { ShopSystem } from './systems/ShopSystem';
 import { AssetSystem } from './systems/AssetSystem';
 import { AudioSystem } from './systems/AudioSystem';
+import { BossSystem } from './systems/BossSystem';
 import { HeroSystem } from './systems/HeroSystem';
 import { InventorySystem } from './systems/InventorySystem';
 import { ItemSystem } from './systems/ItemSystem';
@@ -42,6 +43,7 @@ export class BlockmancerGame extends Phaser.Game {
   readonly shopSystem = new ShopSystem(this.rewardSystem);
   readonly assetSystem = new AssetSystem();
   readonly audioSystem = new AudioSystem();
+  readonly bossSystem = new BossSystem();
   readonly heroSystem = new HeroSystem();
   readonly weaponSystem = new WeaponSystem();
   readonly inventorySystem = new InventorySystem();

@@ -1,5 +1,6 @@
 import type { RunState } from '../types/GameTypes';
 import { clamp } from '../utils/math';
+import { choice } from '../utils/random';
 import { RewardSystem } from './RewardSystem';
 
 export type ShopResolution = {
@@ -22,8 +23,8 @@ export class ShopSystem {
     state.gold = state.player.gold;
     state.player.hp = clamp(state.player.hp + 8, 0, state.player.maxHp);
     return {
-      transition: 'map',
-      messages: ['You buy healing draughts.']
+      transition: 'stay',
+      messages: ['You buy fizzy healing draughts for 30 gold.']
     };
   }
 
@@ -37,10 +38,13 @@ export class ShopSystem {
 
     state.player.gold -= 60;
     state.gold = state.player.gold;
-    const reward = this.rewardSystem.getRandomRewards(1)[0];
+    const reward = this.rewardSystem.getRandomRewards(1, state, 'shop')[0];
+    state.pendingRewards = [reward];
+    const message = this.rewardSystem.applyReward(state, reward.id);
+    state.pendingRewards = [];
     return {
-      transition: 'map',
-      messages: [this.rewardSystem.applyReward(state, reward.id)]
+      transition: 'stay',
+      messages: [message]
     };
   }
 
@@ -56,7 +60,7 @@ export class ShopSystem {
     state.gold = state.player.gold;
     state.player.curses -= 1;
     return {
-      transition: 'map',
+      transition: 'stay',
       messages: ['An oopsie is cleaned up.']
     };
   }
@@ -78,13 +82,12 @@ export class ShopSystem {
     state.player.gold -= 25;
     state.gold = state.player.gold;
     
-    // Quick trick to get a random item using RewardSystem pool
     const items = this.rewardSystem.getRewardPool().filter(r => r.type === 'Item');
-    const reward = items[Math.floor(Math.random() * items.length)];
+    const reward = items.length > 0 ? choice(items) : null;
     
     if (reward) {
       return {
-        transition: 'map',
+        transition: 'stay',
         messages: [this.rewardSystem.applyReward(state, reward.id)]
       };
     }

@@ -3,8 +3,10 @@ import { clamp } from '../utils/math';
 import { choice } from '../utils/random';
 import { contentRegistry } from './ContentRegistry';
 import { EnemySystem } from './EnemySystem';
-import { RelicSystem } from './RelicSystem';
+import { InventorySystem } from './InventorySystem';
 import { RewardSystem } from './RewardSystem';
+
+type RoomEventEffect = { type: string; value?: number };
 
 export type RoomEventChoice = {
   label: string;
@@ -12,7 +14,9 @@ export type RoomEventChoice = {
   value: number;
   requirement: string;
   description?: string;
-  effects?: Array<{ type: string; value?: number }>;
+  effects?: RoomEventEffect[];
+  requirements?: string[];
+  resultText?: string;
   costHp?: number;
   costGold?: number;
   bonusGold?: number;
@@ -22,6 +26,7 @@ export type RoomEventEntry = {
   id: string;
   name: string;
   description: string;
+  biome?: string;
   choices: RoomEventChoice[];
 };
 
@@ -34,11 +39,14 @@ export class EventSystem {
   constructor(
     private readonly rewardSystem: RewardSystem = new RewardSystem(),
     private readonly enemySystem: EnemySystem = new EnemySystem(),
-    private readonly relicSystem: RelicSystem = new RelicSystem()
+    private readonly inventorySystem: InventorySystem = new InventorySystem()
   ) {}
 
-  getRandomEvent(): RoomEventEntry {
-    return this.normalizeEvent(choice(contentRegistry.listEnabled<RoomEventEntry>('roomEvent')));
+  getRandomEvent(stage = 1): RoomEventEntry {
+    const events = contentRegistry.listEnabled<RoomEventEntry>('roomEvent');
+    const stageBiome = this.getStageBiome(stage);
+    const themed = events.filter((eventEntry) => eventEntry.biome === stageBiome || eventEntry.biome === 'dungeon');
+    return this.normalizeEvent(choice(themed.length > 0 ? themed : events));
   }
 
   getEventById(id: string): RoomEventEntry | null {
@@ -50,17 +58,13 @@ export class EventSystem {
     return {
       ...eventEntry,
       choices: eventEntry.choices.map((choiceEntry) => {
-        if (choiceEntry.effectType) {
-          return choiceEntry;
-        }
-
         const firstEffect = choiceEntry.effects?.[0];
         return {
           ...choiceEntry,
-          effectType: this.normalizeEffectType(firstEffect?.type),
+          effectType: choiceEntry.effectType ?? this.normalizeEffectType(firstEffect?.type),
           value: firstEffect?.value ?? choiceEntry.value ?? 0,
-          requirement: choiceEntry.requirement ?? 'none',
-          costHp: choiceEntry.effects?.some((effect) => effect.type === 'damage_player') ? 2 : choiceEntry.costHp
+          requirement: choiceEntry.requirement ?? choiceEntry.requirements?.[0] ?? 'none',
+          costHp: choiceEntry.costHp ?? choiceEntry.effects?.find((effect) => effect.type === 'damage_player')?.value
         };
       })
     };
@@ -70,12 +74,21 @@ export class EventSystem {
     switch (effectType) {
       case 'gain_gold':
         return 'gain_gold';
+      case 'gain_mana':
+        return 'gain_mana';
       case 'gain_random_reward':
       case 'gain_random_spell':
         return 'gain_reward';
       case 'heal_player':
+      case 'heal_full':
       case 'restore_mana_full':
         return 'heal_player';
+      case 'increase_fall_speed':
+        return 'increase_fall_speed';
+      case 'reduce_fall_speed':
+        return 'reduce_fall_speed';
+      case 'gain_random_curse':
+        return 'add_curse';
       default:
         return 'leave';
     }
@@ -87,6 +100,14 @@ export class EventSystem {
       return {
         transition: 'stay',
         messages: [requirementError]
+      };
+    }
+
+    if (choiceEntry.effects?.length) {
+      const messages = this.applyEffects(state, eventEntry, choiceEntry);
+      return {
+        transition: 'map',
+        messages: messages.length > 0 ? messages : [choiceEntry.resultText ?? 'The event resolves with a cheerful sparkle.']
       };
     }
 
@@ -131,7 +152,7 @@ export class EventSystem {
           transition: 'map',
           messages: [
             `The mirror copies ${duplicated}.`,
-            this.relicSystem.applyRelic(state, duplicated)
+            this.rewardSystem.applyReward(state, duplicated)
           ]
         };
       }
@@ -182,8 +203,87 @@ export class EventSystem {
   }
 
   private applyRandomReward(state: RunState): string {
-    const reward = this.rewardSystem.getRandomRewards(1)[0];
-    return this.rewardSystem.applyReward(state, reward.id as RewardId);
+    const reward = this.rewardSystem.getRandomRewards(1, state, 'event')[0];
+    state.pendingRewards = [reward];
+    const message = this.rewardSystem.applyReward(state, reward.id as RewardId);
+    state.pendingRewards = [];
+    return message;
+  }
+
+  private applyEffects(state: RunState, eventEntry: RoomEventEntry, choiceEntry: RoomEventChoice): string[] {
+    const messages: string[] = [];
+    for (const effect of choiceEntry.effects ?? []) {
+      messages.push(...this.applyEffect(state, eventEntry, effect));
+    }
+
+    if (choiceEntry.resultText) {
+      messages.push(choiceEntry.resultText);
+    }
+
+    return messages;
+  }
+
+  private applyEffect(state: RunState, eventEntry: RoomEventEntry, effect: RoomEventEffect): string[] {
+    const value = effect.value ?? 0;
+    switch (effect.type) {
+      case 'gain_gold':
+        state.player.gold += value;
+        state.player.totalGoldCollected += value;
+        state.gold = state.player.gold;
+        return [`${eventEntry.name} gives you ${value} gold.`];
+      case 'lose_gold': {
+        const spent = Math.min(state.player.gold, value);
+        state.player.gold -= spent;
+        state.gold = state.player.gold;
+        return [`${eventEntry.name} takes ${spent} gold for the snack fund.`];
+      }
+      case 'damage_player':
+        state.player.hp = Math.max(1, state.player.hp - value);
+        return [`${eventEntry.name} bonks you for ${value} HP.`];
+      case 'heal_player':
+        state.player.hp = clamp(state.player.hp + value, 0, state.player.maxHp);
+        return [`${eventEntry.name} restores ${value} HP.`];
+      case 'heal_full':
+        state.player.hp = state.player.maxHp;
+        return [`${eventEntry.name} tops off your HP.`];
+      case 'gain_mana':
+        state.player.mana = clamp(state.player.mana + value, 0, state.player.maxMana);
+        return [`${eventEntry.name} restores ${value} mana.`];
+      case 'restore_mana_full':
+        state.player.mana = state.player.maxMana;
+        return [`${eventEntry.name} fills your mana.`];
+      case 'increase_mana_gain_passive':
+        state.player.maxMana += Math.max(5, Math.round(value * 100));
+        state.player.mana = state.player.maxMana;
+        return [`${eventEntry.name} raises max mana to ${state.player.maxMana}.`];
+      case 'gain_random_reward':
+      case 'gain_random_spell':
+        return [this.applyRandomReward(state)];
+      case 'gain_random_curse':
+      case 'add_curse':
+        state.player.curses += Math.max(1, value || 1);
+        return ['A silly oopsie joins the run.'];
+      case 'remove_curse': {
+        const removed = Math.min(state.player.curses, Math.max(1, value || 1));
+        state.player.curses -= removed;
+        return [removed > 0 ? 'An oopsie gets polished away.' : 'No oopsie needed cleaning.'];
+      }
+      case 'gain_random_item': {
+        const items = contentRegistry.listEnabled<{ id: string }>('item');
+        const item = items.length > 0 ? choice(items) : null;
+        if (!item) return ['The prize basket is empty.'];
+        this.inventorySystem.addItem(state, item.id);
+        return [`${eventEntry.name} adds ${item.id} to your bag.`];
+      }
+      case 'reduce_fall_speed':
+        state.fallSpeed = Math.max(0.7, state.fallSpeed - value);
+        return [`${eventEntry.name} steadies the falling blocks.`];
+      case 'increase_fall_speed':
+        state.fallSpeed = Math.min(2, state.fallSpeed + value);
+        return [`${eventEntry.name} makes the blocks a little bouncier.`];
+      default:
+        return [`${eventEntry.name} sparkles, but nothing major changes.`];
+    }
   }
 
   private checkRequirement(state: RunState, choiceEntry: RoomEventChoice): string | null {
@@ -198,6 +298,19 @@ export class EventSystem {
         return state.player.hp > (choiceEntry.costHp ?? 0) ? null : 'You are too weak to pay that price.';
       default:
         return null;
+    }
+  }
+
+  private getStageBiome(stage: number): string {
+    switch (stage) {
+      case 4:
+        return 'crypt';
+      case 5:
+        return 'void';
+      case 6:
+        return 'royal_ruins';
+      default:
+        return 'dungeon';
     }
   }
 }

@@ -4,9 +4,12 @@
   "description": "A neon arcade where combos become carnival tickets.",
   "theme": "void",
   "monsterPool": [
-    "mon_sprinkle_rat",
-    "mon_gadget_goblin",
-    "mon_arcade_spark"
+    "mon_arcade_spark",
+    "mon_combo_crab",
+    "mon_ticket_tumbler",
+    "mon_joystick_jinxer",
+    "mon_score_specter",
+    "mon_witch"
   ],
   "bossId": "mon_boss_high_score_hydra",
   "lootTableId": "loot_battle_default",

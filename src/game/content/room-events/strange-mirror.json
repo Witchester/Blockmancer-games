@@ -1,7 +1,7 @@
 {
   "id": "evt_strange_mirror",
   "name": "Strange Mirror",
-  "description": "The reflection offers impossible trades and unsettling copies.",
+  "description": "The reflection wears a tiny hat and offers ridiculous trades.",
   "rarity": "rare",
   "biome": "void",
   "choices": [
@@ -12,7 +12,7 @@
       "requirement": "has_relic"
     },
     {
-      "label": "Take Curse",
+      "label": "Take Oopsie",
       "effectType": "add_curse",
       "value": 1,
       "bonusGold": 60,

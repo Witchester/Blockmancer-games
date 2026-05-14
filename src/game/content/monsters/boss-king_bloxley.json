@@ -19,7 +19,8 @@
     "description": "King Bloxley prepares Royal Collapse."
   },
   "behaviors": [
-    "spawn_junk"
+    "royal_block_spawn",
+    "swap_next_hold"
   ],
   "resistances": [],
   "weaknesses": [

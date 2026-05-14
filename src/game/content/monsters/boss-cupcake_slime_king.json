@@ -19,7 +19,8 @@
     "description": "Cupcake Slime King prepares Sticky Crown."
   },
   "behaviors": [
-    "spawn_junk"
+    "spawn_junk",
+    "hide_hold_block"
   ],
   "resistances": [],
   "weaknesses": [

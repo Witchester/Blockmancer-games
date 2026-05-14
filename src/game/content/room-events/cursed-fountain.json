@@ -1,8 +1,8 @@
 {
   "id": "evt_cursed_fountain",
-  "name": "Cursed Fountain",
+  "name": "Oopsie Fountain",
   "rarity": "uncommon",
-  "description": "A mysterious fountain with both blessing and curse.",
+  "description": "A fizzy fountain bubbles with helpful magic and one suspicious rubber duck.",
   "iconKey": "evt_cursed_fountain",
   "backgroundKey": "bg_event_fountain",
   "biome": "dungeon",
@@ -10,7 +10,7 @@
     {
       "id": "choice_heal_full_curse",
       "label": "Drink fully",
-      "description": "Restore all health but gain a random curse.",
+      "description": "Restore all health but gain a silly oopsie.",
       "requirements": [],
       "effects": [
         {
@@ -22,7 +22,7 @@
           "value": 1
         }
       ],
-      "resultText": "You feel refreshed but cursed!"
+      "resultText": "You feel refreshed, and the duck follows you."
     },
     {
       "id": "choice_mana_surge",

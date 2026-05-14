@@ -18,3 +18,20 @@ export function shuffle<T>(items: T[]): T[] {
 export function sampleSize<T>(items: T[], count: number): T[] {
   return shuffle(items).slice(0, count);
 }
+
+export function weightedChoice<T>(items: T[], getWeight: (item: T) => number): T {
+  const totalWeight = items.reduce((total, item) => total + Math.max(0, getWeight(item)), 0);
+  if (totalWeight <= 0) {
+    return choice(items);
+  }
+
+  let roll = Math.random() * totalWeight;
+  for (const item of items) {
+    roll -= Math.max(0, getWeight(item));
+    if (roll <= 0) {
+      return item;
+    }
+  }
+
+  return items[items.length - 1];
+}

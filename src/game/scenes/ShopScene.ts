@@ -32,19 +32,30 @@ export class ShopScene extends Phaser.Scene {
       lineSpacing: 6
     }).setOrigin(0.5);
 
-    this.createOption(compact, 320, 'Heal 8 HP', 'Cost: 30 gold', () => {
+    this.add.text(layout.centerX, 270, `Gold ${game.runState.player.gold}   HP ${game.runState.player.hp}/${game.runState.player.maxHp}   Bag ${game.runState.inventory.length}/${game.runState.player.inventoryCapacity}`, {
+      color: '#ffca6b',
+      fontFamily: FONT_FAMILY,
+      fontSize: compact ? '18px' : '20px',
+      align: 'center'
+    }).setOrigin(0.5);
+
+    this.createOption(compact, 340, 'Heal 8 HP', 'Cost: 30 gold', () => {
       this.resolveShopAction(game.shopSystem.healForGold(game.runState));
     });
 
-    this.createOption(compact, 452, 'Buy Random Reward', 'Cost: 60 gold', () => {
+    this.createOption(compact, 456, 'Buy Random Reward', 'Cost: 60 gold', () => {
       this.resolveShopAction(game.shopSystem.buyRandomReward(game.runState));
     });
 
-    this.createOption(compact, 584, 'Remove Oopsie', 'Cost: 50 gold', () => {
+    this.createOption(compact, 572, 'Buy Item', 'Cost: 25 gold', () => {
+      this.resolveShopAction(game.shopSystem.buyItem(game.runState));
+    });
+
+    this.createOption(compact, 688, 'Remove Oopsie', 'Cost: 50 gold', () => {
       this.resolveShopAction(game.shopSystem.removeCurse(game.runState));
     });
 
-    this.createOption(compact, 716, 'Leave', 'Keep your gold.', () => {
+    this.createOption(compact, 804, 'Leave', 'Return to the map.', () => {
       this.resolveShopAction(game.shopSystem.leave());
     });
   }
@@ -74,7 +85,11 @@ export class ShopScene extends Phaser.Scene {
     resolution.messages.forEach((message) => this.log(message));
     if (resolution.transition === 'map') {
       this.exitToMap();
+      return;
     }
+
+    (this.game as BlockmancerGame).saveRun();
+    this.scene.restart();
   }
 
   private log(message: string): void {

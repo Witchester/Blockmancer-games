@@ -21,23 +21,20 @@ export class TreasureScene extends Phaser.Scene {
 
     new Card(this, layout.centerX, layout.centerY, layout.contentWidth, 640, {
       title: 'Treasure Room',
-      body: 'A cheerful cache of coins and relic scraps waits inside a ribbon-wrapped vault.',
+      body: 'A cheerful ribbon-wrapped vault opens into a proper treasure pick.',
       titleColor: '#ffca6b',
       bodyFontSize: compact ? '20px' : '22px',
       strokeColor: COLORS.gold
     });
 
-    new Button(this, layout.centerX, 760, 300, 56, 'Claim Treasure', () => {
-      state.player.gold += 50;
-      state.player.totalGoldCollected += 50;
-      state.gold = state.player.gold;
-      const reward = game.rewardSystem.getRandomRewards(1)[0];
+    new Button(this, layout.centerX, 760, 300, 56, 'Open Vault', () => {
+      state.pendingRewardSource = 'treasure';
+      state.pendingRewards = game.rewardSystem.getRandomRewards(3, state, 'treasure');
+      state.currentRoomProgress = 'reward';
+      state.runStatus = 'reward';
       this.log('Treasure spills into your pack.');
-      this.log(game.rewardSystem.applyReward(state, reward.id));
-      game.mapSystem.completeNode(state, state.currentNodeId);
-      state.runStatus = 'map';
       game.saveRun();
-      this.scene.start('MapScene');
+      this.scene.start('RewardScene');
     });
   }
 

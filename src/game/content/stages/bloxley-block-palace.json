@@ -4,9 +4,12 @@
   "description": "The final palace stacked high with royal blocks.",
   "theme": "royal_ruins",
   "monsterPool": [
-    "mon_sprinkle_rat",
-    "mon_gadget_goblin",
-    "mon_arcade_spark"
+    "mon_block_baron",
+    "mon_royal_page",
+    "mon_palace_jester",
+    "mon_crown_mime",
+    "mon_quilt_knight",
+    "mon_stone_golem"
   ],
   "bossId": "mon_boss_king_bloxley",
   "lootTableId": "loot_battle_default",

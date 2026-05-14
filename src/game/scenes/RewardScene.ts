@@ -35,7 +35,7 @@ export class RewardScene extends Phaser.Scene {
       fontStyle: 'bold'
     }).setOrigin(0.5);
 
-    this.add.text(layout.centerX, 160, 'Take one relic or upgrade before returning to the map.', {
+    this.add.text(layout.centerX, 160, 'Pick one prize, or reroll if you saved a ticket.', {
       color: '#d8deff',
       fontFamily: FONT_FAMILY,
       fontSize: '18px',
@@ -59,7 +59,13 @@ export class RewardScene extends Phaser.Scene {
       fontSize: '18px'
     }).setOrigin(0.5);
 
-    this.add.rectangle(layout.centerX, 494, layout.contentWidth - 72, 420, COLORS.panelAlt, 0.98).setStrokeStyle(2, COLORS.accent, 0.35);
+    this.add.text(layout.centerX, 278, `Rerolls: ${game.runState.rewardRerolls}`, {
+      color: game.runState.rewardRerolls > 0 ? '#65d6a5' : '#98a0c7',
+      fontFamily: FONT_FAMILY,
+      fontSize: '18px'
+    }).setOrigin(0.5);
+
+    this.add.rectangle(layout.centerX, 480, layout.contentWidth - 72, 384, COLORS.panelAlt, 0.98).setStrokeStyle(2, COLORS.accent, 0.35);
     this.add.text(layout.centerX, 352, reward.name, {
       color: '#ffca6b',
       fontFamily: FONT_FAMILY,
@@ -73,7 +79,7 @@ export class RewardScene extends Phaser.Scene {
       fontFamily: FONT_FAMILY,
       fontSize: '20px'
     }).setOrigin(0.5);
-    this.add.text(layout.centerX, 510, reward.description, {
+    this.add.text(layout.centerX, 500, reward.description, {
       color: '#d8deff',
       fontFamily: FONT_FAMILY,
       fontSize: '21px',
@@ -92,6 +98,14 @@ export class RewardScene extends Phaser.Scene {
       this.renderCompactRewardCard();
     }).setDisabled(game.runState.pendingRewards.length <= 1);
 
+    new Button(this, layout.centerX, 702, 220, 50, 'Reroll', () => {
+      const message = game.rewardSystem.rerollRewards(game.runState);
+      game.runState.eventLog.unshift(message);
+      game.runState.eventLog = game.runState.eventLog.slice(0, MAX_EVENT_LOG);
+      this.rewardIndex = 0;
+      this.renderCompactRewardCard();
+    }).setDisabled(game.runState.rewardRerolls <= 0);
+
     new Button(this, layout.centerX, 852, 260, 56, 'Take Reward', () => {
       this.claimReward(reward.id);
     });
@@ -107,7 +121,7 @@ export class RewardScene extends Phaser.Scene {
       fontStyle: 'bold'
     }).setOrigin(0.5);
 
-    this.add.text(layout.centerX, 160, 'One reward at a time for clear portrait play.', {
+    this.add.text(layout.centerX, 160, 'Pick one prize, or reroll if you saved a ticket.', {
       color: '#d8deff',
       fontFamily: FONT_FAMILY,
       fontSize: '18px',
@@ -125,29 +139,25 @@ export class RewardScene extends Phaser.Scene {
     state.pendingRewards = [];
     state.activeEnemy = null;
     state.combo = 0;
+    const advancingStage = state.pendingStageAdvance;
     
-    if (state.lastBattleWasBoss) {
-      state.stage += 1;
-      
-      if (state.stage > 6) {
+    if (state.pendingStageAdvance) {
+      const result = game.mapSystem.advanceAfterBoss(state, game.stageSystem);
+      if (result === 'final-victory') {
         state.victory = true;
-        state.runStatus = 'game-over';
+        state.runStatus = 'victory';
         game.metaSystem.state.normalEndingFinished = true;
         game.metaSystem.save();
-        game.saveRun();
-        this.scene.start('GameOverScene');
+        game.clearSave();
+        this.scene.start('GameOverScene', { victory: true });
         return;
       }
-      
-      // Stage advancement: reset map topology
-      state.map = game.mapSystem.createMap();
-      state.currentNodeId = 'start';
     } else {
       game.mapSystem.completeNode(state, state.currentNodeId);
     }
     
     state.fallSpeed = Math.min(MAX_FALL_SPEED, state.fallSpeed + 0.05);
-    state.currentRoomProgress = 'cleared';
+    state.currentRoomProgress = advancingStage ? 'idle' : 'cleared';
     state.runStatus = 'map';
     game.rewardSystem.applyPostBattleEffects(state).forEach((effectMessage) => {
       state.eventLog.unshift(effectMessage);

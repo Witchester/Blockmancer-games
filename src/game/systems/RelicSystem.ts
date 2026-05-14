@@ -19,16 +19,46 @@ export class RelicSystem {
       case 'arcane-preview':
       case 'rel_arcane_lens':
         state.player.extraPreview = true;
-        return 'Arcane Preview reveals an extra future piece.';
+        return 'Arcane Lens reveals an extra future piece.';
       case 'stonebreaker':
       case 'rel_stone_heart':
         state.player.stonebreaker = true;
-        return 'Stonebreaker ignores Stone Golem mitigation.';
+        state.player.maxHp += 4;
+        state.player.hp = clamp(state.player.hp + 4, 0, state.player.maxHp);
+        return 'Stone Heart raises max HP by 4 and steadies armored fights.';
       case 'emergency-barrier':
       case 'rel_cracked_crown':
         state.player.emergencyBarrier = true;
         state.player.emergencyBarrierUsed = false;
         return 'Emergency Barrier prevents one lethal hit each battle.';
+      case 'rel_arcade_token':
+        state.rewardRerolls += 1;
+        return 'Arcade Token adds 1 reward reroll for the prize counter.';
+      case 'rel_bomb_charm':
+        state.player.spellBonuses['bomb-rune'] += 8;
+        return 'Bomb Charm raises Bomb Rune damage by 8.';
+      case 'rel_cupcake_wrapper':
+        state.player.maxHp += 3;
+        state.player.hp = clamp(state.player.hp + 3, 0, state.player.maxHp);
+        return 'Cupcake Wrapper adds 3 max HP.';
+      case 'rel_dragon_tooth':
+        state.player.spellBonuses.fireball += 10;
+        return 'Dragon Tooth raises fire spell damage by 10.';
+      case 'rel_frozen_dice':
+        state.rewardRerolls += 1;
+        return 'Frozen Dice adds 1 reward reroll.';
+      case 'rel_royal_napkin':
+        state.player.shield += 6;
+        return 'Royal Napkin starts you with 6 extra shield right now.';
+      case 'rel_sprinkle_spoon':
+        state.player.lineDamageBonus += 1;
+        return 'Sprinkle Spoon raises line damage by 1.';
+      case 'rel_star_sticker':
+        state.player.fever = clamp(state.player.fever + 20, 0, 100);
+        return 'Star Sticker fills 20 fever.';
+      case 'rel_void_eye':
+        state.player.voidCutRefund = true;
+        return 'Void Eye lets Void Cut refund mana on large clears.';
       default:
         return 'The relic hums, but nothing obvious happens.';
     }

@@ -19,7 +19,8 @@
     "description": "High Score Hydra prepares Combo Challenge."
   },
   "behaviors": [
-    "increase_fall_speed"
+    "increase_fall_speed",
+    "reverse_controls"
   ],
   "resistances": [],
   "weaknesses": [

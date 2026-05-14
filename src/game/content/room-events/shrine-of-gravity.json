@@ -1,7 +1,7 @@
 {
   "id": "evt_shrine_of_gravity",
   "name": "Shrine of Gravity",
-  "description": "A tilted altar offers stability at a price.",
+  "description": "A tilted festival altar offers stability for a tiny snack-powered wobble.",
   "rarity": "common",
   "biome": "dungeon",
   "choices": [
@@ -18,7 +18,7 @@
       "requirement": "none"
     },
     {
-      "label": "Blood Offering",
+      "label": "Snack Offering",
       "effectType": "gain_reward",
       "value": 1,
       "costHp": 3,

@@ -19,7 +19,8 @@
     "description": "Prototype No. 7 prepares Workshop Whirr."
   },
   "behaviors": [
-    "shake_board"
+    "shake_board",
+    "pattern_junk"
   ],
   "resistances": [],
   "weaknesses": [

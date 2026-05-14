@@ -68,9 +68,12 @@ export class MapScene extends Phaser.Scene {
   private renderInfo(): void {
     const state = this.gameState.runState;
     const currentNode = this.gameState.mapSystem.getNode(state.map, state.currentNodeId);
+    const currentStage = this.gameState.stageSystem.getStageByIndex(state.stage);
+    const stageCount = this.gameState.stageSystem.getStageCount();
     this.infoText?.setText([
       `HP: ${state.player.hp}/${state.player.maxHp}    Mana: ${state.player.mana}/${state.player.maxMana}    Gold: ${state.player.gold}`,
-      `Stage: ${state.stage}    Fall Speed: ${state.fallSpeed.toFixed(2)}x`,
+      `Stage ${state.stage}/${stageCount}: ${currentStage?.name ?? 'Festival Dungeon'}`,
+      `Fall Speed: ${state.fallSpeed.toFixed(2)}x`,
       `Hero: ${state.hero.name}`,
       `Current Room: ${currentNode?.label ?? 'Unknown'}`,
       `Relics: ${state.ownedRewards.length ? state.ownedRewards.slice(0, 3).join(', ') : 'None yet'}`

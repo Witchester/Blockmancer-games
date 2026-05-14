@@ -103,6 +103,7 @@ Mobile:
 - `docs/GDD.md` — game design document
 - `docs/TECHNICAL_DESIGN.md` — technical design notes
 - `docs/BUILD_APK.md` — Android build instructions
+- `docs/BMAD_GAME_DEV_INSTALL.md` — BMAD Game Dev Studio setup instructions
 - `docs/ROADMAP.md` — planned feature roadmap
 
 ## License

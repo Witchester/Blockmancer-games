@@ -66,7 +66,9 @@ function normalizeEnemy(enemy: EnemyInstance | null | undefined): EnemyInstance 
     sleepTurns: enemy.sleepTurns ?? 0,
     reverseControlsTurns: enemy.reverseControlsTurns ?? 0,
     lineDamageBlockedTurns: enemy.lineDamageBlockedTurns ?? 0,
-    behaviorIndex: enemy.behaviorIndex ?? 0
+    behaviorIndex: enemy.behaviorIndex ?? 0,
+    phase: enemy.phase ?? 1,
+    phase2Triggered: enemy.phase2Triggered ?? false
   };
 }
 
@@ -96,8 +98,11 @@ export function createDefaultRunState(): RunState {
     map: cloneMap(),
     eventLog: [...DEFAULT_EVENT_LOG],
     pendingRewards: [],
+    pendingRewardSource: 'battle',
+    rewardRerolls: 0,
     ownedRewards: [],
     lastBattleWasBoss: false,
+    pendingStageAdvance: false,
     victory: false,
     saveVersion: SAVE_VERSION
   };
@@ -135,6 +140,8 @@ export function normalizeRunState(input: unknown): RunState {
     map: raw.map ? raw.map.map((node) => ({ ...node })) : defaults.map,
     eventLog: raw.eventLog ? [...raw.eventLog] : [...defaults.eventLog],
     pendingRewards: raw.pendingRewards ? [...raw.pendingRewards] : [...defaults.pendingRewards],
+    pendingRewardSource: raw.pendingRewardSource ?? defaults.pendingRewardSource,
+    rewardRerolls: raw.rewardRerolls ?? defaults.rewardRerolls,
     ownedRewards: raw.ownedRewards ? [...raw.ownedRewards] : [...defaults.ownedRewards]
   };
 

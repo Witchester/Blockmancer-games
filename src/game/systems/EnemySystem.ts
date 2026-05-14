@@ -108,7 +108,9 @@ export class EnemySystem {
       sleepTurns: 0,
       reverseControlsTurns: 0,
       lineDamageBlockedTurns: 0,
-      behaviorIndex: 0
+      behaviorIndex: 0,
+      phase: 1,
+      phase2Triggered: false
     };
   }
 }

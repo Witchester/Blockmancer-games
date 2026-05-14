@@ -19,7 +19,8 @@
     "description": "Gelato Golem prepares Frozen Scoop."
   },
   "behaviors": [
-    "freeze_piece"
+    "freeze_piece",
+    "hide_next_block"
   ],
   "resistances": [],
   "weaknesses": [

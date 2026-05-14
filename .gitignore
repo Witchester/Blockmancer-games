@@ -35,6 +35,9 @@ Thumbs.db
 # Generated verification output
 artifacts/
 
+# Generated agent and BMAD artifacts
+.claude/
+
 # Local environment files
 .env
 .env.*

@@ -59,7 +59,7 @@ export class EventScene extends Phaser.Scene {
       return persistedEvent;
     }
 
-    const eventEntry = game.eventSystem.getRandomEvent();
+    const eventEntry = game.eventSystem.getRandomEvent(game.runState.stage);
     game.runState.currentEventId = eventEntry.id as EventId;
     game.saveRun();
     return eventEntry;

@@ -1,6 +1,7 @@
 import { MAP_NODES } from '../data/mapNodes';
 import type { EventCard, MapNodeDefinition, RunState } from '../types/GameTypes';
 import { choice } from '../utils/random';
+import type { StageSystem } from './StageSystem';
 
 const EVENT_CARDS: EventCard[] = [
   {
@@ -94,6 +95,28 @@ export class MapSystem {
       node.completed = true;
     }
     state.currentRoomProgress = 'complete';
+  }
+
+  advanceAfterBoss(state: RunState, stageSystem: StageSystem): 'next-stage' | 'final-victory' {
+    this.completeNode(state, state.currentNodeId);
+
+    if (stageSystem.isFinalStage(state.stage)) {
+      state.victory = true;
+      state.runStatus = 'victory';
+      state.currentRoomProgress = 'cleared';
+      return 'final-victory';
+    }
+
+    state.stage += 1;
+    state.map = this.createMap();
+    state.currentNodeId = 'start';
+    state.currentRoomType = 'start';
+    state.currentRoomProgress = 'idle';
+    state.activeEnemy = null;
+    state.lastBattleWasBoss = false;
+    state.pendingStageAdvance = false;
+    state.runStatus = 'map';
+    return 'next-stage';
   }
 
   getRandomEvent(): EventCard {

@@ -126,6 +126,9 @@ export class BattleScene extends Phaser.Scene {
     this.createInputSystem();
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.handleShutdown, this);
     this.combat.addLog(`Battle started against ${state.activeEnemy.name}.`);
+    if (this.sharedGame.bossSystem.isBoss(state.activeEnemy)) {
+      this.combat.addLog(this.sharedGame.bossSystem.getIntro(state.activeEnemy));
+    }
     this.syncBoardState();
     game.saveRun();
     this.renderAll();
@@ -433,6 +436,8 @@ export class BattleScene extends Phaser.Scene {
         return;
       }
 
+      this.checkBossPhase();
+
       if (this.combat.countDownEnemyAttack()) {
         this.resolveEnemyAttack();
       } else {
@@ -623,9 +628,20 @@ export class BattleScene extends Phaser.Scene {
       return;
     }
 
+    this.checkBossPhase();
     this.syncBoardState();
     this.sharedGame.saveRun();
     this.renderAll();
+  }
+
+  private checkBossPhase(): void {
+    const enemy = this.sharedGame.runState.activeEnemy;
+    if (!enemy || !this.sharedGame.bossSystem.shouldEnterPhaseTwo(enemy)) {
+      return;
+    }
+
+    this.combat.addLog(this.sharedGame.bossSystem.enterPhaseTwo(enemy));
+    this.cameras.main.flash(180, 255, 202, 107, false);
   }
 
   private handleVictory(): void {
@@ -639,15 +655,27 @@ export class BattleScene extends Phaser.Scene {
     this.combat.addLog(`${enemyName} tumbles out of the way.`);
 
     if (state.lastBattleWasBoss) {
-      this.sharedGame.mapSystem.completeNode(state, state.currentNodeId);
-      state.victory = true;
-      state.currentRoomProgress = 'cleared';
-      this.sharedGame.clearSave();
-      this.scene.start('GameOverScene', { victory: true });
+      if (this.sharedGame.stageSystem.isFinalStage(state.stage)) {
+        this.sharedGame.mapSystem.advanceAfterBoss(state, this.sharedGame.stageSystem);
+        state.victory = true;
+        this.sharedGame.metaSystem.state.normalEndingFinished = true;
+        this.sharedGame.metaSystem.save();
+        this.sharedGame.clearSave();
+        this.scene.start('GameOverScene', { victory: true });
+        return;
+      }
+
+      this.sharedGame.bossSystem.grantBossRewards(state, this.sharedGame.rewardSystem);
+      state.pendingStageAdvance = true;
+      state.currentRoomProgress = 'reward';
+      state.runStatus = 'reward';
+      this.sharedGame.saveRun();
+      this.scene.start('RewardScene');
       return;
     }
 
-    state.pendingRewards = this.sharedGame.rewardSystem.getRandomRewards(3);
+    state.pendingRewardSource = state.currentRoomType === 'elite' ? 'elite' : 'battle';
+    state.pendingRewards = this.sharedGame.rewardSystem.getRandomRewards(3, state, state.pendingRewardSource);
     state.currentRoomProgress = 'reward';
     state.runStatus = 'reward';
     this.sharedGame.saveRun();
@@ -735,7 +763,7 @@ export class BattleScene extends Phaser.Scene {
     this.enemyNameText?.setText(enemy.name);
     this.enemyStatsText?.setText(`HP ${enemy.currentHp}/${enemy.maxHp}   SH ${enemy.shield}   ATK ${enemy.attack}`);
     this.enemyIntentText?.setText(
-      `${enemy.intent}\n${this.getBehaviorLabel(enemy.behavior)}`
+      `${enemy.roomType === 'boss' ? `Phase ${enemy.phase}  ` : ''}${enemy.intent}\n${this.getBehaviorLabel(enemy.behavior)}`
     );
     this.enemyCountdownText?.setText(
       `Attack in ${enemy.attackCounter} block${enemy.attackCounter === 1 ? '' : 's'}`

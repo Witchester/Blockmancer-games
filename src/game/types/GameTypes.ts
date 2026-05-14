@@ -82,6 +82,8 @@ export interface EnemyInstance {
   reverseControlsTurns: number;
   lineDamageBlockedTurns: number;
   behaviorIndex: number;
+  phase: number;
+  phase2Triggered: boolean;
 }
 
 export interface BoardState {
@@ -108,6 +110,10 @@ export interface RewardDefinition {
   type: string;
   description: string;
   persistent: boolean;
+  rarity?: string;
+  amount?: number;
+  contentType?: string;
+  source?: string;
 }
 
 export interface MapNodeDefinition {
@@ -198,8 +204,11 @@ export interface RunState {
   map: MapNodeDefinition[];
   eventLog: string[];
   pendingRewards: RewardDefinition[];
+  pendingRewardSource: string;
+  rewardRerolls: number;
   ownedRewards: RewardId[];
   lastBattleWasBoss: boolean;
+  pendingStageAdvance: boolean;
   victory: boolean;
   saveVersion: number;
 }
