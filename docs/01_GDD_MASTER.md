@@ -656,6 +656,346 @@ A change is done when:
 - Save compatibility is considered.
 - Player-facing wording follows the cheerful festival tone.
 
+
+## 21. Difficulty and Reactive Counterplay Expansion
+
+The current difficulty target is higher board pressure with fair counterplay. Do not raise difficulty only by increasing enemy HP, enemy damage, or fall speed. Difficulty should come from readable setbacks that force the player to react with cascades, spells, items, relics, hero passives, and positioning.
+
+Design principle:
+
+```text
+Harder does not mean random punishment.
+Harder means the board creates a problem, warns the player, and offers multiple ways to solve it.
+```
+
+Every major setback should have:
+
+- A readable warning.
+- A short counter window measured in pieces, turns, or enemy intent ticks.
+- At least one item counter.
+- At least one spell, relic, hero passive, or cascade counter.
+- A failure result that is challenging but not a soft-lock.
+- Cheerful festival-flavored wording.
+
+### 21.1 New Difficulty Pressure Mechanics
+
+| ID | Name | Type | Effect | Main Counterplay |
+| --- | --- | --- | --- | --- |
+| `block_floaty_rune` | Floaty Rune | Hazard block | Floats for 3 pieces, then drops as junk if ignored. | `item_cloud_pin`, `item_balloon_pop`, Bomb Rune, Clean Cut, nearby cascade. |
+| `block_cloud_junk` | Cloud Junk | Floating junk | Hovers above a column, then falls into the lowest valid space. | Floating counters, clear target column, reroll/hold. |
+| `block_locked_rune` | Locked Rune | Hazard block | Cannot move, fall, or cascade until unlocked or broken. | `item_goblin_wrench`, Clean Cut, Bomb Rune. |
+| `block_cracked_junk` | Cracked Junk | Durable junk | Requires 2 clear hits or 1 bomb hit. | Bomb Rune, Snack Vacuum, Deluxe Block Polish. |
+| `hazard_incoming_junk_queue` | Incoming Junk Queue | Enemy pressure | Enemy prepares junk in a warning tray. Cascades reduce it before it drops. | Cascade, `item_snack_shield`, `item_return_stamp`, `item_trash_lid`. |
+| `hazard_bad_piece_delivery` | Bad Piece Delivery | Queue pressure | Enemy injects one awkward piece into the next queue. | Hold, Rainbow Reroll, `item_nope_stamp`, `item_queue_comb`. |
+| `hazard_low_ceiling` | Low Ceiling | Board size pressure | Temporarily shrinks board height for a set number of pieces. | `item_tent_pole`, `item_expanding_tablecloth`, Clean Cut, Safety Net. |
+| `hazard_rising_floor` | Snack Flood | Board pressure | Bottom row rises after several pieces or enemy ticks. | Clear low rows, Snack Vacuum, Clean Cut, Bomb Rune. |
+| `hazard_preview_disruption` | Preview Disruption | Information pressure | Hides, flashes, swaps, or fakes Next/Hold preview. | `item_preview_glasses`, relic warning upgrades, friendship bonuses. |
+| `hazard_speed_wave` | Speed Wave | Tempo pressure | Slow fall speed briefly, then spike speed briefly. | Frost Lock, `item_speed_brake`, Nixie passive. |
+| `hazard_royal_pattern` | Royal Pattern | Boss pressure | King Bloxley creates pattern blocks or symmetry checks. | Royal Eraser, Clean Cut, Star/Cascade setup. |
+
+### 21.2 Incoming Junk Queue Rules
+
+Enemy junk should usually enter a warning queue before landing.
+
+```text
+1. Enemy announces incoming junk.
+2. UI shows incoming junk amount and timer.
+3. Player has a counter window.
+4. Cascades reduce incoming junk.
+5. Items can delay, cancel, convert, or reflect junk.
+6. Remaining junk falls onto the board.
+```
+
+Recommended reduction:
+
+| Player Action | Incoming Junk Reduction |
+| --- | ---: |
+| Single line clear | -1 junk |
+| Cascade 1 | -2 junk |
+| Cascade 2 | -4 junk |
+| Cascade 3 | -6 junk |
+| Cascade 4+ | Cancel all incoming junk and weaken enemy intent |
+| Bomb block clear | -2 junk |
+| Star block in cascade | Additional -1 junk per star block |
+
+Failure result:
+
+```text
+Remaining junk drops as crumb junk, cracked junk, or stage-themed hazard blocks.
+```
+
+No incoming junk drop may instantly end the run unless the board was already in overflow danger and the player had a clear warning.
+
+### 21.3 Floating Block Rules
+
+Floating blocks create temporary space denial.
+
+```text
+- Spawn as a hovering cell or ghosted block marker.
+- Does not fall during normal gravity for a short window.
+- Shows a countdown marker.
+- If cleared, bombed, pinned, or pulled, it resolves safely.
+- If ignored, it drops as junk or stage-themed hazard.
+```
+
+Recommended defaults:
+
+| Room Type | Float Count | Counter Window |
+| --- | ---: | ---: |
+| Stage 1 tutorial/event | 1 | 4 pieces |
+| Normal battle Stage 2-4 | 1-2 | 3 pieces |
+| Elite battle | 2-3 | 2-3 pieces |
+| Boss phase | 2-4 | Boss-specific |
+| Stage 6 royal phase | 2 royal floaters | 2 pieces |
+
+### 21.4 Stage Difficulty Ramp
+
+| Stage | New Challenge Direction |
+| ---: | --- |
+| 1 | Light sticky blocks, first float tutorial, 1-2 incoming junk warnings, simple cascade objective. |
+| 2 | Regular junk queue, bomb risk/reward, board shake, floating blocks from goblin machines, low-ceiling elite modifier. |
+| 3 | Ice slide, freeze warnings, hold-preview disruption, speed waves. |
+| 4 | Sleepy pressure, soft blocks, shield enemies, blanket/tangle zones. |
+| 5 | Combo targets, no-cascade punishment, Fever pressure, preview flashes, arcade score checks. |
+| 6 | Royal blocks, symmetry checks, floating royal blocks, pattern junk, low ceiling plus incoming junk overlaps in boss/elite rooms only. |
+
+### 21.5 Difficulty Fairness Rules
+
+- Stages 1-2 should introduce one pressure mechanic at a time.
+- Stages 3-4 may combine two light pressure mechanics.
+- Stages 5-6 may combine two major pressure mechanics, especially in elite and boss rooms.
+- Never hide Next, Hold, and Inventory at the same time.
+- Never apply freeze, low ceiling, and rising floor simultaneously.
+- Every hazard must have readable UI text and at least one practical response.
+- Failure should create a worse board state, not an immediate unavoidable loss.
+- Counterplay through cascades should remain possible even without the perfect item.
+
+## 22. Reactive Item, Spell, and Relic Counter System
+
+Items are not only healing or mana consumables. Items should be tactical reactions to board hazards and enemy pressure. Spells and relics should also share this counterplay language.
+
+Core loop:
+
+```text
+Hazard appears -> warning window opens -> player reacts with cascade, item, spell, relic, or hero passive -> hazard resolves or becomes a setback.
+```
+
+### 22.1 Counter Tags
+
+Use counter tags to connect hazards, items, spells, relics, upgrades, and hero passives.
+
+```ts
+type CounterTag =
+  | "counter_junk"
+  | "counter_sticky"
+  | "counter_float"
+  | "counter_freeze"
+  | "counter_preview"
+  | "counter_speed"
+  | "counter_sleep"
+  | "counter_incoming_junk"
+  | "counter_low_ceiling"
+  | "counter_royal"
+  | "counter_pattern"
+  | "counter_board_size"
+  | "counter_piece_queue";
+```
+
+Hazards should declare the counter tags they respond to. Items, spells, relics, upgrades, and hero passives should declare the counter tags they can answer.
+
+### 22.2 Reactive Item Fields
+
+Recommended item content fields:
+
+```ts
+type ItemCategory =
+  | "heal"
+  | "mana"
+  | "board_cleanse"
+  | "hazard_counter"
+  | "spell_catalyst"
+  | "queue_control"
+  | "enemy_pressure"
+  | "emergency"
+  | "risk_reward";
+
+type ItemTiming =
+  | "instant"
+  | "before_spell"
+  | "after_hazard"
+  | "during_enemy_warning"
+  | "before_piece_lock"
+  | "map_only"
+  | "shop_only";
+
+type ReactiveItemContent = {
+  id: string;
+  name: string;
+  description: string;
+  itemCategory: ItemCategory;
+  counterTags: CounterTag[];
+  timing: ItemTiming;
+  rarity: "common" | "uncommon" | "rare" | "legendary";
+  maxStack: number;
+  spellSynergyTags?: string[];
+  effectConfig: Record<string, unknown>;
+  assetKey?: string;
+  iconKey?: string;
+};
+```
+
+### 22.3 Reactive Items
+
+| Item ID | Name | Category | Timing | Counter Tags | Effect |
+| --- | --- | --- | --- | --- | --- |
+| `item_snack_vacuum` | Snack Vacuum | `board_cleanse` | `instant` | `counter_junk` | Remove up to 5 junk blocks from a chosen area. |
+| `item_festival_mop` | Festival Mop | `board_cleanse` | `instant` | `counter_sticky` | Remove Sticky from one selected row or column. |
+| `item_block_polish_plus` | Deluxe Block Polish | `board_cleanse` | `instant` | `counter_junk`, `counter_sticky` | Convert 4 junk/sticky blocks into normal rune blocks. |
+| `item_royal_eraser` | Royal Eraser | `hazard_counter` | `instant` | `counter_royal`, `counter_pattern` | Downgrade 2 royal blocks into normal blocks. |
+| `item_tiny_broom` | Tiny Broom | `emergency` | `instant` | `counter_junk`, `counter_board_size` | Clear the top 2 occupied cells in one column. |
+| `item_sprinkle_shovel` | Sprinkle Shovel | `board_cleanse` | `instant` | `counter_junk` | Dig out 1 bottom-row cell and let above blocks fall. |
+| `item_goblin_wrench` | Goblin Wrench | `hazard_counter` | `instant` | `counter_freeze`, `counter_pattern` | Break one locked or frozen block. |
+| `item_jelly_sponge` | Jelly Sponge | `hazard_counter` | `after_hazard` | `counter_board_size` | Stabilize jelly/soft/wobbly blocks for 5 pieces. |
+| `item_cloud_pin` | Cloud Pin | `hazard_counter` | `after_hazard` | `counter_float` | Force all floating blocks to fall immediately as normal blocks. |
+| `item_balloon_pop` | Balloon Pop | `risk_reward` | `after_hazard` | `counter_float` | Destroy all floating blocks, but add 1 junk next enemy tick. |
+| `item_anchor_cookie` | Anchor Cookie | `hazard_counter` | `during_enemy_warning` | `counter_float` | Next 3 floating blocks spawn as normal blocks instead. |
+| `item_sky_hook` | Sky Hook | `queue_control` | `after_hazard` | `counter_float`, `counter_piece_queue` | Pull one floating block into Hold as a bonus piece. |
+| `item_trash_lid` | Trash Lid | `enemy_pressure` | `during_enemy_warning` | `counter_incoming_junk` | Block the next incoming junk drop by 50%. |
+| `item_snack_shield` | Snack Shield | `enemy_pressure` | `during_enemy_warning` | `counter_incoming_junk` | Delay incoming junk by 3 pieces. |
+| `item_return_stamp` | Return Stamp | `enemy_pressure` | `during_enemy_warning` | `counter_incoming_junk` | Reflect half of incoming junk as enemy damage. |
+| `item_cleanup_coupon` | Cleanup Coupon | `risk_reward` | `during_enemy_warning` | `counter_incoming_junk`, `counter_junk` | Cancel incoming junk if the player clears a line within 2 pieces. |
+| `item_crumby_compost` | Crumby Compost | `risk_reward` | `during_enemy_warning` | `counter_incoming_junk` | 50% chance to convert incoming junk into sprinkle blocks. |
+| `item_preview_glasses` | Preview Glasses | `hazard_counter` | `after_hazard` | `counter_preview` | Reveal hidden Next and Hold for 5 pieces. |
+| `item_hold_coupon_plus` | Deluxe Hold Coupon | `queue_control` | `instant` | `counter_piece_queue` | Refresh Hold and allow one extra Hold this piece. |
+| `item_queue_comb` | Queue Comb | `queue_control` | `instant` | `counter_piece_queue`, `counter_preview` | Reorder the next 3 pieces. |
+| `item_rainbow_receipt` | Rainbow Receipt | `queue_control` | `instant` | `counter_piece_queue` | Reroll active piece and Next piece. |
+| `item_piece_whistle` | Piece Whistle | `queue_control` | `instant` | `counter_piece_queue` | Call a simple square or straight piece next. |
+| `item_nope_stamp` | Nope Stamp | `hazard_counter` | `during_enemy_warning` | `counter_piece_queue` | Delete the next enemy-injected bad piece. |
+| `item_warm_mittens` | Warm Mittens | `hazard_counter` | `during_enemy_warning` | `counter_freeze` | Prevent Freeze for 8 pieces. |
+| `item_hot_cocoa` | Hot Cocoa | `hazard_counter` | `after_hazard` | `counter_freeze` | Instantly unfreeze active piece and gain small mana. |
+| `item_alarm_cookie` | Alarm Cookie | `hazard_counter` | `after_hazard` | `counter_sleep` | Remove Sleepy and prevent the next Sleepy. |
+| `item_comfy_blanket` | Comfy Blanket | `emergency` | `after_hazard` | `counter_sleep` | Reduce enemy damage while Sleepy is active. |
+| `item_speed_brake` | Speed Brake | `hazard_counter` | `after_hazard` | `counter_speed` | Slow fall speed for 6 pieces. |
+| `item_sugar_socks` | Sugar Socks | `hazard_counter` | `during_enemy_warning` | `counter_speed` | Movement remains responsive during speed waves. |
+| `item_tent_pole` | Tent Pole | `hazard_counter` | `after_hazard` | `counter_low_ceiling`, `counter_board_size` | Cancel Low Ceiling for this battle. |
+| `item_expanding_tablecloth` | Expanding Tablecloth | `emergency` | `after_hazard` | `counter_board_size` | Add +1 board height for 10 pieces. |
+| `item_safety_net` | Safety Net | `emergency` | `before_piece_lock` | `counter_board_size`, `counter_low_ceiling` | If board overflows, clear top row once. |
+| `item_pocket_ladder` | Pocket Ladder | `board_cleanse` | `instant` | `counter_board_size` | Move one selected column down by 2 cells if space exists. |
+| `item_corner_cutter` | Corner Cutter | `board_cleanse` | `instant` | `counter_pattern`, `counter_royal` | Clear one awkward corner cluster. |
+
+### 22.4 Spell Catalyst Items
+
+Spell catalyst items make item-spell combos valuable.
+
+| Item ID | Name | Timing | Combo Spell | Effect |
+| --- | --- | --- | --- | --- |
+| `item_firecracker_sugar` | Firecracker Sugar | `before_spell` | Fireball | Next fire spell also burns sticky/junk blocks. |
+| `item_frosting_salt` | Frosting Salt | `before_spell` | Frost Lock | Next frost spell converts ice blocks to normal blocks. |
+| `item_bomb_fuse` | Bomb Fuse | `before_spell` | Bomb Rune | Next Bomb Rune radius +1. |
+| `item_star_syrup` | Star Syrup | `before_spell` | Star Spark | Next spell creates 1 star block. |
+| `item_cascade_confetti` | Cascade Confetti | `before_spell` | Cascade Cheer | Next cascade gives double Fever. |
+| `item_spell_coupon` | Spell Coupon | `before_spell` | Any spell | Next spell costs 50% less mana. |
+| `item_mana_straw` | Mana Straw | `instant` | Mana/sprinkle synergy | Convert 3 sprinkle blocks into mana instantly. |
+| `item_cleaning_charm` | Cleaning Charm | `before_spell` | Clean Cut | Next Clean Cut also removes junk/sticky. |
+
+### 22.5 Hazard Counter Windows
+
+Recommended hazard content shape:
+
+```ts
+type HazardCounterWindow = {
+  hazardId: string;
+  name: string;
+  warningText: string;
+  counterTags: CounterTag[];
+  counterWindowPieces: number;
+  severity: "minor" | "moderate" | "major" | "boss";
+  defaultFailureEffect: string;
+  itemCounterHints: string[];
+  spellCounterHints: string[];
+  cascadeCounterHint?: string;
+};
+```
+
+Initial hazard windows:
+
+| Hazard ID | Warning Text | Counter Window | Failure Effect |
+| --- | --- | ---: | --- |
+| `hazard_floaty_rune` | A Floaty Rune is wobbling overhead! | 3 pieces | Drops as crumb junk. |
+| `hazard_incoming_junk_queue` | Crumb junk is lining up in the snack tray! | 2-4 pieces | Remaining junk drops onto random columns. |
+| `hazard_freeze_warning` | Frost is gathering around your active block! | 1-2 pieces | Active piece freezes briefly. |
+| `hazard_preview_hidden` | A Sugar Bat is blocking your preview! | 3 pieces | Next/Hold preview hidden or flashed. |
+| `hazard_low_ceiling` | The ceiling is getting suspiciously lower! | 5-8 pieces | Board height shrinks temporarily. |
+| `hazard_royal_pattern` | Bloxley demands a proper rectangle! | Boss phase | Royal blocks or symmetry check appears. |
+| `hazard_bad_piece_delivery` | A goblin put something weird in the queue! | 1-2 pieces | Awkward piece enters next queue. |
+| `hazard_speed_wave` | The floor is wobbling faster! | 3-6 pieces | Fall speed spikes. |
+
+### 22.6 Item, Spell, Relic, and Cascade Interaction Rules
+
+- Cascades are the baseline free counter to incoming junk and some pattern pressure.
+- Items are targeted counters and emergency tools.
+- Spells are stronger but spend mana.
+- Relics improve a counter style over the whole run.
+- Hero passives make specific counter styles more reliable.
+
+Examples:
+
+```text
+Sticky Spill:
+- Item counter: Festival Mop.
+- Spell counter: Fireball, Clean Cut, Bomb Rune.
+- Relic synergy: Sticky Sticker makes cleared sticky blocks grant mana.
+- Hero synergy: Pippa burns sticky/junk with fire spells.
+```
+
+```text
+Incoming Junk Queue:
+- Cascade counter: cascade chains reduce incoming junk before it lands.
+- Item counter: Snack Shield, Trash Lid, Return Stamp.
+- Spell counter: Bomb Rune or Clean Cut after junk lands.
+- Relic synergy: Star Cookie improves cascade counter value.
+```
+
+```text
+Low Ceiling:
+- Item counter: Tent Pole, Expanding Tablecloth, Safety Net.
+- Spell counter: Clean Cut.
+- Hero synergy: Bruk can survive overflow once.
+```
+
+### 22.7 Inventory and Balance Rules
+
+- Default inventory slots remain 6.
+- Common reactive items may stack to 3.
+- Strong emergency items should stack to 1.
+- Boss-counter items should be rare.
+- Spell catalyst items should be uncommon.
+- No player can carry every answer at once.
+- Shops should sell clear counter identities: cleanup, preview, emergency, spell catalyst, or risky gadget.
+- Treasure rooms may offer one targeted counter for the next known boss.
+
+### 22.8 UI Requirements
+
+When a hazard warning is active, the battle UI should show:
+
+- Hazard name.
+- Countdown in pieces or enemy ticks.
+- Incoming effect preview.
+- Available item counters in inventory.
+- Available spell counters if enough mana.
+- Cascade hint where relevant.
+
+Example:
+
+```text
+Incoming: 6 Crumb Junk in 3 pieces
+Counters ready: Snack Shield, Return Stamp, Bomb Rune
+Cascade hint: Trigger a cascade to reduce incoming junk.
+```
+
+Do not overload the main board area with text. Use compact icons, a warning tray, tooltip card, or event log line.
+
 ## Change Log
 
+- 2026-05-15: Added difficulty pressure mechanics, floating blocks, incoming junk queue, and Reactive Item/Spell/Relic Counter System.
 - 2026-05-15: Rebuilt as the single source of truth and aligned with the lighthearted content direction.

@@ -8,7 +8,7 @@ import { InputSystem } from '../systems/InputSystem';
 import { OopsieSystem } from '../systems/OopsieSystem';
 import { SpellSystem } from '../systems/SpellSystem';
 import { contentRegistry } from '../systems/ContentRegistry';
-import type { BoardCell, BoardTickResult, CascadeAnimationFrame, CascadeResult, EnemyInstance, RunState, SpellId } from '../types/GameTypes';
+import type { ActiveHazardKind, ActiveHazardState, BoardCell, BoardTickResult, CascadeAnimationFrame, CascadeResult, CounterTag, EnemyInstance, RunState, SpellId } from '../types/GameTypes';
 import { EventLog } from '../ui/EventLog';
 import { Hud } from '../ui/Hud';
 import { MobileControls } from '../ui/MobileControls';
@@ -26,6 +26,101 @@ import {
   TETROMINO_COLORS,
   TETROMINO_SHAPES
 } from '../utils/constants';
+
+const HAZARD_WINDOWS: Record<ActiveHazardKind, Omit<ActiveHazardState, 'instanceId' | 'kind' | 'remainingPieces'>> = {
+  incoming_junk: {
+    hazardId: 'hazard_incoming_junk_queue',
+    name: 'Incoming Junk',
+    warningText: 'Crumb junk is lining up in the snack tray!',
+    counterTags: ['counter_incoming_junk', 'counter_junk'],
+    counterWindowPieces: 3,
+    severity: 'moderate',
+    defaultFailureEffect: 'Remaining junk drops onto random columns.',
+    itemCounterHints: ['Snack Shield', 'Return Stamp', 'Snack Vacuum'],
+    spellCounterHints: ['Bomb Rune', 'Void Cut'],
+    cascadeCounterHint: 'Trigger a cascade to reduce incoming junk.'
+  },
+  floating_block: {
+    hazardId: 'hazard_floaty_rune',
+    name: 'Floaty Rune',
+    warningText: 'A Floaty Rune is wobbling overhead!',
+    counterTags: ['counter_float'],
+    counterWindowPieces: 3,
+    severity: 'minor',
+    defaultFailureEffect: 'Drops as cloud junk.',
+    itemCounterHints: ['Cloud Pin'],
+    spellCounterHints: ['Bomb Rune', 'Void Cut'],
+    cascadeCounterHint: 'Clear space below it before it drops.'
+  },
+  freeze: {
+    hazardId: 'hazard_freeze_warning',
+    name: 'Freeze Warning',
+    warningText: 'Frost is gathering around your active block!',
+    counterTags: ['counter_freeze'],
+    counterWindowPieces: 2,
+    severity: 'moderate',
+    defaultFailureEffect: 'The board gets a small speed nudge.',
+    itemCounterHints: ['Hot Cocoa'],
+    spellCounterHints: ['Frost Lock']
+  },
+  preview: {
+    hazardId: 'hazard_preview_hidden',
+    name: 'Preview Glitter',
+    warningText: 'A Sugar Bat is blocking your preview!',
+    counterTags: ['counter_preview'],
+    counterWindowPieces: 3,
+    severity: 'minor',
+    defaultFailureEffect: 'Next and Hold previews are hidden briefly.',
+    itemCounterHints: ['Preview Glasses'],
+    spellCounterHints: []
+  },
+  low_ceiling: {
+    hazardId: 'hazard_low_ceiling',
+    name: 'Low Ceiling',
+    warningText: 'The ceiling is getting suspiciously lower!',
+    counterTags: ['counter_low_ceiling', 'counter_board_size'],
+    counterWindowPieces: 6,
+    severity: 'major',
+    defaultFailureEffect: 'The top row is pressured but not soft-locked.',
+    itemCounterHints: ['Tent Pole', 'Safety Net'],
+    spellCounterHints: ['Void Cut'],
+    cascadeCounterHint: 'Clear high rows before the ceiling dips.'
+  },
+  bad_piece: {
+    hazardId: 'hazard_bad_piece_delivery',
+    name: 'Weird Delivery',
+    warningText: 'A goblin put something weird in the queue!',
+    counterTags: ['counter_piece_queue'],
+    counterWindowPieces: 2,
+    severity: 'minor',
+    defaultFailureEffect: 'An awkward piece enters Next.',
+    itemCounterHints: ['Return Stamp'],
+    spellCounterHints: []
+  },
+  speed_wave: {
+    hazardId: 'hazard_speed_wave',
+    name: 'Speed Wave',
+    warningText: 'The floor is wobbling faster!',
+    counterTags: ['counter_speed'],
+    counterWindowPieces: 4,
+    severity: 'moderate',
+    defaultFailureEffect: 'Fall speed rises slightly.',
+    itemCounterHints: ['Speed Brake'],
+    spellCounterHints: ['Frost Lock']
+  },
+  royal_pattern: {
+    hazardId: 'hazard_royal_pattern',
+    name: 'Royal Pattern',
+    warningText: 'Bloxley demands a proper rectangle!',
+    counterTags: ['counter_royal', 'counter_pattern'],
+    counterWindowPieces: 3,
+    severity: 'boss',
+    defaultFailureEffect: 'Royal blocks appear in open spaces.',
+    itemCounterHints: ['Tent Pole', 'Snack Vacuum'],
+    spellCounterHints: ['Void Cut', 'Bomb Rune'],
+    cascadeCounterHint: 'Cascades soften pattern pressure.'
+  }
+};
 
 export class BattleScene extends Phaser.Scene {
   private board!: BoardSystem;
@@ -61,6 +156,8 @@ export class BattleScene extends Phaser.Scene {
   private feverText?: Phaser.GameObjects.Text;
   private feverBarFill?: Phaser.GameObjects.Rectangle;
   private cascadeText?: Phaser.GameObjects.Text;
+  private hazardTrayBg?: Phaser.GameObjects.Rectangle;
+  private hazardTrayText?: Phaser.GameObjects.Text;
   private inventoryExpanded = false;
   private inventoryOverlay!: Phaser.GameObjects.Container;
   private inventoryButtons: Button[] = [];
@@ -348,6 +445,17 @@ export class BattleScene extends Phaser.Scene {
       wordWrap: { width: 132 },
       lineSpacing: 4
     }).setOrigin(1, 0).setVisible(false);
+
+    this.hazardTrayBg = this.add.rectangle(this.screenWidth / 2, this.logY - 28, this.screenWidth - 48, 44, COLORS.panelAlt, 0.96)
+      .setStrokeStyle(2, COLORS.gold, 0.35)
+      .setVisible(false);
+    this.hazardTrayText = this.add.text(this.screenWidth / 2, this.logY - 28, '', {
+      color: '#f6f7ff',
+      fontFamily: FONT_FAMILY,
+      fontSize: '15px',
+      align: 'center',
+      wordWrap: { width: this.screenWidth - 72 }
+    }).setOrigin(0.5).setVisible(false);
   }
 
   private buildBoard(): void {
@@ -671,6 +779,16 @@ export class BattleScene extends Phaser.Scene {
     const state = this.sharedGame.runState;
 
     if (result.toppedOut) {
+      if (state.reactiveState.safetyNetArmed) {
+        state.reactiveState.safetyNetArmed = false;
+        const cleared = this.board.clearTopOccupiedCells(this.boardColumns);
+        state.board.topOut = false;
+        this.combat.addLog(`Safety Net catches the overflow and clears ${cleared} top block${cleared === 1 ? '' : 's'}.`);
+        this.syncBoardState();
+        this.sharedGame.saveRun();
+        this.renderAll();
+        return;
+      }
       if (
         state.hero.passiveId === 'passive_no_snack_left_behind' &&
         !state.player.emergencyBarrierUsed
@@ -760,6 +878,7 @@ export class BattleScene extends Phaser.Scene {
     state.runStats.cascadesTriggered += cascade.cascadeCount > 1 ? 1 : 0;
     state.runStats.maxCascade = Math.max(state.runStats.maxCascade, cascade.cascadeCount);
     state.runStats.damageDealt += result.damage;
+    this.reduceIncomingJunkFromCascade(cascade);
     if (cascade.cascadeCount > 1) {
       const stageGoalMessage = this.sharedGame.stageGoalSystem.addProgress(state, 'combo_score', cascade.cascadeCount);
       if (stageGoalMessage) {
@@ -767,6 +886,7 @@ export class BattleScene extends Phaser.Scene {
       }
     }
     this.applyOopsieBoardEffects(cascade.totalLinesCleared);
+    this.tickActiveHazards();
     this.renderCombatUi();
 
     if (state.activeEnemy && state.activeEnemy.currentHp <= 0) {
@@ -868,6 +988,12 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private advanceStatusTimers(): void {
+    const reactive = this.sharedGame.runState.reactiveState;
+    reactive.previewRevealPieces = Math.max(0, reactive.previewRevealPieces - 1);
+    reactive.speedBrakePieces = Math.max(0, reactive.speedBrakePieces - 1);
+    reactive.freezeGuardPieces = Math.max(0, reactive.freezeGuardPieces - 1);
+    reactive.anchorCookiePieces = Math.max(0, reactive.anchorCookiePieces - 1);
+
     const enemy = this.sharedGame.runState.activeEnemy;
     if (!enemy) {
       return;
@@ -928,26 +1054,38 @@ export class BattleScene extends Phaser.Scene {
       case 'basic_attack':
         break;
       case 'spawn_junk':
-        this.board.addJunkRows(1);
-        this.combat.addLog('Junk blocks rise from below.');
+        this.queueIncomingJunk(this.getStageHazardAmount(2), enemy.id, this.getStageCounterWindow(), 'block_crumb_junk');
+        if (state.stage >= 2) {
+          this.spawnFloatingBlock('block_floaty_rune', this.getStageCounterWindow());
+        }
+        this.combat.addLog('Crumb junk lines up in the snack tray.');
         break;
       case 'pattern_junk':
-        this.board.addPatternJunk();
-        this.combat.addLog('A patterned junk row marches onto the board.');
+        this.queueIncomingJunk(this.getStageHazardAmount(3), enemy.id, this.getStageCounterWindow(), 'block_crumb_junk');
+        this.startHazardWarning('royal_pattern', {
+          sourceId: enemy.id,
+          amount: 1,
+          delayPieces: Math.max(2, this.getStageCounterWindow())
+        });
+        this.combat.addLog('Pattern junk waits for a readable opening.');
         break;
       case 'royal_block_spawn': {
-        const added = this.board.addRoyalBlocks(4);
-        this.combat.addLog(`Royal blocks appear in ${added} open spaces.`);
+        this.startHazardWarning('royal_pattern', {
+          sourceId: enemy.id,
+          amount: 4,
+          delayPieces: Math.max(2, this.getStageCounterWindow())
+        });
+        this.combat.addLog('Royal blocks are being measured for a fancy pattern.');
         break;
       }
       case 'hide_next_piece':
       case 'hide_next_block':
-        enemy.previewHiddenTurns = 2;
-        this.combat.addLog('The next-piece preview gets covered in glitter.');
+        this.startHazardWarning('preview', { sourceId: enemy.id, delayPieces: 3 });
+        this.combat.addLog('The next-piece preview is about to get covered in glitter.');
         break;
       case 'hide_hold_block':
-        enemy.holdHiddenTurns = 2;
-        this.combat.addLog('The hold box gets hidden behind parade banners.');
+        this.startHazardWarning('preview', { sourceId: enemy.id, delayPieces: 3 });
+        this.combat.addLog('The hold box is about to get hidden behind parade banners.');
         break;
       case 'mana_hex':
       case 'mana_zap':
@@ -961,9 +1099,9 @@ export class BattleScene extends Phaser.Scene {
         this.combat.addLog('Heavy Slam rattles the board violently.');
         break;
       case 'increase_fall_speed':
-        this.board.addJunkRows(1);
-        state.fallSpeed = Math.min(MAX_FALL_SPEED, state.fallSpeed + 0.06);
-        this.combat.addLog('The board accelerates.');
+        this.startHazardWarning('speed_wave', { sourceId: enemy.id, delayPieces: Math.max(3, this.getStageCounterWindow()) });
+        this.queueIncomingJunk(1, enemy.id, this.getStageCounterWindow(), 'block_crumb_junk');
+        this.combat.addLog('The floor starts wobbling faster.');
         break;
       case 'hydra_combo_check':
         if (state.combo >= 3 || state.player.feverActiveLocks > 0) {
@@ -989,8 +1127,7 @@ export class BattleScene extends Phaser.Scene {
         this.combat.healEnemy(Math.ceil(enemy.maxHp * 0.08));
         break;
       case 'freeze_piece':
-        enemy.frozenTurns = 1;
-        state.fallSpeed = Math.max(0.75, state.fallSpeed - 0.05);
+        this.startHazardWarning('freeze', { sourceId: enemy.id, delayPieces: Math.min(2, this.getStageCounterWindow()) });
         this.combat.addLog('Frost gathers around the falling block.');
         break;
       case 'sleep_player':
@@ -999,8 +1136,8 @@ export class BattleScene extends Phaser.Scene {
         this.combat.addLog('A cozy lullaby makes your next moment sluggish.');
         break;
       case 'swap_next_hold':
-        this.board.swapNextAndHold();
-        this.combat.addLog('Next and hold blocks swap in a festival shuffle.');
+        this.startHazardWarning('bad_piece', { sourceId: enemy.id, delayPieces: 2 });
+        this.combat.addLog('A goblin is carrying a weird piece toward the queue.');
         break;
       case 'reverse_controls':
         enemy.reverseControlsTurns = 3;
@@ -1141,12 +1278,274 @@ export class BattleScene extends Phaser.Scene {
     });
   }
 
+  private queueIncomingJunk(amount: number, sourceId: string, delayPieces: number, blockId = 'block_crumb_junk'): void {
+    const existing = this.sharedGame.runState.activeHazards.find((hazard) => hazard.kind === 'incoming_junk');
+    if (existing) {
+      existing.amount = Math.min(12, (existing.amount ?? 0) + amount);
+      existing.remainingPieces = Math.max(existing.remainingPieces, delayPieces);
+      this.combat.addLog(`Incoming junk grows to ${existing.amount}. Cascades can still trim it.`);
+      return;
+    }
+
+    this.sharedGame.runState.activeHazards.push(this.createHazard('incoming_junk', {
+      sourceId,
+      amount,
+      blockId,
+      delayPieces
+    }));
+  }
+
+  private spawnFloatingBlock(blockId = 'block_floaty_rune', delayPieces = 3): void {
+    if (this.sharedGame.runState.reactiveState.anchorCookiePieces > 0) {
+      const added = this.board.addJunkToColumn(Phaser.Math.Between(0, this.boardColumns - 1), 'block_crumb_junk');
+      this.combat.addLog(added ? 'Anchor Cookie turns a floaty block into normal crumb junk.' : 'Anchor Cookie catches a floaty block safely.');
+      return;
+    }
+
+    const column = Phaser.Math.Between(0, this.boardColumns - 1);
+    const row = Math.max(0, Math.min(2, this.boardRows - 1));
+    this.sharedGame.runState.activeHazards.push(this.createHazard('floating_block', {
+      sourceId: 'battle',
+      blockId,
+      onExpireBlockId: 'block_cloud_junk',
+      column,
+      row,
+      delayPieces
+    }));
+    this.combat.addLog('A Floaty Rune wobbles overhead.');
+  }
+
+  private startHazardWarning(kind: ActiveHazardKind, options: {
+    sourceId?: string;
+    amount?: number;
+    blockId?: string;
+    delayPieces?: number;
+  } = {}): void {
+    if (kind === 'low_ceiling' && this.sharedGame.runState.reactiveState.lowCeilingCanceled) {
+      this.combat.addLog('Tent Pole keeps the low ceiling away.');
+      return;
+    }
+    if (kind === 'freeze' && this.sharedGame.runState.reactiveState.freezeGuardPieces > 0) {
+      this.combat.addLog('Hot Cocoa keeps the frost from sticking.');
+      return;
+    }
+    if (kind === 'speed_wave' && this.sharedGame.runState.reactiveState.speedBrakePieces > 0) {
+      this.combat.addLog('Speed Brake keeps the wobbly floor steady.');
+      return;
+    }
+    if (kind === 'preview' && this.sharedGame.runState.reactiveState.previewRevealPieces > 0) {
+      this.combat.addLog('Preview Glasses keep the next block readable.');
+      return;
+    }
+
+    const existing = this.sharedGame.runState.activeHazards.find((hazard) => hazard.kind === kind);
+    if (existing) {
+      existing.remainingPieces = Math.max(existing.remainingPieces, options.delayPieces ?? existing.remainingPieces);
+      return;
+    }
+
+    this.sharedGame.runState.activeHazards.push(this.createHazard(kind, options));
+  }
+
+  private createHazard(kind: ActiveHazardKind, options: {
+    sourceId?: string;
+    amount?: number;
+    blockId?: string;
+    onExpireBlockId?: string;
+    column?: number;
+    row?: number;
+    delayPieces?: number;
+  }): ActiveHazardState {
+    const delay = options.delayPieces ?? this.getDefaultHazardWindow(kind);
+    const base = HAZARD_WINDOWS[kind];
+    return {
+      ...base,
+      instanceId: `${base.hazardId}_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
+      kind,
+      remainingPieces: delay,
+      counterWindowPieces: delay,
+      amount: options.amount,
+      sourceId: options.sourceId,
+      blockId: options.blockId,
+      onExpireBlockId: options.onExpireBlockId,
+      column: options.column,
+      row: options.row
+    };
+  }
+
+  private reduceIncomingJunkFromCascade(cascade: CascadeResult): void {
+    if (cascade.totalLinesCleared <= 0) {
+      return;
+    }
+
+    const incoming = this.sharedGame.runState.activeHazards.find((hazard) => hazard.kind === 'incoming_junk');
+    if (!incoming || !incoming.amount) {
+      return;
+    }
+
+    let reduction = 1;
+    if (cascade.cascadeCount >= 4) {
+      reduction = incoming.amount;
+    } else if (cascade.cascadeCount >= 3) {
+      reduction = 6;
+    } else if (cascade.cascadeCount >= 2) {
+      reduction = 4;
+    } else {
+      reduction = 2;
+    }
+    reduction += cascade.specialBlocksTriggered.filter((trigger) => trigger.startsWith('block_star')).length;
+    if (this.sharedGame.runState.relics.includes('rel_star_sticker')) {
+      reduction += 1;
+    }
+
+    incoming.amount = Math.max(0, incoming.amount - reduction);
+    this.combat.addLog(`Cascade counterplay trims incoming junk by ${reduction}.`);
+    if (incoming.amount <= 0) {
+      this.sharedGame.runState.activeHazards = this.sharedGame.runState.activeHazards.filter((hazard) => hazard !== incoming);
+      this.combat.addLog('Incoming junk is fully cleared before it lands.');
+    }
+  }
+
+  private tickActiveHazards(): void {
+    const hazards = [...this.sharedGame.runState.activeHazards];
+    hazards.forEach((hazard) => {
+      hazard.remainingPieces = Math.max(0, hazard.remainingPieces - 1);
+      if (hazard.remainingPieces === 0) {
+        this.resolveHazard(hazard);
+      }
+    });
+    this.sharedGame.runState.activeHazards = this.sharedGame.runState.activeHazards.filter((hazard) => hazard.remainingPieces > 0);
+  }
+
+  private resolveHazard(hazard: ActiveHazardState): void {
+    switch (hazard.kind) {
+      case 'incoming_junk':
+        this.dropIncomingJunk(hazard);
+        break;
+      case 'floating_block':
+        this.dropFloatingBlock(hazard);
+        break;
+      case 'freeze':
+        this.sharedGame.runState.fallSpeed = Math.min(MAX_FALL_SPEED, this.sharedGame.runState.fallSpeed + 0.04);
+        this.combat.addLog('The chilly block moment makes the board a little quicker.');
+        break;
+      case 'preview': {
+        const enemy = this.sharedGame.runState.activeEnemy;
+        if (enemy) {
+          enemy.previewHiddenTurns = Math.max(enemy.previewHiddenTurns, 2);
+          enemy.holdHiddenTurns = Math.max(enemy.holdHiddenTurns, 1);
+        }
+        this.combat.addLog('Preview gets covered by festival glitter.');
+        break;
+      }
+      case 'low_ceiling':
+        this.board.clearTopOccupiedCells(Math.ceil(this.boardColumns / 2));
+        this.combat.addLog('The low ceiling nudges the top row clear instead of trapping you.');
+        break;
+      case 'bad_piece':
+        this.board.setNextPieceType(Phaser.Math.Between(0, 1) === 0 ? 'S' : 'Z');
+        this.combat.addLog('A wiggly piece enters the next queue.');
+        break;
+      case 'speed_wave':
+        this.sharedGame.runState.fallSpeed = Math.min(MAX_FALL_SPEED, this.sharedGame.runState.fallSpeed + 0.08);
+        this.combat.addLog('The floor wobbles faster for a bit.');
+        break;
+      case 'royal_pattern': {
+        const added = this.board.addRoyalBlocks(Math.max(1, hazard.amount ?? 2));
+        this.combat.addLog(`Bloxley places ${added} royal pattern block${added === 1 ? '' : 's'}.`);
+        break;
+      }
+      default:
+        break;
+    }
+  }
+
+  private dropIncomingJunk(hazard: ActiveHazardState): void {
+    const amount = Math.min(8, Math.max(0, hazard.amount ?? 0));
+    let added = 0;
+    for (let index = 0; index < amount; index += 1) {
+      if (this.board.addJunkToColumn(Phaser.Math.Between(0, this.boardColumns - 1), hazard.blockId ?? 'block_crumb_junk')) {
+        added += 1;
+      }
+    }
+    this.combat.addLog(`${added} incoming junk block${added === 1 ? '' : 's'} land with room to react.`);
+  }
+
+  private dropFloatingBlock(hazard: ActiveHazardState): void {
+    const column = Math.max(0, Math.min(this.boardColumns - 1, hazard.column ?? Phaser.Math.Between(0, this.boardColumns - 1)));
+    const added = this.board.addJunkToColumn(column, hazard.onExpireBlockId ?? 'block_cloud_junk');
+    this.combat.addLog(added ? 'A Floaty Rune drops as cloud junk.' : 'A Floaty Rune bumps the ceiling and fizzles safely.');
+  }
+
+  private renderHazardTray(): void {
+    const state = this.sharedGame.runState;
+    const hazard = state.activeHazards[0];
+    if (!hazard) {
+      this.hazardTrayBg?.setVisible(false);
+      this.hazardTrayText?.setVisible(false);
+      return;
+    }
+
+    const counters = this.getAvailableCounterNames(hazard);
+    const amount = hazard.amount ? ` ${hazard.amount}` : '';
+    const line1 = `${hazard.name}${amount} in ${hazard.remainingPieces} piece${hazard.remainingPieces === 1 ? '' : 's'}`;
+    const line2 = `${counters.length ? `Counters: ${counters.join(', ')}` : hazard.cascadeCounterHint ?? 'Cascade or cleanup item can help.'}`;
+    this.hazardTrayBg?.setVisible(true);
+    this.hazardTrayText?.setText(`${line1}\n${line2}`).setVisible(true);
+  }
+
+  private getAvailableCounterNames(hazard: ActiveHazardState): string[] {
+    const tags = new Set<CounterTag>(hazard.counterTags);
+    const itemNames = this.sharedGame.runState.inventory
+      .map((stack) => this.sharedGame.itemSystem.getItem(stack.itemId))
+      .filter((item): item is NonNullable<typeof item> => Boolean(item))
+      .filter((item) => item.counterTags?.some((tag) => tags.has(tag)))
+      .slice(0, 2)
+      .map((item) => item.name);
+    const spellNames = SPELLS
+      .filter((spell) => this.spells.getCost(spell.id) <= this.sharedGame.runState.player.mana)
+      .filter((spell) => {
+        if (tags.has('counter_junk') || tags.has('counter_sticky') || tags.has('counter_royal')) {
+          return spell.id === 'bomb-rune' || spell.id === 'void-cut' || spell.id === 'fireball';
+        }
+        if (tags.has('counter_freeze') || tags.has('counter_speed')) {
+          return spell.id === 'frost-lock';
+        }
+        return false;
+      })
+      .slice(0, 1)
+      .map((spell) => spell.label);
+    return [...itemNames, ...spellNames];
+  }
+
+  private getStageHazardAmount(base: number): number {
+    return Math.min(8, base + Math.floor(Math.max(0, this.sharedGame.runState.stage - 1) / 2));
+  }
+
+  private getStageCounterWindow(): number {
+    return Math.max(2, 5 - Math.ceil(this.sharedGame.runState.stage / 2));
+  }
+
+  private getDefaultHazardWindow(kind: ActiveHazardKind): number {
+    if (kind === 'freeze' || kind === 'bad_piece') {
+      return 2;
+    }
+    if (kind === 'low_ceiling') {
+      return 6;
+    }
+    if (kind === 'speed_wave') {
+      return 4;
+    }
+    return this.getStageCounterWindow();
+  }
+
   private renderCombatUi(): void {
     this.renderBoard();
     this.renderEnemy();
     this.renderPreview();
     this.renderUpgrades();
     this.renderMiddleOverlays();
+    this.renderHazardTray();
     this.hud.update(this.sharedGame.runState);
     this.log.update(this.sharedGame.runState);
   }
@@ -1310,6 +1709,7 @@ export class BattleScene extends Phaser.Scene {
     this.renderPreview();
     this.renderUpgrades();
     this.renderMiddleOverlays();
+    this.renderHazardTray();
     this.hud.update(this.sharedGame.runState);
     this.log.update(this.sharedGame.runState);
   }
@@ -1369,6 +1769,16 @@ export class BattleScene extends Phaser.Scene {
         this.displayAlpha[row][col] = 1;
       }
     }
+    this.sharedGame.runState.activeHazards
+      .filter((hazard) => hazard.kind === 'floating_block')
+      .forEach((hazard) => {
+        const row = Math.max(0, Math.min(this.boardRows - 1, hazard.row ?? 0));
+        const col = Math.max(0, Math.min(this.boardColumns - 1, hazard.column ?? 0));
+        if (this.displayBoard[row][col] === 0) {
+          this.displayBoard[row][col] = this.board.createBlockCell(hazard.blockId ?? 'block_floaty_rune');
+          this.displayAlpha[row][col] = 0.72;
+        }
+      });
   }
 
   private paintDisplayBoard(): void {
@@ -1542,7 +1952,8 @@ export class BattleScene extends Phaser.Scene {
     }
 
     const settings = this.sharedGame.getSettings();
-    const hidden = enemy.previewHiddenTurns > 0 || this.sharedGame.oopsieSystem.shouldHidePreview(this.sharedGame.runState);
+    const previewProtected = this.sharedGame.runState.reactiveState.previewRevealPieces > 0;
+    const hidden = !previewProtected && (enemy.previewHiddenTurns > 0 || this.sharedGame.oopsieSystem.shouldHidePreview(this.sharedGame.runState));
     const nextType = this.board.nextPieceType;
     const matrix = TETROMINO_SHAPES[nextType];
     this.previewLabel?.setText(hidden ? 'Preview Hexed' : 'Next');

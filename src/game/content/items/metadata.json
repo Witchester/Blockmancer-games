@@ -12,14 +12,28 @@
     "name": { "type": "string" },
     "description": { "type": "string" },
     "effect": { "type": "object" },
+    "itemCategory": { "type": "enum", "dataList": "itemCategory" },
+    "counterTags": { "type": "array", "itemType": "string" },
+    "timing": { "type": "enum", "dataList": "itemTiming" },
     "rarity": { "type": "enum", "dataList": "rarity" },
+    "maxStack": { "type": "number", "min": 1 },
+    "spellSynergyTags": { "type": "array", "itemType": "string" },
+    "effectConfig": { "type": "object" },
     "iconKey": { "type": "string" },
     "enabled": { "type": "boolean" }
   },
   "dataList": {
-    "rarity": ["common", "uncommon", "rare", "legendary"]
+    "rarity": ["common", "uncommon", "rare", "legendary"],
+    "itemCategory": ["heal", "mana", "board_cleanse", "hazard_counter", "spell_catalyst", "queue_control", "enemy_pressure", "emergency", "risk_reward"],
+    "itemTiming": ["instant", "before_spell", "after_hazard", "during_enemy_warning", "before_piece_lock", "map_only", "shop_only"]
   },
   "defaults": {
-    "enabled": true
+    "enabled": true,
+    "itemCategory": "heal",
+    "counterTags": [],
+    "timing": "instant",
+    "maxStack": 3,
+    "spellSynergyTags": [],
+    "effectConfig": {}
   }
 }

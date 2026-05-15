@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { BlockmancerGame } from '../BlockmancerGame';
 import { createDefaultBoardState } from '../data/constants';
 import { contentRegistry } from '../systems/ContentRegistry';
-import type { BoardCell, EnemyInstance, RewardDefinition, RoomType } from '../types/GameTypes';
+import type { ActiveHazardKind, ActiveHazardState, BoardCell, EnemyInstance, RewardDefinition, RoomType } from '../types/GameTypes';
 import { Button } from '../ui/Button';
 import { BOARD_COLS, BOARD_ROWS, COLORS, FONT_FAMILY, MAX_EVENT_LOG, TETROMINO_COLORS, TETROMINO_SHAPES } from '../utils/constants';
 
@@ -85,7 +85,10 @@ export class DebugScene extends Phaser.Scene {
       ['Give Relic', () => this.giveReward('relic'), 'Give Upgrade', () => this.giveReward('upgrade')],
       ['Spawn Monster', () => this.spawnMonster('fight'), 'Trigger Boss', () => this.triggerBoss()],
       ['Force Reward', () => this.forceReward(), 'Force Cascade Test', () => this.forceCascadeTest()],
-      ['Clear Run Save', () => this.clearRunSave(), 'New Debug Run', () => this.newDebugRun()]
+      ['Queue Junk', () => this.queueDebugHazard('incoming_junk'), 'Floaty Block', () => this.queueDebugHazard('floating_block')],
+      ['Freeze Warning', () => this.queueDebugHazard('freeze'), 'Low Ceiling', () => this.queueDebugHazard('low_ceiling')],
+      ['Give Reactive Item', () => this.giveReactiveItem(), 'New Debug Run', () => this.newDebugRun()],
+      ['Clear Run Save', () => this.clearRunSave(), 'Preview Glitter', () => this.queueDebugHazard('preview')]
     ];
 
     rows.forEach((row, index) => {
@@ -94,7 +97,7 @@ export class DebugScene extends Phaser.Scene {
       new Button(this, rightX, y, buttonWidth, buttonHeight, row[2], row[3], { fontSize: '20px' });
     });
 
-    const stageY = 760;
+    const stageY = 970;
     this.add.text(this.scale.width / 2, stageY - 58, 'Jump To Stage', {
       color: '#ffca6b',
       fontFamily: FONT_FAMILY,
@@ -107,10 +110,10 @@ export class DebugScene extends Phaser.Scene {
       new Button(this, x, stageY, 84, 54, `${stage}`, () => this.jumpToStage(stage), { fontSize: '24px' });
     }
 
-    new Button(this, this.scale.width / 2 - 150, 920, 260, 58, 'Back To Menu', () => {
+    new Button(this, this.scale.width / 2 - 150, 1140, 260, 58, 'Back To Menu', () => {
       this.scene.start('MainMenuScene');
     });
-    new Button(this, this.scale.width / 2 + 150, 920, 260, 58, 'Open Map', () => {
+    new Button(this, this.scale.width / 2 + 150, 1140, 260, 58, 'Open Map', () => {
       this.gameState.runState.runStatus = 'map';
       this.gameState.saveRun();
       this.scene.start('MapScene');
@@ -207,6 +210,39 @@ export class DebugScene extends Phaser.Scene {
     this.scene.start('BattleScene');
   }
 
+  private queueDebugHazard(kind: ActiveHazardKind): void {
+    const state = this.ensureRun();
+    state.currentRoomType = 'fight';
+    state.currentRoomProgress = 'entered';
+    state.activeEnemy = state.activeEnemy ?? this.gameState.enemySystem.spawnEnemy('fight', state.stage);
+    state.runStatus = 'battle';
+    state.activeHazards.push(this.createDebugHazard(kind));
+    this.pushLog(`QA debug queued ${kind.replace(/_/g, ' ')}.`);
+    this.gameState.saveRun();
+    this.scene.start('BattleScene');
+  }
+
+  private giveReactiveItem(): void {
+    const state = this.ensureRun();
+    const itemIds = [
+      'item_snack_vacuum',
+      'item_cloud_pin',
+      'item_snack_shield',
+      'item_return_stamp',
+      'item_preview_glasses',
+      'item_hot_cocoa',
+      'item_speed_brake',
+      'item_tent_pole',
+      'item_safety_net',
+      'item_firecracker_sugar',
+      'item_spell_coupon'
+    ];
+    const itemId = itemIds[this.itemIndex % itemIds.length];
+    this.gameState.inventorySystem.addItem(state, itemId);
+    this.itemIndex += 1;
+    this.saveAndReport(`Added reactive item: ${itemId}.`);
+  }
+
   private clearRunSave(): void {
     this.gameState.clearSave();
     this.gameState.runState = this.gameState.newRun();
@@ -252,7 +288,8 @@ export class DebugScene extends Phaser.Scene {
       `Stage: ${state.stage}    Room: ${state.currentRoomType}    Status: ${state.runStatus}`,
       `HP: ${state.player.hp}/${state.player.maxHp}    Mana: ${state.player.mana}/${state.player.maxMana}    Gold: ${state.player.gold}`,
       `Inventory: ${state.inventory.length}/${state.player.inventoryCapacity}    Relics: ${state.relics.length}    Upgrades: ${state.upgrades.length}`,
-      `Enemy: ${state.activeEnemy ? `${state.activeEnemy.name} (${state.activeEnemy.currentHp}/${state.activeEnemy.maxHp})` : 'None'}`
+      `Enemy: ${state.activeEnemy ? `${state.activeEnemy.name} (${state.activeEnemy.currentHp}/${state.activeEnemy.maxHp})` : 'None'}`,
+      `Hazards: ${state.activeHazards.length ? state.activeHazards.map((hazard) => `${hazard.name}:${hazard.remainingPieces}`).join(', ') : 'None'}`
     ]);
   }
 
@@ -338,5 +375,103 @@ export class DebugScene extends Phaser.Scene {
     grid[BOARD_ROWS - 2] = Array.from({ length: BOARD_COLS }, (_, column) => column === 0 ? 0 : TETROMINO_COLORS.T);
     grid[BOARD_ROWS - 3][0] = TETROMINO_COLORS.L;
     return grid;
+  }
+
+  private createDebugHazard(kind: ActiveHazardKind): ActiveHazardState {
+    const data: Record<ActiveHazardKind, Pick<ActiveHazardState, 'hazardId' | 'name' | 'warningText' | 'counterTags' | 'severity' | 'defaultFailureEffect' | 'itemCounterHints' | 'spellCounterHints' | 'cascadeCounterHint'>> = {
+      incoming_junk: {
+        hazardId: 'hazard_incoming_junk_queue',
+        name: 'Incoming Junk',
+        warningText: 'Crumb junk is lining up in the snack tray!',
+        counterTags: ['counter_incoming_junk', 'counter_junk'],
+        severity: 'moderate',
+        defaultFailureEffect: 'Remaining junk drops onto random columns.',
+        itemCounterHints: ['Snack Shield', 'Return Stamp'],
+        spellCounterHints: ['Bomb Rune', 'Void Cut'],
+        cascadeCounterHint: 'Trigger a cascade to reduce incoming junk.'
+      },
+      floating_block: {
+        hazardId: 'hazard_floaty_rune',
+        name: 'Floaty Rune',
+        warningText: 'A Floaty Rune is wobbling overhead!',
+        counterTags: ['counter_float'],
+        severity: 'minor',
+        defaultFailureEffect: 'Drops as cloud junk.',
+        itemCounterHints: ['Cloud Pin'],
+        spellCounterHints: ['Bomb Rune']
+      },
+      freeze: {
+        hazardId: 'hazard_freeze_warning',
+        name: 'Freeze Warning',
+        warningText: 'Frost is gathering around your active block!',
+        counterTags: ['counter_freeze'],
+        severity: 'moderate',
+        defaultFailureEffect: 'Fall speed nudges upward.',
+        itemCounterHints: ['Hot Cocoa'],
+        spellCounterHints: ['Frost Lock']
+      },
+      preview: {
+        hazardId: 'hazard_preview_hidden',
+        name: 'Preview Glitter',
+        warningText: 'A Sugar Bat is blocking your preview!',
+        counterTags: ['counter_preview'],
+        severity: 'minor',
+        defaultFailureEffect: 'Preview hidden briefly.',
+        itemCounterHints: ['Preview Glasses'],
+        spellCounterHints: []
+      },
+      low_ceiling: {
+        hazardId: 'hazard_low_ceiling',
+        name: 'Low Ceiling',
+        warningText: 'The ceiling is getting suspiciously lower!',
+        counterTags: ['counter_low_ceiling', 'counter_board_size'],
+        severity: 'major',
+        defaultFailureEffect: 'Top row pressure.',
+        itemCounterHints: ['Tent Pole', 'Safety Net'],
+        spellCounterHints: ['Void Cut']
+      },
+      bad_piece: {
+        hazardId: 'hazard_bad_piece_delivery',
+        name: 'Weird Delivery',
+        warningText: 'A goblin put something weird in the queue!',
+        counterTags: ['counter_piece_queue'],
+        severity: 'minor',
+        defaultFailureEffect: 'Awkward piece enters Next.',
+        itemCounterHints: ['Return Stamp'],
+        spellCounterHints: []
+      },
+      speed_wave: {
+        hazardId: 'hazard_speed_wave',
+        name: 'Speed Wave',
+        warningText: 'The floor is wobbling faster!',
+        counterTags: ['counter_speed'],
+        severity: 'moderate',
+        defaultFailureEffect: 'Fall speed rises slightly.',
+        itemCounterHints: ['Speed Brake'],
+        spellCounterHints: ['Frost Lock']
+      },
+      royal_pattern: {
+        hazardId: 'hazard_royal_pattern',
+        name: 'Royal Pattern',
+        warningText: 'Bloxley demands a proper rectangle!',
+        counterTags: ['counter_royal', 'counter_pattern'],
+        severity: 'boss',
+        defaultFailureEffect: 'Royal blocks appear.',
+        itemCounterHints: ['Snack Vacuum'],
+        spellCounterHints: ['Bomb Rune', 'Void Cut']
+      }
+    };
+    return {
+      ...data[kind],
+      instanceId: `debug_${kind}_${Date.now()}`,
+      kind,
+      counterWindowPieces: kind === 'low_ceiling' ? 6 : 3,
+      remainingPieces: kind === 'low_ceiling' ? 6 : 3,
+      amount: kind === 'incoming_junk' ? 5 : kind === 'royal_pattern' ? 4 : undefined,
+      blockId: kind === 'incoming_junk' ? 'block_crumb_junk' : kind === 'floating_block' ? 'block_floaty_rune' : undefined,
+      onExpireBlockId: kind === 'floating_block' ? 'block_cloud_junk' : undefined,
+      column: kind === 'floating_block' ? 3 : undefined,
+      row: kind === 'floating_block' ? 1 : undefined
+    };
   }
 }

@@ -1,0 +1,1 @@
+{"id":"item_hot_cocoa","name":"Hot Cocoa","description":"Warm up freeze warnings and gain a sip of mana.","effect":{"type":"counter_freeze"},"itemCategory":"hazard_counter","counterTags":["counter_freeze"],"timing":"after_hazard","rarity":"common","maxStack":3,"effectConfig":{"pieces":4,"mana":8},"iconKey":"item_hot_cocoa","enabled":true}

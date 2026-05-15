@@ -1,0 +1,1 @@
+{"id":"item_snack_vacuum","name":"Snack Vacuum","description":"Vacuum up crumb junk before it crowds the board.","effect":{"type":"clear_junk"},"itemCategory":"board_cleanse","counterTags":["counter_junk"],"timing":"instant","rarity":"common","maxStack":3,"effectConfig":{"count":5},"iconKey":"item_snack_vacuum","enabled":true}

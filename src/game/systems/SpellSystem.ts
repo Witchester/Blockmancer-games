@@ -1,4 +1,4 @@
-import type { RunState, SpellId } from '../types/GameTypes';
+import type { RunState, SpellCatalystModifier, SpellId } from '../types/GameTypes';
 import { SPELLS } from '../data/spells';
 import { clamp } from '../utils/math';
 import { CombatSystem } from './CombatSystem';
@@ -21,7 +21,11 @@ export class SpellSystem {
     }
 
     const manaHexPenalty = this.state.activeEnemy?.manaHexTurns ? 10 : 0;
-    return Math.max(10, definition.cost - this.state.player.spellCostReduction + manaHexPenalty);
+    const multiplier = this.state.reactiveState.nextSpellModifiers.reduce(
+      (lowest, modifier) => Math.min(lowest, modifier.costMultiplier ?? 1),
+      1
+    );
+    return Math.max(0, Math.round((definition.cost - this.state.player.spellCostReduction + manaHexPenalty) * multiplier));
   }
 
   cast(spellId: SpellId): boolean {
@@ -38,6 +42,7 @@ export class SpellSystem {
     }
 
     this.state.player.mana -= cost;
+    const spellModifiers = [...this.state.reactiveState.nextSpellModifiers];
     const hpCost = this.oopsieSystem.getSpellHpCost(this.state);
     if (hpCost > 0) {
       this.state.player.hp = Math.max(1, this.state.player.hp - hpCost);
@@ -47,13 +52,17 @@ export class SpellSystem {
     switch (spellId) {
       case 'fireball':
         this.combat.applyDirectDamage(22 + this.state.player.spellBonuses.fireball, 'Fireball');
-        if (this.state.hero.passiveId === 'passive_preheat_cleanup') {
-          const cleared = this.board.clearRandomCluster(2);
+        if (this.state.hero.passiveId === 'passive_preheat_cleanup' || this.hasCleanupModifier(spellModifiers)) {
+          const cleared = this.board.clearBlocksByIds(['block_sticky', 'block_crumb_junk', 'block_cloud_junk'], this.hasCleanupModifier(spellModifiers) ? 4 : 2);
           this.combat.addLog(`Preheat Cleanup burns ${cleared} sticky or junk-prone blocks.`);
         }
         break;
       case 'frost-lock':
         this.state.fallSpeed = Math.max(0.7, this.state.fallSpeed - 0.1);
+        if (spellModifiers.some((modifier) => modifier.id === 'frosting_salt')) {
+          const thawed = this.board.convertBlocksByIds(['block_ice'], 0x56d3ff, 4);
+          this.combat.addLog(`Frosting Salt tidies ${thawed} icy block${thawed === 1 ? '' : 's'}.`);
+        }
         if (this.state.hero.passiveId === 'passive_stay_chill') {
           this.state.fallSpeed = Math.max(0.7, this.state.fallSpeed - 0.05);
           this.combat.addLog('Stay Chill smooths the speed spike.');
@@ -66,7 +75,8 @@ export class SpellSystem {
       case 'bomb-rune': {
         const bonus = this.state.player.spellBonuses['bomb-rune'];
         this.combat.applyDirectDamage(35 + bonus, 'Bomb Rune');
-        const removed = this.board.clearRandomFilledArea(1);
+        const radius = 1 + Math.max(0, ...spellModifiers.map((modifier) => modifier.bombRadiusBonus ?? 0));
+        const removed = this.board.clearRandomFilledArea(radius);
         this.combat.addLog(`Bomb Rune blasts a 3x3 area and removes ${removed} blocks.`);
         break;
       }
@@ -78,14 +88,41 @@ export class SpellSystem {
           this.combat.addLog('Void Cut refunds 20 mana.');
         }
         this.combat.addLog(`Void Cut removes ${cleared} blocks from a row.`);
+        if (this.hasCleanupModifier(spellModifiers)) {
+          const cleaned = this.board.clearBlocksByIds(['block_sticky', 'block_crumb_junk', 'block_cloud_junk'], 4);
+          this.combat.addLog(`Cleaning Charm clears ${cleaned} extra sticky or junk block${cleaned === 1 ? '' : 's'}.`);
+        }
         break;
       }
     }
 
+    this.applySharedSpellModifiers(spellModifiers);
+    this.state.reactiveState.nextSpellModifiers = this.state.reactiveState.nextSpellModifiers.filter(
+      (modifier) => !spellModifiers.includes(modifier)
+    );
     return true;
   }
 
   private getSpellLabel(spellId: SpellId): string {
     return SPELLS.find((spell) => spell.id === spellId)?.label ?? 'Unknown spell';
+  }
+
+  private hasCleanupModifier(modifiers: SpellCatalystModifier[]): boolean {
+    return modifiers.some((modifier) => modifier.cleanupTags?.some((tag) => tag === 'counter_junk' || tag === 'counter_sticky'));
+  }
+
+  private applySharedSpellModifiers(modifiers: SpellCatalystModifier[]): void {
+    modifiers.forEach((modifier) => {
+      if (modifier.extraBlockId) {
+        const added = modifier.extraBlockId === 'block_star'
+          ? this.board.addSpecialBlocksForSpell('block_star', 1)
+          : 0;
+        this.combat.addLog(`Star Syrup leaves ${added} bright star block${added === 1 ? '' : 's'} behind.`);
+      }
+      if (modifier.feverMultiplier) {
+        this.state.player.fever = clamp(this.state.player.fever + Math.round(12 * modifier.feverMultiplier), 0, 100);
+        this.combat.addLog('Cascade Confetti charges fever for the next big play.');
+      }
+    });
   }
 }

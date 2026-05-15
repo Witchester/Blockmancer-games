@@ -1,0 +1,1 @@
+{"id":"block_floaty_rune","name":"Floaty Rune","blockType":"hazard","rarity":"uncommon","spriteKey":"block_floaty_rune","color":"#c682ff","clearEffects":[],"tags":["special","floating","counter_float"],"enabled":true}

@@ -1,0 +1,1 @@
+{"id":"item_snack_shield","name":"Snack Shield","description":"Delay incoming junk so you have time for a cascade.","effect":{"type":"delay_incoming_junk"},"itemCategory":"enemy_pressure","counterTags":["counter_incoming_junk"],"timing":"during_enemy_warning","rarity":"common","maxStack":3,"effectConfig":{"pieces":3},"iconKey":"item_snack_shield","enabled":true}

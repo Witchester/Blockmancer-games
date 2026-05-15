@@ -1,0 +1,31 @@
+{
+  "id": "scale_reactive_difficulty",
+  "name": "Reactive Difficulty",
+  "stageRules": {
+    "maxStage": 6,
+    "bossStage": 6,
+    "eliteStageInterval": 2
+  },
+  "enemyScaling": {
+    "hpPerStage": 4,
+    "attackPerStage": 0.25,
+    "armorPerStage": 0
+  },
+  "boardScaling": {
+    "fallSpeedPerStage": 0.025,
+    "maxFallSpeed": 1.85,
+    "junkChancePerStage": 0.015
+  },
+  "reactiveHazards": {
+    "maxActiveHazardsByStage": [1, 1, 2, 2, 2, 2],
+    "incomingJunkByStage": [[1, 2], [2, 4], [3, 5], [3, 5], [4, 7], [5, 8]],
+    "floatingBlocksByStage": [[0, 1], [1, 2], [1, 2], [1, 2], [2, 3], [2, 4]],
+    "counterWindowPiecesByStage": [4, 3, 3, 3, 2, 2],
+    "lowCeilingStages": ["elite_stage_2", "rare_stage_3", "elite_stage_4", "stage_5_elite_boss", "stage_6_elite_boss"]
+  },
+  "rewardScaling": {
+    "goldPerStage": 7,
+    "rareChancePerStage": 0.025
+  },
+  "enabled": true
+}

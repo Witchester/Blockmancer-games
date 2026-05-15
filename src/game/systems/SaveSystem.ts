@@ -140,6 +140,19 @@ export class SaveSystem {
         : [];
     }
 
+    if (version < 4) {
+      migrated.activeHazards = [];
+      migrated.reactiveState = {
+        nextSpellModifiers: [],
+        previewRevealPieces: 0,
+        speedBrakePieces: 0,
+        freezeGuardPieces: 0,
+        anchorCookiePieces: 0,
+        lowCeilingCanceled: false,
+        safetyNetArmed: false
+      };
+    }
+
     return migrated;
   }
 

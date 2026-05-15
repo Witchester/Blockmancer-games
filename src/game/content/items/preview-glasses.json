@@ -1,0 +1,1 @@
+{"id":"item_preview_glasses","name":"Preview Glasses","description":"Reveal Next and Hold through glittery preview tricks.","effect":{"type":"reveal_preview"},"itemCategory":"hazard_counter","counterTags":["counter_preview"],"timing":"after_hazard","rarity":"common","maxStack":3,"effectConfig":{"pieces":5},"iconKey":"item_preview_glasses","enabled":true}

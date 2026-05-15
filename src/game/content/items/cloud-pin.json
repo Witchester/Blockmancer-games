@@ -1,0 +1,1 @@
+{"id":"item_cloud_pin","name":"Cloud Pin","description":"Pin floaty blocks safely before they drop as junk.","effect":{"type":"pin_floating"},"itemCategory":"hazard_counter","counterTags":["counter_float"],"timing":"after_hazard","rarity":"common","maxStack":3,"effectConfig":{},"iconKey":"item_cloud_pin","enabled":true}

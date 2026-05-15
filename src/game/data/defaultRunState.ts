@@ -13,11 +13,13 @@ import {
   SAVE_VERSION
 } from './constants';
 import type {
+  ActiveHazardState,
   BoardState,
   BoardCell,
   CurrentRoomProgress,
   EnemyInstance,
   HeroState,
+  ReactiveBattleState,
   RewardDefinition,
   RewardId,
   RunStats,
@@ -42,6 +44,8 @@ type PartialRunState = Partial<Omit<RunState, 'player' | 'hero' | 'weapon' | 'bo
   inventory?: InventoryStack[];
   pendingRewards?: RewardDefinition[];
   activeEnemy?: EnemyInstance | null;
+  activeHazards?: ActiveHazardState[];
+  reactiveState?: Partial<ReactiveBattleState>;
   /** @deprecated kept for backward save compatibility */
   currentEnemy?: EnemyInstance | null;
   /** @deprecated kept for backward save compatibility */
@@ -81,6 +85,72 @@ function cloneBoardCell(cell: unknown): BoardCell {
     };
   }
   return 0;
+}
+
+function createDefaultReactiveState(): ReactiveBattleState {
+  return {
+    nextSpellModifiers: [],
+    previewRevealPieces: 0,
+    speedBrakePieces: 0,
+    freezeGuardPieces: 0,
+    anchorCookiePieces: 0,
+    lowCeilingCanceled: false,
+    safetyNetArmed: false
+  };
+}
+
+function normalizeActiveHazards(value: unknown): ActiveHazardState[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .filter((entry): entry is Partial<ActiveHazardState> => Boolean(entry) && typeof entry === 'object')
+    .filter((entry) => typeof entry.hazardId === 'string' && typeof entry.kind === 'string')
+    .map((entry, index) => ({
+      hazardId: entry.hazardId ?? 'hazard_unknown',
+      instanceId: typeof entry.instanceId === 'string' ? entry.instanceId : `${entry.hazardId ?? 'hazard_unknown'}_${index}`,
+      kind: entry.kind as ActiveHazardState['kind'],
+      name: typeof entry.name === 'string' ? entry.name : 'Festival Hazard',
+      warningText: typeof entry.warningText === 'string' ? entry.warningText : 'A festival hazard is warming up.',
+      counterTags: Array.isArray(entry.counterTags) ? [...entry.counterTags] : [],
+      counterWindowPieces: Math.max(0, Number(entry.counterWindowPieces ?? entry.remainingPieces ?? 0)),
+      remainingPieces: Math.max(0, Number(entry.remainingPieces ?? entry.counterWindowPieces ?? 0)),
+      severity: entry.severity ?? 'minor',
+      defaultFailureEffect: typeof entry.defaultFailureEffect === 'string' ? entry.defaultFailureEffect : 'It makes the board messier.',
+      itemCounterHints: Array.isArray(entry.itemCounterHints) ? [...entry.itemCounterHints] : [],
+      spellCounterHints: Array.isArray(entry.spellCounterHints) ? [...entry.spellCounterHints] : [],
+      cascadeCounterHint: typeof entry.cascadeCounterHint === 'string' ? entry.cascadeCounterHint : undefined,
+      amount: typeof entry.amount === 'number' ? Math.max(0, entry.amount) : undefined,
+      sourceId: typeof entry.sourceId === 'string' ? entry.sourceId : undefined,
+      blockId: typeof entry.blockId === 'string' ? entry.blockId : undefined,
+      onExpireBlockId: typeof entry.onExpireBlockId === 'string' ? entry.onExpireBlockId : undefined,
+      column: typeof entry.column === 'number' ? entry.column : undefined,
+      row: typeof entry.row === 'number' ? entry.row : undefined
+    }))
+    .filter((entry) => entry.remainingPieces >= 0);
+}
+
+function normalizeReactiveState(value: Partial<ReactiveBattleState> | undefined): ReactiveBattleState {
+  const defaults = createDefaultReactiveState();
+  return {
+    ...defaults,
+    ...(value ?? {}),
+    nextSpellModifiers: Array.isArray(value?.nextSpellModifiers)
+      ? value.nextSpellModifiers
+          .filter((modifier) => modifier && typeof modifier.id === 'string' && typeof modifier.sourceItemId === 'string')
+          .map((modifier) => ({
+            ...modifier,
+            remainingCasts: Math.max(1, Number(modifier.remainingCasts ?? 1))
+          }))
+      : [],
+    previewRevealPieces: Math.max(0, Number(value?.previewRevealPieces ?? 0)),
+    speedBrakePieces: Math.max(0, Number(value?.speedBrakePieces ?? 0)),
+    freezeGuardPieces: Math.max(0, Number(value?.freezeGuardPieces ?? 0)),
+    anchorCookiePieces: Math.max(0, Number(value?.anchorCookiePieces ?? 0)),
+    lowCeilingCanceled: Boolean(value?.lowCeilingCanceled),
+    safetyNetArmed: Boolean(value?.safetyNetArmed)
+  };
 }
 
 function normalizeBoardGrid(input: unknown, defaults: BoardState, columns = defaults.columns, rows = defaults.rows): BoardCell[][] {
@@ -161,6 +231,8 @@ export function createDefaultRunState(): RunState {
     activeBattleObjective: undefined,
     completedBattleObjectives: [],
     activeRandomGameplayEvents: [],
+    activeHazards: [],
+    reactiveState: createDefaultReactiveState(),
     activeOopsies: [],
     currentBossRule: undefined,
     boardSizeModifier: undefined,
@@ -229,6 +301,8 @@ export function normalizeRunState(input: unknown): RunState {
     activeBattleObjective: raw.activeBattleObjective,
     completedBattleObjectives: raw.completedBattleObjectives ? [...raw.completedBattleObjectives] : [],
     activeRandomGameplayEvents: raw.activeRandomGameplayEvents ? [...raw.activeRandomGameplayEvents] : [],
+    activeHazards: normalizeActiveHazards(raw.activeHazards),
+    reactiveState: normalizeReactiveState(raw.reactiveState),
     activeOopsies: raw.activeOopsies ? [...raw.activeOopsies] : [...player.oopsies],
     currentBossRule: raw.currentBossRule,
     boardSizeModifier: raw.boardSizeModifier ? { ...raw.boardSizeModifier } : undefined,

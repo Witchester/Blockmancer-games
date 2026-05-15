@@ -1,0 +1,1 @@
+{"id":"item_speed_brake","name":"Speed Brake","description":"Steady a speed wave before the floor gets too wobbly.","effect":{"type":"speed_brake"},"itemCategory":"hazard_counter","counterTags":["counter_speed"],"timing":"after_hazard","rarity":"uncommon","maxStack":2,"effectConfig":{"pieces":6,"slow":0.2},"iconKey":"item_speed_brake","enabled":true}

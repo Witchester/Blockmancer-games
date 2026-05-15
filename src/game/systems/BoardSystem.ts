@@ -116,6 +116,10 @@ export class BoardSystem {
     };
   }
 
+  createBlockCell(blockId: string): BoardBlockCell {
+    return this.createBoardBlockCell(blockId);
+  }
+
   private isBoardBlock(cell: BoardCell): cell is BoardBlockCell {
     return typeof cell !== 'number';
   }
@@ -439,6 +443,17 @@ export class BoardSystem {
     }
   }
 
+  addJunkToColumn(column: number, blockId = 'block_crumb_junk'): boolean {
+    const safeColumn = Math.max(0, Math.min(this.columns - 1, column));
+    for (let row = this.rows - 1; row >= 0; row -= 1) {
+      if (this.grid[row][safeColumn] === 0) {
+        this.grid[row][safeColumn] = this.createBoardBlockCell(blockId);
+        return true;
+      }
+    }
+    return false;
+  }
+
   addPatternJunk(): void {
     this.grid.shift();
     const junkRow = Array.from({ length: this.columns }, (_, index) =>
@@ -457,6 +472,24 @@ export class BoardSystem {
 
   addStickyBlocks(count: number): number {
     return this.addSpecialBlocks('block_sticky', count);
+  }
+
+  addCloudJunkBlocks(count: number): number {
+    return this.addSpecialBlocks('block_cloud_junk', count);
+  }
+
+  addSpecialBlocksForSpell(blockId: string, count: number): number {
+    return this.addSpecialBlocks(blockId, count);
+  }
+
+  setNextPieceType(type: TetrominoType): void {
+    this.nextPieceType = type;
+  }
+
+  rerollActiveAndNext(): void {
+    this.currentPiece = this.makePiece(this.rollPieceType());
+    this.nextPieceType = this.rollPieceType();
+    this.holdUsedThisPiece = false;
   }
 
   swapNextAndHold(): boolean {
@@ -518,6 +551,49 @@ export class BoardSystem {
       this.grid[bestRow][columnIndex] = 0;
     }
     return bestCount;
+  }
+
+  clearBlocksByIds(blockIds: string[], maxCount: number): number {
+    const targets = new Set(blockIds);
+    let cleared = 0;
+    for (let row = 0; row < this.rows && cleared < maxCount; row += 1) {
+      for (let col = 0; col < this.columns && cleared < maxCount; col += 1) {
+        const cell = this.grid[row][col];
+        if (typeof cell !== 'number' && targets.has(cell.blockId)) {
+          this.grid[row][col] = 0;
+          cleared += 1;
+        }
+      }
+    }
+    return cleared;
+  }
+
+  convertBlocksByIds(blockIds: string[], replacementColor: number, maxCount: number): number {
+    const targets = new Set(blockIds);
+    let converted = 0;
+    for (let row = 0; row < this.rows && converted < maxCount; row += 1) {
+      for (let col = 0; col < this.columns && converted < maxCount; col += 1) {
+        const cell = this.grid[row][col];
+        if (typeof cell !== 'number' && targets.has(cell.blockId)) {
+          this.grid[row][col] = replacementColor;
+          converted += 1;
+        }
+      }
+    }
+    return converted;
+  }
+
+  clearTopOccupiedCells(maxCount: number): number {
+    let cleared = 0;
+    for (let row = 0; row < this.rows && cleared < maxCount; row += 1) {
+      for (let col = 0; col < this.columns && cleared < maxCount; col += 1) {
+        if (this.grid[row][col] !== 0) {
+          this.grid[row][col] = 0;
+          cleared += 1;
+        }
+      }
+    }
+    return cleared;
   }
 
   getGhostPreviewTypes(): TetrominoType[] {

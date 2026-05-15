@@ -28,6 +28,7 @@ These files can still be useful, but they are not the source of truth:
 - `blockmancer_lighthearted_story.md` - story and dialogue reference.
 - `blockmancer_vibe_code_release_1_plan.md` - release planning reference.
 - `blockmancer_release_1_agent_phase_prompts.md` - prompt pack reference.
+- `02_REACTIVE_DIFFICULTY_IMPLEMENTATION_PLAN.md` - implementation plan for harder reactive hazards, floating blocks, incoming junk, and item/spell counterplay.
 - Numbered docs in `docs/` - historical/supporting breakdowns.
 - Older docs in `blockmancer_release_gdd_docs_v2/` - archived source material.
 
@@ -51,6 +52,8 @@ These files can still be useful, but they are not the source of truth:
 - Oopsie risk/reward choices.
 - Festival Hub progression.
 - Monster friendship/collection.
+- Reactive difficulty and item/spell/relic counterplay.
+- Floating blocks, incoming junk queue, and hazard counter windows.
 - Content structure and naming.
 - Save and meta progress.
 - Technical architecture.

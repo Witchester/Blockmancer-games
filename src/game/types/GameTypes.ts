@@ -8,6 +8,48 @@ export type EnemyId = string;
 export type EventId = 'shrine-of-gravity' | 'broken-anvil' | 'strange-mirror' | 'lost-knight';
 export type MapNodeStatus = 'locked' | 'available' | 'completed' | 'current';
 export type StatusEffectDurationType = 'turns' | 'piece_locks' | 'seconds' | 'battle' | 'permanent';
+export type CounterTag =
+  | 'counter_junk'
+  | 'counter_sticky'
+  | 'counter_float'
+  | 'counter_freeze'
+  | 'counter_preview'
+  | 'counter_speed'
+  | 'counter_sleep'
+  | 'counter_incoming_junk'
+  | 'counter_low_ceiling'
+  | 'counter_royal'
+  | 'counter_pattern'
+  | 'counter_board_size'
+  | 'counter_piece_queue';
+export type ItemCategory =
+  | 'heal'
+  | 'mana'
+  | 'board_cleanse'
+  | 'hazard_counter'
+  | 'spell_catalyst'
+  | 'queue_control'
+  | 'enemy_pressure'
+  | 'emergency'
+  | 'risk_reward';
+export type ItemTiming =
+  | 'instant'
+  | 'before_spell'
+  | 'after_hazard'
+  | 'during_enemy_warning'
+  | 'before_piece_lock'
+  | 'map_only'
+  | 'shop_only';
+export type HazardSeverity = 'minor' | 'moderate' | 'major' | 'boss';
+export type ActiveHazardKind =
+  | 'incoming_junk'
+  | 'floating_block'
+  | 'freeze'
+  | 'preview'
+  | 'low_ceiling'
+  | 'bad_piece'
+  | 'speed_wave'
+  | 'royal_pattern';
 
 export interface PlayerState {
   maxHp: number;
@@ -138,6 +180,71 @@ export type BoardSizeModifier = {
   maxHeight?: number;
   reasonText: string;
 };
+
+export interface HazardCounterWindow {
+  hazardId: string;
+  name: string;
+  warningText: string;
+  counterTags: CounterTag[];
+  counterWindowPieces: number;
+  severity: HazardSeverity;
+  defaultFailureEffect: string;
+  itemCounterHints: string[];
+  spellCounterHints: string[];
+  cascadeCounterHint?: string;
+}
+
+export interface ActiveHazardState extends HazardCounterWindow {
+  instanceId: string;
+  kind: ActiveHazardKind;
+  remainingPieces: number;
+  amount?: number;
+  sourceId?: string;
+  blockId?: string;
+  onExpireBlockId?: string;
+  column?: number;
+  row?: number;
+}
+
+export interface SpellCatalystModifier {
+  id: string;
+  sourceItemId: string;
+  remainingCasts: number;
+  costMultiplier?: number;
+  extraBlockId?: string;
+  cleanupTags?: CounterTag[];
+  bombRadiusBonus?: number;
+  feverMultiplier?: number;
+}
+
+export interface ReactiveBattleState {
+  nextSpellModifiers: SpellCatalystModifier[];
+  previewRevealPieces: number;
+  speedBrakePieces: number;
+  freezeGuardPieces: number;
+  anchorCookiePieces: number;
+  lowCeilingCanceled: boolean;
+  safetyNetArmed: boolean;
+}
+
+export interface ReactiveItemContent {
+  id: string;
+  name: string;
+  description: string;
+  effect?: {
+    type?: string;
+    [key: string]: unknown;
+  };
+  itemCategory?: ItemCategory;
+  counterTags?: CounterTag[];
+  timing?: ItemTiming;
+  rarity?: string;
+  maxStack?: number;
+  spellSynergyTags?: string[];
+  effectConfig?: Record<string, unknown>;
+  iconKey?: string;
+  enabled?: boolean;
+}
 
 export interface SpellDefinition {
   id: SpellId;
@@ -293,6 +400,8 @@ export interface RunState {
   activeBattleObjective?: string;
   completedBattleObjectives: string[];
   activeRandomGameplayEvents: string[];
+  activeHazards: ActiveHazardState[];
+  reactiveState: ReactiveBattleState;
   activeOopsies: string[];
   currentBossRule?: string;
   boardSizeModifier?: BoardSizeModifier;

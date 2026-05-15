@@ -1,0 +1,1 @@
+{"id":"item_tent_pole","name":"Tent Pole","description":"Prop up low-ceiling pressure for this battle.","effect":{"type":"cancel_low_ceiling"},"itemCategory":"hazard_counter","counterTags":["counter_low_ceiling","counter_board_size"],"timing":"after_hazard","rarity":"rare","maxStack":1,"effectConfig":{},"iconKey":"item_tent_pole","enabled":true}

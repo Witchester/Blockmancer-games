@@ -7,17 +7,22 @@ export class InventorySystem {
   }
 
   addItem(state: RunState, itemId: string, count = 1): void {
+    const item = contentRegistry.getItem(itemId) as { maxStack?: number } | null;
+    if (!item) {
+      return;
+    }
+
     const existing = state.inventory.find((stack) => stack.itemId === itemId);
     if (existing) {
-      existing.count += count;
+      existing.count = Math.min(item.maxStack ?? 99, existing.count + count);
       return;
     }
 
-    if (state.inventory.length >= state.player.inventoryCapacity || !contentRegistry.getItem(itemId)) {
+    if (state.inventory.length >= state.player.inventoryCapacity) {
       return;
     }
 
-    state.inventory.push({ itemId, count });
+    state.inventory.push({ itemId, count: Math.min(item.maxStack ?? 99, count) });
   }
 
   removeItem(state: RunState, itemId: string, count = 1): void {

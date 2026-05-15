@@ -1,0 +1,1 @@
+{"id":"item_festival_mop","name":"Festival Mop","description":"Mop up sticky blocks with parade-ready sparkle.","effect":{"type":"clear_sticky"},"itemCategory":"board_cleanse","counterTags":["counter_sticky"],"timing":"instant","rarity":"common","maxStack":3,"effectConfig":{"count":5},"iconKey":"item_festival_mop","enabled":true}
