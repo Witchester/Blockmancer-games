@@ -194,17 +194,19 @@ export class MapScene extends Phaser.Scene {
       const positionY = mapStartY + node.y * mapHeight;
       const isCurrent = state.currentNodeId === node.id;
       const isAvailable = available.has(node.id);
+      const nodeState = isCurrent ? 'current' : node.completed ? 'completed' : isAvailable ? 'available' : 'locked';
       const fill = isCurrent ? COLORS.gold : node.completed ? COLORS.success : isAvailable ? COLORS.accent : 0x303750;
       const stroke = isAvailable ? COLORS.gold : 0x616a93;
 
       const circle = this.add.circle(positionX, positionY, 32, fill, 1).setStrokeStyle(3, stroke, 0.8);
       const iconKey = (contentRegistry.getMapNode(`node_${node.roomType}`) as { iconKey?: string } | null)?.iconKey;
-      const icon = this.gameState.assetSystem.addImage(this, positionX, positionY, iconKey, 'icon').setDisplaySize(30, 30);
+      const nodeTexture = this.gameState.assetSystem.getMapNodeTexture(this, node.roomType, nodeState, iconKey);
+      const icon = this.add.image(positionX, positionY, nodeTexture).setDisplaySize(30, 30);
       const label = this.add.text(positionX, positionY - 2, node.icon, {
         color: '#0b0d16',
         fontFamily: FONT_FAMILY,
         fontSize: '26px'
-      }).setOrigin(0.5).setAlpha(iconKey ? 0 : 1);
+      }).setOrigin(0.5).setAlpha(nodeTexture ? 0 : 1);
       const title = this.add.text(positionX, positionY + 48, node.label, {
         color: '#f6f7ff',
         fontFamily: FONT_FAMILY,

@@ -11,6 +11,10 @@ export type AssetManifestEntry = {
 type AssetField = 'iconKey' | 'spriteKey' | 'portraitKey' | 'backgroundKey';
 type ContentAssetEntry = {
   id: string;
+  theme?: string;
+  bossId?: string;
+  assetRefs?: Record<string, string>;
+  backgrounds?: Record<string, string>;
   [key: string]: unknown;
 };
 
@@ -90,6 +94,44 @@ function assetPath(folder: string, key: string): string {
   return `assets/${folder}/${key}.png`;
 }
 
+function addAsset(assets: Map<string, AssetManifestEntry>, key: string | null | undefined, folder: string, kind: AssetKind): void {
+  if (!key || assets.has(key)) {
+    return;
+  }
+
+  assets.set(key, {
+    key,
+    path: assetPath(folder, key),
+    kind
+  });
+}
+
+function boardBlockStem(entry: ContentAssetEntry): string {
+  const key = getAssetValue(entry, 'spriteKey') ?? entry.id;
+  const aliases: Record<string, string> = {
+    block_red: 'spr_block_red_rune',
+    block_blue: 'spr_block_blue_rune',
+    block_green: 'spr_block_green_rune',
+    block_yellow: 'spr_block_yellow_rune'
+  };
+  return aliases[key] ?? (key.startsWith('spr_') ? key : `spr_${key}`);
+}
+
+function stageSlug(stage: ContentAssetEntry): string {
+  return stage.id.replace(/^stage_/, '');
+}
+
+function bossSlug(stage: ContentAssetEntry): string | null {
+  return typeof stage.bossId === 'string' ? stage.bossId.replace(/^mon_boss_/, '') : null;
+}
+
+function collectExplicitRefs(entry: ContentAssetEntry): string[] {
+  return [
+    ...Object.values(entry.assetRefs ?? {}),
+    ...Object.values(entry.backgrounds ?? {})
+  ].filter((value): value is string => typeof value === 'string' && value.length > 0);
+}
+
 export function createContentImageAssets(): AssetManifestEntry[] {
   const assets = new Map<string, AssetManifestEntry>();
 
@@ -105,6 +147,10 @@ export function createContentImageAssets(): AssetManifestEntry[] {
         path: assetPath(source.folder, key),
         kind: source.kind
       });
+
+      for (const explicitRef of collectExplicitRefs(entry)) {
+        addAsset(assets, explicitRef, source.folder, source.kind);
+      }
     }
   }
 
@@ -119,6 +165,72 @@ export function createContentImageAssets(): AssetManifestEntry[] {
         path: assetPath('stages', key),
         kind: 'background'
       });
+    }
+  }
+
+  for (const block of contentRegistry.list<ContentAssetEntry>('boardBlock')) {
+    const stem = boardBlockStem(block);
+    addAsset(assets, stem, 'sprites/board-blocks', 'sprite');
+    addAsset(assets, `${stem}_glow`, 'sprites/board-blocks', 'sprite');
+    addAsset(assets, `${stem}_clear`, 'sprites/board-blocks', 'sprite');
+    addAsset(assets, stem.replace(/^spr_/, 'ico_'), 'icons/board-blocks', 'icon');
+  }
+
+  for (const hero of contentRegistry.list<ContentAssetEntry>('hero')) {
+    for (const state of ['idle', 'cast', 'attack', 'hit', 'victory', 'defeat', 'portrait', 'silhouette_locked']) {
+      addAsset(assets, `spr_${hero.id}_${state}`, 'sprites/heroes', 'sprite');
+    }
+    addAsset(assets, `ico_${hero.id}`, 'icons/heroes', 'icon');
+  }
+
+  for (const monster of contentRegistry.list<ContentAssetEntry>('monster')) {
+    const folder = monster.id.startsWith('mon_boss_') ? 'sprites/bosses' : 'sprites/monsters';
+    const states = monster.id.startsWith('mon_boss_')
+      ? ['idle', 'attack', 'special', 'phase_2', 'hit', 'defeat', 'intro_portrait']
+      : ['idle', 'attack', 'hit', 'defeat'];
+    for (const state of states) {
+      addAsset(assets, `spr_${monster.id}_${state}`, folder, 'sprite');
+    }
+    addAsset(assets, `ico_${monster.id}`, monster.id.startsWith('mon_boss_') ? 'icons/bosses' : 'icons/monsters', 'icon');
+  }
+
+  for (const stage of contentRegistry.list<ContentAssetEntry>('stage')) {
+    const slug = stageSlug(stage);
+    const boss = bossSlug(stage);
+    addAsset(assets, `bg_stage_${slug}_battle`, 'backgrounds/stages', 'background');
+    addAsset(assets, `bg_stage_${slug}_battle_far`, 'backgrounds/stages', 'background');
+    addAsset(assets, `bg_stage_${slug}_battle_mid`, 'backgrounds/stages', 'background');
+    addAsset(assets, `bg_stage_${slug}_battle_near`, 'backgrounds/stages', 'background');
+    addAsset(assets, `bg_map_${slug}`, 'backgrounds/maps', 'background');
+    if (boss) {
+      addAsset(assets, `bg_boss_${boss}_arena`, 'backgrounds/stages', 'background');
+    }
+  }
+
+  for (const node of contentRegistry.list<ContentAssetEntry>('mapNode')) {
+    const room = node.id.replace(/^node_/, '');
+    const stem = room === 'fight' ? 'map_node_normal' : `map_node_${room}`;
+    for (const state of ['available', 'current', 'completed', 'locked']) {
+      addAsset(assets, `${stem}_${state}`, 'map/nodes', 'icon');
+    }
+  }
+
+  const iconSources: Array<[keyof Pick<ContentAssetEntry, 'id'>, string, ContentAssetSource['contentType']]> = [
+    ['id', 'icons/items', 'item'],
+    ['id', 'icons/spells', 'spell'],
+    ['id', 'icons/relics', 'relic'],
+    ['id', 'icons/upgrades', 'upgrade'],
+    ['id', 'icons/weapons', 'weapon'],
+    ['id', 'icons/statuses', 'statusEffect'],
+    ['id', 'icons/oopsies', 'oopsie'],
+    ['id', 'icons/currencies', 'currency'],
+    ['id', 'icons/collectibles', 'collectible'],
+    ['id', 'icons/events', 'roomEvent']
+  ];
+  for (const [, folder, contentType] of iconSources) {
+    for (const entry of contentRegistry.list<ContentAssetEntry>(contentType)) {
+      addAsset(assets, `ico_${entry.id}`, folder, 'icon');
+      addAsset(assets, `icon_${entry.id}`, folder, 'icon');
     }
   }
 

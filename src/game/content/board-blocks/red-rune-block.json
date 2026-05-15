@@ -7,6 +7,15 @@
   "spriteKey": "block_red",
   "color": "#ff0000",
   "clearEffects": [],
-  "tags": ["basic", "rune"],
-  "enabled": true
+  "tags": [
+    "basic",
+    "rune"
+  ],
+  "enabled": true,
+  "assetRefs": {
+    "base": "spr_block_red_rune",
+    "glow": "spr_block_red_rune_glow",
+    "clear": "spr_block_red_rune_clear",
+    "icon": "ico_block_red_rune"
+  }
 }

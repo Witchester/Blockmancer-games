@@ -16,6 +16,16 @@
       "value": 10
     }
   ],
-  "tags": ["bomb", "damage", "rare"],
-  "enabled": true
+  "tags": [
+    "bomb",
+    "damage",
+    "rare"
+  ],
+  "enabled": true,
+  "assetRefs": {
+    "base": "spr_block_bomb",
+    "glow": "spr_block_bomb_glow",
+    "clear": "spr_block_bomb_clear",
+    "icon": "ico_block_bomb"
+  }
 }

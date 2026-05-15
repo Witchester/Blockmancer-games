@@ -14,5 +14,11 @@
   "tags": [
     "special"
   ],
-  "enabled": true
+  "enabled": true,
+  "assetRefs": {
+    "base": "spr_block_sprinkle",
+    "glow": "spr_block_sprinkle_glow",
+    "clear": "spr_block_sprinkle_clear",
+    "icon": "ico_block_sprinkle"
+  }
 }

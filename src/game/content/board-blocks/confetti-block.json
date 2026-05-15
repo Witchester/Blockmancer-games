@@ -14,5 +14,11 @@
   "tags": [
     "special"
   ],
-  "enabled": true
+  "enabled": true,
+  "assetRefs": {
+    "base": "spr_block_confetti",
+    "glow": "spr_block_confetti_glow",
+    "clear": "spr_block_confetti_clear",
+    "icon": "ico_block_confetti"
+  }
 }

@@ -39,6 +39,10 @@
     "spriteKey": {
       "type": "string"
     },
+    "assetRefs": {
+      "type": "object",
+      "description": "Optional variant asset keys for base, glow, clear, and icon textures. Runtime normalization infers these when omitted."
+    },
     "clearEffects": {
       "type": "array",
       "itemType": "object"

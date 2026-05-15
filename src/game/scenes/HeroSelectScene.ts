@@ -67,7 +67,7 @@ export class HeroSelectScene extends Phaser.Scene {
       
       const btn = new Button(this, x, y, btnWidth, 55, h.name, () => {
         this.selectHero(h.id, isUnlocked, h, game);
-      }, { iconKey: h.portraitKey ?? h.id });
+      }, { iconKey: game.assetSystem.getHeroTexture(this, h.id, isUnlocked ? 'icon' : 'locked') });
       
       if (!isUnlocked) {
         btn.setDisabled(true);
@@ -131,7 +131,7 @@ export class HeroSelectScene extends Phaser.Scene {
       title: hero.name,
       subtitle: isUnlocked ? hero.className : '???',
       body: bodyText,
-      imageKey: hero.portraitKey ?? hero.id,
+      imageKey: game.assetSystem.getHeroTexture(this, hero.id, isUnlocked ? 'portrait' : 'locked'),
       imageKind: 'sprite',
       imageSize: 92,
       titleColor: isUnlocked ? '#ffca6b' : '#666666',

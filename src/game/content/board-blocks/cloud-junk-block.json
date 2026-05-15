@@ -1,1 +1,21 @@
-{"id":"block_cloud_junk","name":"Cloud Junk Block","blockType":"hazard","rarity":"uncommon","spriteKey":"block_cloud_junk","color":"#b8c7ff","clearEffects":[],"tags":["special","junk","counter_junk"],"enabled":true}
+{
+  "id": "block_cloud_junk",
+  "name": "Cloud Junk Block",
+  "blockType": "hazard",
+  "rarity": "uncommon",
+  "spriteKey": "block_cloud_junk",
+  "color": "#b8c7ff",
+  "clearEffects": [],
+  "tags": [
+    "special",
+    "junk",
+    "counter_junk"
+  ],
+  "enabled": true,
+  "assetRefs": {
+    "base": "spr_block_cloud_junk",
+    "glow": "spr_block_cloud_junk_glow",
+    "clear": "spr_block_cloud_junk_clear",
+    "icon": "ico_block_cloud_junk"
+  }
+}

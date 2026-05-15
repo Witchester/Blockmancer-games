@@ -7,6 +7,15 @@
   "spriteKey": "block_yellow",
   "color": "#ffff00",
   "clearEffects": [],
-  "tags": ["basic", "rune"],
-  "enabled": true
+  "tags": [
+    "basic",
+    "rune"
+  ],
+  "enabled": true,
+  "assetRefs": {
+    "base": "spr_block_yellow_rune",
+    "glow": "spr_block_yellow_rune_glow",
+    "clear": "spr_block_yellow_rune_clear",
+    "icon": "ico_block_yellow_rune"
+  }
 }

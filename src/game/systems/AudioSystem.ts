@@ -67,6 +67,35 @@ export class AudioSystem {
     this.playFallback(config, volume);
   }
 
+  playSfx(key: string | null | undefined, scene?: Phaser.Scene, fallbackCue: AudioCue = 'button_tap'): void {
+    if (!key) {
+      this.play(fallbackCue, scene);
+      return;
+    }
+
+    const settings = this.settingsSystem.load();
+    if (settings.masterVolume <= 0 || settings.sfxVolume <= 0) {
+      return;
+    }
+
+    const fallback = AUDIO_CUES[fallbackCue];
+    const volume = Math.max(0, Math.min(1, settings.masterVolume * settings.sfxVolume * fallback.volume));
+    if (scene?.cache.audio.exists(key)) {
+      try {
+        scene.sound.play(key, { volume });
+        return;
+      } catch {
+        // Fall through to synthesized fallback.
+      }
+    }
+
+    this.playFallback(fallback, volume);
+  }
+
+  playBgm(key: string | null | undefined, scene?: Phaser.Scene, fallbackCue: AudioCue = 'victory'): void {
+    this.playSfx(key, scene, fallbackCue);
+  }
+
   setMuted(muted: boolean): void {
     const settings = this.settingsSystem.load();
     this.settingsSystem.save({

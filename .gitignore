@@ -45,3 +45,7 @@ _bmad-output/
 .env
 .env.*
 !.env.example
+
+# Miscellaneous
+scripts/
+public/

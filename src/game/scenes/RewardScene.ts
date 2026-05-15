@@ -191,17 +191,26 @@ export class RewardScene extends Phaser.Scene {
 
   private getRewardIconKey(reward: { id: string; contentType?: string; type: string }): string {
     if (reward.contentType === 'item') {
-      return ((contentRegistry.getItem(reward.id) as { iconKey?: string } | null)?.iconKey) ?? 'placeholder_item';
+      const entry = contentRegistry.getItem(reward.id) as { iconKey?: string } | null;
+      return this.gameAsBlockmancer.assetSystem.getIcon(this, 'item', reward.id, entry?.iconKey);
     }
     if (reward.contentType === 'relic') {
-      return ((contentRegistry.getRelic(reward.id) as { iconKey?: string } | null)?.iconKey) ?? 'placeholder_relic';
+      const entry = contentRegistry.getRelic(reward.id) as { iconKey?: string } | null;
+      return this.gameAsBlockmancer.assetSystem.getIcon(this, 'relic', reward.id, entry?.iconKey);
     }
     if (reward.contentType === 'upgrade') {
-      return ((contentRegistry.getUpgrade(reward.id) as { iconKey?: string } | null)?.iconKey) ?? 'placeholder_upgrade';
+      const entry = contentRegistry.getUpgrade(reward.id) as { iconKey?: string } | null;
+      return this.gameAsBlockmancer.assetSystem.getIcon(this, 'upgrade', reward.id, entry?.iconKey);
     }
     if (reward.contentType === 'oopsie') {
-      return ((contentRegistry.getOopsie(reward.id) as { iconKey?: string } | null)?.iconKey) ?? 'placeholder_oopsie';
+      const entry = contentRegistry.getOopsie(reward.id) as { iconKey?: string } | null;
+      return this.gameAsBlockmancer.assetSystem.getIcon(this, 'oopsie', reward.id, entry?.iconKey);
     }
-    return reward.type === 'Gold' ? 'currency_candy_coin' : 'asset_missing_icon';
+    return this.gameAsBlockmancer.assetSystem.getIcon(
+      this,
+      reward.type === 'Gold' ? 'currency' : 'reward',
+      reward.type === 'Gold' ? 'currency_candy_coin' : reward.id,
+      reward.type === 'Gold' ? 'currency_candy_coin' : 'asset_missing_icon'
+    );
   }
 }

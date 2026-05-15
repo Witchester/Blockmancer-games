@@ -14,5 +14,11 @@
   "tags": [
     "special"
   ],
-  "enabled": true
+  "enabled": true,
+  "assetRefs": {
+    "base": "spr_block_star",
+    "glow": "spr_block_star_glow",
+    "clear": "spr_block_star_clear",
+    "icon": "ico_block_star"
+  }
 }

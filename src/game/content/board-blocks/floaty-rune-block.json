@@ -1,1 +1,21 @@
-{"id":"block_floaty_rune","name":"Floaty Rune","blockType":"hazard","rarity":"uncommon","spriteKey":"block_floaty_rune","color":"#c682ff","clearEffects":[],"tags":["special","floating","counter_float"],"enabled":true}
+{
+  "id": "block_floaty_rune",
+  "name": "Floaty Rune",
+  "blockType": "hazard",
+  "rarity": "uncommon",
+  "spriteKey": "block_floaty_rune",
+  "color": "#c682ff",
+  "clearEffects": [],
+  "tags": [
+    "special",
+    "floating",
+    "counter_float"
+  ],
+  "enabled": true,
+  "assetRefs": {
+    "base": "spr_block_floaty_rune",
+    "glow": "spr_block_floaty_rune_glow",
+    "clear": "spr_block_floaty_rune_clear",
+    "icon": "ico_block_floaty_rune"
+  }
+}

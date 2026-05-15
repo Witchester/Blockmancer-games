@@ -135,6 +135,7 @@ export class BattleScene extends Phaser.Scene {
   private boardSymbols: Phaser.GameObjects.Text[][] = [];
   private displayBoard: BoardCell[][] = [];
   private displayAlpha: number[][] = [];
+  private boardVisualState: 'base' | 'glow' | 'clear' = 'base';
   private renderedCellColors: number[][] = [];
   private renderedCellAlphas: number[][] = [];
   private renderedTextureKeys: string[][] = [];
@@ -301,14 +302,7 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private drawLayout(): void {
-    const stageBackground = this.sharedGame.assetSystem.addImage(
-      this,
-      this.screenWidth / 2,
-      this.screenHeight / 2,
-      this.sharedGame.stageSystem.getStageBackgroundKey(this.sharedGame.runState.stage),
-      'background'
-    );
-    stageBackground.setDisplaySize(this.screenWidth, this.screenHeight).setAlpha(0.18);
+    this.addStageBackgroundLayers();
 
     const topPanelWidth = this.screenWidth - 32;
     const topPanelHeight = this.topSectionHeight - 18;
@@ -370,9 +364,12 @@ export class BattleScene extends Phaser.Scene {
       this,
       this.screenWidth - 170,
       160,
-      this.sharedGame.runState.hero.id,
+      null,
       'sprite'
     ).setDisplaySize(64, 64).setAlpha(0.95);
+    this.heroPortrait.setTexture(
+      this.sharedGame.assetSystem.getHeroTexture(this, this.sharedGame.runState.hero.id, 'idle')
+    );
 
     this.enemySprite = this.sharedGame.assetSystem.addImage(
       this,
@@ -456,6 +453,19 @@ export class BattleScene extends Phaser.Scene {
       align: 'center',
       wordWrap: { width: this.screenWidth - 72 }
     }).setOrigin(0.5).setVisible(false);
+  }
+
+  private addStageBackgroundLayers(): void {
+    const far = this.sharedGame.assetSystem.getStageBackground(this, this.sharedGame.runState.stage, 'battleFar');
+    const mid = this.sharedGame.assetSystem.getStageBackground(this, this.sharedGame.runState.stage, 'battleMid');
+    const near = this.sharedGame.assetSystem.getStageBackground(this, this.sharedGame.runState.stage, 'battleNear');
+    const layers = [far, mid, near].filter((key, index, all) => all.indexOf(key) === index);
+
+    layers.forEach((key, index) => {
+      this.add.image(this.screenWidth / 2, this.screenHeight / 2, key)
+        .setDisplaySize(this.screenWidth, this.screenHeight)
+        .setAlpha(layers.length > 1 ? [0.1, 0.14, 0.09][index] ?? 0.1 : 0.18);
+    });
   }
 
   private buildBoard(): void {
@@ -586,7 +596,7 @@ export class BattleScene extends Phaser.Scene {
           label: `${spell.key}\n${this.spells.getCost(spell.id)}`,
           width: size(58),
           height: size(46),
-          iconKey: spellContent?.iconKey,
+          iconKey: this.sharedGame.assetSystem.getIcon(this, 'spell', `spl_${spell.id.replace(/-/g, '_')}`, spellContent?.iconKey),
           disabled: this.sharedGame.runState.player.mana < this.spells.getCost(spell.id),
           onPress: () => this.tryCast(spell.id),
           onCreate: (button: Button) => this.spellButtons.push({ spellId: spell.id, button })
@@ -960,6 +970,7 @@ export class BattleScene extends Phaser.Scene {
     const dropInterval = Math.max(120, BASE_DROP_MS / effectiveFallSpeed);
 
     for (const frame of frames) {
+      this.boardVisualState = frame.type === 'clear' ? 'clear' : 'glow';
       this.renderBoardSnapshot(frame.grid);
       this.renderMiddleOverlays();
       if (frame.type === 'clear') {
@@ -969,6 +980,7 @@ export class BattleScene extends Phaser.Scene {
         await this.wait(duration);
       }
     }
+    this.boardVisualState = 'base';
   }
 
   private pulseFeverMeter(triggered: boolean): void {
@@ -1049,6 +1061,7 @@ export class BattleScene extends Phaser.Scene {
     const behavior = this.getNextEnemyBehavior(enemy);
     let damage = enemy.attack;
     this.combat.addLog(`${enemy.name} uses ${enemy.intent}.`);
+    this.enemySprite?.setTexture(this.sharedGame.assetSystem.getMonsterTexture(this, enemy.id, 'attack'));
 
     switch (behavior) {
       case 'basic_attack':
@@ -1229,6 +1242,7 @@ export class BattleScene extends Phaser.Scene {
       .setStrokeStyle(6, color, hpDamage > 0 ? 0.9 : 0.6);
     if (this.heroPortrait) {
       const originalX = this.heroPortrait.x;
+      this.heroPortrait.setTexture(this.sharedGame.assetSystem.getHeroTexture(this, this.sharedGame.runState.hero.id, 'hit'));
       this.heroPortrait.setTint(color);
       this.tweens.add({
         targets: this.heroPortrait,
@@ -1238,6 +1252,7 @@ export class BattleScene extends Phaser.Scene {
         repeat: 2,
         onComplete: () => {
           this.heroPortrait?.setX(originalX);
+          this.heroPortrait?.setTexture(this.sharedGame.assetSystem.getHeroTexture(this, this.sharedGame.runState.hero.id, 'idle'));
           this.heroPortrait?.clearTint();
         }
       });
@@ -1261,6 +1276,7 @@ export class BattleScene extends Phaser.Scene {
     const originalX = this.enemySprite.x;
     const originalScaleX = this.enemySprite.scaleX;
     const originalScaleY = this.enemySprite.scaleY;
+    this.enemySprite.setTexture(this.sharedGame.assetSystem.getMonsterTexture(this, this.sharedGame.runState.activeEnemy?.id, 'hit'));
     this.enemySprite.setTint(damage > 0 ? COLORS.danger : COLORS.gold);
     this.tweens.add({
       targets: this.enemySprite,
@@ -1273,6 +1289,7 @@ export class BattleScene extends Phaser.Scene {
       onComplete: () => {
         this.enemySprite?.setX(originalX);
         this.enemySprite?.setScale(originalScaleX, originalScaleY);
+        this.enemySprite?.setTexture(this.sharedGame.assetSystem.getMonsterTexture(this, this.sharedGame.runState.activeEnemy?.id, 'idle'));
         this.enemySprite?.clearTint();
       }
     });
@@ -1583,6 +1600,7 @@ export class BattleScene extends Phaser.Scene {
 
     state.runStats.spellsCast += 1;
     this.sharedGame.audioSystem.play('spell_cast', this);
+    this.heroPortrait?.setTexture(this.sharedGame.assetSystem.getHeroTexture(this, state.hero.id, 'cast'));
     const damageDealt = Math.max(0, enemyHpBefore - (state.activeEnemy?.currentHp ?? enemyHpBefore));
     const hpSpent = Math.max(0, playerHpBefore - state.player.hp);
 
@@ -1619,6 +1637,7 @@ export class BattleScene extends Phaser.Scene {
 
     this.combat.addLog(this.sharedGame.bossSystem.enterPhaseTwo(enemy));
     this.showFloatingText('Phase 2', this.screenWidth / 2, 184, '#ffca6b', 34);
+    this.enemySprite?.setTexture(this.sharedGame.assetSystem.getMonsterTexture(this, enemy.id, 'phase_2'));
     if (!this.sharedGame.getSettings().reducedFlashing) {
       this.cameras.main.flash(180, 255, 202, 107, false);
     }
@@ -1632,6 +1651,8 @@ export class BattleScene extends Phaser.Scene {
 
     const enemyName = state.activeEnemy.name;
     const enemyId = state.activeEnemy.id;
+    this.enemySprite?.setTexture(this.sharedGame.assetSystem.getMonsterTexture(this, enemyId, 'defeat'));
+    this.heroPortrait?.setTexture(this.sharedGame.assetSystem.getHeroTexture(this, state.hero.id, 'victory'));
     state.enemiesDefeated += 1;
     state.runStats.roomsCleared += 1;
     this.combat.addLog(`${enemyName} tumbles out of the way.`);
@@ -1844,8 +1865,10 @@ export class BattleScene extends Phaser.Scene {
       return;
     }
 
-    const block = contentRegistry.getBoardBlock(cell.blockId) as { spriteKey?: string } | null;
-    const textureKey = this.sharedGame.assetSystem.getTextureKey(this, block?.spriteKey, 'block');
+    const state = this.boardVisualState !== 'base' || this.displayAlpha[row][col] < 1 || this.sharedGame.runState.player.feverActiveLocks > 0
+      ? this.boardVisualState === 'clear' ? 'clear' : 'glow'
+      : 'base';
+    const textureKey = this.sharedGame.assetSystem.getBoardBlockTexture(this, cell.blockId, state);
     if (this.renderedTextureKeys[row][col] !== textureKey) {
       sprite.setTexture(textureKey);
       this.renderedTextureKeys[row][col] = textureKey;
@@ -1885,9 +1908,9 @@ export class BattleScene extends Phaser.Scene {
       return;
     }
 
-    const monster = contentRegistry.getMonster(enemy.id) as { spriteKey?: string } | null;
+    const state = enemy.roomType === 'boss' && enemy.phase >= 2 ? 'phase_2' : 'idle';
     this.enemySprite
-      ?.setTexture(this.sharedGame.assetSystem.getTextureKey(this, monster?.spriteKey, 'sprite'))
+      ?.setTexture(this.sharedGame.assetSystem.getMonsterTexture(this, enemy.id, state))
       .setVisible(true);
 
     this.enemyNameText?.setText(enemy.name);
@@ -2055,7 +2078,7 @@ export class BattleScene extends Phaser.Scene {
             this.inventoryExpanded = false;
           }
           this.renderAll();
-        }, { iconKey: itemDef.iconKey });
+        }, { iconKey: this.sharedGame.assetSystem.getIcon(this, 'item', stack.itemId, itemDef.iconKey) });
         this.inventoryOverlay.add(btn);
         this.inventoryButtons.push(btn);
       });

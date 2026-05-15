@@ -9,5 +9,11 @@
   "tags": [
     "special"
   ],
-  "enabled": true
+  "enabled": true,
+  "assetRefs": {
+    "base": "spr_block_jelly",
+    "glow": "spr_block_jelly_glow",
+    "clear": "spr_block_jelly_clear",
+    "icon": "ico_block_jelly"
+  }
 }

@@ -12,6 +12,15 @@
       "value": 0.15
     }
   ],
-  "tags": ["frost", "special"],
-  "enabled": true
+  "tags": [
+    "frost",
+    "special"
+  ],
+  "enabled": true,
+  "assetRefs": {
+    "base": "spr_block_ice",
+    "glow": "spr_block_ice_glow",
+    "clear": "spr_block_ice_clear",
+    "icon": "ico_block_ice"
+  }
 }
