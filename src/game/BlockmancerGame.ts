@@ -89,8 +89,7 @@ export class BlockmancerGame extends Phaser.Game {
       height: 1280,
       backgroundColor: '#090b13',
       scale: {
-        mode: Phaser.Scale.FIT,
-        autoCenter: Phaser.Scale.CENTER_BOTH
+        mode: Phaser.Scale.FIT
       },
       scene: [
         BootScene,
