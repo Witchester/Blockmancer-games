@@ -221,6 +221,14 @@ export interface CascadeResult {
   blocksDropped: number;
   specialBlocksTriggered: string[];
   causedCombo: boolean;
+  animationFrames?: CascadeAnimationFrame[];
+}
+
+export interface CascadeAnimationFrame {
+  type: 'clear' | 'gravity';
+  grid: BoardCell[][];
+  clearedLines: number;
+  droppedRows: number;
 }
 
 export interface BoardTickResult {

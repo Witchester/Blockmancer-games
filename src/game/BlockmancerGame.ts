@@ -144,8 +144,9 @@ export class BlockmancerGame extends Phaser.Game {
   }
 
   saveRun(): void {
-    this.runState = normalizeRunState(this.runState);
-    this.saveSystem.saveRun(this.runState);
+    const normalized = normalizeRunState(this.runState);
+    Object.assign(this.runState, normalized);
+    this.saveSystem.saveRun(normalized);
   }
 
   clearSave(): void {

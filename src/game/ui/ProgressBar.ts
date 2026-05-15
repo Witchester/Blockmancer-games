@@ -17,12 +17,15 @@ export class ProgressBar extends Phaser.GameObjects.Container {
   private readonly labelText?: Phaser.GameObjects.Text;
   private readonly valueText?: Phaser.GameObjects.Text;
   private readonly fillWidth: number;
+  private readonly fillHeight: number;
+  private lastValueText = '';
+  private lastFillWidth = -1;
 
   constructor(scene: Phaser.Scene, x: number, y: number, options: ProgressBarOptions = {}) {
     super(scene, x, y);
 
     this.fillWidth = options.width ?? 400;
-    const height = options.height ?? 18;
+    this.fillHeight = options.height ?? 18;
     const showValueText = options.showValueText ?? true;
     const barY = options.label ? 26 : 0;
 
@@ -47,11 +50,11 @@ export class ProgressBar extends Phaser.GameObjects.Container {
     }
 
     this.track = scene.add
-      .rectangle(0, barY, this.fillWidth, height, options.trackColor ?? 0x2f3652, 1)
+      .rectangle(0, barY, this.fillWidth, this.fillHeight, options.trackColor ?? 0x2f3652, 1)
       .setOrigin(0, 0)
       .setStrokeStyle(1, 0x6570a8, 0.8);
     this.fill = scene.add
-      .rectangle(0, barY, this.fillWidth, height, options.fillColor ?? COLORS.danger, 1)
+      .rectangle(0, barY, this.fillWidth, this.fillHeight, options.fillColor ?? COLORS.danger, 1)
       .setOrigin(0, 0);
 
     this.add([this.track, this.fill]);
@@ -61,8 +64,16 @@ export class ProgressBar extends Phaser.GameObjects.Container {
   setValue(current: number, max: number): void {
     const safeMax = Math.max(1, max);
     const ratio = Phaser.Math.Clamp(current / safeMax, 0, 1);
-    this.fill.width = this.fillWidth * ratio;
-    this.valueText?.setText(`${Math.max(0, Math.round(current))}/${safeMax}`);
+    const nextFillWidth = this.fillWidth * ratio;
+    const nextValueText = `${Math.max(0, Math.round(current))}/${safeMax}`;
+    if (this.lastFillWidth !== nextFillWidth) {
+      this.fill.setDisplaySize(nextFillWidth, this.fillHeight);
+      this.lastFillWidth = nextFillWidth;
+    }
+    if (this.valueText && this.lastValueText !== nextValueText) {
+      this.valueText.setText(nextValueText);
+      this.lastValueText = nextValueText;
+    }
   }
 
   setLabel(text: string): void {

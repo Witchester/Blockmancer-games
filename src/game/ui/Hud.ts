@@ -25,6 +25,12 @@ export class Hud {
   private readonly showMeta: boolean;
   private readonly barWidth: number;
   private readonly oopsieSystem = new OopsieSystem();
+  private lastHpText = '';
+  private lastManaText = '';
+  private lastFeverText = '';
+  private lastHpWidth = -1;
+  private lastManaWidth = -1;
+  private lastFeverWidth = -1;
 
   constructor(scene: Phaser.Scene, options: HudOptions = {}) {
     this.compact = options.compact ?? false;
@@ -104,12 +110,21 @@ export class Hud {
       this.oopsieSystem.getSummary(state)
     ].join('\n');
 
-    this.hpText.setText(hpText);
-    this.manaText.setText(manaText);
-    this.feverText.setText(feverText);
-    this.hpFill.width = hpWidth;
-    this.manaFill.width = manaWidth;
-    this.feverFill.width = feverWidth;
+    if (this.lastHpText !== hpText) {
+      this.hpText.setText(hpText);
+      this.lastHpText = hpText;
+    }
+    if (this.lastManaText !== manaText) {
+      this.manaText.setText(manaText);
+      this.lastManaText = manaText;
+    }
+    if (this.lastFeverText !== feverText) {
+      this.feverText.setText(feverText);
+      this.lastFeverText = feverText;
+    }
+    this.setFillWidth(this.hpFill, hpWidth, 'hp');
+    this.setFillWidth(this.manaFill, manaWidth, 'mana');
+    this.setFillWidth(this.feverFill, feverWidth, 'fever');
     if (this.showMeta) {
       this.metaText.setText(metaText);
     }
@@ -122,5 +137,16 @@ export class Hud {
   private getFillWidth(current: number, max: number): number {
     const ratio = Phaser.Math.Clamp(current / Math.max(1, max), 0, 1);
     return Math.max(0, Math.floor((this.barWidth - 4) * ratio));
+  }
+
+  private setFillWidth(fill: Phaser.GameObjects.Rectangle, width: number, key: 'hp' | 'mana' | 'fever'): void {
+    if (key === 'hp' && this.lastHpWidth === width) return;
+    if (key === 'mana' && this.lastManaWidth === width) return;
+    if (key === 'fever' && this.lastFeverWidth === width) return;
+
+    fill.setDisplaySize(Math.max(0, width), 10);
+    if (key === 'hp') this.lastHpWidth = width;
+    if (key === 'mana') this.lastManaWidth = width;
+    if (key === 'fever') this.lastFeverWidth = width;
   }
 }

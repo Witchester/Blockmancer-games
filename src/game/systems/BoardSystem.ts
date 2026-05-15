@@ -331,8 +331,9 @@ export class BoardSystem {
     }
   }
 
-  private applyCascadeGravity(): number {
+  private applyCascadeGravity(): { blocksDropped: number; maxDroppedRows: number } {
     let blocksDropped = 0;
+    let maxDroppedRows = 0;
 
     for (let columnIndex = 0; columnIndex < this.columns; columnIndex += 1) {
       let targetRow = this.rows - 1;
@@ -340,16 +341,18 @@ export class BoardSystem {
         const value = this.grid[rowIndex][columnIndex];
         if (value !== 0) {
           if (rowIndex !== targetRow) {
+            const droppedRows = targetRow - rowIndex;
             this.grid[targetRow][columnIndex] = this.cloneCell(value);
             this.grid[rowIndex][columnIndex] = 0;
-            blocksDropped += targetRow - rowIndex;
+            blocksDropped += droppedRows;
+            maxDroppedRows = Math.max(maxDroppedRows, droppedRows);
           }
           targetRow -= 1;
         }
       }
     }
 
-    return blocksDropped;
+    return { blocksDropped, maxDroppedRows };
   }
 
   private handleSpecialBlockClear(row: number, column: number, cellValue: BoardCell, triggered: string[]): void {
@@ -387,7 +390,8 @@ export class BoardSystem {
       clearedLinesPerCascade: [],
       blocksDropped: 0,
       specialBlocksTriggered: [],
-      causedCombo: false
+      causedCombo: false,
+      animationFrames: []
     };
 
     const completedLines = this.completedLineBuffer;
@@ -397,8 +401,25 @@ export class BoardSystem {
       result.clearedLinesPerCascade.push(completedLines.length);
       result.totalLinesCleared += completedLines.length;
 
+      const clearedLineCount = completedLines.length;
       this.removeCompletedLines(completedLines, result.specialBlocksTriggered);
-      result.blocksDropped += this.applyCascadeGravity();
+      result.animationFrames?.push({
+        type: 'clear',
+        grid: this.cloneGrid(this.grid),
+        clearedLines: clearedLineCount,
+        droppedRows: 0
+      });
+
+      const gravity = this.applyCascadeGravity();
+      result.blocksDropped += gravity.blocksDropped;
+      if (gravity.blocksDropped > 0) {
+        result.animationFrames?.push({
+          type: 'gravity',
+          grid: this.cloneGrid(this.grid),
+          clearedLines: clearedLineCount,
+          droppedRows: gravity.maxDroppedRows
+        });
+      }
 
       this.detectCompletedLines(completedLines);
     }

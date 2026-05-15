@@ -8,7 +8,7 @@ import { InputSystem } from '../systems/InputSystem';
 import { OopsieSystem } from '../systems/OopsieSystem';
 import { SpellSystem } from '../systems/SpellSystem';
 import { contentRegistry } from '../systems/ContentRegistry';
-import type { BoardCell, BoardTickResult, CascadeResult, EnemyInstance, RunState, SpellId } from '../types/GameTypes';
+import type { BoardCell, BoardTickResult, CascadeAnimationFrame, CascadeResult, EnemyInstance, RunState, SpellId } from '../types/GameTypes';
 import { EventLog } from '../ui/EventLog';
 import { Hud } from '../ui/Hud';
 import { MobileControls } from '../ui/MobileControls';
@@ -92,7 +92,7 @@ export class BattleScene extends Phaser.Scene {
   private logHeight = 0;
   private dropTimer = 0;
   private handlePause = () => this.combat.addLog('Pause menu is not open during this battle build.');
-  private readonly cascadeSettlePauseMs = 220;
+  private readonly cascadeSettlePauseMs = 260;
 
   constructor() {
     super('BattleScene');
@@ -145,15 +145,19 @@ export class BattleScene extends Phaser.Scene {
     this.topSectionHeight = layout.topHeight;
     this.bottomSectionHeight = layout.bottomHeight;
     this.middleSectionHeight = layout.middleHeight;
-    this.boardCellSize = Math.min(CELL_SIZE, Math.floor((this.screenWidth - 230) / Math.max(1, this.boardColumns)));
-    this.boardOffsetX = Math.round((this.screenWidth - this.boardColumns * this.boardCellSize) / 2);
-    this.boardOffsetY = this.topSectionHeight + 84;
-    this.previewCenterX = this.screenWidth - 88;
-    this.previewCenterY = this.topSectionHeight + 126;
-    this.controlsCenterX = this.screenWidth / 2;
-    this.controlsY = this.topSectionHeight + this.middleSectionHeight + Math.round(this.bottomSectionHeight / 2) - 4;
     this.logWidth = this.screenWidth - 48;
     this.logHeight = 88;
+    const compactSideSpace = this.screenWidth <= 520 ? 148 : 230;
+    const horizontalCellSize = Math.floor((this.screenWidth - compactSideSpace) / Math.max(1, this.boardColumns));
+    const verticalCellSize = Math.floor((this.middleSectionHeight - this.logHeight - 112) / Math.max(1, this.boardRows));
+    this.boardCellSize = Math.max(12, Math.min(CELL_SIZE, horizontalCellSize, verticalCellSize));
+    this.boardOffsetX = Math.round((this.screenWidth - this.boardColumns * this.boardCellSize) / 2);
+    this.boardOffsetY = this.topSectionHeight + 16;
+    const sideCenterX = Math.max(48, Math.round(this.boardOffsetX / 2));
+    this.previewCenterX = this.screenWidth - sideCenterX;
+    this.previewCenterY = this.boardOffsetY + 58;
+    this.controlsCenterX = this.screenWidth / 2;
+    this.controlsY = this.topSectionHeight + this.middleSectionHeight + Math.round(this.bottomSectionHeight / 2) - 4;
     this.logX = 24;
     this.logY = this.topSectionHeight + this.middleSectionHeight - this.logHeight - 10;
 
@@ -281,19 +285,22 @@ export class BattleScene extends Phaser.Scene {
       'sprite'
     ).setDisplaySize(64, 64).setAlpha(0.95);
 
-    this.add.text(28, this.topSectionHeight + 20, 'Hold', {
+    const sideCenterX = Math.max(48, Math.round(this.boardOffsetX / 2));
+    const sidePanelWidth = this.screenWidth <= 520 ? 82 : 124;
+    const sidePanelHeight = this.screenWidth <= 520 ? 72 : 82;
+    this.add.text(sideCenterX, this.boardOffsetY - 24, 'Hold', {
       color: '#ffca6b',
       fontFamily: FONT_FAMILY,
       fontSize: '17px',
       fontStyle: 'bold'
-    });
-    this.add.rectangle(88, this.topSectionHeight + 74, 124, 82, COLORS.panelAlt, 0.98).setStrokeStyle(2, COLORS.accent, 0.45);
-    this.holdText = this.add.text(88, this.topSectionHeight + 74, 'Empty', {
+    }).setOrigin(0.5, 0);
+    this.add.rectangle(sideCenterX, this.boardOffsetY + 34, sidePanelWidth, sidePanelHeight, COLORS.panelAlt, 0.98).setStrokeStyle(2, COLORS.accent, 0.45);
+    this.holdText = this.add.text(sideCenterX, this.boardOffsetY + 34, 'Empty', {
       color: '#d8deff',
       fontFamily: FONT_FAMILY,
-      fontSize: '18px',
+      fontSize: this.screenWidth <= 520 ? '15px' : '18px',
       align: 'center',
-      wordWrap: { width: 96 }
+      wordWrap: { width: sidePanelWidth - 14 }
     }).setOrigin(0.5);
 
     const boardBottom = this.boardOffsetY + this.boardRows * this.boardCellSize;
@@ -413,37 +420,42 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private createPreviewPanel(): void {
-    this.add.rectangle(this.previewCenterX, this.previewCenterY, 116, 116, COLORS.panelAlt, 0.98).setStrokeStyle(2, COLORS.accent, 0.24);
-    this.previewLabel = this.add.text(this.previewCenterX, this.previewCenterY - 62, 'Next', {
+    const compact = this.screenWidth <= 520;
+    const panelSize = compact ? 84 : 116;
+    const tileSize = compact ? 16 : 18;
+    const tileStep = compact ? 17 : 20;
+    const startOffset = compact ? -34 : -42;
+    this.add.rectangle(this.previewCenterX, this.previewCenterY, panelSize, panelSize, COLORS.panelAlt, 0.98).setStrokeStyle(2, COLORS.accent, 0.24);
+    this.previewLabel = this.add.text(this.previewCenterX, this.previewCenterY - panelSize / 2 - 18, 'Next', {
       color: '#ffca6b',
       fontFamily: FONT_FAMILY,
-      fontSize: '17px'
+      fontSize: compact ? '15px' : '17px'
     }).setOrigin(0.5);
 
     for (let index = 0; index < 16; index += 1) {
       const col = index % 4;
       const row = Math.floor(index / 4);
       const tile = this.add
-        .rectangle(this.previewCenterX - 42 + col * 20, this.previewCenterY - 42 + row * 20, 18, 18, COLORS.boardEmpty, 1)
+        .rectangle(this.previewCenterX + startOffset + col * tileStep, this.previewCenterY + startOffset + row * tileStep, tileSize, tileSize, COLORS.boardEmpty, 1)
         .setStrokeStyle(1, COLORS.boardGrid, this.sharedGame.getSettings().showGrid ? 0.8 : 0)
         .setOrigin(0, 0);
       this.previewTiles.push(tile);
-      this.previewSymbols.push(this.add.text(tile.x + 9, tile.y + 10, '', {
+      this.previewSymbols.push(this.add.text(tile.x + tileSize / 2, tile.y + tileSize / 2 + 1, '', {
         color: '#f6f7ff',
         fontFamily: FONT_FAMILY,
-        fontSize: '12px',
+        fontSize: compact ? '10px' : '12px',
         fontStyle: 'bold',
         stroke: '#05060a',
         strokeThickness: 2
       }).setOrigin(0.5).setVisible(false));
     }
 
-    this.previewExtraText = this.add.text(this.previewCenterX, this.previewCenterY + 66, '', {
+    this.previewExtraText = this.add.text(this.previewCenterX, this.previewCenterY + panelSize / 2 + 18, '', {
       color: '#98a0c7',
       fontFamily: FONT_FAMILY,
-      fontSize: '13px',
+      fontSize: compact ? '11px' : '13px',
       align: 'center',
-      wordWrap: { width: 136 }
+      wordWrap: { width: compact ? 90 : 136 }
     }).setOrigin(0.5);
   }
 
@@ -701,8 +713,18 @@ export class BattleScene extends Phaser.Scene {
     const state = this.sharedGame.runState;
     this.cascadeResolving = true;
     this.advanceStatusTimers();
-    this.syncBoardState();
-    this.renderAll();
+    if (cascade.animationFrames?.length) {
+      this.renderBoardSnapshot(cascade.animationFrames[0].grid);
+      this.renderEnemy();
+      this.renderPreview();
+      this.renderUpgrades();
+      this.renderMiddleOverlays();
+      this.hud.update(state);
+      this.log.update(state);
+    } else {
+      this.syncBoardState();
+      this.renderAll();
+    }
 
     if (cascade.totalLinesCleared > 0) {
       this.sharedGame.audioSystem.play('line_clear', this);
@@ -722,7 +744,8 @@ export class BattleScene extends Phaser.Scene {
 
     const result = this.combat.resolveCascadeClear(cascade);
     if (cascade.cascadeCount > 1) {
-      this.showFloatingText(`Combo x${state.combo}`, this.screenWidth / 2, this.boardOffsetY + 164, '#ffca6b', 30);
+      this.showFloatingText('Cascade Combo!', this.screenWidth / 2, this.boardOffsetY + 164, '#ffca6b', 30);
+      this.showFloatingText(`Combo x${state.combo}`, this.screenWidth / 2, this.boardOffsetY + 206, '#f6f7ff', 25);
     }
     if (result.damage > 0) {
       this.sharedGame.audioSystem.play('enemy_hit', this);
@@ -770,6 +793,11 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private playCascadeGravityFeedback(cascade: CascadeResult): Promise<void> {
+    const frames = cascade.animationFrames ?? [];
+    if (frames.length > 0) {
+      return this.playCascadeFrames(frames);
+    }
+
     if (cascade.blocksDropped <= 0) {
       return Promise.resolve();
     }
@@ -802,6 +830,25 @@ export class BattleScene extends Phaser.Scene {
         onComplete: () => resolve()
       });
     });
+  }
+
+  private async playCascadeFrames(frames: CascadeAnimationFrame[]): Promise<void> {
+    const effectiveFallSpeed = this.sharedGame.oopsieSystem.adjustFallSpeed(
+      this.sharedGame.runState,
+      this.sharedGame.runState.fallSpeed
+    );
+    const dropInterval = Math.max(120, BASE_DROP_MS / effectiveFallSpeed);
+
+    for (const frame of frames) {
+      this.renderBoardSnapshot(frame.grid);
+      this.renderMiddleOverlays();
+      if (frame.type === 'clear') {
+        await this.wait(150);
+      } else {
+        const duration = Math.min(2400, Math.max(220, dropInterval * Math.max(1, frame.droppedRows)));
+        await this.wait(duration);
+      }
+    }
   }
 
   private pulseFeverMeter(triggered: boolean): void {
@@ -971,6 +1018,7 @@ export class BattleScene extends Phaser.Scene {
       const shakeIntensity = this.getDamageShakeIntensity(attackResult.hpDamage, attackResult.shieldBlocked);
       this.shakeCamera(180 + Math.min(220, damage * 18), shakeIntensity);
       this.flashPlayerHit(attackResult.hpDamage);
+      this.showPlayerAttackBanner(enemy.name, attackResult.hpDamage, attackResult.shieldBlocked);
       this.combat.addLog(
         attackResult.hpDamage > 0
           ? `You take ${attackResult.hpDamage} damage.`
@@ -996,6 +1044,37 @@ export class BattleScene extends Phaser.Scene {
 
     this.syncBoardState();
     this.renderAll();
+  }
+
+  private showPlayerAttackBanner(enemyName: string, hpDamage: number, shieldBlocked: number): void {
+    const text = hpDamage > 0
+      ? `${enemyName} bonks you for ${hpDamage}!`
+      : `${enemyName} bonks your shield!`;
+    const color = hpDamage > 0 ? COLORS.danger : COLORS.accent;
+    const panel = this.add.rectangle(this.screenWidth / 2, this.topSectionHeight + 26, this.screenWidth - 56, 44, color, 0.9)
+      .setDepth(128)
+      .setStrokeStyle(2, COLORS.text, shieldBlocked > 0 ? 0.5 : 0.35);
+    const label = this.add.text(this.screenWidth / 2, this.topSectionHeight + 26, text, {
+      color: '#f6f7ff',
+      fontFamily: FONT_FAMILY,
+      fontSize: '20px',
+      fontStyle: 'bold',
+      align: 'center',
+      wordWrap: { width: this.screenWidth - 80 }
+    }).setOrigin(0.5).setDepth(129);
+
+    this.tweens.add({
+      targets: [panel, label],
+      y: '-=16',
+      alpha: 0,
+      delay: 520,
+      duration: 360,
+      ease: 'Sine.easeIn',
+      onComplete: () => {
+        panel.destroy();
+        label.destroy();
+      }
+    });
   }
 
   private getDamageShakeIntensity(hpDamage: number, shieldBlocked: number): number {
@@ -1273,11 +1352,39 @@ export class BattleScene extends Phaser.Scene {
     }
   }
 
+  private renderBoardSnapshot(grid: BoardCell[][]): void {
+    for (let row = 0; row < this.boardRows; row += 1) {
+      for (let col = 0; col < this.boardColumns; col += 1) {
+        this.displayBoard[row][col] = grid[row]?.[col] ?? 0;
+        this.displayAlpha[row][col] = 1;
+      }
+    }
+    this.paintDisplayBoard();
+  }
+
   private copyBoardToDisplayBuffer(): void {
     for (let row = 0; row < this.boardRows; row += 1) {
       for (let col = 0; col < this.boardColumns; col += 1) {
         this.displayBoard[row][col] = this.board.grid[row][col];
         this.displayAlpha[row][col] = 1;
+      }
+    }
+  }
+
+  private paintDisplayBoard(): void {
+    const colorblindSymbols = this.sharedGame.getSettings().colorblindSymbols;
+    for (let row = 0; row < this.boardRows; row += 1) {
+      for (let col = 0; col < this.boardColumns; col += 1) {
+        const cell = this.displayBoard[row][col];
+        const color = cell === 0 ? COLORS.boardEmpty : getBoardCellColor(cell);
+        const alpha = this.displayAlpha[row][col];
+        if (this.renderedCellColors[row][col] !== color || this.renderedCellAlphas[row][col] !== alpha) {
+          this.boardCells[row][col].setFillStyle(color, alpha);
+          this.renderedCellColors[row][col] = color;
+          this.renderedCellAlphas[row][col] = alpha;
+        }
+        this.renderBoardSprite(row, col, cell);
+        this.renderBoardSymbol(row, col, cell, colorblindSymbols);
       }
     }
   }
