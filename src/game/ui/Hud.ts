@@ -5,6 +5,7 @@ import { COLORS, FONT_FAMILY } from '../utils/constants';
 
 type HudOptions = {
   compact?: boolean;
+  showMeta?: boolean;
   x?: number;
   y?: number;
   width?: number;
@@ -21,11 +22,13 @@ export class Hud {
   private readonly feverText: Phaser.GameObjects.Text;
   private readonly metaText: Phaser.GameObjects.Text;
   private readonly compact: boolean;
+  private readonly showMeta: boolean;
   private readonly barWidth: number;
   private readonly oopsieSystem = new OopsieSystem();
 
   constructor(scene: Phaser.Scene, options: HudOptions = {}) {
     this.compact = options.compact ?? false;
+    this.showMeta = options.showMeta ?? true;
     const width = options.width ?? scene.scale.width - 40;
     const panelY = options.y ?? (this.compact ? 52 : 46);
     const panelHeight = options.height ?? (this.compact ? 104 : 90);
@@ -72,7 +75,7 @@ export class Hud {
       fontSize: this.compact ? '17px' : '19px',
       wordWrap: { width: width - 28 },
       lineSpacing: 4
-    });
+    }).setVisible(this.showMeta);
 
     this.root = scene.add.container(0, 0, [
       panel,
@@ -107,7 +110,9 @@ export class Hud {
     this.hpFill.width = hpWidth;
     this.manaFill.width = manaWidth;
     this.feverFill.width = feverWidth;
-    this.metaText.setText(metaText);
+    if (this.showMeta) {
+      this.metaText.setText(metaText);
+    }
   }
 
   destroy(): void {

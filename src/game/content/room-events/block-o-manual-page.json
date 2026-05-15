@@ -1,0 +1,16 @@
+{
+  "id": "evt_block_o_manual_page",
+  "name": "Block-O Manual Page",
+  "rarity": "common",
+  "description": "A manual page flutters down with diagrams, arrows, and one drawing of a cupcake.",
+  "iconKey": "evt_block_o_manual_page",
+  "backgroundKey": "bg_event_manual",
+  "biome": "dungeon",
+  "choices": [
+    {"id":"choice_tip","label":"Learn Tip","description":"Gain mana from a useful note.","requirements":[],"effects":[{"type":"gain_mana","value":20}],"resultText":"The note says: cascades are your friend."},
+    {"id":"choice_diagram","label":"Follow Diagram","description":"Gain an upgrade and a board modifier next battle.","requirements":[],"effects":[{"type":"gain_random_reward","value":1},{"type":"gain_random_oopsie","value":1}],"resultText":"The diagram made sense until the arrows started tap dancing."},
+    {"id":"choice_leave","label":"Fold It Nicely","description":"No effect.","requirements":[],"effects":[],"resultText":"A tidy manual page is its own reward."}
+  ],
+  "tags": ["manual", "oopsie"],
+  "enabled": true
+}

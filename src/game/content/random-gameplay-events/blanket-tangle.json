@@ -1,0 +1,1 @@
+{"id":"r_evt_blanket_tangle","name":"Blanket Tangle","description":"Rotation is awkward for one piece.","allowedStages":[4,6],"allowedNodeTypes":["normal","elite","boss"],"triggerTiming":"battle_start","triggerChance":0.1,"maxPerRoom":1,"effects":[{"type":"speed_spike","value":0.03}],"toneText":"A blanket tries to help and mostly does not.","enabled":true}

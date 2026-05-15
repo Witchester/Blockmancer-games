@@ -26,14 +26,14 @@
     "upgradeIds": []
   },
   "passive": {
-    "id": "passive_star_power",
-    "name": "Star Power",
-    "description": "Cascade combos grant extra mana.",
+    "id": "passive_main_character_energy",
+    "name": "Main Character Energy",
+    "description": "Star blocks boost cascade damage heavily.",
     "effects": [
       {
-        "type": "increase_mana_on_cascade",
-        "value": 5,
-        "condition": "on_cascade"
+        "type": "star_block_cascade_damage",
+        "value": 8,
+        "condition": "on_star_block_clear"
       }
     ]
   },

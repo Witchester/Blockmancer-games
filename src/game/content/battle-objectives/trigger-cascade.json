@@ -1,0 +1,1 @@
+{"id":"obj_trigger_cascade","name":"Trigger 1 Cascade","description":"Make Cascade Gravity happen once.","targetType":"cascade_count","requiredAmount":1,"reward":{"id":"upg_combo_cheer","name":"Combo Cheer","type":"upgrade","description":"Small combo reward.","persistent":true},"enabled":true}

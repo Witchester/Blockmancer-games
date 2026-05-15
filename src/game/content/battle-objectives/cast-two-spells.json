@@ -1,0 +1,1 @@
+{"id":"obj_cast_two_spells","name":"Cast 2 Spells","description":"Cast 2 spells in one battle.","targetType":"cast_spells","requiredAmount":2,"reward":{"id":"item_mana_lemonade","name":"Mana Lemonade","type":"item","description":"Mana refill.","persistent":false},"enabled":true}

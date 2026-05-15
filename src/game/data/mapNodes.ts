@@ -7,97 +7,57 @@ export const MAP_NODES: MapNodeDefinition[] = [
     icon: 'S',
     roomType: 'start',
     x: 0.5,
-    y: 0.88,
-    connections: ['fight-a', 'event-a', 'fight-b'],
+    y: 0.94,
+    connections: ['main-1-1', 'side-1-1'],
     completed: false
   },
   {
-    id: 'fight-a',
+    id: 'main-1-1',
     label: 'Fight',
     icon: 'F',
     roomType: 'fight',
-    x: 0.22,
-    y: 0.7,
-    connections: ['shop'],
+    x: 0.42,
+    y: 0.84,
+    connections: ['main-1-2', 'side-1-2'],
     completed: false
   },
   {
-    id: 'event-a',
+    id: 'main-1-2',
+    label: 'Fight',
+    icon: 'F',
+    roomType: 'fight',
+    x: 0.58,
+    y: 0.69,
+    connections: ['main-1-3'],
+    completed: false
+  },
+  {
+    id: 'main-1-3',
+    label: 'Fight',
+    icon: 'F',
+    roomType: 'fight',
+    x: 0.42,
+    y: 0.54,
+    connections: ['main-1-4', 'side-1-3'],
+    completed: false
+  },
+  {
+    id: 'main-1-4',
     label: 'Event',
     icon: '?',
     roomType: 'event',
-    x: 0.5,
-    y: 0.7,
-    connections: ['elite'],
+    x: 0.58,
+    y: 0.39,
+    connections: ['main-1-5'],
     completed: false
   },
   {
-    id: 'fight-b',
-    label: 'Fight',
-    icon: 'F',
-    roomType: 'fight',
-    x: 0.78,
-    y: 0.7,
-    connections: ['event-b'],
-    completed: false
-  },
-  {
-    id: 'shop',
-    label: 'Shop',
-    icon: '$',
-    roomType: 'shop',
-    x: 0.22,
-    y: 0.52,
-    connections: ['rest'],
-    completed: false
-  },
-  {
-    id: 'elite',
-    label: 'Elite',
-    icon: 'E',
-    roomType: 'elite',
-    x: 0.5,
-    y: 0.52,
-    connections: ['rest'],
-    completed: false
-  },
-  {
-    id: 'event-b',
-    label: 'Event',
-    icon: '?',
-    roomType: 'event',
-    x: 0.78,
-    y: 0.52,
-    connections: ['rest'],
-    completed: false
-  },
-  {
-    id: 'rest',
-    label: 'Rest',
-    icon: 'R',
-    roomType: 'rest',
-    x: 0.5,
-    y: 0.34,
-    connections: ['fight-c', 'treasure'],
-    completed: false
-  },
-  {
-    id: 'fight-c',
-    label: 'Fight',
-    icon: 'F',
-    roomType: 'fight',
-    x: 0.34,
-    y: 0.16,
-    connections: ['boss'],
-    completed: false
-  },
-  {
-    id: 'treasure',
+    id: 'main-1-5',
     label: 'Treasure',
     icon: 'T',
     roomType: 'treasure',
-    x: 0.66,
-    y: 0.16,
+    x: 0.42,
+    y: 0.23,
     connections: ['boss'],
     completed: false
   },
@@ -107,8 +67,38 @@ export const MAP_NODES: MapNodeDefinition[] = [
     icon: 'B',
     roomType: 'boss',
     x: 0.5,
-    y: 0.04,
+    y: 0.06,
     connections: [],
+    completed: false
+  },
+  {
+    id: 'side-1-1',
+    label: 'Rest',
+    icon: 'R',
+    roomType: 'rest',
+    x: 0.2,
+    y: 0.76,
+    connections: ['main-1-2'],
+    completed: false
+  },
+  {
+    id: 'side-1-2',
+    label: 'Event',
+    icon: '?',
+    roomType: 'event',
+    x: 0.82,
+    y: 0.61,
+    connections: ['main-1-3'],
+    completed: false
+  },
+  {
+    id: 'side-1-3',
+    label: 'Treasure',
+    icon: 'T',
+    roomType: 'treasure',
+    x: 0.2,
+    y: 0.36,
+    connections: ['main-1-5'],
     completed: false
   }
 ];

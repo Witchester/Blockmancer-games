@@ -1,0 +1,1 @@
+{"id":"hub_ice_cream_cart","name":"Ice Cream Cart","description":"Unlocks frost items and Nixie upgrades.","maxLevel":3,"levels":[{"level":1,"cost":{"currency_gold":50},"unlocks":["item_snowcone"]},{"level":2,"cost":{"currency_sprinkles":20},"unlocks":["upg_chill_zone"]},{"level":3,"cost":{"currency_stars":2},"unlocks":["nixie_upgrade_pool"]}],"enabled":true}

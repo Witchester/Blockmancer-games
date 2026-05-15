@@ -1,0 +1,1 @@
+{"id":"obj_clear_sprinkles","name":"Clear 5 Sprinkles","description":"Clear 5 sprinkle blocks.","targetType":"clear_block_type","targetId":"block_sprinkle","requiredAmount":5,"reward":{"id":"item_mana_lemonade","name":"Mana Lemonade","type":"item","description":"A fizzy mana item.","persistent":false},"enabled":true}

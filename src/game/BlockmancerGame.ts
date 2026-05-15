@@ -5,6 +5,8 @@ import { StoryScene } from './scenes/StoryScene';
 import { TutorialScene } from './scenes/TutorialScene';
 import { HelpScene } from './scenes/HelpScene';
 import { HeroSelectScene } from './scenes/HeroSelectScene';
+import { HubScene } from './scenes/HubScene';
+import { CollectionScene } from './scenes/CollectionScene';
 import { MapScene } from './scenes/MapScene';
 import { BattleScene } from './scenes/BattleScene';
 import { RewardScene } from './scenes/RewardScene';
@@ -26,13 +28,21 @@ import { ShopSystem } from './systems/ShopSystem';
 import { AssetSystem } from './systems/AssetSystem';
 import { AudioSystem } from './systems/AudioSystem';
 import { BossSystem } from './systems/BossSystem';
+import { BossRuleSystem } from './systems/BossRuleSystem';
+import { BoardSizeModifierSystem } from './systems/BoardSizeModifierSystem';
+import { BattleObjectiveSystem } from './systems/BattleObjectiveSystem';
+import { ChaosRuleSystem } from './systems/ChaosRuleSystem';
+import { FriendshipSystem } from './systems/FriendshipSystem';
 import { HeroSystem } from './systems/HeroSystem';
+import { HubProgressionSystem } from './systems/HubProgressionSystem';
 import { InventorySystem } from './systems/InventorySystem';
 import { ItemSystem } from './systems/ItemSystem';
 import { MetaSystem } from './systems/MetaSystem';
 import { OopsieSystem } from './systems/OopsieSystem';
+import { RandomGameplayEventSystem } from './systems/RandomGameplayEventSystem';
 import { SettingsSystem } from './systems/SettingsSystem';
 import { StageSystem } from './systems/StageSystem';
+import { StageGoalSystem } from './systems/StageGoalSystem';
 import { StorySystem } from './systems/StorySystem';
 import { TutorialSystem } from './systems/TutorialSystem';
 import { WeaponSystem } from './systems/WeaponSystem';
@@ -51,16 +61,24 @@ export class BlockmancerGame extends Phaser.Game {
   readonly assetSystem = new AssetSystem();
   readonly audioSystem = new AudioSystem();
   readonly bossSystem = new BossSystem();
+  readonly bossRuleSystem = new BossRuleSystem();
+  readonly boardSizeModifierSystem = new BoardSizeModifierSystem();
+  readonly battleObjectiveSystem = new BattleObjectiveSystem(this.rewardSystem);
+  readonly chaosRuleSystem = new ChaosRuleSystem();
+  readonly friendshipSystem = new FriendshipSystem();
+  readonly hubProgressionSystem = new HubProgressionSystem();
   readonly heroSystem = new HeroSystem();
   readonly weaponSystem = new WeaponSystem();
   readonly inventorySystem = new InventorySystem();
   readonly itemSystem = new ItemSystem();
   readonly oopsieSystem = new OopsieSystem();
+  readonly randomGameplayEventSystem = new RandomGameplayEventSystem();
   readonly eventSystem = new EventSystem(this.rewardSystem, this.enemySystem, this.inventorySystem, this.oopsieSystem);
   readonly shopSystem = new ShopSystem(this.rewardSystem, this.oopsieSystem);
   readonly storySystem = new StorySystem();
   readonly tutorialSystem = new TutorialSystem();
   readonly settingsSystem = new SettingsSystem();
+  readonly stageGoalSystem = new StageGoalSystem();
   runState: RunState;
 
   constructor(parent: HTMLElement) {
@@ -81,6 +99,8 @@ export class BlockmancerGame extends Phaser.Game {
         TutorialScene,
         HelpScene,
         HeroSelectScene,
+        HubScene,
+        CollectionScene,
         MapScene,
         BattleScene,
         RewardScene,
@@ -101,6 +121,9 @@ export class BlockmancerGame extends Phaser.Game {
   newRun(heroId: string = 'hero_milo_blockmancer'): RunState {
     this.runState = createDefaultRunState();
     this.heroSystem.applyHeroToRun(this.runState, heroId);
+    this.runState.map = this.mapSystem.createMap(this.runState.stage);
+    this.stageGoalSystem.ensureGoal(this.runState);
+    this.boardSizeModifierSystem.applyEncounterBoardSize(this.runState);
     this.saveRun();
     return this.runState;
   }

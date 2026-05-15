@@ -11,6 +11,11 @@ const DEFAULT_META_STATE: MetaState = {
   totalCascades: 0,
   bossesDefeated: [],
   endingsUnlocked: [],
+  hubBuildings: {},
+  monsterFriendship: {},
+  completedStageGoals: [],
+  discoveredChaosRules: [],
+  discoveredBossRules: [],
   stage1BossDefeated: false,
   stage2BossDefeated: false,
   normalEndingFinished: false,
@@ -36,7 +41,12 @@ export class MetaSystem {
       },
       unlockedHeroes: loaded?.unlockedHeroes ? [...loaded.unlockedHeroes] : [],
       bossesDefeated: loaded?.bossesDefeated ? [...loaded.bossesDefeated] : [],
-      endingsUnlocked: loaded?.endingsUnlocked ? [...loaded.endingsUnlocked] : []
+      endingsUnlocked: loaded?.endingsUnlocked ? [...loaded.endingsUnlocked] : [],
+      hubBuildings: { ...(loaded?.hubBuildings || {}) },
+      monsterFriendship: { ...(loaded?.monsterFriendship || {}) },
+      completedStageGoals: loaded?.completedStageGoals ? [...loaded.completedStageGoals] : [],
+      discoveredChaosRules: loaded?.discoveredChaosRules ? [...loaded.discoveredChaosRules] : [],
+      discoveredBossRules: loaded?.discoveredBossRules ? [...loaded.discoveredBossRules] : []
     };
     
     // Ensure milo is always unlocked
@@ -44,6 +54,42 @@ export class MetaSystem {
       this.meta.unlockedHeroes.push('hero_milo_blockmancer');
     }
     this.save();
+  }
+
+  recordStageGoalCompleted(goalId: string): void {
+    if (!this.meta.completedStageGoals.includes(goalId)) {
+      this.meta.completedStageGoals.push(goalId);
+      this.save();
+    }
+  }
+
+  recordChaosRuleDiscovered(ruleId: string): void {
+    if (!this.meta.discoveredChaosRules.includes(ruleId)) {
+      this.meta.discoveredChaosRules.push(ruleId);
+      this.save();
+    }
+  }
+
+  recordBossRuleDiscovered(ruleId: string): void {
+    if (!this.meta.discoveredBossRules.includes(ruleId)) {
+      this.meta.discoveredBossRules.push(ruleId);
+      this.save();
+    }
+  }
+
+  addFriendship(monsterId: string, points: number): number {
+    const current = this.meta.monsterFriendship[monsterId] ?? 0;
+    const next = Math.max(0, current + points);
+    this.meta.monsterFriendship[monsterId] = next;
+    this.save();
+    return next;
+  }
+
+  upgradeHubBuilding(buildingId: string): number {
+    const next = (this.meta.hubBuildings[buildingId] ?? 0) + 1;
+    this.meta.hubBuildings[buildingId] = next;
+    this.save();
+    return next;
   }
 
   get state(): MetaState {

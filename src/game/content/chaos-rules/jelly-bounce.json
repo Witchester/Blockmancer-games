@@ -1,0 +1,1 @@
+{"id":"chaos_jelly_bounce","name":"Jelly Bounce","description":"Jelly blocks wobble and create surprise cascades.","allowedStages":[1,2,3,4,5,6],"allowedNodeTypes":["normal","elite"],"weight":10,"effects":[{"type":"add_confetti_blocks","value":1}],"enabled":true}

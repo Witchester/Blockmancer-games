@@ -1,0 +1,1 @@
+{"id":"goal_stage2_goblin_machines","name":"Disable 2 Goblin Machines","stageId":"stage_goblin_workshop","stage":2,"description":"Disable 2 machines before Prototype No. 7.","targetType":"battle_objective","requiredAmount":2,"bossDebuff":"less_junk","bossBuffOnFail":"overclocked","enabled":true}

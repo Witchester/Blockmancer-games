@@ -1,0 +1,1 @@
+{"id":"obj_low_board_height","name":"Keep It Tidy","description":"End battle with board below 50 percent height.","targetType":"low_board_height","requiredAmount":1,"reward":{"id":"upg_clean_stack","name":"Clean Stack","type":"upgrade","description":"Tidy stacking bonus.","persistent":true},"enabled":true}

@@ -1,0 +1,1 @@
+{"id":"hub_cake_stall","name":"Cake Stall","description":"Unlocks healing items, Pippa chatter, and cupcake relics.","maxLevel":3,"levels":[{"level":1,"cost":{"currency_gold":50},"unlocks":["item_mini_cupcake"]},{"level":2,"cost":{"currency_sprinkles":20},"unlocks":["rel_lucky_cupcake"]},{"level":3,"cost":{"currency_stars":2},"unlocks":["pippa_dialogue"]}],"enabled":true}

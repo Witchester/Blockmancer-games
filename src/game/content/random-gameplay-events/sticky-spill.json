@@ -1,0 +1,1 @@
+{"id":"r_evt_sticky_spill","name":"Sticky Spill","description":"Sticky blocks splat near the lower board.","allowedStages":[1,2,3,4,5,6],"allowedNodeTypes":["normal","elite","boss"],"triggerTiming":"battle_start","triggerChance":0.14,"maxPerRoom":1,"effects":[{"type":"add_sticky_blocks","value":3}],"toneText":"Someone dropped frosting in exactly the wrong place.","enabled":true}

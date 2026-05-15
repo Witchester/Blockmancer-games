@@ -23,9 +23,9 @@
     "upgradeIds": []
   },
   "passive": {
-    "id": "passive_line_mage",
-    "name": "Line Mage",
-    "description": "The first line clear in each battle grants a small extra burst of mana.",
+    "id": "passive_plink_plonk_combo",
+    "name": "Plink-Plonk Combo",
+    "description": "The first cascade each battle grants a friendly burst of bonus mana.",
     "effects": [
       "increase_mana_gain"
     ]

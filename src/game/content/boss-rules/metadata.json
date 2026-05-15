@@ -1,0 +1,1 @@
+{"contentType":"bossRule","version":"1.0.0","idPrefix":"boss_rule_","displayName":"Boss Rule Cards","description":"Readable cards explaining boss gimmicks.","idFormat":"boss_rule_boss_name","exampleIds":["boss_rule_cupcake_slime_king"],"requiredFields":["id","name","bossId","title","description","phaseRules","enabled"],"fields":{},"dataList":{},"defaults":{"enabled":true}}

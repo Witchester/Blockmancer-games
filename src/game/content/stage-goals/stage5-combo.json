@@ -1,0 +1,1 @@
+{"id":"goal_stage5_combo_score","name":"Reach Combo Score Target","stageId":"stage_starfall_arcade","stage":5,"description":"Build enough combo energy before High Score Hydra.","targetType":"combo_score","requiredAmount":4,"bossDebuff":"start_fever","bossBuffOnFail":"hydra_combo_punishment","enabled":true}

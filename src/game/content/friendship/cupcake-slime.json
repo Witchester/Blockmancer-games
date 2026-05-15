@@ -1,0 +1,1 @@
+{"id":"friend_cupcake_slime","monsterId":"mon_dungeon_slime","name":"Cupcake Slime","pointsRequired":6,"gainMethods":[{"type":"defeat","points":1},{"type":"feed_item","itemId":"item_mini_cupcake","points":3}],"unlockReward":{"helperId":"helper_cupcake_slime","effect":[{"type":"start_sprinkle_block","value":1}]},"enabled":true}

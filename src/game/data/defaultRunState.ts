@@ -83,12 +83,15 @@ function cloneBoardCell(cell: unknown): BoardCell {
   return 0;
 }
 
-function normalizeBoardGrid(input: unknown, defaults: BoardState): BoardCell[][] {
+function normalizeBoardGrid(input: unknown, defaults: BoardState, columns = defaults.columns, rows = defaults.rows): BoardCell[][] {
+  const defaultGrid = Array.from({ length: rows }, (_, rowIndex) =>
+    Array.from({ length: columns }, (_, columnIndex) => (defaults.grid[rowIndex]?.[columnIndex] ?? 0) as BoardCell)
+  );
   if (!Array.isArray(input)) {
-    return defaults.grid.map((row) => [...row]);
+    return defaultGrid.map((row) => [...row]);
   }
 
-  return defaults.grid.map((defaultRow, rowIndex) => {
+  return defaultGrid.map((defaultRow, rowIndex) => {
     const rawRow = input[rowIndex];
     if (!Array.isArray(rawRow)) {
       return [...defaultRow];
@@ -153,6 +156,15 @@ export function createDefaultRunState(): RunState {
     pendingRewardSource: 'battle',
     rewardRerolls: 0,
     ownedRewards: [],
+    stageGoals: {},
+    activeChaosRule: undefined,
+    activeBattleObjective: undefined,
+    completedBattleObjectives: [],
+    activeRandomGameplayEvents: [],
+    activeOopsies: [],
+    currentBossRule: undefined,
+    boardSizeModifier: undefined,
+    festivalHubVisited: false,
     lastBattleWasBoss: false,
     pendingStageAdvance: false,
     victory: false,
@@ -187,7 +199,14 @@ export function normalizeRunState(input: unknown): RunState {
     board: {
       ...defaults.board,
       ...(raw.board ?? {}),
-      grid: normalizeBoardGrid(raw.board?.grid, defaults.board),
+      columns: typeof raw.board?.columns === 'number' ? raw.board.columns : defaults.board.columns,
+      rows: typeof raw.board?.rows === 'number' ? raw.board.rows : defaults.board.rows,
+      grid: normalizeBoardGrid(
+        raw.board?.grid,
+        defaults.board,
+        typeof raw.board?.columns === 'number' ? raw.board.columns : defaults.board.columns,
+        typeof raw.board?.rows === 'number' ? raw.board.rows : defaults.board.rows
+      ),
       currentPiece: raw.board?.currentPiece && Array.isArray(raw.board.currentPiece.matrix) ? {
         ...raw.board.currentPiece,
         matrix: raw.board.currentPiece.matrix.map((row) => Array.isArray(row) ? [...row] : [])
@@ -205,6 +224,15 @@ export function normalizeRunState(input: unknown): RunState {
     pendingRewardSource: raw.pendingRewardSource ?? defaults.pendingRewardSource,
     rewardRerolls: raw.rewardRerolls ?? defaults.rewardRerolls,
     ownedRewards: raw.ownedRewards ? [...raw.ownedRewards] : [...defaults.ownedRewards],
+    stageGoals: raw.stageGoals ? { ...raw.stageGoals } : { ...defaults.stageGoals },
+    activeChaosRule: raw.activeChaosRule,
+    activeBattleObjective: raw.activeBattleObjective,
+    completedBattleObjectives: raw.completedBattleObjectives ? [...raw.completedBattleObjectives] : [],
+    activeRandomGameplayEvents: raw.activeRandomGameplayEvents ? [...raw.activeRandomGameplayEvents] : [],
+    activeOopsies: raw.activeOopsies ? [...raw.activeOopsies] : [...player.oopsies],
+    currentBossRule: raw.currentBossRule,
+    boardSizeModifier: raw.boardSizeModifier ? { ...raw.boardSizeModifier } : undefined,
+    festivalHubVisited: Boolean(raw.festivalHubVisited),
     runStats: {
       ...defaults.runStats,
       ...(raw.runStats ?? {}),
@@ -228,6 +256,7 @@ export function normalizeRunState(input: unknown): RunState {
   merged.currentEventId = typeof raw.currentEventId === 'string' ? raw.currentEventId : null;
   merged.saveVersion = SAVE_VERSION;
   oopsieSystem.normalizeState(merged);
+  merged.activeOopsies = [...merged.player.oopsies];
 
   return merged;
 }

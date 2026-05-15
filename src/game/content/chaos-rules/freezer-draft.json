@@ -1,0 +1,1 @@
+{"id":"chaos_freezer_draft","name":"Freezer Draft","description":"Fall speed slows, then pressure returns.","allowedStages":[3,5,6],"allowedNodeTypes":["normal","elite","boss"],"weight":10,"effects":[{"type":"gain_mana","value":8}],"enabled":true}

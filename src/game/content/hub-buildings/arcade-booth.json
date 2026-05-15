@@ -1,0 +1,1 @@
+{"id":"hub_arcade_booth","name":"Arcade Booth","description":"Unlocks Fever challenges and Stage 5 modifiers.","maxLevel":3,"levels":[{"level":1,"cost":{"currency_tickets":1},"unlocks":["item_rainbow_soda"]},{"level":2,"cost":{"currency_tickets":3},"unlocks":["chaos_confetti_fever"]},{"level":3,"cost":{"currency_stars":2},"unlocks":["stage5_modifiers"]}],"enabled":true}

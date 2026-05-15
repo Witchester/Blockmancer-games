@@ -1,0 +1,1 @@
+{"id":"friend_blanket_ghost","monsterId":"mon_blanket_bard","name":"Blanket Ghost","pointsRequired":5,"gainMethods":[{"type":"defeat","points":1},{"type":"spare","points":2}],"unlockReward":{"effect":[{"type":"sleepy_heal","value":1}]},"enabled":true}

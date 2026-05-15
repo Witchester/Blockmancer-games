@@ -1,0 +1,1 @@
+{"id":"chaos_snack_tax","name":"Snack Tax","description":"More gold, but shops are pricier for now.","allowedStages":[1,2,3,4,5,6],"allowedNodeTypes":["normal","elite"],"weight":8,"effects":[{"type":"gain_mana","value":4}],"rewardModifier":{"goldMultiplier":1.2,"shopPriceMultiplier":1.15},"enabled":true}

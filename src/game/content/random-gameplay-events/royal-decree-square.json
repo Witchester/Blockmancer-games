@@ -1,0 +1,1 @@
+{"id":"r_evt_royal_decree_square","name":"Royal Decree: Square!","description":"Make a square-ish clean pattern or face royal blocks.","allowedStages":[6],"allowedNodeTypes":["normal","elite","boss"],"triggerTiming":"battle_start","triggerChance":0.18,"maxPerRoom":1,"effects":[{"type":"add_royal_blocks","value":2}],"toneText":"A tiny trumpet announces corners.","enabled":true}

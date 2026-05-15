@@ -1,0 +1,1 @@
+{"id":"friend_ice_cream_imp","monsterId":"mon_gelato_blob","name":"Ice Cream Imp","pointsRequired":5,"gainMethods":[{"type":"defeat","points":1},{"type":"feed_item","itemId":"item_snowcone","points":3}],"unlockReward":{"effect":[{"type":"shorter_freeze","value":1}]},"enabled":true}

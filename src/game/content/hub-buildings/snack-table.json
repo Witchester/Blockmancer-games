@@ -1,0 +1,1 @@
+{"id":"hub_snack_table","name":"Snack Table","description":"Unlocks Bruk defensive items and rest bonuses.","maxLevel":3,"levels":[{"level":1,"cost":{"currency_gold":50},"unlocks":["item_bubble_gum"]},{"level":2,"cost":{"currency_sprinkles":25},"unlocks":["rest_bonus"]},{"level":3,"cost":{"currency_stars":2},"unlocks":["bruk_items"]}],"enabled":true}

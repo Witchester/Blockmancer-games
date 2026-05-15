@@ -2,44 +2,36 @@
   "id": "evt_suspicious_button",
   "name": "Suspicious Button",
   "rarity": "common",
-  "description": "Suspicious Button offers a bright, risky festival choice.",
+  "description": "A big red button blinks beside a sign that says, in tiny letters, 'probably fine'.",
   "iconKey": "evt_suspicious_button",
   "backgroundKey": "bg_event_festival",
   "biome": "dungeon",
   "choices": [
     {
-      "id": "choice_safe",
-      "label": "Take the safe treat",
-      "description": "Gain a small amount of gold.",
+      "id": "choice_safe_label",
+      "label": "Label It",
+      "description": "Gain a small thank-you prize for improving festival safety.",
       "requirements": [],
-      "effects": [
-        {
-          "type": "gain_gold",
-          "value": 15
-        }
-      ],
-      "resultText": "A tidy prize drops out."
+      "effects": [{"type": "gain_gold", "value": 18}],
+      "resultText": "The label reads: BUTTON. Everyone is wiser now."
     },
     {
-      "id": "choice_risky",
-      "label": "Try the loud option",
-      "description": "Take a tiny hit for a random reward.",
+      "id": "choice_risky_press",
+      "label": "Press It",
+      "description": "Gain a rare reward and a random Oopsie.",
       "requirements": [],
-      "effects": [
-        {
-          "type": "damage_player",
-          "value": 2
-        },
-        {
-          "type": "gain_random_reward",
-          "value": 1
-        }
-      ],
-      "resultText": "It was loud, but useful."
+      "effects": [{"type": "gain_random_reward", "value": 1}, {"type": "gain_random_oopsie", "value": 1}],
+      "resultText": "A prize pops out, followed by an apologetic little sproing."
+    },
+    {
+      "id": "choice_leave",
+      "label": "Walk Away",
+      "description": "Leave the button with its mystery intact.",
+      "requirements": [],
+      "effects": [],
+      "resultText": "The button looks disappointed but respects your boundaries."
     }
   ],
-  "tags": [
-    "special"
-  ],
+  "tags": ["oopsie", "risk_reward"],
   "enabled": true
 }

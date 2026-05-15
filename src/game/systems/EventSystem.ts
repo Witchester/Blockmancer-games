@@ -343,12 +343,16 @@ export class EventSystem {
 
   private getStageBiome(stage: number): string {
     switch (stage) {
+      case 2:
+        return 'goblin_workshop';
+      case 3:
+        return 'frosty_pantry';
       case 4:
-        return 'crypt';
+        return 'pillow_castle';
       case 5:
-        return 'void';
+        return 'starfall_arcade';
       case 6:
-        return 'royal_ruins';
+        return 'bloxley_palace';
       default:
         return 'dungeon';
     }

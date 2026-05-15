@@ -1,0 +1,1 @@
+{"id":"r_evt_ice_slide","name":"Ice Slide","description":"Ice blocks may slide after a clear before gravity settles.","allowedStages":[3,6],"allowedNodeTypes":["normal","elite","boss"],"triggerTiming":"battle_start","triggerChance":0.12,"maxPerRoom":1,"effects":[{"type":"add_confetti_blocks","value":1}],"toneText":"The floor becomes snack-rink smooth.","enabled":true}

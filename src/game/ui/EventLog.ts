@@ -5,10 +5,12 @@ import { COLORS, FONT_FAMILY } from '../utils/constants';
 export class EventLog {
   private readonly body: Phaser.GameObjects.Text;
   private readonly latestText: Phaser.GameObjects.Text;
+  private readonly maxBodyEntries: number;
   private latestCache = '';
   private bodyCache = '';
 
   constructor(scene: Phaser.Scene, x: number, y: number, width: number, height: number) {
+    this.maxBodyEntries = height < 96 ? 2 : 3;
     scene.add
       .rectangle(x, y, width, height, COLORS.panel, 0.96)
       .setOrigin(0, 0)
@@ -34,14 +36,14 @@ export class EventLog {
       fontFamily: FONT_FAMILY,
       fontSize: '18px',
       wordWrap: { width: width - 28 },
-      lineSpacing: 5
+      lineSpacing: height < 96 ? 2 : 5
     });
   }
 
   update(state: RunState): void {
     const [latest, ...rest] = state.eventLog;
     const latestValue = latest ?? '';
-    const bodyValue = rest.slice(0, 3).map((entry) => `- ${entry}`).join('\n');
+    const bodyValue = rest.slice(0, this.maxBodyEntries).map((entry) => `- ${entry}`).join('\n');
     if (latestValue !== this.latestCache) {
       this.latestText.setText(latestValue);
       this.latestCache = latestValue;

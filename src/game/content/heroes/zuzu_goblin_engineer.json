@@ -26,14 +26,14 @@
     "upgradeIds": []
   },
   "passive": {
-    "id": "passive_gadget_discount",
-    "name": "Gadget Discount",
-    "description": "Bomb spells cost 10 less mana.",
+    "id": "passive_bombs_are_features",
+    "name": "Bombs Are Features",
+    "description": "Bomb blocks appear more often, but junk also increases slightly.",
     "effects": [
       {
-        "type": "reduce_spell_cost",
-        "value": 10,
-        "condition": "on_bomb_spell"
+        "type": "increase_bomb_and_junk_blocks",
+        "value": 0.08,
+        "condition": "on_piece_lock"
       }
     ]
   },

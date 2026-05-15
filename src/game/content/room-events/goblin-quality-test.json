@@ -1,0 +1,16 @@
+{
+  "id": "evt_goblin_quality_test",
+  "name": "Goblin Quality Test",
+  "rarity": "uncommon",
+  "description": "A workshop table offers three gadgets, all stamped with a sticker reading 'tested-ish'.",
+  "iconKey": "evt_goblin_quality_test",
+  "backgroundKey": "bg_event_workshop",
+  "biome": "goblin_workshop",
+  "choices": [
+    {"id":"choice_common","label":"Take Common Upgrade","description":"Gain a safe random reward.","requirements":[],"effects":[{"type":"gain_random_reward","value":1}],"resultText":"The gadget only sparkles a normal amount."},
+    {"id":"choice_risky","label":"Test Weird Gadget","description":"Gain a rare reward and a random Oopsie.","requirements":[],"effects":[{"type":"gain_random_reward","value":1},{"type":"gain_random_oopsie","value":1}],"resultText":"The gadget works. The definition of works is flexible."},
+    {"id":"choice_paid","label":"Pay For Safe Version","description":"Pay 45 gold for a controlled reward without Oopsie.","requirements":["min_gold"],"costGold":45,"effects":[{"type":"lose_gold","value":45},{"type":"gain_random_reward","value":1}],"resultText":"The safe version has only one warning label."}
+  ],
+  "tags": ["oopsie", "workshop"],
+  "enabled": true
+}

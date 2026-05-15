@@ -1,0 +1,1 @@
+{"id":"obj_no_spell","name":"No Spell Win","description":"Win without using a spell.","targetType":"no_spell","requiredAmount":1,"reward":{"id":"currency_gold","name":"Gold","type":"gold","description":"Bonus gold.","persistent":false,"amount":25},"enabled":true}

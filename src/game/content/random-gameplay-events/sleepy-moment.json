@@ -1,0 +1,1 @@
+{"id":"r_evt_sleepy_moment","name":"Sleepy Moment","description":"Enemy skips its next action.","allowedStages":[4,5,6],"allowedNodeTypes":["normal","elite","boss"],"triggerTiming":"battle_start","triggerChance":0.16,"maxPerRoom":1,"effects":[{"type":"enemy_sleep","value":1}],"toneText":"The monster yawns at its own dramatic entrance.","enabled":true}

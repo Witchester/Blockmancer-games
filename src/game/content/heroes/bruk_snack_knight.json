@@ -26,14 +26,14 @@
     "upgradeIds": []
   },
   "passive": {
-    "id": "passive_heavy_drop",
-    "name": "Heavy Drop",
-    "description": "Hard drop deals 3 damage to enemies.",
+    "id": "passive_no_snack_left_behind",
+    "name": "No Snack Left Behind",
+    "description": "Survive board overflow once per battle and gain emergency shield.",
     "effects": [
       {
-        "type": "hard_drop_damage",
-        "value": 3,
-        "condition": "on_hard_drop"
+        "type": "prevent_overflow_once",
+        "value": 1,
+        "condition": "on_board_overflow"
       }
     ]
   },

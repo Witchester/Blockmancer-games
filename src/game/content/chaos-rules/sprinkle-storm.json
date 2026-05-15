@@ -1,0 +1,1 @@
+{"id":"chaos_sprinkle_storm","name":"Sprinkle Storm","description":"More sprinkle blocks appear, giving extra mana.","allowedStages":[1,2,3,4,5,6],"allowedNodeTypes":["normal","elite","boss"],"weight":14,"effects":[{"type":"gain_mana","value":10}],"enabled":true}

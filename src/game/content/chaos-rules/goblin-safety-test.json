@@ -1,0 +1,1 @@
+{"id":"chaos_goblin_safety_test","name":"Goblin Safety Test","description":"Bombs and junk both increase.","allowedStages":[2,5,6],"allowedNodeTypes":["normal","elite"],"weight":9,"effects":[{"type":"add_junk_rows","value":1},{"type":"gain_fever","value":8}],"enabled":true}

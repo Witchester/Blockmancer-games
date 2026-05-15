@@ -77,6 +77,9 @@ export class BattleScene extends Phaser.Scene {
   private topSectionHeight = 0;
   private middleSectionHeight = 0;
   private bottomSectionHeight = 0;
+  private boardColumns = BOARD_COLS;
+  private boardRows = BOARD_ROWS;
+  private boardCellSize = CELL_SIZE;
   private boardOffsetX = 0;
   private boardOffsetY = 0;
   private previewCenterX = 0;
@@ -89,6 +92,7 @@ export class BattleScene extends Phaser.Scene {
   private logHeight = 0;
   private dropTimer = 0;
   private handlePause = () => this.combat.addLog('Pause menu is not open during this battle build.');
+  private readonly cascadeSettlePauseMs = 220;
 
   constructor() {
     super('BattleScene');
@@ -127,7 +131,10 @@ export class BattleScene extends Phaser.Scene {
     this.dropTimer = 0;
     this.oopsies = game.oopsieSystem;
     this.oopsies.normalizeState(state);
+    game.boardSizeModifierSystem.applyEncounterBoardSize(state);
     this.board = new BoardSystem(state);
+    this.boardColumns = this.board.columns;
+    this.boardRows = this.board.rows;
     this.combat = new CombatSystem(state);
     this.fever = new FeverSystem();
     this.spells = new SpellSystem(state, this.board, this.combat);
@@ -138,16 +145,17 @@ export class BattleScene extends Phaser.Scene {
     this.topSectionHeight = layout.topHeight;
     this.bottomSectionHeight = layout.bottomHeight;
     this.middleSectionHeight = layout.middleHeight;
-    this.boardOffsetX = Math.round((this.screenWidth - BOARD_COLS * CELL_SIZE) / 2);
+    this.boardCellSize = Math.min(CELL_SIZE, Math.floor((this.screenWidth - 230) / Math.max(1, this.boardColumns)));
+    this.boardOffsetX = Math.round((this.screenWidth - this.boardColumns * this.boardCellSize) / 2);
     this.boardOffsetY = this.topSectionHeight + 84;
     this.previewCenterX = this.screenWidth - 88;
     this.previewCenterY = this.topSectionHeight + 126;
     this.controlsCenterX = this.screenWidth / 2;
     this.controlsY = this.topSectionHeight + this.middleSectionHeight + Math.round(this.bottomSectionHeight / 2) - 4;
     this.logWidth = this.screenWidth - 48;
-    this.logHeight = 100;
+    this.logHeight = 88;
     this.logX = 24;
-    this.logY = this.topSectionHeight + this.middleSectionHeight - this.logHeight - 12;
+    this.logY = this.topSectionHeight + this.middleSectionHeight - this.logHeight - 10;
 
     this.drawLayout();
     this.createRenderBuffers();
@@ -155,10 +163,11 @@ export class BattleScene extends Phaser.Scene {
     this.createPreviewPanel();
     this.hud = new Hud(this, {
       compact: true,
+      showMeta: false,
       x: this.screenWidth / 2,
-      y: 74,
+      y: 76,
       width: this.screenWidth - 64,
-      height: 96
+      height: 76
     });
     this.log = new EventLog(this, this.logX, this.logY, this.logWidth, this.logHeight);
     this.createMobileControls();
@@ -172,6 +181,14 @@ export class BattleScene extends Phaser.Scene {
       bossBeat.lines.forEach((line) => this.combat.addLog(line));
       this.sharedGame.audioSystem.play('boss_intro', this);
       this.showBossIntro(state.activeEnemy.name, bossBeat.lines[0] ?? fallbackIntro);
+      this.showBossRuleCard(state.activeEnemy.id);
+    }
+    const chaos = this.sharedGame.chaosRuleSystem.getActive(state);
+    if (chaos) {
+      this.sharedGame.chaosRuleSystem.applyStartEffects(state, (message) => this.combat.addLog(message), this.board);
+    }
+    for (const eventEntry of this.sharedGame.randomGameplayEventSystem.getActive(state)) {
+      this.sharedGame.randomGameplayEventSystem.applyEffects(state, eventEntry, (message) => this.combat.addLog(message), this.board);
     }
     this.syncBoardState();
     game.saveRun();
@@ -200,14 +217,14 @@ export class BattleScene extends Phaser.Scene {
     this.add.text(28, 20, 'Blockmancer Battle', {
       color: '#f6f7ff',
       fontFamily: FONT_FAMILY,
-      fontSize: '24px',
+      fontSize: '18px',
       fontStyle: 'bold'
     });
 
-    this.add.text(this.screenWidth - 28, 24, `Stage ${this.sharedGame.runState.stage}`, {
+    this.add.text(this.screenWidth - 28, 20, `Stage ${this.sharedGame.runState.stage}`, {
       color: '#ffca6b',
       fontFamily: FONT_FAMILY,
-      fontSize: '18px',
+      fontSize: '16px',
       fontStyle: 'bold'
     }).setOrigin(1, 0);
 
@@ -235,7 +252,7 @@ export class BattleScene extends Phaser.Scene {
       fontSize: '17px',
       wordWrap: { width: topPanelWidth - 190 }
     });
-    this.enemyCountdownText = this.add.text(this.screenWidth - 28, 158, '', {
+    this.enemyCountdownText = this.add.text(this.screenWidth - 28, 206, '', {
       color: '#ff6673',
       fontFamily: FONT_FAMILY,
       fontSize: '18px',
@@ -243,7 +260,7 @@ export class BattleScene extends Phaser.Scene {
     }).setOrigin(1, 0);
     this.enemyHpBar = new ProgressBar(this, 28, 204, {
       label: 'Enemy HP',
-      width: topPanelWidth - 56,
+      width: topPanelWidth - 232,
       height: 16,
       fillColor: COLORS.danger
     });
@@ -251,18 +268,18 @@ export class BattleScene extends Phaser.Scene {
     this.heroPortrait = this.sharedGame.assetSystem.addImage(
       this,
       this.screenWidth - 170,
-      124,
+      160,
       this.sharedGame.runState.hero.id,
       'sprite'
-    ).setDisplaySize(74, 74).setAlpha(0.95);
+    ).setDisplaySize(64, 64).setAlpha(0.95);
 
     this.enemySprite = this.sharedGame.assetSystem.addImage(
       this,
       this.screenWidth - 78,
-      124,
+      160,
       null,
       'sprite'
-    ).setDisplaySize(74, 74).setAlpha(0.95);
+    ).setDisplaySize(64, 64).setAlpha(0.95);
 
     this.add.text(28, this.topSectionHeight + 20, 'Hold', {
       color: '#ffca6b',
@@ -279,65 +296,66 @@ export class BattleScene extends Phaser.Scene {
       wordWrap: { width: 96 }
     }).setOrigin(0.5);
 
-    this.add.text(28, this.boardOffsetY + BOARD_ROWS * CELL_SIZE + 14, 'Inventory', {
+    const boardBottom = this.boardOffsetY + this.boardRows * this.boardCellSize;
+    this.add.text(28, boardBottom + 10, 'Inventory', {
       color: '#ffca6b',
       fontFamily: FONT_FAMILY,
       fontSize: '17px',
       fontStyle: 'bold'
     });
-    this.add.rectangle(132, this.boardOffsetY + BOARD_ROWS * CELL_SIZE + 62, 216, 66, COLORS.panelAlt, 0.96).setStrokeStyle(2, COLORS.accentSoft, 0.45);
-    this.inventoryText = this.add.text(128, this.boardOffsetY + BOARD_ROWS * CELL_SIZE + 58, 'Items: compact pack', {
+    this.add.rectangle(132, boardBottom + 50, 216, 56, COLORS.panelAlt, 0.96).setStrokeStyle(2, COLORS.accentSoft, 0.45);
+    this.inventoryText = this.add.text(128, boardBottom + 50, 'Items: compact pack', {
       color: '#d8deff',
       fontFamily: FONT_FAMILY,
-      fontSize: '17px',
+      fontSize: '15px',
       align: 'center',
       wordWrap: { width: 184 }
     }).setOrigin(0.5);
 
-    this.feverText = this.add.text(this.screenWidth - 28, this.boardOffsetY + BOARD_ROWS * CELL_SIZE + 30, '', {
+    this.feverText = this.add.text(this.screenWidth - 28, boardBottom + 12, '', {
       color: '#65d6a5',
       fontFamily: FONT_FAMILY,
-      fontSize: '19px',
+      fontSize: '17px',
       fontStyle: 'bold',
       align: 'right'
     }).setOrigin(1, 0);
 
-    this.add.rectangle(this.screenWidth - 94, this.boardOffsetY + BOARD_ROWS * CELL_SIZE + 88, 132, 14, COLORS.boardEmpty, 1)
+    this.add.rectangle(this.screenWidth - 94, boardBottom + 56, 132, 14, COLORS.boardEmpty, 1)
       .setStrokeStyle(1, COLORS.accent, 0.55);
-    this.feverBarFill = this.add.rectangle(this.screenWidth - 160, this.boardOffsetY + BOARD_ROWS * CELL_SIZE + 88, 0, 10, COLORS.success, 1)
+    this.feverBarFill = this.add.rectangle(this.screenWidth - 160, boardBottom + 56, 0, 10, COLORS.success, 1)
       .setOrigin(0, 0.5);
-    this.cascadeText = this.add.text(this.screenWidth - 28, this.boardOffsetY + BOARD_ROWS * CELL_SIZE + 102, '', {
+    this.cascadeText = this.add.text(this.screenWidth - 28, boardBottom + 70, '', {
       color: '#ffca6b',
       fontFamily: FONT_FAMILY,
-      fontSize: '17px',
+      fontSize: '16px',
       fontStyle: 'bold',
       align: 'right',
       wordWrap: { width: 150 }
     }).setOrigin(1, 0);
 
-    this.upgradesText = this.add.text(this.screenWidth - 28, this.boardOffsetY + BOARD_ROWS * CELL_SIZE + 56, '', {
+    this.upgradesText = this.add.text(this.screenWidth - 28, boardBottom + 38, '', {
       color: '#d8deff',
       fontFamily: FONT_FAMILY,
-      fontSize: '15px',
+      fontSize: '13px',
       align: 'right',
       wordWrap: { width: 132 },
       lineSpacing: 4
-    }).setOrigin(1, 0);
+    }).setOrigin(1, 0).setVisible(false);
   }
 
   private buildBoard(): void {
-    for (let row = 0; row < BOARD_ROWS; row += 1) {
+    for (let row = 0; row < this.boardRows; row += 1) {
       const cellRow: Phaser.GameObjects.Rectangle[] = [];
       const spriteRow: Phaser.GameObjects.Image[] = [];
       const symbolRow: Phaser.GameObjects.Text[] = [];
-      for (let col = 0; col < BOARD_COLS; col += 1) {
+      for (let col = 0; col < this.boardColumns; col += 1) {
         const settings = this.sharedGame.getSettings();
         const cell = this.add
           .rectangle(
-            this.boardOffsetX + col * CELL_SIZE + CELL_SIZE / 2,
-            this.boardOffsetY + row * CELL_SIZE + CELL_SIZE / 2,
-            CELL_SIZE - 2,
-            CELL_SIZE - 2,
+            this.boardOffsetX + col * this.boardCellSize + this.boardCellSize / 2,
+            this.boardOffsetY + row * this.boardCellSize + this.boardCellSize / 2,
+            this.boardCellSize - 2,
+            this.boardCellSize - 2,
             COLORS.boardEmpty,
             1
           )
@@ -346,22 +364,22 @@ export class BattleScene extends Phaser.Scene {
         const sprite = this.sharedGame.assetSystem
           .addImage(
             this,
-            this.boardOffsetX + col * CELL_SIZE + CELL_SIZE / 2,
-            this.boardOffsetY + row * CELL_SIZE + CELL_SIZE / 2,
+            this.boardOffsetX + col * this.boardCellSize + this.boardCellSize / 2,
+            this.boardOffsetY + row * this.boardCellSize + this.boardCellSize / 2,
             null,
             'block'
           )
-          .setDisplaySize(CELL_SIZE - 6, CELL_SIZE - 6)
+          .setDisplaySize(this.boardCellSize - 6, this.boardCellSize - 6)
           .setVisible(false);
         spriteRow.push(sprite);
         const symbol = this.add.text(
-          this.boardOffsetX + col * CELL_SIZE + CELL_SIZE / 2,
-          this.boardOffsetY + row * CELL_SIZE + CELL_SIZE / 2 + 1,
+          this.boardOffsetX + col * this.boardCellSize + this.boardCellSize / 2,
+          this.boardOffsetY + row * this.boardCellSize + this.boardCellSize / 2 + 1,
           '',
           {
             color: '#f6f7ff',
             fontFamily: FONT_FAMILY,
-            fontSize: '15px',
+            fontSize: `${Math.max(12, Math.min(15, this.boardCellSize - 9))}px`,
             fontStyle: 'bold',
             stroke: '#05060a',
             strokeThickness: 2
@@ -376,14 +394,14 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private createRenderBuffers(): void {
-    for (let row = 0; row < BOARD_ROWS; row += 1) {
+    for (let row = 0; row < this.boardRows; row += 1) {
       this.displayBoard[row] = [];
       this.displayAlpha[row] = [];
       this.renderedCellColors[row] = [];
       this.renderedCellAlphas[row] = [];
       this.renderedTextureKeys[row] = [];
       this.renderedSymbols[row] = [];
-      for (let col = 0; col < BOARD_COLS; col += 1) {
+      for (let col = 0; col < this.boardColumns; col += 1) {
         this.displayBoard[row][col] = 0;
         this.displayAlpha[row][col] = 1;
         this.renderedCellColors[row][col] = -1;
@@ -436,9 +454,9 @@ export class BattleScene extends Phaser.Scene {
     const movementRow = [
       { label: '<', width: size(58), height: size(48), onPress: () => this.moveHorizontal(-1), repeat: true, repeatDelayMs: 180, repeatIntervalMs: 90 },
       { label: '>', width: size(58), height: size(48), onPress: () => this.moveHorizontal(1), repeat: true, repeatDelayMs: 180, repeatIntervalMs: 90 },
-      { label: 'Rot', width: size(64), height: size(48), onPress: () => this.board.rotate() && this.renderBoard() },
-      { label: 'Soft', width: size(66), height: size(48), onPress: () => this.resolveTick(this.board.tick()), repeat: true, repeatDelayMs: 120, repeatIntervalMs: 60 },
-      { label: 'Drop', width: size(70), height: size(48), onPress: () => this.resolveTick(this.board.hardDrop()) },
+      { label: 'Rot', width: size(64), height: size(48), onPress: () => this.rotatePiece() },
+      { label: 'Soft', width: size(66), height: size(48), onPress: () => this.softDrop(), repeat: true, repeatDelayMs: 120, repeatIntervalMs: 60 },
+      { label: 'Drop', width: size(70), height: size(48), onPress: () => this.hardDrop() },
       { label: 'Hold', width: size(64), height: size(48), onPress: () => this.handleHold() }
     ];
     const spellRow = [
@@ -498,6 +516,10 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private handleHold(): void {
+    if (this.cascadeResolving) {
+      return;
+    }
+
     if (this.board.hold()) {
       this.combat.addLog('Held the current block.');
       this.syncBoardState();
@@ -519,9 +541,9 @@ export class BattleScene extends Phaser.Scene {
     this.inputSystem = new InputSystem(this, {
       moveLeft: () => this.moveHorizontal(-1),
       moveRight: () => this.moveHorizontal(1),
-      rotate: () => this.board.rotate() && this.renderBoard(),
-      softDrop: () => this.resolveTick(this.board.tick()),
-      hardDrop: () => this.resolveTick(this.board.hardDrop()),
+      rotate: () => this.rotatePiece(),
+      softDrop: () => this.softDrop(),
+      hardDrop: () => this.hardDrop(),
       hold: () => this.handleHold(),
       castSpell: (slot) => {
         const spell = SPELLS[slot];
@@ -535,6 +557,10 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private moveHorizontal(direction: -1 | 1): void {
+    if (this.cascadeResolving) {
+      return;
+    }
+
     const enemy = this.sharedGame.runState.activeEnemy;
     const slipped = this.sharedGame.oopsieSystem.shouldSlipButton(this.sharedGame.runState);
     const resolvedDirection = enemy?.reverseControlsTurns || slipped ? -direction : direction;
@@ -545,6 +571,30 @@ export class BattleScene extends Phaser.Scene {
       this.syncBoardState();
       this.sharedGame.saveRun();
       this.renderBoard();
+    }
+  }
+
+  private rotatePiece(): void {
+    if (this.cascadeResolving) {
+      return;
+    }
+
+    if (this.board.rotate()) {
+      this.syncBoardState();
+      this.sharedGame.saveRun();
+      this.renderBoard();
+    }
+  }
+
+  private softDrop(): void {
+    if (!this.cascadeResolving) {
+      this.resolveTick(this.board.tick());
+    }
+  }
+
+  private hardDrop(): void {
+    if (!this.cascadeResolving) {
+      this.resolveTick(this.board.hardDrop());
     }
   }
 
@@ -609,6 +659,20 @@ export class BattleScene extends Phaser.Scene {
     const state = this.sharedGame.runState;
 
     if (result.toppedOut) {
+      if (
+        state.hero.passiveId === 'passive_no_snack_left_behind' &&
+        !state.player.emergencyBarrierUsed
+      ) {
+        state.player.emergencyBarrierUsed = true;
+        state.player.shield += 10;
+        state.board.topOut = false;
+        this.board.clearMessiestRow();
+        this.combat.addLog('No Snack Left Behind saves the run and clears breathing room.');
+        this.syncBoardState();
+        this.sharedGame.saveRun();
+        this.renderAll();
+        return;
+      }
       state.board.topOut = true;
       this.combat.addLog('The board reaches the top. The festival machine calls a reset.');
       this.finishRun(false);
@@ -645,14 +709,25 @@ export class BattleScene extends Phaser.Scene {
     }
     if (cascade.cascadeCount > 1 || cascade.blocksDropped > 0) {
       this.sharedGame.audioSystem.play('cascade', this);
-      this.showFloatingText('Cascade Gravity', this.screenWidth / 2, this.boardOffsetY + 120, '#65d6a5', 26);
+      this.showFloatingText(
+        `Cascade Gravity x${Math.max(1, cascade.cascadeCount)}`,
+        this.screenWidth / 2,
+        this.boardOffsetY + 118,
+        '#65d6a5',
+        28
+      );
       await this.playCascadeGravityFeedback(cascade);
+      await this.wait(this.cascadeSettlePauseMs);
     }
 
     const result = this.combat.resolveCascadeClear(cascade);
+    if (cascade.cascadeCount > 1) {
+      this.showFloatingText(`Combo x${state.combo}`, this.screenWidth / 2, this.boardOffsetY + 164, '#ffca6b', 30);
+    }
     if (result.damage > 0) {
       this.sharedGame.audioSystem.play('enemy_hit', this);
       this.showFloatingText(`-${result.damage}`, this.screenWidth - 78, 92, result.specialDamage > 0 ? '#65d6a5' : '#ffca6b');
+      this.flashEnemyHit(result.damage);
     }
     if (result.feverGained > 0 || result.feverTriggered) {
       this.pulseFeverMeter(result.feverTriggered);
@@ -662,10 +737,17 @@ export class BattleScene extends Phaser.Scene {
     state.runStats.cascadesTriggered += cascade.cascadeCount > 1 ? 1 : 0;
     state.runStats.maxCascade = Math.max(state.runStats.maxCascade, cascade.cascadeCount);
     state.runStats.damageDealt += result.damage;
+    if (cascade.cascadeCount > 1) {
+      const stageGoalMessage = this.sharedGame.stageGoalSystem.addProgress(state, 'combo_score', cascade.cascadeCount);
+      if (stageGoalMessage) {
+        this.combat.addLog(stageGoalMessage);
+      }
+    }
     this.applyOopsieBoardEffects(cascade.totalLinesCleared);
     this.renderCombatUi();
 
     if (state.activeEnemy && state.activeEnemy.currentHp <= 0) {
+      await this.wait(280);
       this.cascadeResolving = false;
       this.sharedGame.saveRun();
       this.handleVictory();
@@ -696,8 +778,10 @@ export class BattleScene extends Phaser.Scene {
       this.sharedGame.runState,
       this.sharedGame.runState.fallSpeed
     );
-    const tileDuration = Math.max(140, Math.min(520, BASE_DROP_MS / effectiveFallSpeed));
-    const distance = CELL_SIZE * Math.min(4, Math.max(1, cascade.cascadeCount));
+    const dropInterval = Math.max(120, BASE_DROP_MS / effectiveFallSpeed);
+    const visualRows = Math.min(4, Math.max(1, cascade.cascadeCount));
+    const distance = this.boardCellSize * visualRows;
+    const duration = Math.min(2600, dropInterval * visualRows);
     const targets: Phaser.GameObjects.GameObject[] = [
       ...this.boardCells.flat(),
       ...this.boardSprites.flat().filter((sprite) => sprite.visible),
@@ -713,7 +797,7 @@ export class BattleScene extends Phaser.Scene {
       this.tweens.add({
         targets,
         y: `+=${distance}`,
-        duration: tileDuration * Math.min(3, Math.max(1, cascade.cascadeCount)),
+        duration,
         ease: 'Linear',
         onComplete: () => resolve()
       });
@@ -896,8 +980,8 @@ export class BattleScene extends Phaser.Scene {
       this.vibrate(50);
       this.showFloatingText(
         attackResult.hpDamage > 0 ? `-${attackResult.hpDamage} HP` : 'Blocked',
-        112,
-        94,
+        this.heroPortrait?.x ?? 112,
+        this.heroPortrait?.y ?? 94,
         attackResult.hpDamage > 0 ? '#ff6673' : '#9adfff'
       );
     }
@@ -921,19 +1005,68 @@ export class BattleScene extends Phaser.Scene {
 
   private flashPlayerHit(hpDamage: number): void {
     const color = hpDamage > 0 ? COLORS.danger : COLORS.accent;
-    const flash = this.add.rectangle(this.screenWidth / 2, 82, this.screenWidth - 48, 116, color, 0.18)
-      .setDepth(119)
+    const flash = this.add.rectangle(this.screenWidth / 2, 82, this.screenWidth - 48, 116, color, 0.24)
+      .setDepth(125)
       .setStrokeStyle(2, color, 0.6);
+    const border = this.add.rectangle(this.screenWidth / 2, this.screenHeight / 2, this.screenWidth - 18, this.screenHeight - 18, color, 0)
+      .setDepth(126)
+      .setStrokeStyle(6, color, hpDamage > 0 ? 0.9 : 0.6);
+    if (this.heroPortrait) {
+      const originalX = this.heroPortrait.x;
+      this.heroPortrait.setTint(color);
+      this.tweens.add({
+        targets: this.heroPortrait,
+        x: originalX - 8,
+        duration: 45,
+        yoyo: true,
+        repeat: 2,
+        onComplete: () => {
+          this.heroPortrait?.setX(originalX);
+          this.heroPortrait?.clearTint();
+        }
+      });
+    }
     this.tweens.add({
-      targets: flash,
+      targets: [flash, border],
       alpha: 0,
-      duration: 260,
-      onComplete: () => flash.destroy()
+      duration: 360,
+      onComplete: () => {
+        flash.destroy();
+        border.destroy();
+      }
+    });
+  }
+
+  private flashEnemyHit(damage: number): void {
+    if (!this.enemySprite) {
+      return;
+    }
+
+    const originalX = this.enemySprite.x;
+    const originalScaleX = this.enemySprite.scaleX;
+    const originalScaleY = this.enemySprite.scaleY;
+    this.enemySprite.setTint(damage > 0 ? COLORS.danger : COLORS.gold);
+    this.tweens.add({
+      targets: this.enemySprite,
+      x: originalX + 8,
+      scaleX: originalScaleX * 1.08,
+      scaleY: originalScaleY * 1.08,
+      duration: 60,
+      yoyo: true,
+      repeat: 2,
+      onComplete: () => {
+        this.enemySprite?.setX(originalX);
+        this.enemySprite?.setScale(originalScaleX, originalScaleY);
+        this.enemySprite?.clearTint();
+      }
     });
   }
 
   private renderCombatUi(): void {
+    this.renderBoard();
     this.renderEnemy();
+    this.renderPreview();
+    this.renderUpgrades();
     this.renderMiddleOverlays();
     this.hud.update(this.sharedGame.runState);
     this.log.update(this.sharedGame.runState);
@@ -956,19 +1089,40 @@ export class BattleScene extends Phaser.Scene {
     this.combat.addLog(`${enemy.name} attacks in ${enemy.attackCounter} block${enemy.attackCounter === 1 ? '' : 's'}.`);
   }
 
-  private tryCast(spellId: SpellId): void {
+  private async tryCast(spellId: SpellId): Promise<void> {
+    if (this.cascadeResolving) {
+      return;
+    }
+
+    const state = this.sharedGame.runState;
+    const enemyHpBefore = state.activeEnemy?.currentHp ?? 0;
+    const playerHpBefore = state.player.hp;
     const cast = this.spells.cast(spellId);
     if (!cast) {
       this.renderAll();
       return;
     }
 
-    this.sharedGame.runState.runStats.spellsCast += 1;
+    state.runStats.spellsCast += 1;
     this.sharedGame.audioSystem.play('spell_cast', this);
-    if (this.sharedGame.runState.activeEnemy) {
+    const damageDealt = Math.max(0, enemyHpBefore - (state.activeEnemy?.currentHp ?? enemyHpBefore));
+    const hpSpent = Math.max(0, playerHpBefore - state.player.hp);
+
+    if (state.activeEnemy) {
       this.sharedGame.audioSystem.play('enemy_hit', this);
+      if (damageDealt > 0) {
+        this.showFloatingText(`-${damageDealt}`, this.screenWidth - 78, 126, '#ffca6b', 28);
+        this.flashEnemyHit(damageDealt);
+      }
     }
-    if (this.sharedGame.runState.activeEnemy?.currentHp === 0) {
+    if (hpSpent > 0) {
+      this.showFloatingText(`-${hpSpent} HP`, this.heroPortrait?.x ?? 112, this.heroPortrait?.y ?? 94, '#ff6673', 26);
+      this.flashPlayerHit(hpSpent);
+    }
+    this.renderCombatUi();
+
+    if (state.activeEnemy?.currentHp === 0) {
+      await this.wait(280);
       this.handleVictory();
       return;
     }
@@ -1003,6 +1157,25 @@ export class BattleScene extends Phaser.Scene {
     state.enemiesDefeated += 1;
     state.runStats.roomsCleared += 1;
     this.combat.addLog(`${enemyName} tumbles out of the way.`);
+    const objectiveMessage = this.sharedGame.battleObjectiveSystem.evaluateVictory(state);
+    if (objectiveMessage) {
+      this.combat.addLog(objectiveMessage);
+    }
+    const friendshipMessage = this.sharedGame.friendshipSystem.gain(this.sharedGame.metaSystem.state, enemyId, 'defeat');
+    if (friendshipMessage) {
+      this.combat.addLog(friendshipMessage);
+      this.sharedGame.metaSystem.save();
+    }
+    const goalMessage = this.sharedGame.stageGoalSystem.addProgress(state, 'battle_objective', 1, enemyId);
+    if (goalMessage) {
+      this.combat.addLog(goalMessage);
+      const goalProgress = this.sharedGame.stageGoalSystem.getProgress(state);
+      if (goalProgress?.progress.completed) {
+        this.sharedGame.metaSystem.recordStageGoalCompleted(goalProgress.goal.id);
+      }
+    }
+    this.sharedGame.chaosRuleSystem.clear(state);
+    this.sharedGame.randomGameplayEventSystem.clearRoomEvents(state);
 
     if (state.lastBattleWasBoss) {
       if (!state.runStats.bossesDefeated.includes(enemyId)) {
@@ -1062,18 +1235,20 @@ export class BattleScene extends Phaser.Scene {
     this.log.update(this.sharedGame.runState);
   }
 
-  private renderBoard(): void {
+  private renderBoard(showActivePiece = !this.cascadeResolving): void {
     this.copyBoardToDisplayBuffer();
-    this.overlayGhostPiece();
+    if (showActivePiece) {
+      this.overlayGhostPiece();
+    }
 
     const current = this.board.currentPiece;
-    if (current) {
+    if (showActivePiece && current) {
       for (let rowIndex = 0; rowIndex < current.matrix.length; rowIndex += 1) {
         for (let colIndex = 0; colIndex < current.matrix[rowIndex].length; colIndex += 1) {
           if (!current.matrix[rowIndex][colIndex]) continue;
           const targetRow = current.y + rowIndex;
           const targetCol = current.x + colIndex;
-          if (targetRow >= 0 && targetRow < BOARD_ROWS && targetCol >= 0 && targetCol < BOARD_COLS) {
+          if (targetRow >= 0 && targetRow < this.boardRows && targetCol >= 0 && targetCol < this.boardColumns) {
             this.displayBoard[targetRow][targetCol] = current.color;
             this.displayAlpha[targetRow][targetCol] = 1;
           }
@@ -1082,8 +1257,8 @@ export class BattleScene extends Phaser.Scene {
     }
 
     const colorblindSymbols = this.sharedGame.getSettings().colorblindSymbols;
-    for (let row = 0; row < BOARD_ROWS; row += 1) {
-      for (let col = 0; col < BOARD_COLS; col += 1) {
+    for (let row = 0; row < this.boardRows; row += 1) {
+      for (let col = 0; col < this.boardColumns; col += 1) {
         const cell = this.displayBoard[row][col];
         const color = cell === 0 ? COLORS.boardEmpty : getBoardCellColor(cell);
         const alpha = this.displayAlpha[row][col];
@@ -1099,8 +1274,8 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private copyBoardToDisplayBuffer(): void {
-    for (let row = 0; row < BOARD_ROWS; row += 1) {
-      for (let col = 0; col < BOARD_COLS; col += 1) {
+    for (let row = 0; row < this.boardRows; row += 1) {
+      for (let col = 0; col < this.boardColumns; col += 1) {
         this.displayBoard[row][col] = this.board.grid[row][col];
         this.displayAlpha[row][col] = 1;
       }
@@ -1128,9 +1303,9 @@ export class BattleScene extends Phaser.Scene {
         const targetCol = current.x + colIndex;
         if (
           targetRow >= 0 &&
-          targetRow < BOARD_ROWS &&
+          targetRow < this.boardRows &&
           targetCol >= 0 &&
-          targetCol < BOARD_COLS &&
+          targetCol < this.boardColumns &&
           this.displayBoard[targetRow][targetCol] === 0
         ) {
           this.displayBoard[targetRow][targetCol] = COLORS.boardGhost;
@@ -1301,13 +1476,20 @@ export class BattleScene extends Phaser.Scene {
           : 'Hold\nEmpty'
     );
     
-    const inventorySummary = state.inventory.slice(0, 2).map(stack => `${this.sharedGame.itemSystem.getItem(stack.itemId)?.name} x${stack.count}`).join(', ');
+    const inventorySummary = state.inventory.slice(0, 1).map(stack => `${this.sharedGame.itemSystem.getItem(stack.itemId)?.name} x${stack.count}`).join(', ');
     const bagText = state.inventory.length ? inventorySummary : 'Bag Empty';
+    const chaos = this.sharedGame.chaosRuleSystem.getActive(state);
+    const objective = this.sharedGame.battleObjectiveSystem.getActive(state);
+    const battleStatusText = [
+      `Relics ${state.ownedRewards.length}  Oops ${state.player.oopsies.length}`,
+      chaos ? `Chaos: ${chaos.name}` : '',
+      objective ? `Obj: ${objective.name}` : ''
+    ].filter(Boolean).join('\n');
     
     this.inventoryText?.setText(
       this.inventoryExpanded
         ? `Bag Open`
-        : `Gold ${state.player.gold}\n${bagText}`
+        : `Gold ${state.player.gold}\n${bagText}\n${battleStatusText}`
     );
     
     this.inventoryOverlay.setVisible(this.inventoryExpanded);
@@ -1489,6 +1671,49 @@ export class BattleScene extends Phaser.Scene {
     });
   }
 
+  private showBossRuleCard(bossId: string): void {
+    const card = this.sharedGame.bossRuleSystem.getForBoss(bossId);
+    if (!card) {
+      return;
+    }
+    const rules = card.phaseRules
+      .slice(0, 2)
+      .map((rule) => `P${rule.phase}: ${rule.effect}${rule.playerTip ? ` Tip: ${rule.playerTip}` : ''}`)
+      .join('\n');
+    const panel = this.add.rectangle(this.screenWidth / 2, 310, this.screenWidth - 72, 150, COLORS.panelAlt, 0.98)
+      .setStrokeStyle(3, COLORS.gold, 0.8)
+      .setDepth(132);
+    const title = this.add.text(this.screenWidth / 2, 258, card.title, {
+      color: '#ffca6b',
+      fontFamily: FONT_FAMILY,
+      fontSize: '24px',
+      fontStyle: 'bold',
+      align: 'center',
+      wordWrap: { width: this.screenWidth - 104 }
+    }).setOrigin(0.5).setDepth(133);
+    const body = this.add.text(this.screenWidth / 2, 326, `${card.description}\n${rules}`, {
+      color: '#f6f7ff',
+      fontFamily: FONT_FAMILY,
+      fontSize: '17px',
+      align: 'center',
+      wordWrap: { width: this.screenWidth - 112 },
+      lineSpacing: 4
+    }).setOrigin(0.5).setDepth(133);
+    const dismiss = new Button(this, this.screenWidth / 2, 392, 160, 42, 'Got It', () => {
+      panel.destroy();
+      title.destroy();
+      body.destroy();
+      dismiss.destroy();
+    });
+    dismiss.setDepth(134);
+  }
+
+  private wait(ms: number): Promise<void> {
+    return new Promise((resolve) => {
+      this.time.delayedCall(ms, resolve);
+    });
+  }
+
   private shakeCamera(duration: number, intensity: number): void {
     if (this.sharedGame.getSettings().screenShake) {
       this.cameras.main.shake(duration, intensity);
@@ -1513,8 +1738,8 @@ export class BattleScene extends Phaser.Scene {
 
   private syncBoardState(): void {
     this.sharedGame.runState.board = {
-      columns: BOARD_COLS,
-      rows: BOARD_ROWS,
+      columns: this.boardColumns,
+      rows: this.boardRows,
       activePieceType: this.board.currentPiece?.type ?? null,
       nextPieceType: this.board.nextPieceType,
       holdPieceType: this.board.holdPieceType,

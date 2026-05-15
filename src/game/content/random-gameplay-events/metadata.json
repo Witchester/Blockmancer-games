@@ -1,0 +1,16 @@
+{
+  "contentType": "randomGameplayEvent",
+  "version": "1.0.0",
+  "idPrefix": "r_evt_",
+  "displayName": "Random Gameplay Events",
+  "description": "Cheerful runtime events that can modify battles, map rooms, rewards, goals, or board state.",
+  "idFormat": "r_evt_snake_case",
+  "exampleIds": ["r_evt_sprinkle_rain"],
+  "requiredFields": ["id", "name", "description", "allowedStages", "allowedNodeTypes", "triggerTiming", "triggerChance", "effects", "enabled"],
+  "fields": {},
+  "dataList": {},
+  "defaults": {
+    "enabled": true,
+    "maxPerRoom": 1
+  }
+}

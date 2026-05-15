@@ -1,0 +1,1 @@
+{"id":"friend_combo_gremlin","monsterId":"mon_combo_crab","name":"Combo Gremlin","pointsRequired":6,"gainMethods":[{"type":"defeat","points":1}],"unlockReward":{"effect":[{"type":"fever_gain_bonus","value":0.05}]},"enabled":true}

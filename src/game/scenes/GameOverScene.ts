@@ -50,7 +50,12 @@ export class GameOverScene extends Phaser.Scene {
       this.scene.start('MapScene');
     });
 
-    new Button(this, layout.centerX, 728, 250, 56, 'Main Menu', () => {
+    new Button(this, layout.centerX, 728, 250, 56, 'Festival Hub', () => {
+      game.clearSave();
+      this.scene.start('HubScene');
+    });
+
+    new Button(this, layout.centerX, 806, 250, 56, 'Main Menu', () => {
       game.clearSave();
       this.scene.start('MainMenuScene');
     });

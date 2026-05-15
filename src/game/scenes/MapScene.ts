@@ -17,6 +17,7 @@ export class MapScene extends Phaser.Scene {
 
   create(): void {
     this.gameState.runState.runStatus = 'map';
+    this.gameState.stageGoalSystem.ensureGoal(this.gameState.runState);
     const stageStoryId = this.gameState.stageSystem.getStageStoryId(this.gameState.runState.stage);
     if (stageStoryId && !this.gameState.storySystem.hasSeen(stageStoryId)) {
       const beat = this.gameState.storySystem.getStageIntro(stageStoryId);
@@ -95,6 +96,7 @@ export class MapScene extends Phaser.Scene {
     this.infoText?.setText([
       `HP: ${state.player.hp}/${state.player.maxHp}    Mana: ${state.player.mana}/${state.player.maxMana}    Gold: ${state.player.gold}`,
       `Stage ${state.stage}/${stageCount}: ${currentStage?.name ?? 'Festival Dungeon'}`,
+      this.getStageGoalSummary(),
       `Fall Speed: ${state.fallSpeed.toFixed(2)}x`,
       `Hero: ${state.hero.name}`,
       `Current Room: ${currentNode?.label ?? 'Unknown'}`,
@@ -221,12 +223,18 @@ export class MapScene extends Phaser.Scene {
   }
 
   private handleNodeClick(node: MapNodeDefinition): void {
-    const moved = this.gameState.mapSystem.moveToNode(this.gameState.runState, node.id);
+    const state = this.gameState.runState;
+    const moved = this.gameState.mapSystem.moveToNode(state, node.id);
     if (!moved) {
       return;
     }
 
     this.log(`Entered ${node.label}.`);
+    const mapEvent = this.gameState.randomGameplayEventSystem.roll(state, 'map_node_enter');
+    if (mapEvent) {
+      this.log(`Random event: ${mapEvent.name}.`);
+      this.gameState.randomGameplayEventSystem.applyEffects(state, mapEvent, (message) => this.log(message));
+    }
     if (['fight', 'elite', 'boss'].includes(node.roomType)) {
       this.startBattle(node.roomType);
       return;
@@ -267,6 +275,34 @@ export class MapScene extends Phaser.Scene {
 
     state.activeEnemy = enemy;
     state.lastBattleWasBoss = roomType === 'boss';
+    const randomEvent = this.gameState.randomGameplayEventSystem.roll(state, 'battle_start');
+    if (randomEvent) {
+      this.log(`Random event incoming: ${randomEvent.name}.`);
+    }
+    const boardSizeMessage = this.gameState.boardSizeModifierSystem.applyEncounterBoardSize(state);
+    if (boardSizeMessage) {
+      this.log(boardSizeMessage);
+    }
+    const chaosRule = this.gameState.chaosRuleSystem.rollForCombat(state);
+    if (chaosRule) {
+      this.gameState.metaSystem.recordChaosRuleDiscovered(chaosRule.id);
+      this.log(`Festival Chaos rolled: ${chaosRule.name}.`);
+    }
+    const objective = this.gameState.battleObjectiveSystem.rollForCombat(state);
+    if (objective) {
+      this.log(`Mini-objective: ${objective.name}.`);
+    }
+    if (roomType === 'boss') {
+      const goalMessage = this.gameState.stageGoalSystem.applyBossStartEffect(state);
+      if (goalMessage) {
+        this.log(goalMessage);
+      }
+      const card = this.gameState.bossRuleSystem.getForBoss(enemy.id);
+      state.currentBossRule = card?.id;
+      if (card) {
+        this.gameState.metaSystem.recordBossRuleDiscovered(card.id);
+      }
+    }
     state.player.emergencyBarrierUsed = false;
     state.currentRoomProgress = 'entered';
     state.runStatus = 'battle';
@@ -277,5 +313,14 @@ export class MapScene extends Phaser.Scene {
 
   private isCompactLayout(): boolean {
     return this.scale.parentSize.width <= 900 || this.scale.parentSize.height <= 720;
+  }
+
+  private getStageGoalSummary(): string {
+    const goalProgress = this.gameState.stageGoalSystem.getProgress(this.gameState.runState);
+    if (!goalProgress) {
+      return 'Stage Goal: none';
+    }
+    const { goal, progress } = goalProgress;
+    return `Stage Goal: ${goal.name} ${progress.progress}/${progress.requiredAmount}${progress.completed ? ' done' : ''}`;
   }
 }

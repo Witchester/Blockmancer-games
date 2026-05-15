@@ -26,9 +26,9 @@
     "upgradeIds": []
   },
   "passive": {
-    "id": "passive_frost_control",
-    "name": "Frost Control",
-    "description": "Reduce fall speed by 0.05 at battle start.",
+    "id": "passive_stay_chill",
+    "name": "Stay Chill",
+    "description": "Once per room, frost control can smooth a fall-speed spike.",
     "effects": [
       {
         "type": "reduce_fall_speed",

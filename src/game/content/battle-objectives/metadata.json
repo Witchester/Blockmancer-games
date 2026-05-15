@@ -1,0 +1,1 @@
+{"contentType":"battleObjective","version":"1.0.0","idPrefix":"obj_","displayName":"Battle Mini-Objectives","description":"Optional combat goals for small rewards.","idFormat":"obj_snake_case","exampleIds":["obj_trigger_cascade"],"requiredFields":["id","name","description","targetType","requiredAmount","reward","enabled"],"fields":{},"dataList":{},"defaults":{"enabled":true}}

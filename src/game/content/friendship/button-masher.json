@@ -1,0 +1,1 @@
+{"id":"friend_button_masher","monsterId":"mon_gadget_goblin","name":"Button Masher","pointsRequired":5,"gainMethods":[{"type":"defeat","points":1}],"unlockReward":{"effect":[{"type":"reduce_board_shake","value":1}]},"enabled":true}

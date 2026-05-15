@@ -1,0 +1,1 @@
+{"id":"chaos_royal_inspection","name":"Royal Inspection","description":"Clean boards get bonuses; messy boards attract royal blocks.","allowedStages":[6],"allowedNodeTypes":["normal","elite","boss"],"weight":10,"effects":[{"type":"gain_fever","value":8}],"enabled":true}

@@ -1,0 +1,1 @@
+{"id":"chaos_confetti_fever","name":"Confetti Fever","description":"Cascades fill Fever faster.","allowedStages":[3,4,5,6],"allowedNodeTypes":["normal","elite","boss"],"weight":12,"effects":[{"type":"gain_fever","value":10}],"enabled":true}

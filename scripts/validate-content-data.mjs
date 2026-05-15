@@ -22,7 +22,14 @@ const idPrefixes = {
   stages: 'stage_',
   currencies: 'currency_',
   collectibles: 'collectible_',
-  npcs: 'npc_'
+  npcs: 'npc_',
+  'random-gameplay-events': 'r_evt_',
+  'stage-goals': 'goal_',
+  'chaos-rules': 'chaos_',
+  'battle-objectives': 'obj_',
+  'boss-rules': 'boss_rule_',
+  'hub-buildings': 'hub_',
+  friendship: 'friend_'
 };
 
 async function findContentFiles(dir) {

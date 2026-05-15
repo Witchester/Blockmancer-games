@@ -1,0 +1,16 @@
+{
+  "id": "evt_arcade_challenge",
+  "name": "Arcade Challenge",
+  "rarity": "uncommon",
+  "description": "A magical cabinet asks for a combo and offers prize tickets in return.",
+  "iconKey": "evt_arcade_challenge",
+  "backgroundKey": "bg_event_arcade",
+  "biome": "starfall_arcade",
+  "choices": [
+    {"id":"choice_token","label":"Pay Token","description":"Take a small safe reward.","requirements":[],"effects":[{"type":"gain_gold","value":15}],"resultText":"The cabinet dispenses a modest prize."},
+    {"id":"choice_combo","label":"Combo Challenge","description":"Risk an Oopsie for a rare reward.","requirements":[],"effects":[{"type":"gain_random_reward","value":1},{"type":"gain_random_oopsie","value":1}],"resultText":"The high-score initials are now WOW."},
+    {"id":"choice_leave","label":"Leave","description":"Keep your tokens for snacks.","requirements":[],"effects":[],"resultText":"The cabinet plays a tiny goodbye jingle."}
+  ],
+  "tags": ["arcade", "risk_reward"],
+  "enabled": true
+}

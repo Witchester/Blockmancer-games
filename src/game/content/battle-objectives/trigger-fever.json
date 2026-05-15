@@ -1,0 +1,1 @@
+{"id":"obj_trigger_fever","name":"Trigger Fever","description":"Trigger Fever before victory.","targetType":"trigger_fever","requiredAmount":1,"reward":{"id":"item_rainbow_soda","name":"Rainbow Soda","type":"item","description":"Fever snack.","persistent":false},"enabled":true}

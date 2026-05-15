@@ -1,0 +1,1 @@
+{"id":"goal_stage1_lost_cupcakes","name":"Recover 3 Lost Cupcakes","stageId":"stage_sprinkle_sewers","stage":1,"description":"Find 3 lost cupcakes before the boss.","targetType":"battle_objective","targetId":"mon_boss_cupcake_slime_king","requiredAmount":3,"bossDebuff":"fewer_sticky_blocks","bossBuffOnFail":"extra_sticky","enabled":true}

@@ -1,6 +1,13 @@
 import type { RunState, SpellId } from '../types/GameTypes';
 import { contentRegistry } from './ContentRegistry';
 
+const SPELL_ID_BY_CONTENT_ID: Record<string, SpellId> = {
+  spl_fireball: 'fireball',
+  spl_frost_lock: 'frost-lock',
+  spl_bomb_rune: 'bomb-rune',
+  spl_void_cut: 'void-cut'
+};
+
 export class HeroSystem {
   listHeroes() {
     return contentRegistry.listEnabled('hero');
@@ -27,7 +34,9 @@ export class HeroSystem {
 
     // Apply loadout
     state.weapon.id = hero.startingLoadout.weaponId;
-    state.spells = hero.startingLoadout.spellIds as SpellId[];
+    state.spells = hero.startingLoadout.spellIds
+      .map((spellId: string) => SPELL_ID_BY_CONTENT_ID[spellId] ?? spellId)
+      .filter((spellId: string): spellId is SpellId => ['fireball', 'frost-lock', 'bomb-rune', 'void-cut'].includes(spellId));
 
     // Set HeroState
     state.hero = {

@@ -72,16 +72,24 @@ export class MainMenuScene extends Phaser.Scene {
       this.scene.start('TutorialScene');
     });
 
-    new Button(this, centerX, 548, 280, 58, 'Help', () => {
+    new Button(this, centerX, 548, 280, 58, 'Festival Hub', () => {
+      this.scene.start('HubScene');
+    });
+
+    new Button(this, centerX, 620, 280, 58, 'Monster Friends', () => {
+      this.scene.start('CollectionScene');
+    });
+
+    new Button(this, centerX, 692, 280, 58, 'Help', () => {
       this.scene.start('HelpScene');
     });
 
-    new Button(this, centerX, 620, 280, 58, 'Settings', () => {
+    new Button(this, centerX, 764, 280, 58, 'Settings', () => {
       this.scene.start('SettingsScene');
     });
 
     if (import.meta.env.DEV) {
-      new Button(this, centerX, 694, 280, 52, 'QA Debug', () => {
+      new Button(this, centerX, 836, 280, 52, 'QA Debug', () => {
         this.scene.start('DebugScene');
       });
     }

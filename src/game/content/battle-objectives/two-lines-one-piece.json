@@ -1,0 +1,1 @@
+{"id":"obj_two_lines_one_piece","name":"Clear 2 Lines","description":"Clear 2 lines with one piece.","targetType":"lines_with_one_piece","requiredAmount":2,"reward":{"id":"currency_gold","name":"Gold","type":"gold","description":"Bonus gold.","persistent":false,"amount":20},"enabled":true}

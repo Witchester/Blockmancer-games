@@ -1,0 +1,1 @@
+{"id":"obj_clear_all_junk","name":"Clean The Junk","description":"Destroy all junk blocks before winning.","targetType":"clear_all_junk","requiredAmount":"all","reward":{"id":"item_toolbox","name":"Toolbox","type":"item","description":"Cleanup tool.","persistent":false},"enabled":true}

@@ -1,0 +1,1 @@
+{"contentType":"hubBuilding","version":"1.0.0","idPrefix":"hub_","displayName":"Festival Hub Buildings","description":"Meta-progression booths restored between runs.","idFormat":"hub_snake_case","exampleIds":["hub_cake_stall"],"requiredFields":["id","name","description","maxLevel","levels","enabled"],"fields":{},"dataList":{},"defaults":{"enabled":true}}

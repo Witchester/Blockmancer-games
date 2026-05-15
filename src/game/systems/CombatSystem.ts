@@ -146,11 +146,20 @@ export class CombatSystem {
     const feverMana = this.feverSystem.getManaBonus(this.state, baseMana + bonusMana);
     this.state.player.mana = clamp(this.state.player.mana + baseMana + bonusMana + feverMana, 0, this.state.player.maxMana);
     
-    // Handle passive_line_mage
-    if (this.state.hero.passiveId === 'passive_line_mage' && this.firstLineClearMage) {
+    if (
+      (this.state.hero.passiveId === 'passive_line_mage' ||
+        this.state.hero.passiveId === 'passive_plink_plonk_combo') &&
+      this.firstLineClearMage &&
+      cascade.cascadeCount > 1
+    ) {
       this.firstLineClearMage = false;
       this.state.player.mana = clamp(this.state.player.mana + 15, 0, this.state.player.maxMana);
-      this.addLog('Line Mage grants an initial burst of mana!');
+      this.addLog('Plink-Plonk Combo grants bonus mana!');
+    }
+
+    if (this.state.hero.passiveId === 'passive_main_character_energy' && cascade.specialBlocksTriggered.some((trigger) => trigger.startsWith('block_star'))) {
+      this.damageEnemy(8);
+      this.addLog('Main Character Energy turns star blocks into bonus damage.');
     }
 
     const specialResult = this.applySpecialBlockEffects(cascade.specialBlocksTriggered);

@@ -1,0 +1,1 @@
+{"id":"r_evt_button_panic","name":"Button Panic","description":"The board shakes and the active piece gets a tiny nudge.","allowedStages":[2,4,5,6],"allowedNodeTypes":["normal","elite","boss"],"triggerTiming":"battle_start","triggerChance":0.13,"maxPerRoom":1,"effects":[{"type":"speed_spike","value":0.04}],"toneText":"Every button lights up at once.","enabled":true}

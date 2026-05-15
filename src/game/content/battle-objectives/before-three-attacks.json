@@ -1,0 +1,1 @@
+{"id":"obj_before_three_attacks","name":"Beat The Countdown","description":"Win before the enemy attacks 3 times.","targetType":"win_before_enemy_attacks","requiredAmount":3,"reward":{"id":"item_mini_cupcake","name":"Mini Cupcake","type":"item","description":"Tiny heal.","persistent":false},"enabled":true}

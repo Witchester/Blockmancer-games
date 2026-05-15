@@ -1,4 +1,5 @@
 export type RoomType = 'start' | 'fight' | 'event' | 'shop' | 'elite' | 'rest' | 'treasure' | 'boss';
+export type EncounterNodeType = 'normal' | 'hard_normal' | 'elite' | 'boss' | 'event' | 'shop' | 'rest' | 'treasure';
 export type TetrominoType = 'I' | 'O' | 'T' | 'S' | 'Z' | 'J' | 'L';
 export type SpellId = 'fireball' | 'frost-lock' | 'bomb-rune' | 'void-cut';
 export type RunStatus = 'menu' | 'map' | 'battle' | 'reward' | 'game-over' | 'victory';
@@ -99,6 +100,44 @@ export interface BoardState {
   currentPiece: PieceState | null;
   holdUsedThisPiece: boolean;
 }
+
+export type GameplayEffect = {
+  type: string;
+  value?: number;
+  blockId?: string;
+  text?: string;
+  targetId?: string;
+  duration?: number;
+};
+
+export type RewardModifier = {
+  goldMultiplier?: number;
+  extraRewardChoices?: number;
+  shopPriceMultiplier?: number;
+};
+
+export type StageGoalProgress = {
+  goalId: string;
+  progress: number;
+  requiredAmount: number;
+  completed: boolean;
+  failed: boolean;
+};
+
+export type BoardSizeModifier = {
+  id: string;
+  encounterType: EncounterNodeType;
+  widthDelta?: number;
+  heightDelta?: number;
+  lockedRows?: number;
+  duration: 'room' | 'phase' | 'turns' | 'pieces';
+  durationValue?: number;
+  minWidth?: number;
+  minHeight?: number;
+  maxWidth?: number;
+  maxHeight?: number;
+  reasonText: string;
+};
 
 export interface SpellDefinition {
   id: SpellId;
@@ -241,6 +280,15 @@ export interface RunState {
   pendingRewardSource: string;
   rewardRerolls: number;
   ownedRewards: RewardId[];
+  stageGoals: Record<string, StageGoalProgress>;
+  activeChaosRule?: string;
+  activeBattleObjective?: string;
+  completedBattleObjectives: string[];
+  activeRandomGameplayEvents: string[];
+  activeOopsies: string[];
+  currentBossRule?: string;
+  boardSizeModifier?: BoardSizeModifier;
+  festivalHubVisited: boolean;
   lastBattleWasBoss: boolean;
   pendingStageAdvance: boolean;
   victory: boolean;

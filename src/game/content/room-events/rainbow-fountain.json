@@ -2,44 +2,36 @@
   "id": "evt_rainbow_fountain",
   "name": "Rainbow Fountain",
   "rarity": "common",
-  "description": "Rainbow Fountain offers a bright, risky festival choice.",
+  "description": "The town fountain is still jelly, but today it is politely rainbow jelly.",
   "iconKey": "evt_rainbow_fountain",
   "backgroundKey": "bg_event_festival",
   "biome": "dungeon",
   "choices": [
     {
-      "id": "choice_safe",
-      "label": "Take the safe treat",
-      "description": "Gain a small amount of gold.",
+      "id": "choice_heal",
+      "label": "Take A Sip",
+      "description": "Heal safely.",
       "requirements": [],
-      "effects": [
-        {
-          "type": "gain_gold",
-          "value": 15
-        }
-      ],
-      "resultText": "A tidy prize drops out."
+      "effects": [{"type": "heal_player", "value": 10}],
+      "resultText": "It tastes like strawberry confidence."
     },
     {
-      "id": "choice_risky",
-      "label": "Try the loud option",
-      "description": "Take a tiny hit for a random reward.",
+      "id": "choice_risky_status",
+      "label": "Dive For Sparkles",
+      "description": "Gain a strong reward and a random Oopsie.",
       "requirements": [],
-      "effects": [
-        {
-          "type": "damage_player",
-          "value": 2
-        },
-        {
-          "type": "gain_random_reward",
-          "value": 1
-        }
-      ],
-      "resultText": "It was loud, but useful."
+      "effects": [{"type": "gain_random_reward", "value": 1}, {"type": "gain_random_oopsie", "value": 1}],
+      "resultText": "The fountain applauds in bubbles."
+    },
+    {
+      "id": "choice_mana",
+      "label": "Fill Lemonade",
+      "description": "Gain mana instead.",
+      "requirements": [],
+      "effects": [{"type": "gain_mana", "value": 35}],
+      "resultText": "The lemonade glows in a responsible way."
     }
   ],
-  "tags": [
-    "special"
-  ],
+  "tags": ["healing", "oopsie"],
   "enabled": true
 }

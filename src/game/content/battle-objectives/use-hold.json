@@ -1,0 +1,1 @@
+{"id":"obj_use_hold","name":"Use Hold","description":"Use Hold at least once.","targetType":"use_hold","requiredAmount":1,"reward":{"id":"item_hold_coupon","name":"Hold Coupon","type":"item","description":"Refreshes hold.","persistent":false},"enabled":true}

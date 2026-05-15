@@ -1,0 +1,1 @@
+{"id":"goal_stage6_royal_seals","name":"Break 3 Royal Seals","stageId":"stage_bloxley_block_palace","stage":6,"description":"Break 3 royal seals before King Bloxley.","targetType":"battle_objective","requiredAmount":3,"bossDebuff":"weaken_boss","bossBuffOnFail":"extra_royal_blocks","enabled":true}

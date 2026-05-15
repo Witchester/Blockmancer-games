@@ -1,0 +1,1 @@
+{"id":"friend_square_jester","monsterId":"mon_palace_jester","name":"Square Jester","pointsRequired":6,"gainMethods":[{"type":"defeat","points":1},{"type":"event_choice","points":2}],"unlockReward":{"effect":[{"type":"early_royal_warning","value":1}]},"enabled":true}

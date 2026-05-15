@@ -60,6 +60,7 @@ export class OopsieSystem {
     const selected = choice(candidates);
     state.player.oopsies.push(selected.id);
     state.player.curses = state.player.oopsies.length;
+    state.activeOopsies = [...state.player.oopsies];
     return selected;
   }
 
@@ -77,6 +78,7 @@ export class OopsieSystem {
 
     const [removedId] = state.player.oopsies.splice(index, 1);
     state.player.curses = state.player.oopsies.length;
+    state.activeOopsies = [...state.player.oopsies];
     return this.getOopsie(removedId);
   }
 

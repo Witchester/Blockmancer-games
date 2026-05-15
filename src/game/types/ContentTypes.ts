@@ -16,7 +16,14 @@ export type ContentCategory =
   | 'stage'
   | 'currency'
   | 'collectible'
-  | 'npc';
+  | 'npc'
+  | 'randomGameplayEvent'
+  | 'stageGoal'
+  | 'chaosRule'
+  | 'battleObjective'
+  | 'bossRule'
+  | 'hubBuilding'
+  | 'friendship';
 
 export interface ContentReference<TId extends string = string> {
   id: TId;

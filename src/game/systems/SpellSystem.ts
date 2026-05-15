@@ -47,9 +47,17 @@ export class SpellSystem {
     switch (spellId) {
       case 'fireball':
         this.combat.applyDirectDamage(22 + this.state.player.spellBonuses.fireball, 'Fireball');
+        if (this.state.hero.passiveId === 'passive_preheat_cleanup') {
+          const cleared = this.board.clearRandomCluster(2);
+          this.combat.addLog(`Preheat Cleanup burns ${cleared} sticky or junk-prone blocks.`);
+        }
         break;
       case 'frost-lock':
         this.state.fallSpeed = Math.max(0.7, this.state.fallSpeed - 0.1);
+        if (this.state.hero.passiveId === 'passive_stay_chill') {
+          this.state.fallSpeed = Math.max(0.7, this.state.fallSpeed - 0.05);
+          this.combat.addLog('Stay Chill smooths the speed spike.');
+        }
         if (this.state.player.frostLockDelayBonus && enemy.attackCounter > 1) {
           enemy.attackCounter += 1;
         }

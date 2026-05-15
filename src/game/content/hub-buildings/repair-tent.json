@@ -1,0 +1,1 @@
+{"id":"hub_repair_tent","name":"Repair Tent","description":"Unlocks Oopsie removal and board-start fixes.","maxLevel":3,"levels":[{"level":1,"cost":{"currency_gold":40},"unlocks":["remove_oopsies"]},{"level":2,"cost":{"currency_sprinkles":20},"unlocks":["fix_board_penalty"]},{"level":3,"cost":{"currency_stars":2},"unlocks":["special_repair_event"]}],"enabled":true}

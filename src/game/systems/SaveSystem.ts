@@ -131,6 +131,15 @@ export class SaveSystem {
       };
     }
 
+    if (version < 3) {
+      migrated.stageGoals = {};
+      migrated.activeRandomGameplayEvents = [];
+      migrated.completedBattleObjectives = [];
+      migrated.activeOopsies = isObject(migrated.player) && Array.isArray(migrated.player.oopsies)
+        ? migrated.player.oopsies
+        : [];
+    }
+
     return migrated;
   }
 
@@ -156,6 +165,11 @@ export class SaveSystem {
           : 0,
       bossesDefeated,
       endingsUnlocked,
+      hubBuildings: isObject(raw.hubBuildings) ? raw.hubBuildings as Record<string, number> : {},
+      monsterFriendship: isObject(raw.monsterFriendship) ? raw.monsterFriendship as Record<string, number> : {},
+      completedStageGoals: uniqueStrings(raw.completedStageGoals),
+      discoveredChaosRules: uniqueStrings(raw.discoveredChaosRules),
+      discoveredBossRules: uniqueStrings(raw.discoveredBossRules),
       stage1BossDefeated,
       stage2BossDefeated,
       normalEndingFinished,

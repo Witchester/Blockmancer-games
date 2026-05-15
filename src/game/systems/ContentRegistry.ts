@@ -36,7 +36,14 @@ const CONTENT_FOLDERS: ContentFolderConfig[] = [
   { category: 'stage', folder: 'stages', fallbackId: 'stage_sprinkle_sewers' },
   { category: 'currency', folder: 'currencies', fallbackId: 'currency_candy_coin' },
   { category: 'collectible', folder: 'collectibles', fallbackId: 'collectible_festival_token' },
-  { category: 'npc', folder: 'npcs', fallbackId: 'npc_festival_guide' }
+  { category: 'npc', folder: 'npcs', fallbackId: 'npc_festival_guide' },
+  { category: 'randomGameplayEvent', folder: 'random-gameplay-events', fallbackId: 'r_evt_sprinkle_rain' },
+  { category: 'stageGoal', folder: 'stage-goals', fallbackId: 'goal_stage1_lost_cupcakes' },
+  { category: 'chaosRule', folder: 'chaos-rules', fallbackId: 'chaos_sprinkle_storm' },
+  { category: 'battleObjective', folder: 'battle-objectives', fallbackId: 'obj_trigger_cascade' },
+  { category: 'bossRule', folder: 'boss-rules', fallbackId: 'boss_rule_cupcake_slime_king' },
+  { category: 'hubBuilding', folder: 'hub-buildings', fallbackId: 'hub_cake_stall' },
+  { category: 'friendship', folder: 'friendship', fallbackId: 'friend_cupcake_slime' }
 ];
 
 const jsonModules = (import.meta as unknown as {
@@ -193,6 +200,34 @@ export class ContentRegistry {
 
   getMapNode(id: string) {
     return this.getById('mapNode', id);
+  }
+
+  getRandomGameplayEvent(id: string) {
+    return this.getById('randomGameplayEvent', id);
+  }
+
+  getStageGoal(id: string) {
+    return this.getById('stageGoal', id);
+  }
+
+  getChaosRule(id: string) {
+    return this.getById('chaosRule', id);
+  }
+
+  getBattleObjective(id: string) {
+    return this.getById('battleObjective', id);
+  }
+
+  getBossRule(id: string) {
+    return this.getById('bossRule', id);
+  }
+
+  getHubBuilding(id: string) {
+    return this.getById('hubBuilding', id);
+  }
+
+  getFriendship(id: string) {
+    return this.getById('friendship', id);
   }
 }
 

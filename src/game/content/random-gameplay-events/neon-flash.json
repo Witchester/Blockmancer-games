@@ -1,0 +1,1 @@
+{"id":"r_evt_neon_flash","name":"Neon Flash","description":"Preview visibility gets flashy for a moment.","allowedStages":[5,6],"allowedNodeTypes":["normal","elite","boss"],"triggerTiming":"battle_start","triggerChance":0.12,"maxPerRoom":1,"effects":[{"type":"speed_spike","value":0.02}],"toneText":"The sign says STYLE POINTS in very large lights.","enabled":true}
