@@ -8,6 +8,31 @@ Core direction:
 
 ---
 
+## Recommended Engine Stack
+
+```text
+Engine: Phaser 3
+Language: TypeScript
+Build Tool: Vite
+Mobile Packaging: Capacitor
+Content: JSON/data-driven content loaded through ContentRegistry
+Save: Local save first, versioned for migration
+Target: Web build first, Android build through Capacitor
+```
+
+Why this stack fits:
+
+```text
+- Fast iteration for a 2D falling-block roguelike RPG
+- Strong fit for portrait mobile UI
+- Easy web deployment
+- Android packaging through Capacitor matches Release 1.0 target
+- TypeScript types keep BoardSystem, CombatSystem, MapSystem, and SaveSystem safer
+- JSON content keeps events, monsters, bosses, goals, and rewards easy to tune
+```
+
+---
+
 ## Release 1.0 Target
 
 ### Core Gameplay
@@ -49,6 +74,14 @@ Core direction:
 - 8 room events
 - 8 NPCs
 - 12+ loot tables
+- 20 random gameplay events
+- 6 stage goals
+- 8 festival chaos rules
+- 10 battle mini-objectives
+- 6 boss rule cards
+- 8 festival hub buildings
+- 8 monster friendship tracks
+- Dynamic board size modifiers by stage/encounter
 ```
 
 ### Release Target
@@ -187,6 +220,14 @@ AudioSystem
 InputSystem
 TutorialSystem
 SettingsSystem
+RandomGameplayEventSystem
+StageGoalSystem
+ChaosRuleSystem
+BattleObjectiveSystem
+BossRuleSystem
+BoardSizeModifierSystem
+HubProgressionSystem
+FriendshipSystem
 ```
 
 ### Acceptance Criteria
@@ -233,6 +274,13 @@ Convert content to the cheerful festival concept and prepare the full 1.0 roster
 - Add NPCs
 - Add currencies and collectibles
 - Add stage-specific loot tables
+- Add random gameplay events
+- Add stage goals
+- Add chaos rules
+- Add battle mini-objectives
+- Add boss rule cards
+- Add hub building data
+- Add friendship data
 ```
 
 ### Content Areas
@@ -256,6 +304,13 @@ src/game/content/collectibles/
 src/game/content/stages/
 src/game/content/loot-tables/
 src/game/content/difficulty-scaling/
+src/game/content/random-gameplay-events/
+src/game/content/stage-goals/
+src/game/content/chaos-rules/
+src/game/content/battle-objectives/
+src/game/content/boss-rules/
+src/game/content/hub-buildings/
+src/game/content/friendship/
 ```
 
 ### Acceptance Criteria
@@ -788,6 +843,18 @@ Turn the run into a full 6-stage adventure.
 6. Bloxley’s Block Palace
 ```
 
+
+### Stage Node Scaling
+
+```text
+Stage 1: 6 main-path nodes, 9–11 total generated nodes, 0 elites
+Stage 2: 8 main-path nodes, 12–14 total generated nodes, 1 elite
+Stage 3: 10 main-path nodes, 15–17 total generated nodes, 1 elite
+Stage 4: 12 main-path nodes, 18–21 total generated nodes, 1–2 elites
+Stage 5: 14 main-path nodes, 22–25 total generated nodes, 2 elites
+Stage 6: 16 main-path nodes, 26–30 total generated nodes, 2–3 elites plus special pre-boss
+```
+
 ### Acceptance Criteria
 
 ```text
@@ -1014,6 +1081,299 @@ Give advanced players a satisfying mastery layer.
 
 ```text
 Implement FeverSystem tied to combo and Cascade Gravity. Add fever meter, fever activation, bonus effects, UI feedback, and special Stage 5/High Score Hydra interactions.
+```
+
+---
+
+## Phase 16.5 — Festival Chaos & Replayability
+
+### Goal
+
+Add the designer-requested replayability layer that makes each run feel different without changing the cheerful festival identity.
+
+This phase should be implemented after the core run structure exists because it connects MapSystem, StageSystem, BoardSystem, CombatSystem, EventSystem, RewardSystem, HeroSystem, BossSystem, OopsieSystem, SaveSystem, and UI.
+
+### Features
+
+```text
+- Random gameplay events during battle/map/event rooms
+- Stage Goals for each of the 6 stages
+- Festival Chaos Rules as room-level modifiers
+- Battle Mini-Objectives
+- Boss Rule Cards
+- Oopsie risk/reward event choices
+- Hero-specific playstyle passives
+- Dynamic board size modifiers by encounter type
+- Festival Hub progression
+- Monster Friendship / Collection
+```
+
+### New Required Systems
+
+```text
+RandomGameplayEventSystem
+StageGoalSystem
+ChaosRuleSystem
+BattleObjectiveSystem
+BossRuleSystem
+BoardSizeModifierSystem
+HubProgressionSystem
+FriendshipSystem
+```
+
+### Content Areas
+
+```text
+src/game/content/random-gameplay-events/
+src/game/content/stage-goals/
+src/game/content/chaos-rules/
+src/game/content/battle-objectives/
+src/game/content/boss-rules/
+src/game/content/hub-buildings/
+src/game/content/friendship/
+```
+
+### Random Gameplay Events
+
+Implement at least these initial events:
+
+```text
+r_evt_jelly_surge
+r_evt_sprinkle_rain
+r_evt_sticky_spill
+r_evt_lost_cake_alarm
+r_evt_goblin_miswire
+r_evt_button_panic
+r_evt_bomb_delivery
+r_evt_freezer_draft
+r_evt_ice_slide
+r_evt_sleepy_moment
+r_evt_blanket_tangle
+r_evt_arcade_combo_callout
+r_evt_prize_claw_grab
+r_evt_neon_flash
+r_evt_royal_decree_square
+r_evt_symmetry_check
+r_evt_confetti_overload
+r_evt_manual_page_tip
+r_evt_snack_break
+r_evt_machine_hiccup
+```
+
+### Map Node Scaling
+
+```text
+Stage 1: 6 main-path nodes, 9–11 total generated nodes
+Stage 2: 8 main-path nodes, 12–14 total generated nodes
+Stage 3: 10 main-path nodes, 15–17 total generated nodes
+Stage 4: 12 main-path nodes, 18–21 total generated nodes
+Stage 5: 14 main-path nodes, 22–25 total generated nodes
+Stage 6: 16 main-path nodes, 26–30 total generated nodes
+```
+
+Rules:
+
+```text
+- Boss node is always the final required node.
+- Elite nodes start from Stage 2.
+- Stage 6 includes a special pre-boss / mini-boss / Royal Guard node.
+- Map state must save/load.
+```
+
+### Base Board Size by Stage
+
+```text
+Stage 1: 8 x 16
+Stage 2: 9 x 17
+Stage 3: 9 x 18
+Stage 4: 10 x 18
+Stage 5: 10 x 19
+Stage 6: 10 x 20
+```
+
+Encounter modifiers:
+
+```text
+Normal: stage base size
+Hard Normal: base size with possible locked hazard row
+Elite: usually width -1 or height -2, with better rewards
+Boss Phase 1: base size plus boss mechanic
+Boss Phase 2: shrink, expand, or reshape temporarily
+Final Boss: board changes by phase
+Treasure/Rest: slightly safer or larger puzzle board
+Event: variable based on event choice
+```
+
+Safety rules:
+
+```text
+- Never shrink below 6 x 12.
+- Never expand beyond mobile-readable layout.
+- Board resize must preserve existing blocks safely or use a clear fallback.
+- Board size changes must not break Cascade Gravity.
+```
+
+### Stage Goals
+
+```text
+Stage 1: Recover 3 Lost Cupcakes
+Stage 2: Disable 2 Goblin Machines
+Stage 3: Save 3 Ice Cream Crates
+Stage 4: Keep 2 Guards Asleep
+Stage 5: Reach Combo Score Target
+Stage 6: Break 3 Royal Seals
+```
+
+Each stage goal should affect boss difficulty, rewards, or true-ending progress.
+
+### Festival Chaos Rules
+
+```text
+chaos_sprinkle_storm
+chaos_wobbly_floor
+chaos_snack_tax
+chaos_confetti_fever
+chaos_goblin_safety_test
+chaos_freezer_draft
+chaos_royal_inspection
+chaos_jelly_bounce
+```
+
+### Battle Mini-Objectives
+
+```text
+mini_trigger_cascade
+mini_clear_two_lines_one_piece
+mini_clear_sprinkles
+mini_clear_all_junk
+mini_no_spell_win
+mini_win_before_enemy_attacks
+mini_use_hold
+mini_cast_two_spells
+mini_low_board_height
+mini_trigger_fever
+```
+
+### Boss Rule Cards
+
+```text
+Cupcake Slime King: Sticky blocks spread if ignored.
+Prototype No. 7: The machine drops junk or bombs every few pieces.
+Gelato Golem: The board freezes during cold waves.
+Sir Snore-a-Lot: Sleeps, shields, then wakes stronger.
+High Score Hydra: Low combo play makes Hydra stronger.
+King Bloxley: Symmetry patterns and royal blocks must be managed.
+```
+
+### Hero-Specific Playstyle Passives
+
+```text
+Milo: First cascade each battle gives bonus mana.
+Pippa: Fire spells burn sticky/junk blocks.
+Nixie: Once per room, can slow fall speed or soften speed spikes.
+Bruk: Survive board overflow once per battle or gain emergency shield.
+Zuzu: Bomb blocks appear more often, but junk increases slightly.
+Lumi: Star blocks heavily boost cascade damage.
+```
+
+### Festival Hub Buildings
+
+```text
+hub_cake_stall
+hub_ice_cream_cart
+hub_goblin_workshop
+hub_arcade_booth
+hub_snack_table
+hub_star_lantern_stage
+hub_repair_tent
+hub_bloxley_statue
+```
+
+### Monster Friendship Rewards
+
+```text
+Cupcake Slime: Start battle with 1 sprinkle block.
+Sugar Bat: Next preview hide duration reduced.
+Crumb Goblin: Junk blocks have chance to become normal blocks.
+Button Masher: Board shake reduced.
+Ice Cream Imp: Freeze effects last shorter.
+Blanket Ghost: Sleepy effect can heal slightly or reduce enemy action.
+Combo Gremlin: Fever gain bonus.
+Square Jester: Royal pattern warning appears earlier.
+```
+
+### Acceptance Criteria
+
+```text
+- At least 10 random gameplay events are implemented.
+- Each stage has 1 optional stage goal.
+- Combat rooms can roll 0–1 Festival Chaos Rule.
+- Combat rooms can roll 0–1 Battle Mini-Objective.
+- Bosses show Boss Rule Cards before combat.
+- Event choices can grant Oopsies in exchange for stronger rewards.
+- Each hero has a unique passive that affects board/combat.
+- Board size can change by encounter type and boss phase.
+- Hub buildings can be upgraded after runs.
+- Monster friendship points can be gained and saved.
+- All new content is data-driven.
+- Save/load supports all new current-run and meta-progress fields.
+- Mobile portrait readability remains intact.
+- Build passes.
+```
+
+### Codex Prompt
+
+```text
+Implement Phase 16.5 — Festival Chaos & Replayability.
+
+Goal:
+Add replayability and strategic variety to Blockmancer Dungeon by implementing random gameplay events, stage goals, chaos rules, battle mini-objectives, boss rule cards, oopsie risk/reward choices, hero passives, dynamic board size modifiers, festival hub progression, and monster friendship.
+
+Important:
+- Keep cheerful festival / cute chaos tone.
+- Do not add dark curse content.
+- Keep Cascade Gravity as the core board mechanic.
+- Keep all content data-driven.
+- Do not rewrite unrelated working systems.
+- Keep mobile portrait readability.
+- Add safe fallbacks for missing content.
+- Save/load new progress safely.
+- Build after changes.
+
+Inspect first:
+- BoardSystem
+- CombatSystem
+- EventSystem
+- RewardSystem
+- OopsieSystem
+- HeroSystem
+- MapSystem
+- StageSystem
+- BossSystem / EnemySystem
+- SaveSystem
+- ContentRegistry
+- BattleScene / MapScene / EventScene / RewardScene
+
+Expected output:
+- RandomGameplayEventSystem
+- StageGoalSystem
+- ChaosRuleSystem
+- BattleObjectiveSystem
+- BossRuleSystem
+- BoardSizeModifierSystem
+- HubProgressionSystem
+- FriendshipSystem
+- New content folders and seed content
+- UI indicators/cards/placeholders for new systems
+- Save data migration/defaults for new fields
+
+Commands:
+- npm run build
+- npm run validate:content, if available
+- npm run validate:metadata, if available
+
+Finish with:
+Summary / Files changed / Systems added / Content added / Gameplay impact / Save-load changes / UI changes / Commands run / How to test / Known limitations
 ```
 
 ---
@@ -1613,6 +1973,13 @@ Prepare Blockmancer Dungeon Release Candidate 1.0.0. Update version, run full bu
 [ ] 8 room events
 [ ] 8 NPCs
 [ ] Loot tables
+[ ] Random gameplay events
+[ ] Stage goals
+[ ] Chaos rules
+[ ] Battle mini-objectives
+[ ] Boss rule cards
+[ ] Hub buildings
+[ ] Monster friendship tracks
 ```
 
 ## Systems
@@ -1642,6 +2009,14 @@ Prepare Blockmancer Dungeon Release Candidate 1.0.0. Update version, run full bu
 [ ] AssetSystem
 [ ] TutorialSystem
 [ ] SettingsSystem
+[ ] RandomGameplayEventSystem
+[ ] StageGoalSystem
+[ ] ChaosRuleSystem
+[ ] BattleObjectiveSystem
+[ ] BossRuleSystem
+[ ] BoardSizeModifierSystem
+[ ] HubProgressionSystem
+[ ] FriendshipSystem
 ```
 
 ## Mobile / Release
@@ -1695,6 +2070,12 @@ Phase 15
 Phase 16
 ```
 
+## Milestone C+ — Festival Chaos & Replayability
+
+```text
+Phase 16.5
+```
+
 ## Milestone D — Release Features
 
 ```text
@@ -1733,6 +2114,7 @@ Phase 30
 7. Implement stages/bosses/map
 8. Implement hero unlocks/meta
 9. Implement rewards/events/shops
+9.5. Implement Festival Chaos & Replayability systems
 10. Implement tutorial/save/settings
 11. Add assets/audio/polish
 12. QA/balance/release

@@ -924,6 +924,240 @@ The top battle screen shows the result of the puzzle battle. The middle board is
 
 ---
 
+# Festival Chaos & Replayability Story Layer
+
+The expanded game structure should make the dungeon feel like a living festival machine that keeps improvising.
+
+The Block-O-Matic 3000 is not only spawning monsters. It is also accidentally creating:
+
+```text
+Random room mishaps
+Stage-specific side goals
+Boss rule announcements
+Festival hub repair projects
+Monster friendship moments
+Board-size hiccups
+Silly risk/reward Oopsies
+```
+
+This keeps the story lighthearted while explaining why each run feels different.
+
+Core story rule:
+
+> The dungeon changes because the Block-O-Matic is trying to help, but it has the planning skills of a confetti cannon.
+
+---
+
+# Stage Goals — Story Motivation
+
+Each stage should have one optional side goal that gives players a reason to care about the route beyond simply reaching the boss.
+
+| Stage | Story Goal | Narrative Result |
+| ---: | --- | --- |
+| 1 | Recover 3 Lost Cupcakes | Pippa gets enough emergency frosting to weaken the Cupcake Slime King |
+| 2 | Disable 2 Goblin Machines | Zuzu identifies which workshop buttons should definitely not be glowing |
+| 3 | Save 3 Ice Cream Crates | Nixie keeps the gelato supply from becoming soup |
+| 4 | Keep 2 Guards Asleep | Bruk preserves the Pillow Castle’s sacred nap schedule |
+| 5 | Reach Combo Score Target | Lumi wins enough arcade tickets to calm the High Score Hydra |
+| 6 | Break 3 Royal Seals | King Bloxley’s “perfectly square” palace rules begin to wobble |
+
+Failure should not feel like grim punishment. It should feel like comedic inconvenience:
+
+```text
+The boss gets stickier.
+The machine gets overexcited.
+The palace adds more royal blocks.
+The arcade gets smug.
+```
+
+---
+
+# Map Progression Story Logic
+
+The dungeon should feel larger and stranger as the player gets closer to King Bloxley.
+
+```text
+Stage 1: 6 main-path nodes — short, beginner-friendly sewer cleanup
+Stage 2: 8 main-path nodes — more workshop route choices
+Stage 3: 10 main-path nodes — frozen pantry detours
+Stage 4: 12 main-path nodes — sleepy castle exploration
+Stage 5: 14 main-path nodes — arcade challenge route
+Stage 6: 16 main-path nodes — final palace gauntlet
+```
+
+The increase in nodes represents the Block-O-Matic becoming more creative, confused, and dramatic.
+
+---
+
+# Dynamic Board Size Story Logic
+
+Board size changes are caused by the Block-O-Matic physically reshaping the magical playfield.
+
+Examples:
+
+```text
+Cupcake Slime King squeezes the board with frosting.
+Prototype No. 7 expands the board with unstable bomb lanes.
+Gelato Golem freezes the board edges inward.
+Sir Snore-a-Lot accidentally gives the player extra space while napping.
+High Score Hydra expands the board for combo challenges.
+King Bloxley narrows the board because “rectangular discipline builds character.”
+```
+
+These changes should feel funny and readable, not unfair.
+
+---
+
+# Festival Chaos Rules — Story Logic
+
+Festival Chaos Rules are temporary room conditions announced by the dungeon like a chaotic carnival game.
+
+Examples:
+
+```text
+Sprinkle Storm: “Free sprinkles! Probably too many!”
+Wobbly Floor: “Please enjoy our unstable safety-certified tiles.”
+Snack Tax: “All snacks now cost one dramatic sigh extra.”
+Confetti Fever: “Combos are now legally exciting.”
+Royal Inspection: “Stand up straight. The squares are watching.”
+```
+
+They should explain room modifiers in a playful way before battle starts.
+
+---
+
+# Battle Mini-Objectives — Story Logic
+
+Battle Mini-Objectives are small challenges shouted by the Festival Announcer, Ticket Imp, Professor Poplin, or the Block-O-Matic itself.
+
+Examples:
+
+```text
+“Clear two lines with one piece for bonus tickets!”
+“Trigger a cascade before the monster finishes chewing!”
+“Keep the board tidy and the Cake Judge will be impressed!”
+```
+
+These objectives should make players feel clever, not punished.
+
+---
+
+# Boss Rule Cards — Story Logic
+
+Boss Rule Cards should feel like theatrical announcements before each major fight.
+
+```text
+Cupcake Slime King: Sticky Situation!
+Prototype No. 7: Totally Safe Machine Test!
+Gelato Golem: Brain Freeze Warning!
+Sir Snore-a-Lot: Do Not Wake the Pillow Knight!
+High Score Hydra: Combo or Be Chomped!
+King Bloxley: Everything Must Be Square!
+```
+
+Boss cards help teach mechanics while preserving the game’s Saturday-morning-cartoon tone.
+
+---
+
+# Oopsie Risk/Reward Story Logic
+
+Oopsies are not curses. They are funny festival mishaps.
+
+Good examples:
+
+```text
+Heavy Blocks
+Slippery Buttons
+Too Much Confetti
+Snack Tax
+Sticky Floor
+Overexcited Machine
+Square Only
+Sugar Crash
+```
+
+Events should offer choices like:
+
+```text
+Take a safe small reward.
+Try a weird gadget for a rare reward plus an Oopsie.
+Pay gold for a safer controlled reward.
+Walk away with dignity, or at least most of it.
+```
+
+---
+
+# Hero Passive Story Logic
+
+Hero passives should express personality through gameplay.
+
+| Hero | Passive Story |
+| --- | --- |
+| Milo | He listens to blocks, so his first cascade gives bonus mana |
+| Pippa | Her fire magic burns through sticky/junk messes |
+| Nixie | She keeps the board chill when things speed up |
+| Bruk | He refuses to fall before the snacks are safe |
+| Zuzu | Her bombs are “features,” but they invite more junk |
+| Lumi | Star blocks shine brighter when cascades get dramatic |
+
+---
+
+# Festival Hub Progression
+
+After runs, the player should return to a festival hub where the town slowly recovers.
+
+Hub buildings:
+
+```text
+Cake Stall
+Ice Cream Cart
+Goblin Workshop
+Arcade Booth
+Snack Table
+Star Lantern Stage
+Repair Tent
+Bloxley Statue
+```
+
+Narrative purpose:
+
+```text
+- Failed runs still help repair the festival.
+- Restored booths unlock new items, relics, events, or dialogue.
+- The festival becomes more alive as the player progresses.
+```
+
+The hub should feel cozy, not grindy.
+
+---
+
+# Monster Friendship / Collection
+
+Some monsters are not evil. They are sugar-rushed, confused, overexcited, or stuck in a weird job created by the Block-O-Matic.
+
+Friendship examples:
+
+```text
+Feed a Cupcake Slime enough times and it becomes a Sprinkle Buddy.
+Help a Crumb Goblin clean up and junk blocks become less annoying.
+Calm a Button Masher and board shake becomes weaker.
+Befriend a Square Jester and royal pattern warnings appear earlier.
+```
+
+Theme:
+
+> Winning is good. Befriending the chaos is better.
+
+---
+
+# Updated One-Sentence Pitch
+
+```text
+A cheerful portrait-mobile falling-block roguelike RPG where a clumsy apprentice mage clears rune lines, triggers cascades, survives random festival chaos, befriends silly monsters, restores the festival hub, and defeats a dramatic block king who insists everything must be square.
+```
+
+---
+
 # One-Sentence Pitch
 
 ```text

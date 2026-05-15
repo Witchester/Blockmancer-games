@@ -57,6 +57,8 @@ Core rules:
 - Keep content data-driven.
 - Preserve placeholder-safe asset fallbacks.
 - Keep portrait mobile as the primary layout target.
+- Prefer Phaser 3 + TypeScript + Vite + Capacitor as the implementation stack unless the repo proves otherwise.
+- Keep replayability systems data-driven: random events, stage goals, chaos rules, mini-objectives, boss cards, hub buildings, and friendship.
 - Run build/validation if possible.
 
 After completing the task, respond with:
@@ -331,6 +333,117 @@ Commands to run:
 - npm run validate:content
 
 Finish with a full run-path test checklist.
+```
+
+---
+
+## Milestone C+ — Festival Chaos & Replayability
+
+Includes:
+
+```text
+Phase 16.5 — Festival Chaos & Replayability
+```
+
+### Milestone Goal
+
+Add the requested replayability and strategic variety layer on top of the core run structure: random gameplay events, stage goals, chaos rules, battle mini-objectives, boss rule cards, dynamic board size modifiers, oopsie risk/reward, hero passives, festival hub progression, and monster friendship.
+
+### Copy-Paste Prompt
+
+```text
+Read AGENT.md first and follow it as the main project instruction.
+Also read blockmancer_vibe_code_release_1_plan.md and blockmancer_lighthearted_content_direction.md.
+
+Implement Milestone C+ — Festival Chaos & Replayability.
+
+Scope:
+- Random gameplay events
+- Stage goals
+- Festival chaos rules
+- Battle mini-objectives
+- Boss rule cards
+- Oopsie risk/reward event choices
+- Hero-specific playstyle passives
+- Dynamic board size modifiers
+- Festival hub progression
+- Monster friendship / collection
+
+Important:
+Do this after the core run structure exists. Do not rewrite unrelated working systems. Extend existing systems when possible. Keep all content data-driven, cheerful, safe for mobile portrait layout, and compatible with Cascade Gravity.
+
+What to inspect first:
+- BoardSystem
+- CombatSystem
+- EventSystem
+- RewardSystem
+- OopsieSystem
+- HeroSystem
+- MapSystem
+- StageSystem
+- BossSystem / EnemySystem
+- SaveSystem
+- ContentRegistry
+- BattleScene
+- MapScene
+- EventScene
+- RewardScene
+- HeroSelectScene
+
+What to look for:
+- Whether map nodes are generated or hardcoded
+- Whether board dimensions are configurable
+- Whether combat can accept room modifiers
+- Whether events can apply multiple result types
+- Whether reward bundles support gold/items/relics/upgrades/oopsies
+- Whether hero passives are data-driven or hardcoded
+- Whether save migration/defaults exist
+- Whether UI can show compact status cards
+
+Expected output:
+- RandomGameplayEventSystem
+- StageGoalSystem
+- ChaosRuleSystem
+- BattleObjectiveSystem
+- BossRuleSystem
+- BoardSizeModifierSystem
+- HubProgressionSystem
+- FriendshipSystem
+- Content folders for all new systems
+- Save fields and migration/defaults
+- Minimal readable UI for new information
+
+Acceptance criteria:
+- At least 10 random gameplay events are implemented.
+- Stage 1 has 6 main-path nodes.
+- Stage 2 has 8 main-path nodes.
+- Stage 3 has 10 main-path nodes.
+- Stage 4 has 12 main-path nodes.
+- Stage 5 has 14 main-path nodes.
+- Stage 6 has 16 main-path nodes.
+- Boss node is always the final required node.
+- Elite nodes begin from Stage 2.
+- Base board size scales by stage.
+- Encounter type can modify board size.
+- Board never shrinks below 6x12.
+- Each stage has 1 stage goal.
+- Combat rooms can roll 0–1 chaos rule.
+- Combat rooms can roll 0–1 mini-objective.
+- Bosses show boss rule cards before combat.
+- Events can grant Oopsies for stronger rewards.
+- Each hero has a unique passive.
+- Hub buildings can be upgraded.
+- Monster friendship points can be gained and saved.
+- Save/load supports all new systems.
+- Build passes.
+
+Commands to run:
+- npm run build
+- npm run validate:content, if available
+- npm run validate:metadata, if available
+
+Finish with:
+Summary / Files changed / Systems added / Systems updated / Content added / Gameplay impact / Save-load changes / UI changes / Commands run / How to test / Known limitations
 ```
 
 ---
@@ -1399,6 +1512,257 @@ Summary / Files changed / Fever mechanics / Commands run / How to test / Known l
 
 ---
 
+## Phase 16.5 — Festival Chaos & Replayability
+
+```text
+Read AGENT.md first and follow it as the main project instruction.
+Also read blockmancer_vibe_code_release_1_plan.md and blockmancer_lighthearted_content_direction.md.
+
+Task:
+Implement the designer-requested replayability expansion:
+1. More random gameplay events that can affect how the player completes a stage.
+2. Increased map node count per stage.
+3. Dynamic playing field / board size changes for bosses, elites, and normal encounters.
+4. Stage Goals.
+5. Festival Chaos Rules.
+6. Battle Mini-Objectives.
+7. Boss Rule Cards.
+8. Oopsie Risk/Reward Choices.
+9. Hero-Specific Playstyle Passives.
+10. Festival Hub Progression.
+11. Monster Friendship / Collection.
+
+Inspect first:
+- BoardSystem
+- CombatSystem
+- EventSystem
+- RewardSystem
+- OopsieSystem
+- HeroSystem
+- MapSystem
+- StageSystem
+- BossSystem / EnemySystem
+- SaveSystem
+- ContentRegistry
+- BattleScene
+- MapScene
+- EventScene
+- RewardScene
+- HeroSelectScene
+
+Expected systems:
+- RandomGameplayEventSystem
+- StageGoalSystem
+- ChaosRuleSystem
+- BattleObjectiveSystem
+- BossRuleSystem
+- BoardSizeModifierSystem
+- HubProgressionSystem
+- FriendshipSystem
+
+Expected content folders:
+- src/game/content/random-gameplay-events/
+- src/game/content/stage-goals/
+- src/game/content/chaos-rules/
+- src/game/content/battle-objectives/
+- src/game/content/boss-rules/
+- src/game/content/board-size-modifiers/
+- src/game/content/hub-buildings/
+- src/game/content/friendship/
+
+Random gameplay events to seed:
+- r_evt_jelly_surge
+- r_evt_sprinkle_rain
+- r_evt_sticky_spill
+- r_evt_lost_cake_alarm
+- r_evt_goblin_miswire
+- r_evt_button_panic
+- r_evt_bomb_delivery
+- r_evt_freezer_draft
+- r_evt_ice_slide
+- r_evt_sleepy_moment
+- r_evt_blanket_tangle
+- r_evt_arcade_combo_callout
+- r_evt_prize_claw_grab
+- r_evt_neon_flash
+- r_evt_royal_decree_square
+- r_evt_symmetry_check
+- r_evt_confetti_overload
+- r_evt_manual_page_tip
+- r_evt_snack_break
+- r_evt_machine_hiccup
+
+Map node scaling:
+- Stage 1: 6 main-path nodes, 9–11 total nodes, 0 elites
+- Stage 2: 8 main-path nodes, 12–14 total nodes, 1 elite
+- Stage 3: 10 main-path nodes, 15–17 total nodes, 1 elite
+- Stage 4: 12 main-path nodes, 18–21 total nodes, 1–2 elites
+- Stage 5: 14 main-path nodes, 22–25 total nodes, 2 elites
+- Stage 6: 16 main-path nodes, 26–30 total nodes, 2–3 elites plus special pre-boss
+
+Base board size:
+- Stage 1: 8x16
+- Stage 2: 9x17
+- Stage 3: 9x18
+- Stage 4: 10x18
+- Stage 5: 10x19
+- Stage 6: 10x20
+
+Board size safety:
+- Never shrink below 6x12.
+- Never expand beyond mobile-readable limits.
+- Preserve existing blocks safely or use a documented fallback.
+- Do not break Cascade Gravity.
+
+Stage goals:
+- Stage 1: Recover 3 Lost Cupcakes
+- Stage 2: Disable 2 Goblin Machines
+- Stage 3: Save 3 Ice Cream Crates
+- Stage 4: Keep 2 Guards Asleep
+- Stage 5: Reach Combo Score Target
+- Stage 6: Break 3 Royal Seals
+
+Chaos rules:
+- chaos_sprinkle_storm
+- chaos_wobbly_floor
+- chaos_snack_tax
+- chaos_confetti_fever
+- chaos_goblin_safety_test
+- chaos_freezer_draft
+- chaos_royal_inspection
+- chaos_jelly_bounce
+
+Battle mini-objectives:
+- mini_trigger_cascade
+- mini_clear_two_lines_one_piece
+- mini_clear_sprinkles
+- mini_clear_all_junk
+- mini_no_spell_win
+- mini_win_before_enemy_attacks
+- mini_use_hold
+- mini_cast_two_spells
+- mini_low_board_height
+- mini_trigger_fever
+
+Boss rule cards:
+- Cupcake Slime King: Sticky blocks spread if ignored.
+- Prototype No. 7: Machine drops junk or bombs every few pieces.
+- Gelato Golem: Board freezes during cold waves.
+- Sir Snore-a-Lot: Sleeps, shields, then wakes stronger.
+- High Score Hydra: Low combo play makes Hydra stronger.
+- King Bloxley: Symmetry patterns and royal blocks must be managed.
+
+Hero passives:
+- Milo: First cascade each battle gives bonus mana.
+- Pippa: Fire spells burn sticky/junk blocks.
+- Nixie: Once per room, can slow fall speed or soften speed spikes.
+- Bruk: Survive board overflow once per battle or gain emergency shield.
+- Zuzu: Bomb blocks appear more often, but junk increases slightly.
+- Lumi: Star blocks heavily boost cascade damage.
+
+Hub buildings:
+- hub_cake_stall
+- hub_ice_cream_cart
+- hub_goblin_workshop
+- hub_arcade_booth
+- hub_snack_table
+- hub_star_lantern_stage
+- hub_repair_tent
+- hub_bloxley_statue
+
+Monster friendship tracks:
+- Cupcake Slime
+- Sugar Bat
+- Crumb Goblin
+- Button Masher
+- Ice Cream Imp
+- Blanket Ghost
+- Combo Gremlin
+- Square Jester
+
+Save requirements:
+Add safe defaults/migration for:
+- hubBuildings
+- monsterFriendship
+- completedStageGoals
+- discoveredChaosRules
+- discoveredBossRules
+- stageGoals
+- activeChaosRule
+- activeBattleObjective
+- activeRandomGameplayEvents
+- currentBossRule
+- boardSizeModifier
+
+Acceptance criteria:
+- At least 10 random gameplay events work.
+- Each stage has 1 stage goal.
+- Combat can roll 0–1 chaos rule.
+- Combat can roll 0–1 mini-objective.
+- Boss rule cards appear.
+- Events can offer safe/risky/Oopsie choices.
+- Hero passives affect battle.
+- Board size modifiers work safely.
+- Hub progression can be upgraded.
+- Monster friendship points can be gained and saved.
+- Build passes.
+- Content validation passes if available.
+
+Commands:
+- npm run build
+- npm run validate:content, if available
+- npm run validate:metadata, if available
+
+Response format:
+Summary:
+- ...
+
+Files changed:
+- ...
+
+Systems added:
+- ...
+
+Systems updated:
+- ...
+
+Content added:
+- ...
+
+Gameplay impact:
+- ...
+
+Save/load changes:
+- ...
+
+UI changes:
+- ...
+
+Commands run:
+- ...
+
+How to test:
+1. Start a new run.
+2. Confirm Stage 1 map has 6 main-path nodes.
+3. Enter a battle and confirm chaos rule / mini-objective can appear.
+4. Trigger or simulate a random gameplay event.
+5. Confirm board size changes safely in elite or boss encounter.
+6. Reach Stage 1 boss and confirm Boss Rule Card appears.
+7. Complete/fail Stage 1 goal and confirm boss effect changes.
+8. Pick an event choice that grants an Oopsie.
+9. Confirm hero passive affects battle.
+10. End a run and confirm hub progression can be upgraded.
+11. Gain monster friendship and confirm it persists after reload.
+
+Known limitations:
+- ...
+
+Recommended next step:
+- ...
+```
+
+---
+
 ## Phase 17 — Tutorial and Onboarding
 
 ```text
@@ -2204,6 +2568,8 @@ Before moving to the next phase, verify:
 [ ] Cascade Gravity remains core board behavior
 [ ] Missing assets/content do not crash
 [ ] Save compatibility considered
+[ ] New replayability systems are data-driven if in scope
+[ ] Board size changes preserve mobile readability if in scope
 [ ] Manual test steps provided
 [ ] Changes are small enough to review
 ```

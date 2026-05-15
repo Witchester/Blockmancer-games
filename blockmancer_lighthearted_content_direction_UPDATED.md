@@ -900,3 +900,313 @@ The content that needs the most changes:
 7. UI/art direction
 8. Loot tables
 ```
+
+---
+
+## 25. Updated Replayability Direction
+
+The expanded Release 1.0 direction should add variety through **player decisions, surprise board states, optional goals, and long-term collection**, not just more enemies.
+
+New replayability pillars:
+
+```text
+1. Random Gameplay Events
+2. Stage Goals
+3. Festival Chaos Rules
+4. Battle Mini-Objectives
+5. Boss Rule Cards
+6. Oopsie Risk/Reward Choices
+7. Hero-Specific Playstyle Passives
+8. Dynamic Board Size Modifiers
+9. Festival Hub Progression
+10. Monster Friendship / Collection
+```
+
+Design rule:
+
+> Every new system should either change how the player stacks blocks, chooses a route, prepares for a boss, or values a reward.
+
+---
+
+## 26. Random Gameplay Events
+
+Random gameplay events are runtime surprises that can trigger during battles, map movement, event rooms, or boss phases.
+
+They should affect at least one of:
+
+```text
+- Board state
+- Combat state
+- Rewards
+- Stage goal progress
+- Boss difficulty
+- Route risk
+- Player resources
+```
+
+| ID | Name | Trigger | Effect | Gameplay Impact |
+| --- | --- | --- | --- | --- |
+| `r_evt_jelly_surge` | Jelly Surge | Battle | Jelly/bouncy cells or columns appear | Makes line planning harder but may create cascades |
+| `r_evt_sprinkle_rain` | Sprinkle Rain | Battle | More sprinkle blocks for a few pieces | Helps mana recovery |
+| `r_evt_sticky_spill` | Sticky Spill | Stage 1+ battle | Sticky blocks appear near lower rows | Threatens board control |
+| `r_evt_lost_cake_alarm` | Lost Cake Alarm | Map/event/battle | Clear 2 lines quickly for cake progress | Supports true ending and risk/reward |
+| `r_evt_goblin_miswire` | Goblin Miswire | Stage 2+ battle | Swaps next/hold preview once | Disrupts planned placement |
+| `r_evt_button_panic` | Button Panic | Workshop/gadget rooms | Board shake and small active-piece nudge | Increases misdrop risk |
+| `r_evt_bomb_delivery` | Bomb Delivery | Stage 2+ battle | Adds a bomb block to upcoming pieces | Helps recover messy board |
+| `r_evt_freezer_draft` | Freezer Draft | Stage 3+ battle | Fall speed slows, then spikes | Creates setup window then pressure |
+| `r_evt_ice_slide` | Ice Slide | Frosty Pantry | Ice blocks slide before gravity stabilizes | Creates or ruins cascades |
+| `r_evt_sleepy_moment` | Sleepy Moment | Stage 4+ battle | Enemy skips next action | Gives recovery window |
+| `r_evt_blanket_tangle` | Blanket Tangle | Pillow Castle | Rotation disabled for 1 piece | Forces awkward placement |
+| `r_evt_arcade_combo_callout` | Arcade Combo Callout | Stage 5+ battle | Trigger cascade within limited pieces | Rewards combo mastery |
+| `r_evt_prize_claw_grab` | Prize Claw Grab | Stage 5+ battle/event | Removes a block or steals an item | Can help or hurt |
+| `r_evt_neon_flash` | Neon Flash | Stage 5+ battle | Next preview flashes/hides | Makes planning harder |
+| `r_evt_royal_decree_square` | Royal Decree: Square! | Stage 6+ battle | Create/clear a 2x2 pattern | Prepares final boss skill |
+| `r_evt_symmetry_check` | Symmetry Check | Stage 6/boss | Checks left/right board symmetry | Rewards clean palace play |
+| `r_evt_confetti_overload` | Confetti Overload | Any later stage | Random confetti blocks appear | Random bonuses and clutter |
+| `r_evt_manual_page_tip` | Manual Page Tip | Event/reward | Reveals next enemy intent or boss tip | Helps strategic planning |
+| `r_evt_snack_break` | Snack Break | Between nodes | Small heal or mana gain | Helps long-stage survival |
+| `r_evt_machine_hiccup` | Machine Hiccup | Any room | Temporarily changes board size | Directly changes encounter difficulty |
+
+Trigger limits:
+
+```text
+Stage 1–2: max 1 active random gameplay event
+Stage 3–4: max 1–2 active events depending on node type
+Stage 5–6: up to 2 active events, especially elite/boss rooms
+```
+
+---
+
+## 27. Map Node Scaling
+
+Stage length should increase as the run deepens.
+
+| Stage | Main Path Nodes | Total Generated Nodes | Required Structure |
+| ---: | ---: | ---: | --- |
+| 1 | 6 | 9–11 | 3 Normal, 1 Event, 1 Treasure/Rest, 1 Boss |
+| 2 | 8 | 12–14 | 4 Normal, 1 Event, 1 Shop, 1 Elite, 1 Boss |
+| 3 | 10 | 15–17 | 5 Normal, 1 Event, 1 Rest, 1 Treasure, 1 Elite, 1 Boss |
+| 4 | 12 | 18–21 | 6 Normal, 2 Events, 1 Shop, 1 Rest, 1 Elite, 1 Boss |
+| 5 | 14 | 22–25 | 7 Normal, 2 Events, 1 Shop, 1 Treasure, 2 Elites, 1 Boss |
+| 6 | 16 | 26–30 | 8 Normal, 2 Events, 1 Shop, 1 Rest, 2 Elites, 1 Royal Guard, 1 Final Boss |
+
+Rules:
+
+```text
+- Boss node is always the final required node.
+- Elite nodes start from Stage 2.
+- Stage 6 includes a special pre-boss / Royal Guard node.
+- More nodes should mean more route decisions, not just more fights.
+```
+
+---
+
+## 28. Dynamic Board Size Modifiers
+
+Base board size:
+
+| Stage | Base Board |
+| ---: | --- |
+| 1 | 8 x 16 |
+| 2 | 9 x 17 |
+| 3 | 9 x 18 |
+| 4 | 10 x 18 |
+| 5 | 10 x 19 |
+| 6 | 10 x 20 |
+
+Encounter rules:
+
+| Encounter Type | Board Rule | Gameplay Impact |
+| --- | --- | --- |
+| Normal | Use stage base size | Stable baseline |
+| Hard Normal | Base size plus locked hazard row | Slight pressure |
+| Elite | Usually width -1 or height -2 | Tighter and riskier |
+| Boss Phase 1 | Base size plus boss mechanic | Teaches boss rule |
+| Boss Phase 2 | Shrink/expand/reshape temporarily | Difficulty spike |
+| Final Boss | Board changes by phase | Memorable finale |
+| Treasure/Rest | Safer or slightly larger board | Puzzle/recovery feel |
+| Event | Variable by choice | Supports risk/reward |
+
+Safety rules:
+
+```text
+- Never shrink below 6 x 12.
+- Never expand beyond portrait mobile readability.
+- Board resizing must preserve blocks safely or use a clear fallback.
+- Dynamic board size must not break Cascade Gravity.
+```
+
+Boss board examples:
+
+```text
+Cupcake Slime King: 8x16 → 8x15 during sticky phase
+Prototype No. 7: 9x17 → 10x17 with bomb lanes
+Gelato Golem: 9x18 → 9x16 during frozen fog
+Sir Snore-a-Lot: 10x18 → 10x20 while sleeping
+High Score Hydra: 10x19 → 10x21 during combo challenge
+King Bloxley: 10x20 → 8x20 during Everything Must Be Square
+```
+
+---
+
+## 29. Stage Goals
+
+| Stage | Goal | Success Effect | Fail Effect |
+| ---: | --- | --- | --- |
+| 1 | Recover 3 Lost Cupcakes | Boss starts with fewer sticky blocks | Boss adds extra sticky blocks |
+| 2 | Disable 2 Goblin Machines | Prototype drops less junk | Prototype starts overclocked |
+| 3 | Save 3 Ice Cream Crates | Player starts boss with shield | Fall speed spike during boss |
+| 4 | Keep 2 Guards Asleep | Rare treasure or reduced Sleepy effect | More Sleepy status in boss |
+| 5 | Reach Combo Score Target | Start boss with Fever | Hydra gains stronger combo punishment |
+| 6 | Break 3 Royal Seals | King Bloxley starts weakened | Final boss starts with royal blocks |
+
+Stage goals should be visible at stage start, track progress during the route, and resolve before the boss fight.
+
+---
+
+## 30. Festival Chaos Rules
+
+Chaos rules are room-level modifiers for eligible combat rooms.
+
+| ID | Name | Effect |
+| --- | --- | --- |
+| `chaos_sprinkle_storm` | Sprinkle Storm | More sprinkle blocks appear |
+| `chaos_wobbly_floor` | Wobbly Floor | Board shakes every few pieces |
+| `chaos_snack_tax` | Snack Tax | More gold reward, but shop prices increase |
+| `chaos_confetti_fever` | Confetti Fever | Cascades fill Fever faster |
+| `chaos_goblin_safety_test` | Goblin Safety Test | Bomb blocks and junk blocks both increase |
+| `chaos_freezer_draft` | Freezer Draft | Fall speed slows, then spikes |
+| `chaos_royal_inspection` | Royal Inspection | Clean board gives bonus; messy board adds royal blocks |
+| `chaos_jelly_bounce` | Jelly Bounce | Jelly blocks bounce or shift during cascade |
+
+---
+
+## 31. Battle Mini-Objectives
+
+| ID | Objective | Reward Direction |
+| --- | --- | --- |
+| `mini_trigger_cascade` | Trigger 1 cascade | Gold/Fever |
+| `mini_clear_two_lines_one_piece` | Clear 2 lines with one piece | Bonus reward |
+| `mini_clear_sprinkles` | Clear 5 sprinkle blocks | Mana/gold |
+| `mini_clear_all_junk` | Destroy all junk blocks | Item/relic chance |
+| `mini_no_spell_win` | Win without using a spell | Gold/relic chance |
+| `mini_win_before_enemy_attacks` | Win before enemy attacks 3 times | Fever/gold |
+| `mini_use_hold` | Use Hold at least once | Small item |
+| `mini_cast_two_spells` | Cast 2 spells in battle | Mana reward |
+| `mini_low_board_height` | End with board below 50% height | Extra reward choice chance |
+| `mini_trigger_fever` | Trigger Fever before victory | Arcade reward |
+
+---
+
+## 32. Boss Rule Cards
+
+Boss rule cards should appear before boss combat and explain the gimmick clearly.
+
+| Boss | Rule Card |
+| --- | --- |
+| Cupcake Slime King | Sticky blocks spread if ignored |
+| Prototype No. 7 | Machine drops junk or bombs every few pieces |
+| Gelato Golem | Board freezes during cold waves |
+| Sir Snore-a-Lot | Sleeps, shields, then wakes stronger |
+| High Score Hydra | Low combo play makes Hydra stronger |
+| King Bloxley | Symmetry patterns and royal blocks must be managed |
+
+---
+
+## 33. Hero-Specific Playstyle Passives
+
+| Hero | Passive | Gameplay Identity |
+| --- | --- | --- |
+| Milo | First cascade each battle gives bonus mana | Beginner-friendly combo hero |
+| Pippa | Fire spells burn sticky/junk blocks | Aggressive cleanup |
+| Nixie | Once per room, can slow fall speed or soften speed spikes | Control and safety |
+| Bruk | Survive board overflow once per battle or gain emergency shield | Defensive rescue |
+| Zuzu | Bomb blocks appear more often, but junk increases slightly | Risky chaos |
+| Lumi | Star blocks heavily boost cascade damage | Combo mastery |
+
+---
+
+## 34. Festival Hub Progression
+
+Festival Hub buildings give long-term meta-progression after each run.
+
+| Building | Unlock Direction |
+| --- | --- |
+| `hub_cake_stall` | Healing items, Pippa dialogue, cupcake relics |
+| `hub_ice_cream_cart` | Frost/control items, Nixie upgrades |
+| `hub_goblin_workshop` | Bomb/gadget relics, Zuzu event variants |
+| `hub_arcade_booth` | Fever challenges, Stage 5 modifiers |
+| `hub_snack_table` | Bruk defensive items, rest bonuses |
+| `hub_star_lantern_stage` | Lumi cascade upgrades, star block bonuses |
+| `hub_repair_tent` | Remove Oopsies, fix board-start penalties |
+| `hub_bloxley_statue` | Final-stage challenge modifiers and optional hard mode later |
+
+---
+
+## 35. Monster Friendship / Collection
+
+Monster friendship gives cute long-term goals and supports the non-grim tone.
+
+| Monster | Friendship Reward |
+| --- | --- |
+| Cupcake Slime | Start battle with 1 sprinkle block |
+| Sugar Bat | Next preview hide duration reduced |
+| Crumb Goblin | Junk blocks have chance to become normal blocks |
+| Button Masher | Board shake reduced |
+| Ice Cream Imp | Freeze effects last shorter |
+| Blanket Ghost | Sleepy effect can heal slightly or reduce enemy action |
+| Combo Gremlin | Fever gain bonus |
+| Square Jester | Royal pattern warning appears earlier |
+
+Gain methods:
+
+```text
+- Defeat monster
+- Feed item
+- Spare/calm monster
+- Resolve event choice kindly
+```
+
+---
+
+## 36. Updated Content Categories
+
+Add these categories to the existing data-driven content list:
+
+```text
+random-gameplay-events
+stage-goals
+chaos-rules
+battle-objectives
+boss-rules
+board-size-modifiers
+hub-buildings
+friendship
+hero-passives
+```
+
+---
+
+## 37. Updated Save Data Needs
+
+Meta progress should include:
+
+```text
+hubBuildings
+monsterFriendship
+completedStageGoals
+discoveredChaosRules
+discoveredBossRules
+```
+
+Current run should include:
+
+```text
+stageGoals
+activeChaosRule
+activeBattleObjective
+activeRandomGameplayEvents
+activeOopsies
+currentBossRule
+boardSizeModifier
+```
