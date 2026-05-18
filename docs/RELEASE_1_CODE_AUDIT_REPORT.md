@@ -1,3 +1,18 @@
+
+<!-- BLOCKMANCER_STATUS_UPDATE_2026-05-18 -->
+## 0. Follow-up Update — 2026-05-18
+
+Decision after reviewing this audit: **keep Phaser 3 + TypeScript + Vite + Capacitor**. The project already has enough runtime scaffolding that an engine migration would slow progress more than it helps.
+
+### Updated release focus
+
+1. Stabilize one full Stage 1 vertical slice.
+2. Import/verify Priority 1 board and VFX animation assets.
+3. Fix P0 objective/test/save issues.
+4. Complete Stage 1 boss and core spell/item effects.
+5. Run desktop and portrait-mobile smoke tests.
+6. Only revisit engine migration if Phaser still blocks performance or maintainability after this vertical slice.
+<!-- END_BLOCKMANCER_STATUS_UPDATE -->
 ﻿# Blockmancer Dungeon — Release 1 Code Audit Report
 
 ## 1. Audit Summary

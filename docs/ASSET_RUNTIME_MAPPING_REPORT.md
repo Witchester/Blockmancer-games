@@ -1,4 +1,18 @@
 # Asset Runtime Mapping Report
+<!-- BLOCKMANCER_STATUS_UPDATE_2026-05-18 -->
+## Current Interpretation — 2026-05-18
+
+This report should be read as **runtime safety**, not final art completion.
+
+| Metric | Meaning |
+| --- | --- |
+| 199 runtime keys | Runtime knows what to load. |
+| 187 runtime files ready | Required image paths are present or covered. |
+| 12 audio files missing but fallback-safe | Runtime will not crash, but final audio is still needed. |
+| 0 unresolved runtime assets | Asset resolver has no current hard blockers. |
+
+Next asset update: import final Priority 1 PNG animation frame packages and final OGG audio at the expected runtime paths.
+<!-- END_BLOCKMANCER_STATUS_UPDATE -->
 Generated: 2026-05-15T18:35:04.333Z
 ## Inputs
 - Runtime path source: `src/game/data/assets.ts`

@@ -1,4 +1,22 @@
 # Asset Variant Integration Report
+<!-- BLOCKMANCER_STATUS_UPDATE_2026-05-18 -->
+## Current Follow-up — 2026-05-18
+
+The integration is valid and should be kept.
+
+### What is done
+
+- Board, hero, monster, boss, stage, map node, reward/control, and audio variant resolution is implemented.
+- BattleScene uses board glow/clear states, hero/monster states, boss phase variants, and stage background layers.
+- Missing variants safely fall back.
+
+### What remains
+
+- Add final art for optional legacy/future blocks if they stay in scope.
+- Add final hero art for Bloop/Professor only if they stay selectable.
+- Add dedicated VFX hooks to individual spell/status systems as those behaviors become concrete.
+- Add final licensed BGM/SFX files.
+<!-- END_BLOCKMANCER_STATUS_UPDATE -->
 
 Generated: 2026-05-15
 

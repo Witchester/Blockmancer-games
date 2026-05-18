@@ -1,4 +1,20 @@
 # Blockmancer Dungeon Animation Asset Requirements
+<!-- BLOCKMANCER_STATUS_UPDATE_2026-05-18 -->
+## Current Runtime / Production Status — 2026-05-18
+
+Exact-frame animation support is implemented at manifest/runtime level.
+
+| Item | Status |
+| --- | --- |
+| Exact-frame contract | Done. This document is the production contract. Frame ranges are not allowed. |
+| Runtime definitions | Done. `src/game/data/animation-standards.json` and `src/game/data/animations.ts` define/expand animation definitions. |
+| Validation | Done. `npm run validate:animations` validates exact frame counts and expected paths. |
+| Fallback behavior | Done. Missing animation frames are nonfatal and fall back to still sprites/placeholders. |
+| Asset production | Partial. Final PNG frame packages still need to be imported for release-quality visuals. |
+| Priority 1 import target | Normal rune blocks, bomb/star/ice/sticky/crumb junk/royal/floaty rune, line clear, cascade pop, bomb explosion, enemy hit, and hazard warning UI. |
+
+Do not mark the animation asset pipeline as release-complete until final PNG frame packages are present and `validate:animations` reports no missing Priority 1 frame warnings.
+<!-- END_BLOCKMANCER_STATUS_UPDATE -->
 
 This is the exact-frame animation standard for game-ready PNG frame sequences. Do not create GIF files. Every entry below has an exact frame count; frame ranges are not allowed.
 
@@ -246,4 +262,3 @@ Total per boss: 45 PNG files.
 | `ui_stage_transition` | 8 |
 | `ui_victory_banner` | 8 |
 | `ui_defeat_banner` | 8 |
-

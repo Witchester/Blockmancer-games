@@ -1,4 +1,34 @@
 # Blockmancer Dungeon - Release 1.0 Asset Manifest with Designer Descriptions
+<!-- BLOCKMANCER_STATUS_UPDATE_2026-05-18 -->
+## Current Asset List Update — 2026-05-18
+
+This asset manifest is now interpreted together with:
+
+- `ASSET_RUNTIME_MAPPING_REPORT.md`
+- `ASSET_RUNTIME_ALIGNMENT_REPORT.md`
+- `ASSET_VARIANT_AUDIT.md`
+- `ASSET_VARIANT_INTEGRATION_REPORT.md`
+- `ANIMATION_ASSET_REQUIREMENTS.md`
+- `blockmancer_release_1_asset_checklist_UPDATED.xlsx`
+
+### Current asset readiness summary
+
+| Category | Current status | Production action |
+| --- | --- | --- |
+| Runtime image paths | Safe. Runtime mapping reports 0 unresolved assets. | Replace placeholder art with final production art by priority. |
+| Audio | Missing runtime SFX are fallback-safe; many planned audio rows remain unresolved. | Add final OGG files. |
+| Board block variants | Mostly ready; four optional/legacy blocks use fallback variants. | Finalize Priority 1 blocks first. |
+| Hero variants | 6 Release 1 heroes ready; Bloop/Professor fallback. | Decide future/backlog status. |
+| Stage variants | 6 stage variant sets ready. | Smoke-test on portrait mobile. |
+| Exact-frame animations | Manifest exists and validates exact counts. | Import final frame PNG packages. |
+| UI | Fallback-safe. | Add final button/card/control/HUD assets. |
+
+### Asset production priority
+
+1. Priority 1: board blocks, board clear/glow frames, line clear VFX, cascade VFX, bomb explosion, enemy hit/defeat, hazard warnings.
+2. Priority 2: Stage 1 hero/monster/boss art, spell/item VFX, UI button/card/control assets, core SFX.
+3. Priority 3: full boss animation sets, all monster variants, hub/friendship assets, BGM/ambience, store art.
+<!-- END_BLOCKMANCER_STATUS_UPDATE -->
 
 ## Purpose
 

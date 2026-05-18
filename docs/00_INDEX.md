@@ -1,4 +1,19 @@
 # Blockmancer Dungeon Documentation Index
+<!-- BLOCKMANCER_STATUS_UPDATE_2026-05-18 -->
+## Latest Documentation Status — 2026-05-18
+
+Use this order when working from the docs:
+
+1. `01_GDD_MASTER.md` — canonical design/source of truth.
+2. `RELEASE_1_CODE_AUDIT_REPORT.md` — implementation reality and P0/P1 gaps.
+3. `ANIMATION_ASSET_REQUIREMENTS.md` — exact-frame PNG production contract.
+4. `ASSET_RUNTIME_MAPPING_REPORT.md` and `ASSET_RUNTIME_ALIGNMENT_REPORT.md` — runtime asset keys/paths.
+5. `ASSET_VARIANT_AUDIT.md` and `ASSET_VARIANT_INTEGRATION_REPORT.md` — variant readiness and fallback behavior.
+6. `blockmancer_release_1_asset_checklist.xlsx` — designer-facing asset list and production tracker.
+7. `02_REACTIVE_DIFFICULTY_IMPLEMENTATION_PLAN.md` — reactive difficulty implementation status and next steps.
+
+Current decision: **do not migrate engines**. Continue with Phaser 3 + TypeScript + Vite + Capacitor until at least one full Stage 1 vertical slice is stable.
+<!-- END_BLOCKMANCER_STATUS_UPDATE -->
 
 ## Canonical Source
 

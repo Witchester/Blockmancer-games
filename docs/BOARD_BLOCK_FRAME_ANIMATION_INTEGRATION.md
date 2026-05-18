@@ -1,4 +1,23 @@
 # Board Block Frame Animation Integration
+<!-- BLOCKMANCER_STATUS_UPDATE_2026-05-18 -->
+## Current Follow-up — 2026-05-18
+
+Board block frame animation is implemented and should remain in place.
+
+### Current status
+
+- PNG frame sequences are supported.
+- GIF files are not required.
+- Glow and clear animations are visual-only and do not replace Cascade Gravity.
+- Board block size is capped by the universal 24px board block constant.
+- Missing frames fall back safely.
+
+### Remaining work
+
+- Import final exact-frame PNG packages using `asset_id__animation_name__f00.png` naming.
+- Verify complete Priority 1 block animations in battle.
+- Keep legacy `_frame_01` paths only for fallback compatibility; new art should use exact-frame naming.
+<!-- END_BLOCKMANCER_STATUS_UPDATE -->
 
 ## Files Changed
 

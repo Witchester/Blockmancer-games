@@ -1,4 +1,24 @@
 # Blockmancer Dungeon — Reactive Difficulty & Item Counter Implementation Plan
+<!-- BLOCKMANCER_STATUS_UPDATE_2026-05-18 -->
+## Current Reactive Difficulty Status — 2026-05-18
+
+The reactive difficulty direction remains correct, but it is **partial** at runtime.
+
+| Phase | Status | Notes / next action |
+| --- | --- | --- |
+| R0 Audit | Done | Integration points were audited in the Release 1 code audit. |
+| R1 Counter tags / item schema | Partial/Done | Counter items and schema support exist, but behavior coverage must be checked against `ItemSystem.applyEffect`. |
+| R2 Incoming junk queue | Partial | Warning/counter concepts exist, but end-to-end enemy behavior, cascade reduction, and item counter smoke tests are required. |
+| R3 Floating blocks | Partial | Floaty block content/assets exist; countdown/counter behavior needs full gameplay verification. |
+| R4 Hazard counter windows | Partial | Hazard UI/warnings exist conceptually; every hazard needs a test case and counter verification. |
+| R5 Spell catalysts | Partial | Catalyst item content exists; next-spell modifier behavior must be confirmed for each catalyst. |
+| R6 Relic/hero synergies | Partial | Passives/relics exist but many are shallow or switch-based. |
+| R7 Warning tray/counter hints | Partial | Runtime has warning/variant hooks; UI must be tested on portrait mobile. |
+| R8 Balance | Not complete | Tune after Stage 1 vertical slice is stable. |
+| R9 QA/debug | Partial | Debug scene exists; add specific hazard triggers and smoke checklist. |
+
+Priority next step: build a **reactive difficulty smoke test matrix** for incoming junk, floaty blocks, freeze, low ceiling, preview disruption, speed wave, royal pattern, and item/spell counters.
+<!-- END_BLOCKMANCER_STATUS_UPDATE -->
 
 This plan implements the new difficulty/setback direction from `docs/01_GDD_MASTER.md` sections 21 and 22.
 
@@ -697,14 +717,3 @@ Summary / Files changed / Systems changed / Content added / Commands run / Manua
 | Clean Cut catalyst combo | Use Cleaning Charm then Clean Cut | Clean Cut removes row and junk/sticky. |
 | Safety Net overflow | Fill top row, trigger overflow with Safety Net | Top row clears once instead of defeat. |
 | Save/load active hazard | Save with incoming junk and floaty block | Load safely restores or clears with feedback. |
-
-### Implementation QA Checklist
-
-- Queue Incoming Junk from the debug scene and verify the battle warning tray shows amount, countdown, and counters.
-- Trigger a cascade before Incoming Junk expires and verify the queued amount is reduced or cleared.
-- Use Snack Shield and Return Stamp while Incoming Junk is active and verify delay/reflect behavior.
-- Spawn Floaty Block from the debug scene and verify the tray countdown appears and Cloud Pin clears it safely.
-- Trigger Freeze Warning, Preview Glitter, Low Ceiling, Speed Wave, and Bad Piece from debug tools and verify each has readable warning text.
-- Use Hot Cocoa, Preview Glasses, Tent Pole, Safety Net, and Speed Brake against matching hazards.
-- Use Firecracker Sugar, Spell Coupon, Bomb Fuse, Star Syrup, Cascade Confetti, Frosting Salt, and Cleaning Charm before a spell and verify the modifier is consumed once.
-- Save/reload during an active hazard and verify the run loads without crashing and active hazards remain bounded.

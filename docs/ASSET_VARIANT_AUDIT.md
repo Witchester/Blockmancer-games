@@ -1,4 +1,16 @@
 # Asset Variant Audit
+<!-- BLOCKMANCER_STATUS_UPDATE_2026-05-18 -->
+## Current Interpretation — 2026-05-18
+
+Variant audit confirms the **variant system is working and fallback-safe**.
+
+### Production notes
+
+- Release 1 heroes are ready; Bloop and Professor Poplin are future/backlog unless explicitly promoted.
+- Board blocks are mostly ready, but `block_junk`, `block_magic`, `block_stone`, and `block_void` still fall back for expanded variants.
+- All six stage variants are ready and should be smoke-tested in portrait mobile.
+- Variant readiness does not guarantee final polished art; it means runtime can resolve a usable asset or fallback.
+<!-- END_BLOCKMANCER_STATUS_UPDATE -->
 
 Generated: 2026-05-15T18:51:22.797Z
 

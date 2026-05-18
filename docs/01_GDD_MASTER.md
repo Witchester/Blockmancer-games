@@ -1,4 +1,30 @@
 # Blockmancer Dungeon - Source of Truth
+<!-- BLOCKMANCER_STATUS_UPDATE_2026-05-18 -->
+## 0. Current Implementation Status Snapshot — 2026-05-18
+
+This section reflects the latest code audit and asset reports. It does not replace the design goals below; it records what is currently implemented versus what still needs work.
+
+### Implemented now
+
+- Phaser scene flow, board placement, movement, Hold/Next, Cascade Gravity, combat resolution, map routing, reward flow, save/meta migration, debug scene, Android/Capacitor scaffolding, content registry, asset fallback, audio fallback, and exact-frame animation manifest support are implemented.
+- Runtime validations pass for content, metadata, and animation definitions.
+- Asset runtime mapping reports zero unresolved runtime assets, but audio and final animation frame art still require production.
+
+### Needs implementation before Release 1.0
+
+- Replace placeholder battle objective checks.
+- Complete or de-scope unsupported spell content.
+- Finish boss mechanics and rule-card effects.
+- Finish reactive difficulty end-to-end behavior and soft-lock tests.
+- Add final Priority 1 PNG frame assets and real audio files.
+- Run desktop + portrait mobile smoke tests.
+- Tone-clean legacy curse/blood content names while preserving save compatibility.
+- Decide whether hub upgrades and monster friendship are Release 1 core or post-release backlog.
+
+### Engine decision
+
+Continue using the planned stack: **Phaser 3 + TypeScript + Vite + Capacitor**. The audit shows the current issue is asset/content/completion risk, not an engine limitation.
+<!-- END_BLOCKMANCER_STATUS_UPDATE -->
 
 This is the single canonical design, content, technical, and release source of truth for Blockmancer Dungeon.
 
@@ -551,7 +577,6 @@ Asset rules:
 - Public assets live under `public/assets/`.
 - Content uses asset keys, not raw paths.
 - Missing assets must use placeholders.
-- Animation PNG frame sequences must use exact frame counts from `docs/ANIMATION_ASSET_REQUIREMENTS.md`.
 - Do not use unlicensed third-party art.
 
 ## 16. Audio Direction
