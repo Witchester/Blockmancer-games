@@ -5,6 +5,7 @@ import { contentRegistry } from '../systems/ContentRegistry';
 import { Button } from '../ui/Button';
 import { COLORS, FONT_FAMILY, MAX_EVENT_LOG, MAX_FALL_SPEED, POST_BATTLE_FALL_SPEED_STEP } from '../utils/constants';
 import { getPortraitLayout, isCompactLayout } from '../utils/layout';
+import { ITEM_ICON_SIZE, setIconDisplaySize } from '../data/renderSizes';
 
 export class RewardScene extends Phaser.Scene {
   private rewardIndex = 0;
@@ -68,9 +69,10 @@ export class RewardScene extends Phaser.Scene {
     }).setOrigin(0.5);
 
     this.add.rectangle(layout.centerX, 500, layout.contentWidth - 72, 430, COLORS.panelAlt, 0.98).setStrokeStyle(3, COLORS.accent, 0.45);
-    this.gameAsBlockmancer.assetSystem
-      .addImage(this, layout.centerX, 330, this.getRewardIconKey(reward), 'icon')
-      .setDisplaySize(68, 68);
+    setIconDisplaySize(
+      this.gameAsBlockmancer.assetSystem.addImage(this, layout.centerX, 330, this.getRewardIconKey(reward), 'icon'),
+      ITEM_ICON_SIZE
+    );
     this.add.text(layout.centerX, 398, reward.name, {
       color: '#ffca6b',
       fontFamily: FONT_FAMILY,

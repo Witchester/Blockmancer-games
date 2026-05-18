@@ -5,6 +5,7 @@ import type { MapNodeDefinition, RoomType } from '../types/GameTypes';
 import { Button } from '../ui/Button';
 import { COLORS, FONT_FAMILY, MAX_EVENT_LOG } from '../utils/constants';
 import { getPortraitLayout } from '../utils/layout';
+import { MAP_NODE_ICON_SIZE, setIconDisplaySize } from '../data/renderSizes';
 
 export class MapScene extends Phaser.Scene {
   private infoText?: Phaser.GameObjects.Text;
@@ -201,7 +202,7 @@ export class MapScene extends Phaser.Scene {
       const circle = this.add.circle(positionX, positionY, 32, fill, 1).setStrokeStyle(3, stroke, 0.8);
       const iconKey = (contentRegistry.getMapNode(`node_${node.roomType}`) as { iconKey?: string } | null)?.iconKey;
       const nodeTexture = this.gameState.assetSystem.getMapNodeTexture(this, node.roomType, nodeState, iconKey);
-      const icon = this.add.image(positionX, positionY, nodeTexture).setDisplaySize(30, 30);
+      const icon = setIconDisplaySize(this.add.image(positionX, positionY, nodeTexture), MAP_NODE_ICON_SIZE);
       const label = this.add.text(positionX, positionY - 2, node.icon, {
         color: '#0b0d16',
         fontFamily: FONT_FAMILY,

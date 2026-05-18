@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { Button } from './Button';
 import { COLORS, FONT_FAMILY } from '../utils/constants';
+import { MOBILE_CONTROL_BUTTON_SIZE, UI_BUTTON_HEIGHT } from '../data/renderSizes';
 
 export type MobileControlsButtonConfig = {
   label: string;
@@ -37,9 +38,9 @@ export class MobileControls extends Phaser.GameObjects.Container {
     const buttonGap = options.buttonGap ?? 10;
     const titleHeight = options.title ? 28 : 0;
     const rowWidths = rows.map((row) =>
-      row.reduce((total, button, index) => total + (button.width ?? 64) + (index > 0 ? buttonGap : 0), 0)
+      row.reduce((total, button, index) => total + (button.width ?? MOBILE_CONTROL_BUTTON_SIZE) + (index > 0 ? buttonGap : 0), 0)
     );
-    const rowHeights = rows.map((row) => Math.max(...row.map((button) => button.height ?? 46)));
+    const rowHeights = rows.map((row) => Math.max(...row.map((button) => button.height ?? UI_BUTTON_HEIGHT)));
     const width = Math.max(...rowWidths, 0) + padding * 2;
     const height =
       titleHeight +
@@ -69,8 +70,8 @@ export class MobileControls extends Phaser.GameObjects.Container {
       let currentX = -rowWidth / 2;
 
       row.forEach((buttonConfig) => {
-        const buttonWidth = buttonConfig.width ?? 64;
-        const buttonHeight = buttonConfig.height ?? 46;
+        const buttonWidth = buttonConfig.width ?? MOBILE_CONTROL_BUTTON_SIZE;
+        const buttonHeight = buttonConfig.height ?? UI_BUTTON_HEIGHT;
         const button = new Button(
           scene,
           currentX + buttonWidth / 2,

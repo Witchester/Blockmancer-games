@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { BlockmancerGame } from '../BlockmancerGame';
 import { COLORS, FONT_FAMILY } from '../utils/constants';
+import { UI_BUTTON_HEIGHT, setIconDisplaySize } from '../data/renderSizes';
 
 type ButtonOptions = {
   iconKey?: string | null;
@@ -24,17 +25,18 @@ export class Button extends Phaser.GameObjects.Container {
     options: ButtonOptions = {}
   ) {
     super(scene, x, y);
+    const renderHeight = Math.max(height, UI_BUTTON_HEIGHT);
 
     this.background = scene.add
-      .rectangle(0, 0, width, height, COLORS.panelAlt, 0.98)
+      .rectangle(0, 0, width, renderHeight, COLORS.panelAlt, 0.98)
       .setStrokeStyle(2, COLORS.accent, 0.7)
       .setOrigin(0.5);
 
     if (options.iconKey) {
       const compactIcon = width < 90;
       this.icon = (scene.game as BlockmancerGame).assetSystem
-        .addImage(scene, compactIcon ? 0 : -width / 2 + 28, compactIcon ? -9 : 0, options.iconKey, 'icon')
-        .setDisplaySize(Math.min(compactIcon ? 20 : 28, height - 16), Math.min(compactIcon ? 20 : 28, height - 16));
+        .addImage(scene, compactIcon ? 0 : -width / 2 + 28, compactIcon ? -9 : 0, options.iconKey, 'icon');
+      setIconDisplaySize(this.icon, Math.min(compactIcon ? 20 : 28, renderHeight - 16));
     }
 
     const compactIcon = Boolean(this.icon && width < 90);
@@ -53,9 +55,9 @@ export class Button extends Phaser.GameObjects.Container {
       .setOrigin(0.5);
 
     this.add(this.icon ? [this.background, this.icon, this.label] : [this.background, this.label]);
-    this.setSize(width, height);
+    this.setSize(width, renderHeight);
     this.setInteractive(
-      new Phaser.Geom.Rectangle(-width / 2, -height / 2, width, height),
+      new Phaser.Geom.Rectangle(-width / 2, -renderHeight / 2, width, renderHeight),
       Phaser.Geom.Rectangle.Contains
     );
 

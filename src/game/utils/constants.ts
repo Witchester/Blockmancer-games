@@ -1,10 +1,11 @@
 import type { PlayerState, TetrominoType } from '../types/GameTypes';
+import { BOARD_BLOCK_ICON_SIZE, BOARD_CELL_SIZE } from '../data/renderSizes';
 
 export const BOARD_COLS = 10;
 export const BOARD_ROWS = 20;
 export const BLOCK_ANIM = {
-  BOARD_BLOCK_SIZE: 24,
-  BOARD_ICON_SIZE: 48,
+  BOARD_BLOCK_SIZE: BOARD_CELL_SIZE,
+  BOARD_ICON_SIZE: BOARD_BLOCK_ICON_SIZE,
 
   GLOW_FRAME_COUNT: 3,
   GLOW_FRAME_MS: 50,
@@ -15,7 +16,7 @@ export const BLOCK_ANIM = {
   CLEAR_TOTAL_MS: 200
 } as const;
 
-export const CELL_SIZE = BLOCK_ANIM.BOARD_BLOCK_SIZE;
+export const CELL_SIZE = BOARD_CELL_SIZE;
 export const BOARD_OFFSET_X = 36;
 export const BOARD_OFFSET_Y = 118;
 export const MAX_EVENT_LOG = 8;

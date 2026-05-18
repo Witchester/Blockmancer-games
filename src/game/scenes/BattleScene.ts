@@ -9,7 +9,7 @@ import { InputSystem } from '../systems/InputSystem';
 import { OopsieSystem } from '../systems/OopsieSystem';
 import { SpellSystem } from '../systems/SpellSystem';
 import { contentRegistry } from '../systems/ContentRegistry';
-import type { ActiveHazardKind, ActiveHazardState, BoardCell, BoardTickResult, CascadeAnimationFrame, CascadeResult, CounterTag, EnemyInstance, RunState, SpellId } from '../types/GameTypes';
+import type { ActiveHazardKind, ActiveHazardState, BoardCell, BoardTickResult, CascadeAnimationFrame, CascadeResult, CounterTag, EnemyInstance, RunState, SpellId, TetrominoType } from '../types/GameTypes';
 import { EventLog } from '../ui/EventLog';
 import { Hud } from '../ui/Hud';
 import { MobileControls } from '../ui/MobileControls';
@@ -17,11 +17,26 @@ import { ProgressBar } from '../ui/ProgressBar';
 import { Button } from '../ui/Button';
 import { getPortraitLayout, isCompactLayout } from '../utils/layout';
 import {
+  BOARD_CELL_SIZE,
+  BOARD_PREVIEW_CELL_SIZE,
+  BOSS_BATTLE_BOX_SIZE,
+  COMBAT_HIT_VFX_BOX_SIZE,
+  HERO_BATTLE_BOX_SIZE,
+  ITEM_VFX_BOX_SIZE,
+  MOBILE_CONTROL_BUTTON_SIZE,
+  MONSTER_BATTLE_BOX_SIZE,
+  SPELL_VFX_BOX_SIZE,
+  UI_BUTTON_HEIGHT,
+  fitSpriteToBox,
+  setBoardBlockDisplaySize,
+  setBoardPreviewBlockDisplaySize,
+  setBoardVfxDisplaySize
+} from '../data/renderSizes';
+import {
   BASE_DROP_MS,
   BLOCK_ANIM,
   BOARD_COLS,
   BOARD_ROWS,
-  CELL_SIZE,
   COLORS,
   FONT_FAMILY,
   MAX_FALL_SPEED,
@@ -155,6 +170,7 @@ export class BattleScene extends Phaser.Scene {
   private renderedAnimationKeys: string[][] = [];
   private renderedSymbols: string[][] = [];
   private previewSymbols: Phaser.GameObjects.Text[] = [];
+  private holdPreviewSymbols: Phaser.GameObjects.Text[] = [];
   private heroPortrait?: Phaser.GameObjects.Image;
   private enemySprite?: Phaser.GameObjects.Image;
   private enemyNameText?: Phaser.GameObjects.Text;
@@ -164,6 +180,7 @@ export class BattleScene extends Phaser.Scene {
   private upgradesText?: Phaser.GameObjects.Text;
   private enemyHpBar?: ProgressBar;
   private previewTiles: Phaser.GameObjects.Rectangle[] = [];
+  private holdPreviewTiles: Phaser.GameObjects.Rectangle[] = [];
   private previewLabel?: Phaser.GameObjects.Text;
   private previewExtraText?: Phaser.GameObjects.Text;
   private holdText?: Phaser.GameObjects.Text;
@@ -191,7 +208,7 @@ export class BattleScene extends Phaser.Scene {
   private bottomSectionHeight = 0;
   private boardColumns = BOARD_COLS;
   private boardRows = BOARD_ROWS;
-  private boardCellSize: number = CELL_SIZE;
+  private boardCellSize: number = BOARD_CELL_SIZE;
   private boardOffsetX = 0;
   private boardOffsetY = 0;
   private previewCenterX = 0;
@@ -238,8 +255,10 @@ export class BattleScene extends Phaser.Scene {
     this.renderedAnimationKeys = [];
     this.renderedSymbols = [];
     this.previewSymbols = [];
+    this.holdPreviewSymbols = [];
     this.spellButtons = [];
     this.previewTiles = [];
+    this.holdPreviewTiles = [];
     this.inventoryRenderKey = '';
     this.dropTimer = 0;
     this.oopsies = game.oopsieSystem;
@@ -260,10 +279,7 @@ export class BattleScene extends Phaser.Scene {
     this.middleSectionHeight = layout.middleHeight;
     this.logWidth = this.screenWidth - 48;
     this.logHeight = 88;
-    const compactSideSpace = this.screenWidth <= 520 ? 148 : 230;
-    const horizontalCellSize = Math.floor((this.screenWidth - compactSideSpace) / Math.max(1, this.boardColumns));
-    const verticalCellSize = Math.floor((this.middleSectionHeight - this.logHeight - 112) / Math.max(1, this.boardRows));
-    this.boardCellSize = Math.max(12, Math.min(CELL_SIZE, horizontalCellSize, verticalCellSize));
+    this.boardCellSize = BOARD_CELL_SIZE;
     this.boardOffsetX = Math.round((this.screenWidth - this.boardColumns * this.boardCellSize) / 2);
     this.boardOffsetY = this.topSectionHeight + 16;
     const sideCenterX = Math.max(48, Math.round(this.boardOffsetX / 2));
@@ -390,10 +406,11 @@ export class BattleScene extends Phaser.Scene {
       160,
       null,
       'sprite'
-    ).setDisplaySize(64, 64).setAlpha(0.95);
+    ).setAlpha(0.95);
     this.heroPortrait.setTexture(
       this.sharedGame.assetSystem.getHeroTexture(this, this.sharedGame.runState.hero.id, 'idle')
     );
+    fitSpriteToBox(this.heroPortrait, HERO_BATTLE_BOX_SIZE, HERO_BATTLE_BOX_SIZE);
 
     this.enemySprite = this.sharedGame.assetSystem.addImage(
       this,
@@ -401,7 +418,8 @@ export class BattleScene extends Phaser.Scene {
       160,
       null,
       'sprite'
-    ).setDisplaySize(64, 64).setAlpha(0.95);
+    ).setAlpha(0.95);
+    fitSpriteToBox(this.enemySprite, MONSTER_BATTLE_BOX_SIZE, MONSTER_BATTLE_BOX_SIZE);
 
     const sideCenterX = Math.max(48, Math.round(this.boardOffsetX / 2));
     const sidePanelWidth = this.screenWidth <= 520 ? 82 : 124;
@@ -420,6 +438,13 @@ export class BattleScene extends Phaser.Scene {
       align: 'center',
       wordWrap: { width: sidePanelWidth - 14 }
     }).setOrigin(0.5);
+    this.createTetrominoPreviewTiles(
+      sideCenterX,
+      this.boardOffsetY + 34,
+      this.holdPreviewTiles,
+      this.holdPreviewSymbols,
+      this.screenWidth <= 520
+    );
 
     const boardBottom = this.boardOffsetY + this.boardRows * this.boardCellSize;
     this.add.text(28, boardBottom + 10, 'Inventory', {
@@ -503,22 +528,21 @@ export class BattleScene extends Phaser.Scene {
           .rectangle(
             this.boardOffsetX + col * this.boardCellSize + this.boardCellSize / 2,
             this.boardOffsetY + row * this.boardCellSize + this.boardCellSize / 2,
-            this.boardCellSize - 2,
-            this.boardCellSize - 2,
+            BOARD_CELL_SIZE,
+            BOARD_CELL_SIZE,
             COLORS.boardEmpty,
             1
           )
           .setStrokeStyle(1, COLORS.boardGrid, settings.showGrid ? 0.9 : 0);
         cellRow.push(cell);
-        const blockRenderSize = Math.min(BLOCK_ANIM.BOARD_BLOCK_SIZE, this.boardCellSize);
         const sprite = this.add
           .sprite(
             this.boardOffsetX + col * this.boardCellSize + this.boardCellSize / 2,
             this.boardOffsetY + row * this.boardCellSize + this.boardCellSize / 2,
             this.sharedGame.assetSystem.getTextureKey(this, null, 'block')
           )
-          .setDisplaySize(blockRenderSize, blockRenderSize)
           .setVisible(false);
+        setBoardBlockDisplaySize(sprite);
         spriteRow.push(sprite);
         const symbol = this.add.text(
           this.boardOffsetX + col * this.boardCellSize + this.boardCellSize / 2,
@@ -565,8 +589,8 @@ export class BattleScene extends Phaser.Scene {
   private createPreviewPanel(): void {
     const compact = this.screenWidth <= 520;
     const panelSize = compact ? 84 : 116;
-    const tileSize = compact ? 16 : 18;
-    const tileStep = compact ? 17 : 20;
+    const tileSize = BOARD_PREVIEW_CELL_SIZE;
+    const tileStep = BOARD_PREVIEW_CELL_SIZE + (compact ? 1 : 4);
     const startOffset = compact ? -34 : -42;
     this.add.rectangle(this.previewCenterX, this.previewCenterY, panelSize, panelSize, COLORS.panelAlt, 0.98).setStrokeStyle(2, COLORS.accent, 0.24);
     this.previewLabel = this.add.text(this.previewCenterX, this.previewCenterY - panelSize / 2 - 18, 'Next', {
@@ -582,6 +606,7 @@ export class BattleScene extends Phaser.Scene {
         .rectangle(this.previewCenterX + startOffset + col * tileStep, this.previewCenterY + startOffset + row * tileStep, tileSize, tileSize, COLORS.boardEmpty, 1)
         .setStrokeStyle(1, COLORS.boardGrid, this.sharedGame.getSettings().showGrid ? 0.8 : 0)
         .setOrigin(0, 0);
+      setBoardPreviewBlockDisplaySize(tile);
       this.previewTiles.push(tile);
       this.previewSymbols.push(this.add.text(tile.x + tileSize / 2, tile.y + tileSize / 2 + 1, '', {
         color: '#f6f7ff',
@@ -602,25 +627,56 @@ export class BattleScene extends Phaser.Scene {
     }).setOrigin(0.5);
   }
 
+  private createTetrominoPreviewTiles(
+    centerX: number,
+    centerY: number,
+    tiles: Phaser.GameObjects.Rectangle[],
+    symbols: Phaser.GameObjects.Text[],
+    compact: boolean
+  ): void {
+    const tileSize = BOARD_PREVIEW_CELL_SIZE;
+    const tileStep = BOARD_PREVIEW_CELL_SIZE + (compact ? 1 : 4);
+    const startOffset = compact ? -34 : -38;
+    for (let index = 0; index < 16; index += 1) {
+      const col = index % 4;
+      const row = Math.floor(index / 4);
+      const tile = this.add
+        .rectangle(centerX + startOffset + col * tileStep, centerY + startOffset + row * tileStep, tileSize, tileSize, COLORS.boardEmpty, 1)
+        .setStrokeStyle(1, COLORS.boardGrid, this.sharedGame.getSettings().showGrid ? 0.8 : 0)
+        .setOrigin(0, 0)
+        .setVisible(false);
+      setBoardPreviewBlockDisplaySize(tile);
+      tiles.push(tile);
+      symbols.push(this.add.text(tile.x + tileSize / 2, tile.y + tileSize / 2 + 1, '', {
+        color: '#f6f7ff',
+        fontFamily: FONT_FAMILY,
+        fontSize: compact ? '10px' : '12px',
+        fontStyle: 'bold',
+        stroke: '#05060a',
+        strokeThickness: 2
+      }).setOrigin(0.5).setVisible(false));
+    }
+  }
+
   private createMobileControls(): void {
     const settings = this.sharedGame.getSettings();
     const buttonScale = settings.buttonSize === 'large' ? 1.12 : 1;
     const size = (value: number) => Math.round(value * buttonScale);
     const movementRow = [
-      { label: '<', width: size(58), height: size(48), onPress: () => this.moveHorizontal(-1), repeat: true, repeatDelayMs: 180, repeatIntervalMs: 90 },
-      { label: '>', width: size(58), height: size(48), onPress: () => this.moveHorizontal(1), repeat: true, repeatDelayMs: 180, repeatIntervalMs: 90 },
-      { label: 'Rot', width: size(64), height: size(48), onPress: () => this.rotatePiece() },
-      { label: 'Soft', width: size(66), height: size(48), onPress: () => this.softDrop(), repeat: true, repeatDelayMs: 120, repeatIntervalMs: 60 },
-      { label: 'Drop', width: size(70), height: size(48), onPress: () => this.hardDrop() },
-      { label: 'Hold', width: size(64), height: size(48), onPress: () => this.handleHold() }
+      { label: '<', width: size(MOBILE_CONTROL_BUTTON_SIZE), height: size(UI_BUTTON_HEIGHT), onPress: () => this.moveHorizontal(-1), repeat: true, repeatDelayMs: 180, repeatIntervalMs: 90 },
+      { label: '>', width: size(MOBILE_CONTROL_BUTTON_SIZE), height: size(UI_BUTTON_HEIGHT), onPress: () => this.moveHorizontal(1), repeat: true, repeatDelayMs: 180, repeatIntervalMs: 90 },
+      { label: 'Rot', width: size(MOBILE_CONTROL_BUTTON_SIZE), height: size(UI_BUTTON_HEIGHT), onPress: () => this.rotatePiece() },
+      { label: 'Soft', width: size(MOBILE_CONTROL_BUTTON_SIZE + 10), height: size(UI_BUTTON_HEIGHT), onPress: () => this.softDrop(), repeat: true, repeatDelayMs: 120, repeatIntervalMs: 60 },
+      { label: 'Drop', width: size(MOBILE_CONTROL_BUTTON_SIZE + 14), height: size(UI_BUTTON_HEIGHT), onPress: () => this.hardDrop() },
+      { label: 'Hold', width: size(MOBILE_CONTROL_BUTTON_SIZE + 8), height: size(UI_BUTTON_HEIGHT), onPress: () => this.handleHold() }
     ];
     const playableSpells = SPELLS.filter((spell) => this.sharedGame.runState.spells.includes(spell.id));
     const spellButtons = playableSpells.map((spell) => {
         const spellContent = contentRegistry.getSpell(`spl_${spell.id.replace(/-/g, '_')}`) as { iconKey?: string } | null;
         return {
           label: `${spell.key}\n${this.spells.getCost(spell.id)}`,
-          width: size(52),
-          height: size(42),
+          width: size(MOBILE_CONTROL_BUTTON_SIZE),
+          height: size(UI_BUTTON_HEIGHT),
           iconKey: this.sharedGame.assetSystem.getIcon(this, 'spell', `spl_${spell.id.replace(/-/g, '_')}`, spellContent?.iconKey),
           disabled: this.sharedGame.runState.player.mana < this.spells.getCost(spell.id),
           onPress: () => this.tryCast(spell.id),
@@ -629,7 +685,7 @@ export class BattleScene extends Phaser.Scene {
       });
     const spellRows = this.chunkControls([
       ...spellButtons,
-      { label: 'Bag', width: size(58), height: size(42), onPress: () => this.toggleInventory() }
+      { label: 'Bag', width: size(MOBILE_CONTROL_BUTTON_SIZE), height: size(UI_BUTTON_HEIGHT), onPress: () => this.toggleInventory() }
     ], this.screenWidth <= 520 ? 5 : 8);
     new MobileControls(
       this,
@@ -846,7 +902,7 @@ export class BattleScene extends Phaser.Scene {
       ) {
         state.player.emergencyBarrierUsed = true;
         state.player.shield += 10;
-        this.playVfx('anim_vfx_shield_gain', this.heroPortrait?.x ?? 112, this.heroPortrait?.y ?? 94, 54, 126);
+        this.playVfx('anim_vfx_shield_gain', this.heroPortrait?.x ?? 112, this.heroPortrait?.y ?? 94, COMBAT_HIT_VFX_BOX_SIZE, 126);
         state.board.topOut = false;
         this.board.clearMessiestRow();
         this.combat.addLog('No Snack Left Behind saves the run and clears breathing room.');
@@ -898,11 +954,11 @@ export class BattleScene extends Phaser.Scene {
 
     if (cascade.totalLinesCleared > 0) {
       this.sharedGame.audioSystem.play('line_clear', this);
-      this.playVfx('anim_vfx_line_clear', this.screenWidth / 2, this.boardOffsetY + this.boardRows * this.boardCellSize * 0.5, 72, 95);
+      this.playVfx('anim_vfx_line_clear', this.screenWidth / 2, this.boardOffsetY + this.boardRows * this.boardCellSize * 0.5, SPELL_VFX_BOX_SIZE, 95);
     }
     if (cascade.cascadeCount > 1 || cascade.blocksDropped > 0) {
       this.sharedGame.audioSystem.play('cascade', this);
-      this.playVfx('anim_vfx_cascade_pop', this.screenWidth / 2, this.boardOffsetY + 118, 64, 96);
+      this.playVfx('anim_vfx_cascade_pop', this.screenWidth / 2, this.boardOffsetY + 118, SPELL_VFX_BOX_SIZE, 96);
       this.showFloatingText(
         `Cascade Gravity x${Math.max(1, cascade.cascadeCount)}`,
         this.screenWidth / 2,
@@ -916,13 +972,13 @@ export class BattleScene extends Phaser.Scene {
 
     const result = this.combat.resolveCascadeClear(cascade);
     if (cascade.cascadeCount > 1) {
-      this.playVfx('anim_vfx_cascade_chain_bonus', this.screenWidth / 2, this.boardOffsetY + 164, 64, 97);
+      this.playVfx('anim_vfx_cascade_chain_bonus', this.screenWidth / 2, this.boardOffsetY + 164, SPELL_VFX_BOX_SIZE, 97);
       this.showFloatingText('Cascade Combo!', this.screenWidth / 2, this.boardOffsetY + 164, '#ffca6b', 30);
       this.showFloatingText(`Combo x${state.combo}`, this.screenWidth / 2, this.boardOffsetY + 206, '#f6f7ff', 25);
     }
     if (result.damage > 0) {
       this.sharedGame.audioSystem.play('enemy_hit', this);
-      this.playVfx('anim_vfx_enemy_hit', this.enemySprite?.x ?? this.screenWidth - 78, this.enemySprite?.y ?? 92, 52, 126);
+      this.playVfx('anim_vfx_enemy_hit', this.enemySprite?.x ?? this.screenWidth - 78, this.enemySprite?.y ?? 92, COMBAT_HIT_VFX_BOX_SIZE, 126);
       this.showFloatingText(`-${result.damage}`, this.screenWidth - 78, 92, result.specialDamage > 0 ? '#65d6a5' : '#ffca6b');
       this.flashEnemyHit(result.damage);
     }
@@ -1130,6 +1186,7 @@ export class BattleScene extends Phaser.Scene {
     this.sharedGame.battleObjectiveSystem.recordEnemyAttack(state);
     this.combat.addLog(`${enemy.name} uses ${enemy.intent}.`);
     this.enemySprite?.setTexture(this.sharedGame.assetSystem.getMonsterTexture(this, enemy.id, 'attack'));
+    this.fitEnemyBattleSprite(enemy);
 
     switch (behavior) {
       case 'basic_attack':
@@ -1247,7 +1304,7 @@ export class BattleScene extends Phaser.Scene {
         attackResult.hpDamage > 0 ? 'anim_vfx_player_hit' : 'anim_vfx_shield_gain',
         this.heroPortrait?.x ?? 112,
         this.heroPortrait?.y ?? 94,
-        54,
+        COMBAT_HIT_VFX_BOX_SIZE,
         126
       );
       this.vibrate(50);
@@ -1352,6 +1409,9 @@ export class BattleScene extends Phaser.Scene {
     const originalScaleX = this.enemySprite.scaleX;
     const originalScaleY = this.enemySprite.scaleY;
     this.enemySprite.setTexture(this.sharedGame.assetSystem.getMonsterTexture(this, this.sharedGame.runState.activeEnemy?.id, 'hit'));
+    if (this.sharedGame.runState.activeEnemy) {
+      this.fitEnemyBattleSprite(this.sharedGame.runState.activeEnemy);
+    }
     this.enemySprite.setTint(damage > 0 ? COLORS.danger : COLORS.gold);
     this.tweens.add({
       targets: this.enemySprite,
@@ -1365,6 +1425,9 @@ export class BattleScene extends Phaser.Scene {
         this.enemySprite?.setX(originalX);
         this.enemySprite?.setScale(originalScaleX, originalScaleY);
         this.enemySprite?.setTexture(this.sharedGame.assetSystem.getMonsterTexture(this, this.sharedGame.runState.activeEnemy?.id, 'idle'));
+        if (this.enemySprite && this.sharedGame.runState.activeEnemy) {
+          this.fitEnemyBattleSprite(this.sharedGame.runState.activeEnemy);
+        }
         this.enemySprite?.clearTint();
       }
     });
@@ -1390,7 +1453,7 @@ export class BattleScene extends Phaser.Scene {
       blockId,
       delayPieces
     }));
-    this.playVfx('anim_hazard_incoming_junk_warning', this.screenWidth - 76, this.topSectionHeight + 52, 38, 127);
+    this.playVfx('anim_hazard_incoming_junk_warning', this.screenWidth - 76, this.topSectionHeight + 52, ITEM_VFX_BOX_SIZE, 127);
   }
 
   private spawnFloatingBlock(blockId = 'block_floaty_rune', delayPieces = 3): void {
@@ -1414,7 +1477,7 @@ export class BattleScene extends Phaser.Scene {
       row,
       delayPieces
     }));
-    this.playVfx('anim_hazard_floaty_countdown', this.boardOffsetX + column * this.boardCellSize + this.boardCellSize / 2, this.boardOffsetY + row * this.boardCellSize + this.boardCellSize / 2, 34, 80);
+    this.playVfx('anim_hazard_floaty_countdown', this.boardOffsetX + column * this.boardCellSize + this.boardCellSize / 2, this.boardOffsetY + row * this.boardCellSize + this.boardCellSize / 2, BOARD_CELL_SIZE, 80);
     this.combat.addLog('A Floaty Rune wobbles overhead.');
   }
 
@@ -1471,7 +1534,7 @@ export class BattleScene extends Phaser.Scene {
     }
 
     this.sharedGame.runState.activeHazards.push(this.createHazard(kind, options));
-    this.playVfx(this.getHazardWarningAnimationId(kind), this.screenWidth - 76, this.topSectionHeight + 52, 38, 127);
+    this.playVfx(this.getHazardWarningAnimationId(kind), this.screenWidth - 76, this.topSectionHeight + 52, ITEM_VFX_BOX_SIZE, 127);
   }
 
   private createHazard(kind: ActiveHazardKind, options: {
@@ -1760,14 +1823,15 @@ export class BattleScene extends Phaser.Scene {
     this.sharedGame.battleObjectiveSystem.recordSpellCast(state);
     this.sharedGame.audioSystem.play('spell_cast', this);
     this.heroPortrait?.setTexture(this.sharedGame.assetSystem.getHeroTexture(this, state.hero.id, 'cast'));
-    this.playVfx(this.getSpellVfxKey(spellId), this.heroPortrait?.x ?? 96, this.heroPortrait?.y ?? 92, 58, 126);
+    this.fitHeroBattleSprite();
+    this.playVfx(this.getSpellVfxKey(spellId), this.heroPortrait?.x ?? 96, this.heroPortrait?.y ?? 92, SPELL_VFX_BOX_SIZE, 126);
     const damageDealt = Math.max(0, enemyHpBefore - (state.activeEnemy?.currentHp ?? enemyHpBefore));
     const hpSpent = Math.max(0, playerHpBefore - state.player.hp);
 
     if (state.activeEnemy) {
       this.sharedGame.audioSystem.play('enemy_hit', this);
       if (damageDealt > 0) {
-        this.playVfx('anim_vfx_enemy_hit', this.enemySprite?.x ?? this.screenWidth - 78, this.enemySprite?.y ?? 126, 52, 126);
+        this.playVfx('anim_vfx_enemy_hit', this.enemySprite?.x ?? this.screenWidth - 78, this.enemySprite?.y ?? 126, COMBAT_HIT_VFX_BOX_SIZE, 126);
         this.showFloatingText(`-${damageDealt}`, this.screenWidth - 78, 126, '#ffca6b', 28);
         this.flashEnemyHit(damageDealt);
       }
@@ -1804,6 +1868,7 @@ export class BattleScene extends Phaser.Scene {
     }
     this.showFloatingText('Phase 2', this.screenWidth / 2, 184, '#ffca6b', 34);
     this.enemySprite?.setTexture(this.sharedGame.assetSystem.getMonsterTexture(this, enemy.id, 'phase_2'));
+    this.fitEnemyBattleSprite(enemy);
     if (!this.sharedGame.getSettings().reducedFlashing) {
       this.cameras.main.flash(180, 255, 202, 107, false);
     }
@@ -1818,8 +1883,12 @@ export class BattleScene extends Phaser.Scene {
     const enemyName = state.activeEnemy.name;
     const enemyId = state.activeEnemy.id;
     this.enemySprite?.setTexture(this.sharedGame.assetSystem.getMonsterTexture(this, enemyId, 'defeat'));
-    this.playVfx('anim_vfx_enemy_defeat_poof', this.enemySprite?.x ?? this.screenWidth - 78, this.enemySprite?.y ?? 92, 68, 126);
+    if (state.activeEnemy) {
+      this.fitEnemyBattleSprite(state.activeEnemy);
+    }
+    this.playVfx('anim_vfx_enemy_defeat_poof', this.enemySprite?.x ?? this.screenWidth - 78, this.enemySprite?.y ?? 92, COMBAT_HIT_VFX_BOX_SIZE, 126);
     this.heroPortrait?.setTexture(this.sharedGame.assetSystem.getHeroTexture(this, state.hero.id, 'victory'));
+    this.fitHeroBattleSprite();
     state.enemiesDefeated += 1;
     state.runStats.roomsCleared += 1;
     this.combat.addLog(`${enemyName} tumbles out of the way.`);
@@ -2071,6 +2140,7 @@ export class BattleScene extends Phaser.Scene {
       ? this.boardVisualState === 'clear' ? 'clear' : 'glow'
       : 'base';
     if (state === 'glow' && this.playBoardBlockGlowAnimation(sprite, cell.blockId, row, col)) {
+      setBoardBlockDisplaySize(sprite);
       if (!sprite.visible) {
         sprite.setVisible(true);
       }
@@ -2081,6 +2151,7 @@ export class BattleScene extends Phaser.Scene {
     const textureKey = this.sharedGame.assetSystem.getBoardBlockTexture(this, cell.blockId, state);
     if (this.renderedTextureKeys[row][col] !== textureKey) {
       sprite.setTexture(textureKey);
+      setBoardBlockDisplaySize(sprite);
       this.renderedTextureKeys[row][col] = textureKey;
     }
     if (!sprite.visible) {
@@ -2102,6 +2173,7 @@ export class BattleScene extends Phaser.Scene {
     const animationKey = this.sharedGame.assetSystem.getBoardBlockAnimationId(blockId, 'glow') ?? this.getBoardBlockAnimationKey(blockId, 'glow');
     this.createBoardBlockAnimationIfMissing(animationKey, frames, BLOCK_ANIM.GLOW_FRAME_MS, -1);
     if (this.renderedAnimationKeys[row][col] !== animationKey || !sprite.anims.isPlaying) {
+      setBoardBlockDisplaySize(sprite);
       sprite.play(animationKey);
       this.renderedAnimationKeys[row][col] = animationKey;
       this.renderedTextureKeys[row][col] = '';
@@ -2109,7 +2181,7 @@ export class BattleScene extends Phaser.Scene {
     return true;
   }
 
-  private playVfx(animationId: string | null | undefined, x: number, y: number, size = 48, depth = 120): void {
+  private playVfx(animationId: string | null | undefined, x: number, y: number, size = SPELL_VFX_BOX_SIZE, depth = 120): void {
     const definition = getAnimationDefinition(animationId);
     if (!definition) {
       return;
@@ -2121,6 +2193,9 @@ export class BattleScene extends Phaser.Scene {
       .setDisplaySize(size, size)
       .setDepth(depth)
       .setAlpha(frames.length > 0 ? 1 : 0.42);
+    if (size === BOARD_CELL_SIZE) {
+      setBoardVfxDisplaySize(sprite);
+    }
 
     if (frames.length === definition.frameCount && this.sharedGame.assetSystem.playAnimationSafe(sprite, definition.id)) {
       sprite.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => sprite.destroy());
@@ -2189,10 +2264,9 @@ export class BattleScene extends Phaser.Scene {
     }
 
     const texture = clearFrames[0] ?? clearStillTexture;
-    const blockRenderSize = Math.min(BLOCK_ANIM.BOARD_BLOCK_SIZE, this.boardCellSize);
     const overlay = this.add.sprite(x, y, texture)
-      .setDisplaySize(blockRenderSize, blockRenderSize)
       .setDepth(24);
+    setBoardBlockDisplaySize(overlay);
 
     if (clearFrames.length === BLOCK_ANIM.CLEAR_FRAME_COUNT) {
       const animationKey = this.sharedGame.assetSystem.getBoardBlockAnimationId(blockId, 'clear') ?? this.getBoardBlockAnimationKey(blockId, 'clear');
@@ -2270,6 +2344,7 @@ export class BattleScene extends Phaser.Scene {
     this.enemySprite
       ?.setTexture(this.sharedGame.assetSystem.getMonsterTexture(this, enemy.id, state))
       .setVisible(true);
+    this.fitEnemyBattleSprite(enemy);
 
     this.enemyNameText?.setText(enemy.name);
     this.enemyStatsText?.setText(`HP ${enemy.currentHp}/${enemy.maxHp}   SH ${enemy.shield}   ATK ${enemy.attack}`);
@@ -2280,6 +2355,19 @@ export class BattleScene extends Phaser.Scene {
       `Attack in ${enemy.attackCounter} block${enemy.attackCounter === 1 ? '' : 's'}`
     );
     this.enemyHpBar?.setValue(enemy.currentHp, enemy.maxHp);
+  }
+
+  private fitHeroBattleSprite(): void {
+    if (this.heroPortrait) {
+      fitSpriteToBox(this.heroPortrait, HERO_BATTLE_BOX_SIZE, HERO_BATTLE_BOX_SIZE);
+    }
+  }
+
+  private fitEnemyBattleSprite(enemy: EnemyInstance): void {
+    if (this.enemySprite) {
+      const boxSize = enemy.roomType === 'boss' ? BOSS_BATTLE_BOX_SIZE : MONSTER_BATTLE_BOX_SIZE;
+      fitSpriteToBox(this.enemySprite, boxSize, boxSize);
+    }
   }
 
   private getBehaviorLabel(behavior: string): string {
@@ -2356,6 +2444,26 @@ export class BattleScene extends Phaser.Scene {
     }
   }
 
+  private renderTetrominoPreview(
+    tiles: Phaser.GameObjects.Rectangle[],
+    symbols: Phaser.GameObjects.Text[],
+    type: TetrominoType | null,
+    hidden: boolean
+  ): void {
+    const matrix = type ? TETROMINO_SHAPES[type] : [];
+    const settings = this.sharedGame.getSettings();
+    tiles.forEach((tile, index) => {
+      const col = index % 4;
+      const row = Math.floor(index / 4);
+      const value = !hidden && type ? matrix[row]?.[col] ?? 0 : 0;
+      tile
+        .setFillStyle(value && type ? TETROMINO_COLORS[type] : COLORS.boardEmpty, 1)
+        .setVisible(Boolean(type && !hidden));
+      symbols[index]?.setText(value && settings.colorblindSymbols && type ? type : '');
+      symbols[index]?.setVisible(Boolean(value && settings.colorblindSymbols && type && !hidden));
+    });
+  }
+
   private renderUpgrades(): void {
     const owned = this.sharedGame.runState.ownedRewards;
     const oopsieCount = this.sharedGame.runState.player.oopsies.length;
@@ -2367,13 +2475,16 @@ export class BattleScene extends Phaser.Scene {
   private renderMiddleOverlays(): void {
     const state = this.sharedGame.runState;
     const enemy = state.activeEnemy;
+    const holdHidden = Boolean(enemy?.holdHiddenTurns);
     this.holdText?.setText(
-      enemy?.holdHiddenTurns
+      holdHidden
         ? 'Hold\nHidden'
         : this.board.holdPieceType
-          ? `Held\n${this.board.holdPieceType}`
+          ? ''
           : 'Hold\nEmpty'
     );
+    this.holdText?.setVisible(holdHidden || !this.board.holdPieceType);
+    this.renderTetrominoPreview(this.holdPreviewTiles, this.holdPreviewSymbols, this.board.holdPieceType, holdHidden);
     
     const inventorySummary = state.inventory.slice(0, 1).map(stack => `${this.sharedGame.itemSystem.getItem(stack.itemId)?.name} x${stack.count}`).join(', ');
     const bagText = state.inventory.length ? inventorySummary : 'Bag Empty';
@@ -2431,12 +2542,12 @@ export class BattleScene extends Phaser.Scene {
           const msg = this.sharedGame.itemSystem.applyItem(state, stack.itemId, this.board, this.combat);
           this.combat.addLog(msg);
           const itemAnimation = itemDef.useVfxKey ?? itemDef.vfxKey ?? `anim_${stack.itemId}_use`;
-          this.playVfx(itemAnimation, x + 22, y + 30, 42, 141);
+          this.playVfx(itemAnimation, x + 22, y + 30, ITEM_VFX_BOX_SIZE, 141);
           if (state.activeHazards.length < hazardCountBefore) {
-            this.playVfx(itemDef.counterSuccessVfxKey ?? `anim_${stack.itemId}_counter_success`, x + 22, y + 30, 46, 142);
+            this.playVfx(itemDef.counterSuccessVfxKey ?? `anim_${stack.itemId}_counter_success`, x + 22, y + 30, ITEM_VFX_BOX_SIZE, 142);
           }
           if (state.player.shield > shieldBefore) {
-            this.playVfx('anim_vfx_shield_gain', this.heroPortrait?.x ?? 112, this.heroPortrait?.y ?? 94, 54, 126);
+            this.playVfx('anim_vfx_shield_gain', this.heroPortrait?.x ?? 112, this.heroPortrait?.y ?? 94, COMBAT_HIT_VFX_BOX_SIZE, 126);
           }
           this.sharedGame.inventorySystem.removeItem(state, stack.itemId, 1);
           state.runStats.itemsUsed += 1;

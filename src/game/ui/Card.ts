@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { BlockmancerGame } from '../BlockmancerGame';
 import { COLORS, FONT_FAMILY } from '../utils/constants';
+import { HERO_SELECT_SPRITE_BOX_SIZE, UI_CARD_ICON_SIZE, fitSpriteToBox, setIconDisplaySize } from '../data/renderSizes';
 
 type TextAlign = 'left' | 'center' | 'right';
 
@@ -56,10 +57,14 @@ export class Card extends Phaser.GameObjects.Container {
     this.add(this.background);
 
     if (options.imageKey) {
-      const size = options.imageSize ?? 96;
+      const size = options.imageSize ?? (options.imageKind === 'icon' ? UI_CARD_ICON_SIZE : HERO_SELECT_SPRITE_BOX_SIZE);
       this.image = (scene.game as BlockmancerGame).assetSystem
-        .addImage(scene, 0, 0, options.imageKey, options.imageKind ?? 'sprite')
-        .setDisplaySize(size, size);
+        .addImage(scene, 0, 0, options.imageKey, options.imageKind ?? 'sprite');
+      if ((options.imageKind ?? 'sprite') === 'icon') {
+        setIconDisplaySize(this.image, size);
+      } else {
+        fitSpriteToBox(this.image, size, size);
+      }
       this.add(this.image);
     }
 

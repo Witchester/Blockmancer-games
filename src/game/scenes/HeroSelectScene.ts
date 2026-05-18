@@ -5,6 +5,7 @@ import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
 import { COLORS } from '../utils/constants';
 import { getPortraitLayout, isCompactLayout } from '../utils/layout';
+import { HERO_SELECT_SPRITE_BOX_SIZE } from '../data/renderSizes';
 
 type HeroEntry = {
   id: string;
@@ -133,7 +134,7 @@ export class HeroSelectScene extends Phaser.Scene {
       body: bodyText,
       imageKey: game.assetSystem.getHeroTexture(this, hero.id, isUnlocked ? 'portrait' : 'locked'),
       imageKind: 'sprite',
-      imageSize: 92,
+      imageSize: HERO_SELECT_SPRITE_BOX_SIZE,
       titleColor: isUnlocked ? '#ffca6b' : '#666666',
       bodyFontSize: isCompactLayout(this) ? '16px' : '18px',
       strokeColor: isUnlocked ? COLORS.gold : COLORS.panelAlt
