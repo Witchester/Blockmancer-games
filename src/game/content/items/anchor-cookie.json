@@ -1,0 +1,14 @@
+{
+  "id": "item_anchor_cookie",
+  "name": "Anchor Cookie",
+  "description": "Make the next few floating block hazards spawn as normal crumb junk instead.",
+  "effect": { "type": "anchor_floaters" },
+  "itemCategory": "hazard_counter",
+  "counterTags": ["counter_float"],
+  "timing": "during_enemy_warning",
+  "rarity": "uncommon",
+  "maxStack": 2,
+  "effectConfig": { "pieces": 3 },
+  "iconKey": "item_anchor_cookie",
+  "enabled": true
+}

@@ -16,7 +16,7 @@ export const DEFAULT_FALL_SPEED = 1.0;
 export const DEFAULT_GOLD = 50;
 export const DEFAULT_RUN_STATUS: RunStatus = 'menu';
 export const DEFAULT_EVENT_LOG = ['The dungeon stirs beneath your feet.'];
-export const SAVE_VERSION = 5;
+export const SAVE_VERSION = 6;
 
 export function createDefaultHeroState(): HeroState {
   return {

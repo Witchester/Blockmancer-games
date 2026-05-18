@@ -605,6 +605,92 @@ export class BoardSystem {
     return cleared;
   }
 
+  spawnFloatingBlock(blockId: string, column: number, row: number, countdownPieces: number): boolean {
+    if (!this.state) {
+      return false;
+    }
+    const safeColumn = Math.max(0, Math.min(this.columns - 1, column));
+    const safeRow = Math.max(0, Math.min(this.rows - 1, row));
+    this.state.activeHazards.push({
+      hazardId: 'hazard_floaty_rune',
+      instanceId: `board_float_${Date.now()}_${safeColumn}_${safeRow}`,
+      kind: 'floating_block',
+      name: 'Floaty Rune',
+      warningText: 'A Floaty Rune is wobbling overhead!',
+      counterTags: ['counter_float'],
+      counterWindowPieces: Math.max(1, countdownPieces),
+      remainingPieces: Math.max(1, countdownPieces),
+      severity: 'minor',
+      defaultFailureEffect: 'Drops as cloud junk.',
+      itemCounterHints: ['Cloud Pin', 'Balloon Pop'],
+      spellCounterHints: ['Bomb Rune', 'Clean Cut'],
+      cascadeCounterHint: 'Clear space below it before it drops.',
+      sourceId: 'board',
+      blockId,
+      onExpireBlockId: 'block_cloud_junk',
+      column: safeColumn,
+      row: safeRow
+    });
+    return true;
+  }
+
+  resolveFloatingCountdown(): number {
+    if (!this.state) {
+      return 0;
+    }
+    let expired = 0;
+    this.state.activeHazards.forEach((hazard) => {
+      if (hazard.kind === 'floating_block') {
+        hazard.remainingPieces = Math.max(0, hazard.remainingPieces - 1);
+        if (hazard.remainingPieces === 0) {
+          expired += 1;
+        }
+      }
+    });
+    return expired;
+  }
+
+  pinFloatingBlocks(): number {
+    if (!this.state) {
+      return 0;
+    }
+    const floaters = this.state.activeHazards.filter((hazard) => hazard.kind === 'floating_block');
+    floaters.forEach((hazard) => {
+      this.addJunkToColumn(hazard.column ?? 0, hazard.blockId ?? 'block_floaty_rune');
+    });
+    this.state.activeHazards = this.state.activeHazards.filter((hazard) => hazard.kind !== 'floating_block');
+    return floaters.length;
+  }
+
+  popFloatingBlocks(): number {
+    if (!this.state) {
+      return 0;
+    }
+    const before = this.state.activeHazards.length;
+    this.state.activeHazards = this.state.activeHazards.filter((hazard) => hazard.kind !== 'floating_block');
+    return before - this.state.activeHazards.length;
+  }
+
+  expireFloatingBlocks(): number {
+    if (!this.state) {
+      return 0;
+    }
+    const expired = this.state.activeHazards.filter((hazard) => hazard.kind === 'floating_block' && hazard.remainingPieces <= 0);
+    expired.forEach((hazard) => {
+      this.addJunkToColumn(hazard.column ?? 0, hazard.onExpireBlockId ?? 'block_cloud_junk');
+    });
+    this.state.activeHazards = this.state.activeHazards.filter((hazard) => !(hazard.kind === 'floating_block' && hazard.remainingPieces <= 0));
+    return expired.length;
+  }
+
+  getFloatingBlocks() {
+    return this.state?.activeHazards.filter((hazard) => hazard.kind === 'floating_block') ?? [];
+  }
+
+  hasFloatingBlocks(): boolean {
+    return this.getFloatingBlocks().length > 0;
+  }
+
   getGhostPreviewTypes(): TetrominoType[] {
     return [this.nextPieceType, this.rollPieceType()];
   }

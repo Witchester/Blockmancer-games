@@ -1,9 +1,12 @@
 import type {
   DialogueLine,
+  HazardSeverity,
   HeroRouteProgress,
   RouteChoiceContent,
   RouteChoiceLane,
   RouteProgressState,
+  RouteRiskConfig,
+  RouteRuntimeModifier,
   RouteRewardConfig,
   RouteSceneContent,
   RunState
@@ -214,15 +217,8 @@ export class RouteStorySystem {
       `Route choice: ${choice.label}.`,
       this.applyRouteReward(runState, choice.rewardConfig)
     ];
-    if (choice.riskConfig?.oopsieChance && Math.random() < choice.riskConfig.oopsieChance) {
-      const oopsie = this.oopsieSystem?.addRandomOopsie(runState);
-      if (oopsie) {
-        messages.push(`Route risk added oopsie: ${oopsie.name}.`);
-      } else if (choice.riskConfig.hazardIncrease) {
-        messages.push(this.applyRiskHazard(runState, choice.riskConfig.hazardIncrease));
-      }
-    } else if (choice.riskConfig?.hazardIncrease) {
-      messages.push(`Route risk noted: ${choice.riskConfig.hazardIncrease}.`);
+    if (choice.riskConfig) {
+      messages.push(...this.applyRouteRisk(choice.riskConfig, runState));
     }
 
     runState.routeProgress.activeHeroId = scene.heroId;
@@ -241,9 +237,12 @@ export class RouteStorySystem {
   }
 
   applyBossCallbackModifier(runState: RunState): string | null {
-    const stageId = STAGE_IDS[runState.stage - 1] ?? 'stage_sprinkle_sewers';
-    const scene = this.getRouteSceneForHeroStage(runState.hero.id, stageId);
-    const lane = this.getHeroProgress(runState.routeProgress, runState.hero.id).chosenScenes[scene.id];
+    return this.applyBossRouteModifier(runState.hero.id, STAGE_IDS[runState.stage - 1] ?? 'stage_sprinkle_sewers', runState);
+  }
+
+  applyBossRouteModifier(heroId: string, stageId: string, runState: RunState): string | null {
+    const scene = this.getRouteSceneForHeroStage(heroId, stageId);
+    const lane = this.getHeroProgress(runState.routeProgress, heroId).chosenScenes[scene.id];
     if (!lane) {
       return null;
     }
@@ -296,7 +295,7 @@ export class RouteStorySystem {
     return routeState.heroes[heroId];
   }
 
-  private applyRouteReward(runState: RunState, reward: RouteRewardConfig): string {
+  applyRouteReward(runState: RunState, reward: RouteRewardConfig): string {
     if (!reward?.rewardId || !reward.rewardType) {
       return 'Route reward missing; the festival moves on safely.';
     }
@@ -357,6 +356,7 @@ export class RouteStorySystem {
         if (reward.modifierId === 'route_fever') {
           runState.player.fever = clamp(runState.player.fever + (reward.amount ?? 12), 0, 100);
         }
+        this.registerRouteModifier(runState, reward);
         return `Route modifier ${reward.modifierId ?? reward.rewardId} applied for ${reward.duration ?? 'battle'}.`;
       }
       case 'stage_modifier':
@@ -371,6 +371,7 @@ export class RouteStorySystem {
         if (reward.modifierId?.includes('preview') || reward.modifierId?.includes('warning')) {
           runState.reactiveState.previewRevealPieces = Math.max(runState.reactiveState.previewRevealPieces, reward.amount ?? 3);
         }
+        this.registerRouteModifier(runState, reward);
         return `Route modifier ${reward.modifierId ?? reward.rewardId} applied for ${reward.duration ?? 'stage'}.`;
       }
       default:
@@ -378,33 +379,221 @@ export class RouteStorySystem {
     }
   }
 
-  private applyRiskHazard(runState: RunState, hazardId: string): string {
+  applyRouteRisk(risk: RouteRiskConfig, runState: RunState): string[] {
+    const messages: string[] = [];
+    if (risk.oopsieChance && Math.random() < risk.oopsieChance) {
+      const oopsie = this.oopsieSystem?.addRandomOopsie(runState);
+      if (oopsie) {
+        messages.push(`Route risk added oopsie: ${oopsie.name}.`);
+      }
+    }
+    const hazardId = risk.addHazardId ?? risk.hazardIncrease;
+    if (hazardId) {
+      messages.push(this.applyRiskHazard(runState, hazardId, risk.increaseHazardSeverity));
+    }
+    if (risk.bossModifierId) {
+      this.registerRouteModifier(runState, {
+        rewardId: `risk_${risk.bossModifierId}`,
+        rewardType: 'boss_modifier',
+        modifierId: risk.bossModifierId,
+        duration: 'boss'
+      });
+      messages.push(`Route risk boss modifier ${risk.bossModifierId} registered.`);
+    }
+    return messages;
+  }
+
+  registerRouteModifier(runState: RunState, reward: RouteRewardConfig): RouteRuntimeModifier | null {
+    if (!reward.modifierId || !reward.duration || reward.duration === 'next_battle') {
+      return null;
+    }
+    const modifier: RouteRuntimeModifier = {
+      id: `${reward.rewardId}_${reward.modifierId}_${runState.stage}`,
+      sourceRewardId: reward.rewardId,
+      modifierId: reward.modifierId,
+      duration: reward.duration,
+      stage: reward.duration === 'stage' || reward.duration === 'boss' ? runState.stage : undefined,
+      amount: reward.amount,
+      consumed: false
+    };
+    runState.reactiveState.activeRouteModifiers = runState.reactiveState.activeRouteModifiers.filter((entry) => entry.id !== modifier.id);
+    runState.reactiveState.activeRouteModifiers.push(modifier);
+    return modifier;
+  }
+
+  getActiveRouteModifiers(runState: RunState, duration?: RouteRuntimeModifier['duration']): RouteRuntimeModifier[] {
+    return runState.reactiveState.activeRouteModifiers.filter((modifier) =>
+      !modifier.consumed &&
+      (!duration || modifier.duration === duration) &&
+      (modifier.duration === 'run' || modifier.stage === undefined || modifier.stage === runState.stage)
+    );
+  }
+
+  consumeRouteModifier(runState: RunState, modifierId: string): void {
+    runState.reactiveState.activeRouteModifiers = runState.reactiveState.activeRouteModifiers.map((modifier) =>
+      modifier.modifierId === modifierId ? { ...modifier, consumed: true } : modifier
+    );
+  }
+
+  private applyRiskHazard(runState: RunState, hazardId: string, severityOverride?: RouteRiskConfig['increaseHazardSeverity']): string {
+    const severity = severityOverride ?? 'moderate';
     if (hazardId.includes('speed')) {
-      runState.fallSpeed = clamp(runState.fallSpeed + 0.03, 0.7, 1.85);
-      return 'Route risk: fall speed nudges upward briefly.';
+      this.queueRiskHazard(runState, 'speed_wave', hazardId, severity);
+      return 'Route risk: Speed Wave warning queued with counterplay.';
     }
     if (hazardId.includes('sticky')) {
-      runState.activeRandomGameplayEvents.push('r_evt_sticky_spill');
-      return 'Route risk: sticky spill pressure queued.';
+      this.queueRiskHazard(runState, 'incoming_junk', hazardId, severity, 2, 'block_sticky');
+      return 'Route risk: sticky pressure enters the warning tray.';
+    }
+    if (hazardId.includes('machine') || hazardId.includes('junk')) {
+      this.queueRiskHazard(runState, 'incoming_junk', hazardId, severity, 3, 'block_crumb_junk');
+      return 'Route risk: machine junk enters the warning tray.';
+    }
+    if (hazardId.includes('freeze')) {
+      this.queueRiskHazard(runState, 'freeze', hazardId, severity);
+      return 'Route risk: Freeze warning queued with Hot Cocoa counterplay.';
+    }
+    if (hazardId.includes('preview')) {
+      this.queueRiskHazard(runState, 'preview', hazardId, severity);
+      return 'Route risk: Preview warning queued with glasses counterplay.';
+    }
+    if (hazardId.includes('sleep')) {
+      this.queueRiskHazard(runState, 'sleep', hazardId, severity);
+      return 'Route risk: Sleepy warning queued with Alarm Cookie counterplay.';
     }
     if (hazardId.includes('royal')) {
-      runState.activeHazards.push({
+      this.queueRiskHazard(runState, 'royal_pattern', hazardId, 'boss', 3);
+      return 'Route risk: extra royal pattern warning queued.';
+    }
+    return `Route risk: ${hazardId}.`;
+  }
+
+  private queueRiskHazard(
+    runState: RunState,
+    kind: RunState['activeHazards'][number]['kind'],
+    sourceId: string,
+    severity: HazardSeverity,
+    amount?: number,
+    blockId?: string
+  ): void {
+    if (runState.activeHazards.length >= (runState.stage <= 2 ? 1 : 2)) {
+      runState.eventLog.unshift('Route risk waited because another hazard warning was already active.');
+      return;
+    }
+    const templates: Record<RunState['activeHazards'][number]['kind'], Omit<RunState['activeHazards'][number], 'instanceId' | 'kind' | 'remainingPieces'>> = {
+      incoming_junk: {
+        hazardId: 'hazard_incoming_junk_queue',
+        name: 'Route Junk Tray',
+        warningText: 'A risky route choice has lined up extra junk in the snack tray.',
+        counterTags: ['counter_incoming_junk', 'counter_junk'],
+        counterWindowPieces: 3,
+        severity,
+        defaultFailureEffect: 'Remaining route junk drops onto safe random columns.',
+        itemCounterHints: ['Snack Shield', 'Trash Lid', 'Return Stamp'],
+        spellCounterHints: ['Bomb Rune', 'Clean Cut'],
+        cascadeCounterHint: 'Trigger a cascade to reduce incoming junk.',
+        amount: amount ?? 2,
+        sourceId,
+        blockId: blockId ?? 'block_crumb_junk'
+      },
+      floating_block: {
+        hazardId: 'hazard_floaty_rune',
+        name: 'Route Floaty Rune',
+        warningText: 'A risky route sparkle is wobbling overhead.',
+        counterTags: ['counter_float'],
+        counterWindowPieces: 3,
+        severity,
+        defaultFailureEffect: 'Drops as cloud junk.',
+        itemCounterHints: ['Cloud Pin', 'Balloon Pop'],
+        spellCounterHints: ['Bomb Rune']
+      },
+      freeze: {
+        hazardId: 'hazard_freeze_warning',
+        name: 'Route Freeze Warning',
+        warningText: 'A risky route chill gathers around the active block.',
+        counterTags: ['counter_freeze'],
+        counterWindowPieces: 2,
+        severity,
+        defaultFailureEffect: 'Fall speed nudges upward.',
+        itemCounterHints: ['Hot Cocoa'],
+        spellCounterHints: ['Frost Lock']
+      },
+      preview: {
+        hazardId: 'hazard_preview_hidden',
+        name: 'Route Preview Glitter',
+        warningText: 'Risky sparkle is drifting toward the Next and Hold windows.',
+        counterTags: ['counter_preview'],
+        counterWindowPieces: 3,
+        severity,
+        defaultFailureEffect: 'Preview hides briefly.',
+        itemCounterHints: ['Preview Glasses'],
+        spellCounterHints: []
+      },
+      low_ceiling: {
+        hazardId: 'hazard_low_ceiling',
+        name: 'Route Low Ceiling',
+        warningText: 'A risky route banner is lowering toward the board.',
+        counterTags: ['counter_low_ceiling', 'counter_board_size'],
+        counterWindowPieces: 5,
+        severity,
+        defaultFailureEffect: 'Top row pressure clears safely.',
+        itemCounterHints: ['Tent Pole', 'Safety Net'],
+        spellCounterHints: ['Clean Cut']
+      },
+      bad_piece: {
+        hazardId: 'hazard_bad_piece_delivery',
+        name: 'Route Weird Delivery',
+        warningText: 'A risky route shortcut is nudging a weird piece into the queue.',
+        counterTags: ['counter_piece_queue'],
+        counterWindowPieces: 2,
+        severity,
+        defaultFailureEffect: 'Awkward piece enters Next.',
+        itemCounterHints: ['Nope Stamp', 'Queue Comb'],
+        spellCounterHints: []
+      },
+      sleep: {
+        hazardId: 'hazard_sleep_warning',
+        name: 'Route Sleepy Tune',
+        warningText: 'A risky route lullaby is drifting through the room.',
+        counterTags: ['counter_sleep'],
+        counterWindowPieces: 3,
+        severity,
+        defaultFailureEffect: 'Sleepy pressure lands softly.',
+        itemCounterHints: ['Alarm Cookie'],
+        spellCounterHints: []
+      },
+      speed_wave: {
+        hazardId: 'hazard_speed_wave',
+        name: 'Route Speed Wave',
+        warningText: 'A risky route burst makes the floor wobble faster.',
+        counterTags: ['counter_speed'],
+        counterWindowPieces: 4,
+        severity,
+        defaultFailureEffect: 'Fall speed rises slightly.',
+        itemCounterHints: ['Speed Brake'],
+        spellCounterHints: ['Frost Lock']
+      },
+      royal_pattern: {
         hazardId: 'hazard_royal_pattern',
-        instanceId: `route_royal_${Date.now()}`,
-        kind: 'royal_pattern',
         name: 'Route Royal Pattern',
         warningText: 'The risky route has made the palace extra square.',
         counterTags: ['counter_royal', 'counter_pattern'],
         counterWindowPieces: 3,
-        remainingPieces: 3,
         severity: 'boss',
         defaultFailureEffect: 'Royal blocks appear with extra ceremony.',
         itemCounterHints: ['Royal Eraser', 'Snack Vacuum'],
-        spellCounterHints: ['Bomb Rune', 'Void Cut']
-      });
-      return 'Route risk: extra royal pattern warning queued.';
-    }
-    return `Route risk: ${hazardId}.`;
+        spellCounterHints: ['Bomb Rune', 'Clean Cut'],
+        amount: amount ?? 3,
+        sourceId
+      }
+    };
+    const template = templates[kind];
+    runState.activeHazards.push({
+      ...template,
+      instanceId: `${template.hazardId}_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
+      kind,
+      remainingPieces: template.counterWindowPieces
+    });
   }
 
   private incrementLane(progress: HeroRouteProgress, lane: RouteChoiceLane): void {

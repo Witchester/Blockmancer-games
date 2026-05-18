@@ -96,8 +96,13 @@ function createDefaultReactiveState(): ReactiveBattleState {
     speedBrakePieces: 0,
     freezeGuardPieces: 0,
     anchorCookiePieces: 0,
+    cleanupCouponPieces: 0,
+    nopeStampPieces: 0,
+    sleepGuardPieces: 0,
+    nixieMitigationUsed: false,
     lowCeilingCanceled: false,
-    safetyNetArmed: false
+    safetyNetArmed: false,
+    activeRouteModifiers: []
   };
 }
 
@@ -150,8 +155,23 @@ function normalizeReactiveState(value: Partial<ReactiveBattleState> | undefined)
     speedBrakePieces: Math.max(0, Number(value?.speedBrakePieces ?? 0)),
     freezeGuardPieces: Math.max(0, Number(value?.freezeGuardPieces ?? 0)),
     anchorCookiePieces: Math.max(0, Number(value?.anchorCookiePieces ?? 0)),
+    cleanupCouponPieces: Math.max(0, Number(value?.cleanupCouponPieces ?? 0)),
+    nopeStampPieces: Math.max(0, Number(value?.nopeStampPieces ?? 0)),
+    sleepGuardPieces: Math.max(0, Number(value?.sleepGuardPieces ?? 0)),
+    nixieMitigationUsed: Boolean(value?.nixieMitigationUsed),
     lowCeilingCanceled: Boolean(value?.lowCeilingCanceled),
-    safetyNetArmed: Boolean(value?.safetyNetArmed)
+    safetyNetArmed: Boolean(value?.safetyNetArmed),
+    activeRouteModifiers: Array.isArray(value?.activeRouteModifiers)
+      ? value.activeRouteModifiers
+          .filter((modifier) => modifier && typeof modifier.id === 'string' && typeof modifier.modifierId === 'string')
+          .map((modifier) => ({
+            ...modifier,
+            duration: modifier.duration === 'stage' || modifier.duration === 'boss' || modifier.duration === 'run'
+              ? modifier.duration
+              : 'next_battle',
+            consumed: Boolean(modifier.consumed)
+          }))
+      : []
   };
 }
 

@@ -1,0 +1,14 @@
+{
+  "id": "item_queue_comb",
+  "name": "Queue Comb",
+  "description": "Comb the next queue into a clean line piece and clear weird delivery warnings.",
+  "effect": { "type": "reorder_queue" },
+  "itemCategory": "queue_control",
+  "counterTags": ["counter_piece_queue", "counter_preview"],
+  "timing": "instant",
+  "rarity": "uncommon",
+  "maxStack": 2,
+  "effectConfig": {},
+  "iconKey": "item_queue_comb",
+  "enabled": true
+}

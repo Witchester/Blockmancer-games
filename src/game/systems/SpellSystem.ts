@@ -21,7 +21,9 @@ export class SpellSystem {
     }
 
     const manaHexPenalty = this.state.activeEnemy?.manaHexTurns ? 10 : 0;
-    const multiplier = this.state.reactiveState.nextSpellModifiers.reduce(
+    const multiplier = this.state.reactiveState.nextSpellModifiers
+      .filter((modifier) => this.isModifierCompatible(spellId, modifier))
+      .reduce(
       (lowest, modifier) => Math.min(lowest, modifier.costMultiplier ?? 1),
       1
     );
@@ -42,7 +44,9 @@ export class SpellSystem {
     }
 
     this.state.player.mana -= cost;
-    const spellModifiers = [...this.state.reactiveState.nextSpellModifiers];
+    const spellModifiers = this.state.reactiveState.nextSpellModifiers.filter((modifier) =>
+      this.isModifierCompatible(spellId, modifier)
+    );
     const hpCost = this.oopsieSystem.getSpellHpCost(this.state);
     if (hpCost > 0) {
       this.state.player.hp = Math.max(1, this.state.player.hp - hpCost);
@@ -73,11 +77,33 @@ export class SpellSystem {
         this.combat.addLog('Frost Lock slows the battlefield.');
         break;
       case 'bomb-rune': {
-        const bonus = this.state.player.spellBonuses['bomb-rune'];
+        const zuzuBonus = this.state.hero.passiveId === 'passive_bombs_are_features' ? 8 : 0;
+        const bonus = this.state.player.spellBonuses['bomb-rune'] + zuzuBonus;
         this.combat.applyDirectDamage(35 + bonus, 'Bomb Rune');
         const radius = 1 + Math.max(0, ...spellModifiers.map((modifier) => modifier.bombRadiusBonus ?? 0));
         const removed = this.board.clearRandomFilledArea(radius);
         this.combat.addLog(`Bomb Rune blasts a 3x3 area and removes ${removed} blocks.`);
+        if (this.state.hero.passiveId === 'passive_bombs_are_features' && Math.random() < 0.25) {
+          this.state.activeHazards.push({
+            hazardId: 'hazard_incoming_junk_queue',
+            instanceId: `zuzu_bomb_junk_${Date.now()}`,
+            kind: 'incoming_junk',
+            name: 'Goblin Bomb Crumbs',
+            warningText: 'Zuzu made the bomb stronger, and one crumb delivery is wobbling loose.',
+            counterTags: ['counter_incoming_junk', 'counter_junk'],
+            counterWindowPieces: 3,
+            remainingPieces: 3,
+            severity: 'minor',
+            defaultFailureEffect: 'One crumb junk drops into a safe random column.',
+            itemCounterHints: ['Snack Shield', 'Return Stamp'],
+            spellCounterHints: ['Bomb Rune', 'Clean Cut'],
+            cascadeCounterHint: 'Any line clear can trim it.',
+            amount: 1,
+            sourceId: 'passive_bombs_are_features',
+            blockId: 'block_crumb_junk'
+          });
+          this.combat.addLog('Bombs Are Features adds power, with one warned crumb risk.');
+        }
         break;
       }
       case 'void-cut': {
@@ -97,9 +123,18 @@ export class SpellSystem {
     }
 
     this.applySharedSpellModifiers(spellModifiers);
-    this.state.reactiveState.nextSpellModifiers = this.state.reactiveState.nextSpellModifiers.filter(
-      (modifier) => !spellModifiers.includes(modifier)
-    );
+    this.state.reactiveState.nextSpellModifiers = this.state.reactiveState.nextSpellModifiers.filter((modifier) => {
+      if (!spellModifiers.includes(modifier)) {
+        return true;
+      }
+      modifier.consumed = true;
+      modifier.remainingCasts -= 1;
+      return modifier.remainingCasts > 0;
+    });
+    const waiting = this.state.reactiveState.nextSpellModifiers.length;
+    if (waiting > 0 && spellModifiers.length === 0) {
+      this.combat.addLog('Your spell catalyst waits for a compatible spell.');
+    }
     return true;
   }
 
@@ -109,6 +144,17 @@ export class SpellSystem {
 
   private hasCleanupModifier(modifiers: SpellCatalystModifier[]): boolean {
     return modifiers.some((modifier) => modifier.cleanupTags?.some((tag) => tag === 'counter_junk' || tag === 'counter_sticky'));
+  }
+
+  private isModifierCompatible(spellId: SpellId, modifier: SpellCatalystModifier): boolean {
+    const filter = modifier.spellFilter;
+    if (!filter) {
+      return true;
+    }
+    if (Array.isArray(filter)) {
+      return filter.includes(spellId) || filter.includes('any');
+    }
+    return filter === spellId || filter === 'any';
   }
 
   private applySharedSpellModifiers(modifiers: SpellCatalystModifier[]): void {

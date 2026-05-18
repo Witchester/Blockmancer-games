@@ -1,0 +1,14 @@
+{
+  "id": "item_nope_stamp",
+  "name": "Nope Stamp",
+  "description": "Delete the next enemy-injected bad piece before it enters the queue.",
+  "effect": { "type": "delete_bad_piece" },
+  "itemCategory": "hazard_counter",
+  "counterTags": ["counter_piece_queue"],
+  "timing": "during_enemy_warning",
+  "rarity": "uncommon",
+  "maxStack": 2,
+  "effectConfig": { "pieces": 3 },
+  "iconKey": "item_nope_stamp",
+  "enabled": true
+}

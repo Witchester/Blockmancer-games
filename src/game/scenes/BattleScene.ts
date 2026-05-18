@@ -96,7 +96,18 @@ const HAZARD_WINDOWS: Record<ActiveHazardKind, Omit<ActiveHazardState, 'instance
     counterWindowPieces: 2,
     severity: 'minor',
     defaultFailureEffect: 'An awkward piece enters Next.',
-    itemCounterHints: ['Return Stamp'],
+    itemCounterHints: ['Nope Stamp', 'Queue Comb'],
+    spellCounterHints: []
+  },
+  sleep: {
+    hazardId: 'hazard_sleep_warning',
+    name: 'Sleepy Tune',
+    warningText: 'A pillow-soft tune is trying to make the room drowsy!',
+    counterTags: ['counter_sleep'],
+    counterWindowPieces: 3,
+    severity: 'moderate',
+    defaultFailureEffect: 'A cozy tune slows the next beat.',
+    itemCounterHints: ['Alarm Cookie'],
     spellCounterHints: []
   },
   speed_wave: {
@@ -118,7 +129,7 @@ const HAZARD_WINDOWS: Record<ActiveHazardKind, Omit<ActiveHazardState, 'instance
     counterWindowPieces: 3,
     severity: 'boss',
     defaultFailureEffect: 'Royal blocks appear in open spaces.',
-    itemCounterHints: ['Tent Pole', 'Snack Vacuum'],
+    itemCounterHints: ['Royal Eraser', 'Snack Vacuum'],
     spellCounterHints: ['Void Cut', 'Bomb Rune'],
     cascadeCounterHint: 'Cascades soften pattern pressure.'
   }
@@ -1032,6 +1043,9 @@ export class BattleScene extends Phaser.Scene {
     reactive.speedBrakePieces = Math.max(0, reactive.speedBrakePieces - 1);
     reactive.freezeGuardPieces = Math.max(0, reactive.freezeGuardPieces - 1);
     reactive.anchorCookiePieces = Math.max(0, reactive.anchorCookiePieces - 1);
+    reactive.cleanupCouponPieces = Math.max(0, reactive.cleanupCouponPieces - 1);
+    reactive.nopeStampPieces = Math.max(0, reactive.nopeStampPieces - 1);
+    reactive.sleepGuardPieces = Math.max(0, reactive.sleepGuardPieces - 1);
 
     const enemy = this.sharedGame.runState.activeEnemy;
     if (!enemy) {
@@ -1171,9 +1185,9 @@ export class BattleScene extends Phaser.Scene {
         this.combat.addLog('Frost gathers around the falling block.');
         break;
       case 'sleep_player':
-        enemy.sleepTurns = 1;
+        this.startHazardWarning('sleep', { sourceId: enemy.id, delayPieces: 3 });
         damage = 0;
-        this.combat.addLog('A cozy lullaby makes your next moment sluggish.');
+        this.combat.addLog('A cozy lullaby is warming up with a clear counter window.');
         break;
       case 'swap_next_hold':
         this.startHazardWarning('bad_piece', { sourceId: enemy.id, delayPieces: 2 });
@@ -1338,6 +1352,11 @@ export class BattleScene extends Phaser.Scene {
       return;
     }
 
+    if (!this.canStartNewHazard('incoming_junk')) {
+      this.combat.addLog('The junk tray waits so active warnings stay readable.');
+      return;
+    }
+
     this.sharedGame.runState.activeHazards.push(this.createHazard('incoming_junk', {
       sourceId,
       amount,
@@ -1348,6 +1367,10 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private spawnFloatingBlock(blockId = 'block_floaty_rune', delayPieces = 3): void {
+    if (!this.canStartNewHazard('floating_block')) {
+      this.combat.addLog('The warning tray is full, so the extra floaty block waits its turn.');
+      return;
+    }
     if (this.sharedGame.runState.reactiveState.anchorCookiePieces > 0) {
       const added = this.board.addJunkToColumn(Phaser.Math.Between(0, this.boardColumns - 1), 'block_crumb_junk');
       this.combat.addLog(added ? 'Anchor Cookie turns a floaty block into normal crumb junk.' : 'Anchor Cookie catches a floaty block safely.');
@@ -1374,6 +1397,24 @@ export class BattleScene extends Phaser.Scene {
     blockId?: string;
     delayPieces?: number;
   } = {}): void {
+    if (kind === 'bad_piece' && this.sharedGame.runState.reactiveState.nopeStampPieces > 0) {
+      this.sharedGame.runState.reactiveState.nopeStampPieces = 0;
+      this.combat.addLog('Nope Stamp rejects the weird delivery before it reaches the queue.');
+      return;
+    }
+    if (kind === 'sleep' && this.sharedGame.runState.reactiveState.sleepGuardPieces > 0) {
+      this.combat.addLog('Alarm Cookie keeps the Sleepy tune polite and brief.');
+      return;
+    }
+    if (
+      (kind === 'freeze' || kind === 'speed_wave') &&
+      this.sharedGame.runState.hero.passiveId === 'passive_stay_chill' &&
+      !this.sharedGame.runState.reactiveState.nixieMitigationUsed
+    ) {
+      this.sharedGame.runState.reactiveState.nixieMitigationUsed = true;
+      this.combat.addLog('Stay Chill softens this hazard before it becomes sharp.');
+      return;
+    }
     if (kind === 'low_ceiling' && this.sharedGame.runState.reactiveState.lowCeilingCanceled) {
       this.combat.addLog('Tent Pole keeps the low ceiling away.');
       return;
@@ -1394,6 +1435,11 @@ export class BattleScene extends Phaser.Scene {
     const existing = this.sharedGame.runState.activeHazards.find((hazard) => hazard.kind === kind);
     if (existing) {
       existing.remainingPieces = Math.max(existing.remainingPieces, options.delayPieces ?? existing.remainingPieces);
+      return;
+    }
+
+    if (!this.canStartNewHazard(kind)) {
+      this.combat.addLog('A hazard warning waits so the board stays readable.');
       return;
     }
 
@@ -1437,6 +1483,14 @@ export class BattleScene extends Phaser.Scene {
       return;
     }
 
+    if (this.sharedGame.runState.reactiveState.cleanupCouponPieces > 0) {
+      this.sharedGame.runState.reactiveState.cleanupCouponPieces = 0;
+      incoming.amount = 0;
+      this.sharedGame.runState.activeHazards = this.sharedGame.runState.activeHazards.filter((hazard) => hazard !== incoming);
+      this.combat.addLog('Cleanup Coupon cashes in the line clear and cancels incoming junk.');
+      return;
+    }
+
     let reduction = 1;
     if (cascade.cascadeCount >= 4) {
       reduction = incoming.amount;
@@ -1447,9 +1501,15 @@ export class BattleScene extends Phaser.Scene {
     } else {
       reduction = 2;
     }
-    reduction += cascade.specialBlocksTriggered.filter((trigger) => trigger.startsWith('block_star')).length;
+    const starClears = cascade.specialBlocksTriggered.filter((trigger) => trigger.startsWith('block_star')).length;
+    reduction += starClears;
+    if (this.sharedGame.runState.hero.passiveId === 'passive_main_character_energy' && starClears > 0) {
+      reduction += starClears;
+      this.combat.addLog('Main Character Energy makes star blocks shove extra junk out of line.');
+    }
     if (this.sharedGame.runState.relics.includes('rel_star_sticker')) {
       reduction += 1;
+      this.combat.addLog('Star Sticker helps the cascade trim one extra junk.');
     }
 
     incoming.amount = Math.max(0, incoming.amount - reduction);
@@ -1500,6 +1560,14 @@ export class BattleScene extends Phaser.Scene {
         this.board.setNextPieceType(Phaser.Math.Between(0, 1) === 0 ? 'S' : 'Z');
         this.combat.addLog('A wiggly piece enters the next queue.');
         break;
+      case 'sleep': {
+        const enemy = this.sharedGame.runState.activeEnemy;
+        if (enemy) {
+          enemy.sleepTurns = Math.max(enemy.sleepTurns, 1);
+        }
+        this.combat.addLog('The Sleepy tune lands softly; one beat gets drowsy.');
+        break;
+      }
       case 'speed_wave':
         this.sharedGame.runState.fallSpeed = Math.min(MAX_FALL_SPEED, this.sharedGame.runState.fallSpeed + 0.08);
         this.combat.addLog('The floor wobbles faster for a bit.');
@@ -1584,6 +1652,9 @@ export class BattleScene extends Phaser.Scene {
     if (kind === 'freeze' || kind === 'bad_piece') {
       return 2;
     }
+    if (kind === 'sleep') {
+      return 3;
+    }
     if (kind === 'low_ceiling') {
       return 6;
     }
@@ -1591,6 +1662,29 @@ export class BattleScene extends Phaser.Scene {
       return 4;
     }
     return this.getStageCounterWindow();
+  }
+
+  private canStartNewHazard(kind: ActiveHazardKind): boolean {
+    const state = this.sharedGame.runState;
+    const activeKinds = new Set(state.activeHazards.map((hazard) => hazard.kind));
+    if (kind === 'low_ceiling' && activeKinds.has('freeze')) {
+      return false;
+    }
+    if (kind === 'freeze' && activeKinds.has('low_ceiling')) {
+      return false;
+    }
+    return state.activeHazards.length < this.getMaxActiveHazards();
+  }
+
+  private getMaxActiveHazards(): number {
+    const state = this.sharedGame.runState;
+    if (state.stage <= 2) {
+      return 1;
+    }
+    if (state.stage <= 4) {
+      return state.currentRoomType === 'elite' || state.currentRoomType === 'boss' ? 2 : 1;
+    }
+    return state.currentRoomType === 'fight' ? 1 : 2;
   }
 
   private renderCombatUi(): void {
@@ -2033,6 +2127,7 @@ export class BattleScene extends Phaser.Scene {
       preview: 'anim_hazard_preview_hidden_warning',
       low_ceiling: 'anim_hazard_low_ceiling_warning',
       bad_piece: 'anim_hazard_bad_piece_delivery_warning',
+      sleep: 'anim_hazard_preview_hidden_warning',
       speed_wave: 'anim_hazard_speed_wave_warning',
       royal_pattern: 'anim_hazard_royal_pattern_warning'
     };

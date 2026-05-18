@@ -1,0 +1,14 @@
+{
+  "id": "item_alarm_cookie",
+  "name": "Alarm Cookie",
+  "description": "Remove Sleepy pressure and prevent the next drowsy tune.",
+  "effect": { "type": "remove_sleep" },
+  "itemCategory": "hazard_counter",
+  "counterTags": ["counter_sleep"],
+  "timing": "after_hazard",
+  "rarity": "common",
+  "maxStack": 2,
+  "effectConfig": { "pieces": 4 },
+  "iconKey": "item_alarm_cookie",
+  "enabled": true
+}

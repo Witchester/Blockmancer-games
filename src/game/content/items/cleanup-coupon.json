@@ -1,0 +1,14 @@
+{
+  "id": "item_cleanup_coupon",
+  "name": "Cleanup Coupon",
+  "description": "If you clear a line within two pieces, cancel the active incoming junk tray.",
+  "effect": { "type": "cleanup_coupon" },
+  "itemCategory": "risk_reward",
+  "counterTags": ["counter_incoming_junk", "counter_junk"],
+  "timing": "during_enemy_warning",
+  "rarity": "uncommon",
+  "maxStack": 1,
+  "effectConfig": { "pieces": 2 },
+  "iconKey": "item_cleanup_coupon",
+  "enabled": true
+}

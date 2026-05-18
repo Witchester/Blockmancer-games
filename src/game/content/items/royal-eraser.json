@@ -1,0 +1,14 @@
+{
+  "id": "item_royal_eraser",
+  "name": "Royal Eraser",
+  "description": "Downgrade royal pattern blocks into ordinary runes.",
+  "effect": { "type": "royal_erase" },
+  "itemCategory": "hazard_counter",
+  "counterTags": ["counter_royal", "counter_pattern"],
+  "timing": "instant",
+  "rarity": "rare",
+  "maxStack": 1,
+  "effectConfig": { "count": 2 },
+  "iconKey": "item_royal_eraser",
+  "enabled": true
+}

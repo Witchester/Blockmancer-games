@@ -49,6 +49,7 @@ export type ActiveHazardKind =
   | 'preview'
   | 'low_ceiling'
   | 'bad_piece'
+  | 'sleep'
   | 'speed_wave'
   | 'royal_pattern';
 
@@ -189,6 +190,16 @@ export type RouteRewardConfig = {
   duration?: 'next_battle' | 'stage' | 'boss' | 'run';
 };
 
+export type RouteRiskConfig = {
+  oopsieChance?: number;
+  addHazardId?: string;
+  increaseHazardSeverity?: HazardSeverity;
+  bossModifierId?: string;
+  rewardTier?: 'stage' | 'rare' | 'hero_themed';
+  /** @deprecated route JSON used this before RouteRiskConfig was formalized. */
+  hazardIncrease?: string;
+};
+
 export type RouteChoiceContent = {
   id: string;
   lane: RouteChoiceLane;
@@ -200,11 +211,7 @@ export type RouteChoiceContent = {
   rewardConfig: RouteRewardConfig;
   statDelta: Record<string, number>;
   grantFlag?: string;
-  riskConfig?: {
-    rewardTier?: 'stage' | 'rare' | 'hero_themed';
-    oopsieChance?: number;
-    hazardIncrease?: string;
-  };
+  riskConfig?: RouteRiskConfig;
 };
 
 export type RouteSceneContent = {
@@ -297,9 +304,32 @@ export interface ActiveHazardState extends HazardCounterWindow {
   row?: number;
 }
 
+export type IncomingJunkQueue = ActiveHazardState & {
+  kind: 'incoming_junk';
+  amount: number;
+  originalAmount?: number;
+  sourceId: string;
+  delayPieces: number;
+  remainingPieces: number;
+  junkType: string;
+};
+
+export type FloatingState = {
+  isFloating: boolean;
+  countdownPieces: number;
+  onExpireBlockId: string;
+  sourceId?: string;
+};
+
+export type ActiveHazardCounterWindow = ActiveHazardState;
+
 export interface SpellCatalystModifier {
   id: string;
   sourceItemId: string;
+  spellFilter?: string | string[];
+  effectType?: string;
+  value?: number;
+  consumed?: boolean;
   remainingCasts: number;
   costMultiplier?: number;
   extraBlockId?: string;
@@ -308,14 +338,31 @@ export interface SpellCatalystModifier {
   feverMultiplier?: number;
 }
 
+export type NextSpellModifier = SpellCatalystModifier;
+
+export type RouteRuntimeModifier = {
+  id: string;
+  sourceRewardId: string;
+  modifierId: string;
+  duration: 'next_battle' | 'stage' | 'boss' | 'run';
+  stage?: number;
+  amount?: number;
+  consumed?: boolean;
+};
+
 export interface ReactiveBattleState {
   nextSpellModifiers: SpellCatalystModifier[];
   previewRevealPieces: number;
   speedBrakePieces: number;
   freezeGuardPieces: number;
   anchorCookiePieces: number;
+  cleanupCouponPieces: number;
+  nopeStampPieces: number;
+  sleepGuardPieces: number;
+  nixieMitigationUsed: boolean;
   lowCeilingCanceled: boolean;
   safetyNetArmed: boolean;
+  activeRouteModifiers: RouteRuntimeModifier[];
 }
 
 export interface ReactiveItemContent {

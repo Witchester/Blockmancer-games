@@ -87,8 +87,12 @@ export class DebugScene extends Phaser.Scene {
       ['Force Reward', () => this.forceReward(), 'Force Cascade Test', () => this.forceCascadeTest()],
       ['Queue Junk', () => this.queueDebugHazard('incoming_junk'), 'Floaty Block', () => this.queueDebugHazard('floating_block')],
       ['Freeze Warning', () => this.queueDebugHazard('freeze'), 'Low Ceiling', () => this.queueDebugHazard('low_ceiling')],
-      ['Give Reactive Item', () => this.giveReactiveItem(), 'New Debug Run', () => this.newDebugRun()],
-      ['Clear Run Save', () => this.clearRunSave(), 'Preview Glitter', () => this.queueDebugHazard('preview')]
+      ['Bad Piece', () => this.queueDebugHazard('bad_piece'), 'Speed Wave', () => this.queueDebugHazard('speed_wave')],
+      ['Royal Pattern', () => this.queueDebugHazard('royal_pattern'), 'Sleepy Tune', () => this.queueDebugHazard('sleep')],
+      ['Give Reactive Item', () => this.giveReactiveItem(), 'Give Catalyst Item', () => this.giveCatalystItem()],
+      ['Apply Route Reward', () => this.applyDebugRouteReward(false), 'Apply Route Risk', () => this.applyDebugRouteReward(true)],
+      ['Clear Hazards', () => this.clearHazards(), 'Preview Glitter', () => this.queueDebugHazard('preview')],
+      ['Clear Run Save', () => this.clearRunSave(), 'New Debug Run', () => this.newDebugRun()]
     ];
 
     rows.forEach((row, index) => {
@@ -234,6 +238,11 @@ export class DebugScene extends Phaser.Scene {
       'item_speed_brake',
       'item_tent_pole',
       'item_safety_net',
+      'item_trash_lid',
+      'item_queue_comb',
+      'item_nope_stamp',
+      'item_alarm_cookie',
+      'item_royal_eraser',
       'item_firecracker_sugar',
       'item_spell_coupon'
     ];
@@ -241,6 +250,52 @@ export class DebugScene extends Phaser.Scene {
     this.gameState.inventorySystem.addItem(state, itemId);
     this.itemIndex += 1;
     this.saveAndReport(`Added reactive item: ${itemId}.`);
+  }
+
+  private giveCatalystItem(): void {
+    const state = this.ensureRun();
+    const itemIds = [
+      'item_firecracker_sugar',
+      'item_frosting_salt',
+      'item_bomb_fuse',
+      'item_star_syrup',
+      'item_cascade_confetti',
+      'item_spell_coupon',
+      'item_cleaning_charm'
+    ];
+    const itemId = itemIds[this.itemIndex % itemIds.length];
+    this.gameState.inventorySystem.addItem(state, itemId);
+    this.itemIndex += 1;
+    this.saveAndReport(`Added spell catalyst item: ${itemId}.`);
+  }
+
+  private applyDebugRouteReward(risky: boolean): void {
+    const state = this.ensureRun();
+    const message = this.gameState.routeStorySystem.applyRouteReward(state, {
+      rewardId: risky ? 'debug_route_risky_fever' : 'debug_route_safe_preview',
+      rewardType: 'battle_modifier',
+      modifierId: risky ? 'route_fever' : 'extra_preview',
+      amount: risky ? 20 : 3,
+      duration: risky ? 'stage' : 'next_battle'
+    });
+    if (risky) {
+      this.gameState.routeStorySystem.applyRouteRisk({
+        addHazardId: 'hazard_machine_junk_route',
+        increaseHazardSeverity: 'moderate',
+        rewardTier: 'stage'
+      }, state).forEach((entry) => this.pushLog(entry));
+    }
+    this.saveAndReport(message);
+  }
+
+  private clearHazards(): void {
+    const state = this.ensureRun();
+    state.activeHazards = [];
+    state.reactiveState.nextSpellModifiers = [];
+    state.reactiveState.cleanupCouponPieces = 0;
+    state.reactiveState.nopeStampPieces = 0;
+    state.reactiveState.sleepGuardPieces = 0;
+    this.saveAndReport('Cleared all active hazards and temporary reactive warnings.');
   }
 
   private clearRunSave(): void {
@@ -438,6 +493,16 @@ export class DebugScene extends Phaser.Scene {
         severity: 'minor',
         defaultFailureEffect: 'Awkward piece enters Next.',
         itemCounterHints: ['Return Stamp'],
+        spellCounterHints: []
+      },
+      sleep: {
+        hazardId: 'hazard_sleep_warning',
+        name: 'Sleepy Tune',
+        warningText: 'A pillow-soft tune is trying to make the room drowsy!',
+        counterTags: ['counter_sleep'],
+        severity: 'moderate',
+        defaultFailureEffect: 'Sleepy pressure lands softly.',
+        itemCounterHints: ['Alarm Cookie'],
         spellCounterHints: []
       },
       speed_wave: {

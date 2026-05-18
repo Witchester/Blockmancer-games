@@ -1,0 +1,14 @@
+{
+  "id": "item_sky_hook",
+  "name": "Sky Hook",
+  "description": "Hook one floating block into Hold as a safe square piece.",
+  "effect": { "type": "sky_hook" },
+  "itemCategory": "queue_control",
+  "counterTags": ["counter_float", "counter_piece_queue"],
+  "timing": "after_hazard",
+  "rarity": "rare",
+  "maxStack": 1,
+  "effectConfig": {},
+  "iconKey": "item_sky_hook",
+  "enabled": true
+}

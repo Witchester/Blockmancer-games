@@ -1,0 +1,14 @@
+{
+  "id": "item_balloon_pop",
+  "name": "Balloon Pop",
+  "description": "Pop all floating blocks, then warn about one crumb junk drifting down.",
+  "effect": { "type": "pop_floating" },
+  "itemCategory": "risk_reward",
+  "counterTags": ["counter_float"],
+  "timing": "after_hazard",
+  "rarity": "uncommon",
+  "maxStack": 2,
+  "effectConfig": { "junkAmount": 1, "delayPieces": 2 },
+  "iconKey": "item_balloon_pop",
+  "enabled": true
+}

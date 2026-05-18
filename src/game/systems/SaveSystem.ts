@@ -148,8 +148,13 @@ export class SaveSystem {
         speedBrakePieces: 0,
         freezeGuardPieces: 0,
         anchorCookiePieces: 0,
+        cleanupCouponPieces: 0,
+        nopeStampPieces: 0,
+        sleepGuardPieces: 0,
+        nixieMitigationUsed: false,
         lowCeilingCanceled: false,
-        safetyNetArmed: false
+        safetyNetArmed: false,
+        activeRouteModifiers: []
       };
     }
 
@@ -173,6 +178,24 @@ export class SaveSystem {
             variantEndingIds: []
           }
         }
+      };
+    }
+
+    if (version < 6) {
+      const reactive = isObject(migrated.reactiveState) ? migrated.reactiveState : {};
+      migrated.reactiveState = {
+        nextSpellModifiers: Array.isArray(reactive.nextSpellModifiers) ? reactive.nextSpellModifiers : [],
+        previewRevealPieces: typeof reactive.previewRevealPieces === 'number' ? reactive.previewRevealPieces : 0,
+        speedBrakePieces: typeof reactive.speedBrakePieces === 'number' ? reactive.speedBrakePieces : 0,
+        freezeGuardPieces: typeof reactive.freezeGuardPieces === 'number' ? reactive.freezeGuardPieces : 0,
+        anchorCookiePieces: typeof reactive.anchorCookiePieces === 'number' ? reactive.anchorCookiePieces : 0,
+        cleanupCouponPieces: typeof reactive.cleanupCouponPieces === 'number' ? reactive.cleanupCouponPieces : 0,
+        nopeStampPieces: typeof reactive.nopeStampPieces === 'number' ? reactive.nopeStampPieces : 0,
+        sleepGuardPieces: typeof reactive.sleepGuardPieces === 'number' ? reactive.sleepGuardPieces : 0,
+        nixieMitigationUsed: Boolean(reactive.nixieMitigationUsed),
+        lowCeilingCanceled: Boolean(reactive.lowCeilingCanceled),
+        safetyNetArmed: Boolean(reactive.safetyNetArmed),
+        activeRouteModifiers: Array.isArray(reactive.activeRouteModifiers) ? reactive.activeRouteModifiers : []
       };
     }
 

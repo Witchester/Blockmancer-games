@@ -1,0 +1,14 @@
+{
+  "id": "item_trash_lid",
+  "name": "Trash Lid",
+  "description": "Block half of the next incoming junk tray.",
+  "effect": { "type": "block_incoming_junk" },
+  "itemCategory": "enemy_pressure",
+  "counterTags": ["counter_incoming_junk"],
+  "timing": "during_enemy_warning",
+  "rarity": "common",
+  "maxStack": 2,
+  "effectConfig": { "remainingMultiplier": 0.5 },
+  "iconKey": "item_trash_lid",
+  "enabled": true
+}
