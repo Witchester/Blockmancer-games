@@ -17,7 +17,18 @@ The reactive difficulty direction remains correct, but it is **partial** at runt
 | R8 Balance | Not complete | Tune after Stage 1 vertical slice is stable. |
 | R9 QA/debug | Partial | Debug scene exists; add specific hazard triggers and smoke checklist. |
 
-Priority next step: build a **reactive difficulty smoke test matrix** for incoming junk, floaty blocks, freeze, low ceiling, preview disruption, speed wave, royal pattern, and item/spell counters.
+Priority next step: build a **reactive difficulty smoke test matrix** for incoming junk, floaty blocks, freeze, low ceiling, preview disruption, speed wave, royal pattern, item/spell counters, and route-triggered reward/risk modifiers.
+
+### Character route integration status
+
+The new route story system should interact with reactive difficulty as a controlled reward/risk layer, not as a replacement for hazard rules.
+
+- Practical route choices may grant small safety tools such as shield, mana, reduced junk, or a one-battle hazard reduction.
+- True route choices may grant stage-specific counter advantages, wider warning windows, or boss softening tied to that hero's route theme.
+- Risky route choices may grant stronger rewards while adding an Oopsie, hazard pressure, or boss modifier.
+- Route-triggered hazards must still follow fairness rules: warning first, counter window, no soft-lock, and no simultaneous impossible hazard stack.
+- Current status is **design ready, runtime verification pending** until route rewards and hazards are wired through code.
+
 <!-- END_BLOCKMANCER_STATUS_UPDATE -->
 
 This plan implements the new difficulty/setback direction from `docs/01_GDD_MASTER.md` sections 21 and 22.
@@ -49,6 +60,7 @@ Add these systems and content:
 - Item/spell/relic/cascade synergy hooks.
 - Hazard warning UI.
 - Balance and QA coverage.
+- Route-triggered reward/risk modifiers from the six hero story routes.
 
 Core rule:
 
@@ -117,6 +129,54 @@ type ReactiveItemContent = {
   iconKey?: string;
 };
 ```
+
+
+### Route Reward / Risk Modifier Fields
+
+Route choices may apply reactive difficulty modifiers. Keep them small, explicit, and testable.
+
+```ts
+type RouteChoiceLane = "practical" | "true" | "risky";
+
+type RouteRewardConfig = {
+  rewardId: string;
+  rewardType:
+    | "gold"
+    | "heal"
+    | "mana"
+    | "shield"
+    | "item"
+    | "relic"
+    | "upgrade"
+    | "stage_modifier"
+    | "boss_modifier"
+    | "hazard_modifier"
+    | "battle_modifier";
+  amount?: number;
+  itemId?: string;
+  relicId?: string;
+  upgradeId?: string;
+  modifierId?: string;
+  duration?: "next_battle" | "stage" | "boss" | "run";
+};
+
+type RouteRiskConfig = {
+  oopsieChance?: number;
+  addHazardId?: string;
+  increaseHazardSeverity?: "minor" | "moderate" | "major";
+  bossModifierId?: string;
+  rewardTier?: "stage" | "rare" | "hero_themed";
+};
+```
+
+Route reward rules:
+
+- Practical choices grant safety or consistency.
+- True choices grant thematic counterplay or boss softening.
+- Risky choices may add Oopsies or hazards, but must also provide stronger rewards.
+- No route choice may create an unavoidable loss state.
+- Route rewards should use existing systems first: `RewardSystem`, `ItemSystem`, `CombatSystem`, `BoardSystem`, `BossSystem`, `OopsieSystem`, and hazard-counter systems.
+
 
 ### Hazard Counter Window Fields
 
@@ -198,6 +258,21 @@ Implement this minimum set first:
 | `item_cleaning_charm` | Clean Cut | Also removes junk/sticky. |
 
 ---
+
+
+### Route-Triggered Counterplay Rewards
+
+The character route story system may grant small route-specific counterplay rewards. These must be implemented as real gameplay modifiers, not flavor text only.
+
+| Hero | Practical Reward Direction | True Reward Direction | Risky Reward Direction |
+| --- | --- | --- | --- |
+| Milo | Safer board setup, small mana, reduced simple hazard. | Better warning/counter timing or boss callback advantage. | Rare reward plus possible Oopsie or harder hazard. |
+| Pippa | Burn sticky/junk or gain fire-themed item. | Reduce sticky/junk pressure for boss or stage. | Stronger fire reward plus overheat or speed risk. |
+| Zuzu | Reduce machine/junk hazard. | Improve warning timers or safer gadget behavior. | Bomb reward plus extra junk risk. |
+| Nixie | Slow/freeze mitigation. | Wider freeze/speed counter window or preservation reward. | Strong freeze reward plus speed-wave risk. |
+| Bruk | Shield or overflow protection. | Hospitality heal/protect/boss-softening reward. | Big charge reward plus board pressure. |
+| Lumi | Preview/star guidance. | Cascade/star/wishkeeper bonus. | Rare star reward plus fever or preview pressure risk. |
+
 
 ## 4. Implementation Phases
 
@@ -567,6 +642,46 @@ Add dev-only controls to:
 
 ---
 
+
+## Phase R10 — Route Story Reward/Risk Integration
+
+### Goal
+
+Connect character route choices to reactive difficulty in a fair and testable way.
+
+### Tasks
+
+1. Read route content from `docs/story board/` and generated route JSON.
+2. Add route reward application support for:
+   - `stage_modifier`
+   - `boss_modifier`
+   - `hazard_modifier`
+   - `battle_modifier`
+3. Route Practical choices should apply small safety rewards.
+4. Route True choices should apply thematic counter bonuses or boss softening.
+5. Route Risky choices should apply stronger rewards plus optional Oopsie/hazard increase.
+6. Add route reward event-log messages.
+7. Ensure route-triggered hazards obey the same hazard warning/counter rules as normal hazards.
+
+### Acceptance Criteria
+
+- Route rewards are functional, not text-only.
+- Each hero has at least one route reward that interacts with that hero's gameplay identity.
+- Risky route choices cannot create unavoidable loss.
+- Route rewards save/load safely if their duration is stage, boss, or run.
+- Boss callbacks can apply a small boss modifier when configured.
+- Content validation and build pass.
+
+### Manual Test
+
+1. Trigger Milo Stage 1 route scene and choose Practical; verify safety reward applies.
+2. Trigger Pippa Stage 1 route scene and choose True; verify sticky/junk or boss-softening modifier applies.
+3. Trigger Zuzu Stage 2 route scene and choose Risky; verify reward and extra junk/hazard risk are both applied safely.
+4. Trigger Nixie Stage 3 route scene and choose True; verify freeze/speed counter window changes.
+5. Trigger Bruk Stage 6 route scene and choose True; verify boss modifier or protection reward applies.
+6. Trigger Lumi Stage 5 route scene and choose Risky; verify star/fever reward and preview/fever pressure risk are safe.
+
+
 ## 5. Recommended File/Folder Changes
 
 Exact paths may vary depending on the current repo. Prefer updating existing files rather than creating unnecessary new ones.
@@ -585,6 +700,10 @@ src/game/systems/HazardCounterSystem.ts
 src/game/systems/IncomingJunkQueueSystem.ts
 src/game/systems/FloatingBlockSystem.ts
 src/game/ui/HazardWarningTray.ts
+src/game/systems/RouteStorySystem.ts
+src/game/systems/DialogueSystem.ts
+src/game/content/story/routes/route-scenes.*.json
+src/game/content/story/routes/route-endings.json
 src/game/content/items/reactive-items.json
 src/game/content/items/spell-catalyst-items.json
 src/game/content/board-blocks/hazard-blocks.json
@@ -611,6 +730,7 @@ If the project already keeps content in a different structure, follow the existi
 - Content validation passes.
 - Build passes.
 - Mobile portrait readability remains intact.
+- Route-triggered rewards and risks use the same counterplay fairness rules and never bypass hazard warnings.
 
 ---
 
@@ -661,6 +781,7 @@ Implement in this order:
 8. Add compact battle UI warning tray and counter hints.
 9. Add balance values by stage.
 10. Add dev-only debug triggers and QA checklist updates.
+11. Integrate route story reward/risk modifiers from RouteStorySystem without bypassing hazard fairness rules.
 
 Required Priority 1 items:
 - item_snack_vacuum
@@ -690,6 +811,7 @@ Acceptance criteria:
 - Items can counter hazards using counterTags.
 - Spell catalyst items modify the next spell once.
 - UI shows active hazard and available counters.
+- Route story choices can apply functional reward/risk modifiers safely.
 - No hazard can soft-lock the player.
 - Save/load safely handles active hazards or clears them with fallback.
 - npm run validate:content passes.
@@ -717,3 +839,13 @@ Summary / Files changed / Systems changed / Content added / Commands run / Manua
 | Clean Cut catalyst combo | Use Cleaning Charm then Clean Cut | Clean Cut removes row and junk/sticky. |
 | Safety Net overflow | Fill top row, trigger overflow with Safety Net | Top row clears once instead of defeat. |
 | Save/load active hazard | Save with incoming junk and floaty block | Load safely restores or clears with feedback. |
+
+### Route Story / Reactive Difficulty Tests
+
+| Test | Setup | Expected Result |
+| --- | --- | --- |
+| Route Practical reward | Choose a practical route option | Small safety reward applies without adding hazard. |
+| Route True reward | Choose a true route option | True flag is granted and thematic counter/boss modifier applies. |
+| Route Risky reward | Choose a risky route option | Stronger reward applies; optional Oopsie/hazard appears with warning and counterplay. |
+| Route reward save/load | Save after a stage/boss/run route modifier | Load restores or safely clears modifier with feedback. |
+| Boss callback modifier | Enter boss after route scene choice | Boss callback appears and configured modifier applies once. |

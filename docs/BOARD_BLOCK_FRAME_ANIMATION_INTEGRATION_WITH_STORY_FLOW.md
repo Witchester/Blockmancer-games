@@ -12,6 +12,12 @@ Board block frame animation is implemented and should remain in place.
 - Board block size is capped by the universal 24px board block constant.
 - Missing frames fall back safely.
 
+### Story route asset note
+
+- Story-route assets such as route trigger icons, choice badges, dialogue panels, portraits, and ending cards are not board-block animations.
+- They should use the same asset manifest/fallback philosophy, but they must not alter Cascade Gravity or board clear timing.
+- If a route reward highlights a board hazard or special block, use the existing glow/clear frame hooks instead of adding route-specific board logic.
+
 ### Remaining work
 
 - Import final exact-frame PNG packages using `asset_id__animation_name__f00.png` naming.
@@ -135,6 +141,54 @@ Board block content may optionally provide:
 
 Existing board block JSON remains valid because runtime inference fills omitted variants.
 
+
+## Story Route Visual Integration
+
+The character route story flow adds UI and narrative assets that may appear near the board, but they are separate from board-block animation.
+
+Recommended route asset categories:
+
+```text
+public/assets/ui/story-routes/
+public/assets/icons/story-routes/
+public/assets/portraits/heroes/
+public/assets/portraits/npcs/
+public/assets/story/endings/
+public/assets/stage-backgrounds/route-scenes/
+public/assets/effects/story-routes/
+```
+
+Recommended asset key patterns:
+
+```text
+ui_route_dialogue_panel
+ui_route_choice_card_practical
+ui_route_choice_card_true
+ui_route_choice_card_risky
+ico_route_trigger_[hero]_[stage]
+ico_route_badge_practical
+ico_route_badge_true
+ico_route_badge_risky
+prt_route_[speaker]_[expression]
+story_end_[hero]_normal
+story_end_[hero]_true
+story_end_[hero]_variant
+vfx_route_reward_sparkle
+vfx_route_risky_oopsie
+```
+
+Rules:
+
+- Route dialogue panels and choice cards are UI assets, not board-block sprites.
+- Route trigger icons should be loaded through the asset manifest with fallback icons.
+- Hero portraits and NPC portraits should fall back to safe placeholder portraits.
+- Ending cards should fall back to a generic festival ending card.
+- Route reward VFX may highlight board blocks, but should call existing board highlight/glow helpers.
+- Missing route visual assets must never block dialogue, choice resolution, rewards, or endings.
+
+If a route reward clears, glows, pins, freezes, or transforms a board block, the visual sequence should use the board block's existing `glowFrames` and `clearFrames` where available. Do not create separate board logic just for the story system.
+
+
 ## How To Test
 
 1. Start a battle.
@@ -147,3 +201,5 @@ Existing board block JSON remains valid because runtime inference fills omitted 
 8. Remove one optional frame and confirm the game falls back without crashing.
 9. Confirm Cascade Gravity still resolves after line clears.
 10. Open UI that uses content icons and confirm missing icons fall back safely.
+11. Trigger a route story event and confirm dialogue/choice UI assets fall back safely if missing.
+12. Choose a route reward that highlights or clears blocks and confirm it uses existing glow/clear frame hooks without changing Cascade Gravity.

@@ -8,6 +8,7 @@ This section reflects the latest code audit and asset reports. It does not repla
 
 - Phaser scene flow, board placement, movement, Hold/Next, Cascade Gravity, combat resolution, map routing, reward flow, save/meta migration, debug scene, Android/Capacitor scaffolding, content registry, asset fallback, audio fallback, and exact-frame animation manifest support are implemented.
 - Runtime validations pass for content, metadata, and animation definitions.
+- Story route docs for six heroes are prepared in `docs/story board/`, including route voice, choice labels, flags, endings, and implementation guidance.
 - Asset runtime mapping reports zero unresolved runtime assets, but audio and final animation frame art still require production.
 
 ### Needs implementation before Release 1.0
@@ -20,6 +21,14 @@ This section reflects the latest code audit and asset reports. It does not repla
 - Run desktop + portrait mobile smoke tests.
 - Tone-clean legacy curse/blood content names while preserving save compatibility.
 - Decide whether hub upgrades and monster friendship are Release 1 core or post-release backlog.
+- Implement the character route story flow at runtime: route triggers, route dialogue UI, rewards, save/load, boss callbacks, and hero-specific Normal/True/Risky variant endings.
+
+### Story route documentation status
+
+- The character-route story flow is now designed in `docs/story board/`.
+- The route design covers 6 playable heroes × 6 stages = **36 unique hero-stage route scenes**.
+- Each hero-stage scene requires a unique trigger, story focus, choice labels, dialogue voice, route reward, boss callback, and ending contribution.
+- Current status is **design/docs ready, runtime implementation pending** unless the code audit later confirms `RouteStorySystem`, route content JSON, dialogue UI, route rewards, boss callbacks, and route endings are wired.
 
 ### Engine decision
 
@@ -208,6 +217,178 @@ Unlock direction:
 - Nixie: control/no-damage style challenge.
 - Bruk: total gold meta progress.
 - Lumi: cascade/combo mastery.
+
+
+## 7A. Character Route Story Flow
+
+The six playable heroes share the same Brixonia adventure, but each hero must experience it through a different route lens. The route system is a Release 1 narrative feature and should be implemented as data-driven story content, not hardcoded generic scene text.
+
+Source docs live in:
+
+```text
+docs/story board/
+```
+
+Required route structure:
+
+```text
+Selected hero enters stage -> unique hero-stage route trigger appears -> player chooses Practical, True, or Risky response -> route stat/flag updates -> gameplay reward or risk applies -> boss callback reflects route state -> ending resolver checks Normal, True, and Risky Variant conditions after King Bloxley.
+```
+
+### 7A.1 Route Scope
+
+Release 1 route scope is:
+
+```text
+6 playable heroes × 6 stages = 36 unique route scenes
+```
+
+Each route scene must have:
+
+- A unique scene ID.
+- A unique trigger ID.
+- A hero-specific story focus.
+- Stage-specific build-up.
+- Three choices: Practical, True, Risky.
+- Unique choice label text.
+- Character-specific dialogue voice.
+- Functional reward or risk logic.
+- Optional boss callback.
+- Save/load support through route progress.
+- Safe fallback if dialogue, reward, or asset content is missing.
+
+Do not use one generic route event such as "first route event in this stage" for all heroes. The same stage must feel different when played by different heroes.
+
+### 7A.2 Character Voice Rules
+
+| Hero | Route Arc | Voice Direction |
+| --- | --- | --- |
+| Milo | Gentle cleanup to truly hearing the dungeon's frightened block-language. | Soft, observant, careful; uses plink-plonk, rhythm, quiet, space, listening, left/right, and conversation imagery. |
+| Pippa | Angry protective fire to hearth-warmth that feeds and protects. | Brisk baker voice; uses oven, tray, batch, frosting, crumbs, hearth, preheat, serve, and share language. |
+| Zuzu | Field-test chaos to accountable public repair ethics. | Fast goblin engineer; uses prototype, clamps, calibration, patch, override, ledger, warranty, and safety margin language. |
+| Nixie | Freezing problems in place to preserving what matters while allowing thaw. | Calm frostbinder; uses chill, thaw, flavor, syrup, preserve, settle, breathe, and slow timing language. |
+| Bruk | Guarding the snack table to hospitality as shared protection. | Loyal snack knight; uses oath, table, ration, shield, plate, provision, guest, banquet, and service language. |
+| Lumi | Following pretty lights to becoming keeper of wishes and guidance. | Dreamy star witch; uses lanterns, wishes, constellations, shimmer, paper stars, moonlight, and crownlight language. |
+
+Voice QA rule:
+
+```text
+If a dialogue line can move between two heroes without changing words, rewrite it.
+```
+
+### 7A.3 Unique Hero-Stage Trigger Matrix
+
+| Stage | Milo | Pippa | Zuzu | Nixie | Bruk | Lumi |
+| ---: | --- | --- | --- | --- | --- | --- |
+| 1 — Sprinkle Sewers | Frightened block voice beneath sticky sprinkle flow. | Hungry cupcake slime batch is wrongly blamed. | Old quick patch worsens candy pressure valve. | Warm syrup hides inside chilled frosting flow. | Small sugar-rushed slimes need plates, not punishment. | Sprinkle star carries a tiny unnamed wish. |
+| 2 — Goblin Workshop | Machines produce pieces that argue in different rhythms. | Goblin oven overheats because it was never taught to rest. | Prototype No. 7 exposes an undocumented override. | Machine needs cooling without being forced silent. | Hungry goblin testers break machines because nobody feeds the shift. | Gears form a machine constellation with one missing light. |
+| 3 — Frosty Pantry | Frozen runes speak slowly and teach patience. | Frozen share-crates must be warmed without spoiling food. | Pantry needs a proper thaw protocol. | Lost flavors ask to be named before they melt. | Warm rations save more crates than a shield wall alone. | Melting star ribbon must be carried before its wish fades. |
+| 4 — Pillow Castle | Even rooms need rest, not only repair. | Sleepy guards need midnight rolls more than alarms. | Pillow alarm must be repaired with consent, not forced testing. | Sleeping room teaches that quiet is alive. | Pillow Castle has a sacred nap table. | Sleeping window asks to be lit gently, not brightly. |
+| 5 — Starfall Arcade | Arcade chimes drown out a small true rhythm. | Prize cake tempts Pippa to win loudly or share fairly. | Score formula must become fair instead of mysterious. | Arcade score should slow down enough for everyone to understand it. | Winning tickets matter less than splitting the prize table honestly. | Arcade wishlight must be shared, not hoarded as a score. |
+| 6 — Bloxley's Block Palace | Palace asks whether order is a crown or a shelter. | Bloxley demands a square cake, but structure can have a soft center. | Royal clamps reveal the cost of clever design without safety notes. | Bloxley's hidden corner must thaw before the palace can soften. | Victory is setting Bloxley a place at the table. | Bloxley's crownlight is crooked because it has been carried alone. |
+
+### 7A.4 Route Choice Lanes
+
+Every route scene has exactly three choices.
+
+| Lane | Purpose | Required Result |
+| --- | --- | --- |
+| Practical | Safe, useful, normal-route progression. | +1 practical score and a stable reward. No true flag. No oopsie. |
+| True | Deeper empathy/accountability/care/wishkeeping route. | +1 true score, exactly one unique stage true flag, and a thoughtful reward or boss modifier. |
+| Risky | Stylish festival action with stronger reward and possible setback. | +1 risky score, higher reward, possible Oopsie or hazard increase. Does not override Normal/True Ending. |
+
+### 7A.5 Route Stats and Ending Rules
+
+Use a generic route progress model so future heroes can be added without new hardcoded save fields.
+
+```ts
+type RouteChoiceLane = "practical" | "true" | "risky";
+
+type HeroRouteProgress = {
+  heroId: string;
+  practicalScore: number;
+  trueScore: number;
+  riskyScore: number;
+  trueFlags: string[];
+  chosenScenes: Record<string, RouteChoiceLane>;
+  triggeredScenes: string[];
+  unlockedEndingIds: string[];
+  variantEndingIds: string[];
+};
+
+type RouteProgressState = {
+  activeHeroId: string;
+  routeVersion: number;
+  heroes: Record<string, HeroRouteProgress>;
+};
+```
+
+Recommended thresholds:
+
+```ts
+const TRUE_ENDING_MIN_FLAGS = 5;
+const TRUE_ENDING_MIN_SCORE = 5;
+const VARIANT_MIN_RISK_SCORE = 3;
+```
+
+Ending rules:
+
+- Normal Ending: defeat King Bloxley with selected hero without meeting True Ending threshold.
+- True Ending: defeat King Bloxley with selected hero, `trueScore >= 5`, and at least 5 true flags.
+- Risky Variant: if `riskyScore >= 3`, add a short flavor panel after Normal or True Ending. It must not replace either ending.
+
+### 7A.6 Runtime Systems Needed
+
+Required systems or equivalent responsibilities:
+
+| System | Responsibility |
+| --- | --- |
+| `RouteStorySystem` | Select route scenes, enforce unique triggers, resolve choices, apply route rewards, track flags/stats, provide boss callbacks, resolve endings. |
+| `DialogueSystem` | Present skippable route dialogue, choice cards, NPC responses, narration, and ending panels in a mobile-readable format. |
+| `ContentRegistry` | Load route scene JSON, route endings, barks, voice tags, and fallback route content. |
+| `SaveSystem` | Save and migrate route progress safely. |
+
+Suggested content folders:
+
+```text
+src/game/content/story/routes/
+  route-scenes.milo.json
+  route-scenes.pippa.json
+  route-scenes.zuzu.json
+  route-scenes.nixie.json
+  route-scenes.bruk.json
+  route-scenes.lumi.json
+  route-endings.json
+  route-barks.json
+  route-voice-tags.json
+```
+
+### 7A.7 Route Reward Rules
+
+Route rewards must be functional. Do not leave them as flavor text only.
+
+Examples by hero:
+
+| Hero | Practical Reward Direction | True Reward Direction | Risky Reward Direction |
+| --- | --- | --- | --- |
+| Milo | Safer board setup, small mana, reduced simple hazard. | Warning improvement or boss callback advantage. | Rare reward plus possible Oopsie or harder hazard. |
+| Pippa | Burn sticky/junk or fire-themed item. | Boss starts with reduced sticky/junk or shared-hearth modifier. | Stronger fire reward plus overheat hazard. |
+| Zuzu | Reduce machine/junk hazard. | Improve warning timers or safer gadget behavior. | Bomb reward plus extra junk risk. |
+| Nixie | Slow/freeze mitigation. | Larger counter window or preservation reward. | Strong freeze reward plus speed-wave risk. |
+| Bruk | Shield or defense. | Hospitality heal/protect/boss-softening reward. | Big charge reward plus board pressure. |
+| Lumi | Preview/star guidance. | Cascade/star/wishkeeper bonus. | Rare star reward plus fever or preview pressure risk. |
+
+### 7A.8 Trigger Rules
+
+Route scene triggers should follow this priority:
+
+1. Trigger once per run for selected hero and stage.
+2. Prefer first eligible Event node in the stage.
+3. If no Event node appears before the boss, trigger after first normal combat victory.
+4. Never trigger during boss combat.
+5. Never trigger more than once for the same hero-stage scene in the same run.
+6. If content is missing, use `fallback_route_scene` and log a warning without crashing.
+
 
 ## 8. Board Blocks
 
@@ -490,6 +671,7 @@ Current run state must preserve:
 - Active random gameplay events.
 - Current boss rule.
 - Board size modifier.
+- Route story progress: active hero route, triggered scenes, chosen choices, practical/true/risky scores, and true flags.
 
 Meta progress must preserve:
 
@@ -504,6 +686,7 @@ Meta progress must preserve:
 - Discovered boss rules.
 - Tutorial completion.
 - Settings.
+- Unlocked route endings and risky variant ending panels.
 
 Save rules:
 
@@ -624,6 +807,7 @@ Minimum smoke path:
 1. Start a new run.
 2. Select Milo.
 3. Confirm Stage 1 map has 6 main-path nodes.
+3A. Confirm selected hero's unique Stage 1 route trigger appears once before the boss.
 4. Enter a battle.
 5. Move, rotate, soft drop, hard drop, and hold.
 6. Clear a line and verify Cascade Gravity.
@@ -631,8 +815,11 @@ Minimum smoke path:
 8. Confirm chaos/objective/event text can appear.
 9. Defeat enemy and choose reward.
 10. Visit event/shop/rest/treasure rooms.
+10A. Choose a Practical/True/Risky route option and confirm reward, score, and flag behavior.
 11. Reach a boss and confirm boss rule card.
+11A. Confirm selected hero's boss callback reflects the route choice when applicable.
 12. Save, refresh, and continue.
+13. Defeat King Bloxley and verify the selected hero's Normal or True Ending plus any Risky Variant panel.
 
 ## 18. Marketing and IP Safety
 
@@ -666,6 +853,7 @@ Root reference docs:
 
 - `blockmancer_lighthearted_content_direction.md` is the wording and content direction source used to create this master.
 - `blockmancer_lighthearted_story.md` is story source material.
+- `docs/story board/00_MASTER_CHARACTER_ROUTE_INDEX.md` and individual hero route files are the route-story implementation reference.
 - `blockmancer_vibe_code_release_1_plan.md` and `blockmancer_release_1_agent_phase_prompts.md` are planning/prompt references, not canonical design law.
 
 ## 20. Definition of Done
@@ -681,6 +869,7 @@ A change is done when:
 - Missing content/assets have safe fallbacks.
 - Save compatibility is considered.
 - Player-facing wording follows the cheerful festival tone.
+- Route scene triggers, route rewards, route saves, and ending checks are validated if story flow content changed.
 
 
 ## 21. Difficulty and Reactive Counterplay Expansion
@@ -1022,6 +1211,8 @@ Cascade hint: Trigger a cascade to reduce incoming junk.
 Do not overload the main board area with text. Use compact icons, a warning tray, tooltip card, or event log line.
 
 ## Change Log
+
+- 2026-05-18: Added character route story flow requirements: 36 unique hero-stage route scenes, route triggers, dialogue choices, route rewards, save state, boss callbacks, and hero Normal/True/Risky variant endings.
 
 - 2026-05-15: Added difficulty pressure mechanics, floating blocks, incoming junk queue, and Reactive Item/Spell/Relic Counter System.
 - 2026-05-15: Rebuilt as the single source of truth and aligned with the lighthearted content direction.
