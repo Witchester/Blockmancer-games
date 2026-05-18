@@ -292,6 +292,7 @@ export class BattleScene extends Phaser.Scene {
     this.createInputSystem();
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.handleShutdown, this);
     this.combat.addLog(`Battle started against ${state.activeEnemy.name}.`);
+    this.sharedGame.weaponSystem.applyBattleStart(state, this.combat, this.board);
     if (this.sharedGame.bossSystem.isBoss(state.activeEnemy)) {
       const fallbackIntro = this.sharedGame.bossSystem.getIntro(state.activeEnemy);
       const bossBeat = this.sharedGame.storySystem.getBossIntro(state.activeEnemy.id, fallbackIntro);
@@ -306,6 +307,7 @@ export class BattleScene extends Phaser.Scene {
       this.sharedGame.audioSystem.play('boss_intro', this);
       this.showBossIntro(state.activeEnemy.name, bossBeat.lines[0] ?? fallbackIntro);
       this.showBossRuleCard(state.activeEnemy.id);
+      this.sharedGame.bossSystem.applyBossStartMechanic(state, this.board).forEach((message) => this.combat.addLog(message));
     }
     const chaos = this.sharedGame.chaosRuleSystem.getActive(state);
     if (chaos) {
@@ -612,30 +614,40 @@ export class BattleScene extends Phaser.Scene {
       { label: 'Drop', width: size(70), height: size(48), onPress: () => this.hardDrop() },
       { label: 'Hold', width: size(64), height: size(48), onPress: () => this.handleHold() }
     ];
-    const spellRow = [
-      ...SPELLS.map((spell) => {
+    const playableSpells = SPELLS.filter((spell) => this.sharedGame.runState.spells.includes(spell.id));
+    const spellButtons = playableSpells.map((spell) => {
         const spellContent = contentRegistry.getSpell(`spl_${spell.id.replace(/-/g, '_')}`) as { iconKey?: string } | null;
         return {
           label: `${spell.key}\n${this.spells.getCost(spell.id)}`,
-          width: size(58),
-          height: size(46),
+          width: size(52),
+          height: size(42),
           iconKey: this.sharedGame.assetSystem.getIcon(this, 'spell', `spl_${spell.id.replace(/-/g, '_')}`, spellContent?.iconKey),
           disabled: this.sharedGame.runState.player.mana < this.spells.getCost(spell.id),
           onPress: () => this.tryCast(spell.id),
           onCreate: (button: Button) => this.spellButtons.push({ spellId: spell.id, button })
         };
-      }),
-      { label: 'Bag', width: size(64), height: size(46), onPress: () => this.toggleInventory() }
-    ];
+      });
+    const spellRows = this.chunkControls([
+      ...spellButtons,
+      { label: 'Bag', width: size(58), height: size(42), onPress: () => this.toggleInventory() }
+    ], this.screenWidth <= 520 ? 5 : 8);
     new MobileControls(
       this,
       this.controlsCenterX,
       this.controlsY,
       settings.leftHandedControls
-        ? [movementRow.slice().reverse(), spellRow.slice().reverse()]
-        : [movementRow, spellRow],
-      { padding: 14, rowGap: 10, buttonGap: 8 }
+        ? [movementRow.slice().reverse(), ...spellRows.map((row) => row.slice().reverse())]
+        : [movementRow, ...spellRows],
+      { padding: 10, rowGap: 6, buttonGap: 6 }
     );
+  }
+
+  private chunkControls<T>(items: T[], size: number): T[][] {
+    const rows: T[][] = [];
+    for (let index = 0; index < items.length; index += size) {
+      rows.push(items.slice(index, index + size));
+    }
+    return rows;
   }
 
   private createInventoryOverlay(): void {
@@ -674,6 +686,8 @@ export class BattleScene extends Phaser.Scene {
     }
 
     if (this.board.hold()) {
+      this.sharedGame.runState.runStats.holdsUsed += 1;
+      this.sharedGame.battleObjectiveSystem.recordHold(this.sharedGame.runState);
       this.combat.addLog('Held the current block.');
       this.syncBoardState();
       this.sharedGame.saveRun();
@@ -747,7 +761,11 @@ export class BattleScene extends Phaser.Scene {
 
   private hardDrop(): void {
     if (!this.cascadeResolving) {
-      this.resolveTick(this.board.hardDrop());
+      const result = this.board.hardDrop();
+      if (result.locked) {
+        this.sharedGame.weaponSystem.onHardDrop(this.sharedGame.runState, this.combat);
+      }
+      this.resolveTick(result);
     }
   }
 
@@ -911,11 +929,17 @@ export class BattleScene extends Phaser.Scene {
     if (result.feverGained > 0 || result.feverTriggered) {
       this.pulseFeverMeter(result.feverTriggered);
     }
+    if (result.feverTriggered) {
+      state.runStats.feverTriggers += 1;
+      this.sharedGame.battleObjectiveSystem.recordFeverTriggered(state);
+    }
     state.runStats.piecesLocked += 1;
     state.runStats.linesCleared += cascade.totalLinesCleared;
     state.runStats.cascadesTriggered += cascade.cascadeCount > 1 ? 1 : 0;
     state.runStats.maxCascade = Math.max(state.runStats.maxCascade, cascade.cascadeCount);
     state.runStats.damageDealt += result.damage;
+    this.sharedGame.battleObjectiveSystem.recordCascade(state, cascade);
+    this.sharedGame.weaponSystem.afterPieceLock(state, this.board, this.combat, cascade);
     this.reduceIncomingJunkFromCascade(cascade);
     if (cascade.cascadeCount > 1) {
       const stageGoalMessage = this.sharedGame.stageGoalSystem.addProgress(state, 'combo_score', cascade.cascadeCount);
@@ -930,6 +954,7 @@ export class BattleScene extends Phaser.Scene {
     if (state.activeEnemy && state.activeEnemy.currentHp <= 0) {
       await this.wait(280);
       this.cascadeResolving = false;
+      this.syncBoardState();
       this.sharedGame.saveRun();
       this.handleVictory();
       return;
@@ -1101,6 +1126,8 @@ export class BattleScene extends Phaser.Scene {
 
     const behavior = this.getNextEnemyBehavior(enemy);
     let damage = enemy.attack;
+    state.runStats.enemyAttacks += 1;
+    this.sharedGame.battleObjectiveSystem.recordEnemyAttack(state);
     this.combat.addLog(`${enemy.name} uses ${enemy.intent}.`);
     this.enemySprite?.setTexture(this.sharedGame.assetSystem.getMonsterTexture(this, enemy.id, 'attack'));
 
@@ -1628,10 +1655,10 @@ export class BattleScene extends Phaser.Scene {
       .filter((spell) => this.spells.getCost(spell.id) <= this.sharedGame.runState.player.mana)
       .filter((spell) => {
         if (tags.has('counter_junk') || tags.has('counter_sticky') || tags.has('counter_royal')) {
-          return spell.id === 'bomb-rune' || spell.id === 'void-cut' || spell.id === 'fireball';
+          return spell.id === 'bomb-rune' || spell.id === 'void-cut' || spell.id === 'clean-cut' || spell.id === 'fireball';
         }
         if (tags.has('counter_freeze') || tags.has('counter_speed')) {
-          return spell.id === 'frost-lock';
+          return spell.id === 'frost-lock' || spell.id === 'snowcone-burst';
         }
         return false;
       })
@@ -1730,6 +1757,7 @@ export class BattleScene extends Phaser.Scene {
     }
 
     state.runStats.spellsCast += 1;
+    this.sharedGame.battleObjectiveSystem.recordSpellCast(state);
     this.sharedGame.audioSystem.play('spell_cast', this);
     this.heroPortrait?.setTexture(this.sharedGame.assetSystem.getHeroTexture(this, state.hero.id, 'cast'));
     this.playVfx(this.getSpellVfxKey(spellId), this.heroPortrait?.x ?? 96, this.heroPortrait?.y ?? 92, 58, 126);
@@ -1751,6 +1779,7 @@ export class BattleScene extends Phaser.Scene {
     this.renderCombatUi();
 
     if (state.activeEnemy?.currentHp === 0) {
+      this.syncBoardState();
       await this.wait(280);
       this.handleVictory();
       return;
@@ -1769,6 +1798,10 @@ export class BattleScene extends Phaser.Scene {
     }
 
     this.combat.addLog(this.sharedGame.bossSystem.enterPhaseTwo(enemy));
+    const phaseMechanicMessage = this.sharedGame.bossSystem.applyPhaseTwoBoardMechanic(this.sharedGame.runState, this.board);
+    if (phaseMechanicMessage) {
+      this.combat.addLog(phaseMechanicMessage);
+    }
     this.showFloatingText('Phase 2', this.screenWidth / 2, 184, '#ffca6b', 34);
     this.enemySprite?.setTexture(this.sharedGame.assetSystem.getMonsterTexture(this, enemy.id, 'phase_2'));
     if (!this.sharedGame.getSettings().reducedFlashing) {
@@ -1799,7 +1832,10 @@ export class BattleScene extends Phaser.Scene {
       this.combat.addLog(friendshipMessage);
       this.sharedGame.metaSystem.save();
     }
-    const goalMessage = this.sharedGame.stageGoalSystem.addProgress(state, 'battle_objective', 1, enemyId);
+    const objectiveSucceeded = objectiveMessage?.startsWith('Mini-objective complete');
+    const goalMessage = objectiveSucceeded
+      ? this.sharedGame.stageGoalSystem.addProgress(state, 'battle_objective', 1, enemyId)
+      : null;
     if (goalMessage) {
       this.combat.addLog(goalMessage);
       const goalProgress = this.sharedGame.stageGoalSystem.getProgress(state);
@@ -2343,10 +2379,11 @@ export class BattleScene extends Phaser.Scene {
     const bagText = state.inventory.length ? inventorySummary : 'Bag Empty';
     const chaos = this.sharedGame.chaosRuleSystem.getActive(state);
     const objective = this.sharedGame.battleObjectiveSystem.getActive(state);
+    const objectiveSummary = this.sharedGame.battleObjectiveSystem.getSummary(state);
     const battleStatusText = [
       `Relics ${state.ownedRewards.length}  Oops ${state.player.oopsies.length}`,
       chaos ? `Chaos: ${chaos.name}` : '',
-      objective ? `Obj: ${objective.name}` : ''
+      objective ? objectiveSummary.replace(/^Objective: /, 'Obj: ') : ''
     ].filter(Boolean).join('\n');
     
     this.inventoryText?.setText(

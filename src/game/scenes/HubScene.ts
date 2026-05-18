@@ -18,7 +18,7 @@ export class HubScene extends Phaser.Scene {
 
     new Card(this, layout.centerX, 96, layout.contentWidth, 120, {
       title: 'Festival Hub',
-      body: 'Restore booths between runs to unlock small bonuses and new content hooks.',
+      body: `Restore booths between runs. Meta gold: ${game.metaSystem.state.totalGoldCollected}`,
       titleColor: '#ffca6b',
       bodyFontSize: compact ? '17px' : '19px',
       strokeColor: COLORS.gold
@@ -30,15 +30,19 @@ export class HubScene extends Phaser.Scene {
       const x = layout.centerX + (col === 0 ? -layout.contentWidth / 4 : layout.contentWidth / 4);
       const y = 230 + row * 132;
       const level = game.metaSystem.state.hubBuildings[building.id] ?? 0;
+      const nextLevel = game.hubProgressionSystem.getNextLevel(building.id, game.metaSystem.state);
+      const costText = nextLevel ? `Cost: ${game.hubProgressionSystem.formatCost(nextLevel.cost)}` : 'Locked for backlog';
       new Card(this, x, y, layout.contentWidth / 2 - 20, 104, {
         title: `${building.name} Lv.${level}`,
-        body: building.description,
+        body: `${building.description}\n${costText}`,
         titleFontSize: compact ? '18px' : '20px',
         bodyFontSize: compact ? '14px' : '15px',
         strokeColor: COLORS.accentSoft
       });
       const button = new Button(this, x, y + 58, 128, 36, 'Upgrade', () => {
-        game.metaSystem.upgradeHubBuilding(building.id);
+        const message = game.hubProgressionSystem.upgrade(game.metaSystem.state, building.id);
+        game.runState.eventLog.unshift(message);
+        game.metaSystem.save();
         this.scene.restart();
       }, { fontSize: '15px' });
       button.setDisabled(!game.hubProgressionSystem.canUpgrade(game.metaSystem.state, building.id));

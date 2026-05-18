@@ -1,4 +1,5 @@
 import type { RewardId, RunState, SpellId } from '../types/GameTypes';
+import { SPELLS } from '../data/spells';
 import { MAX_FALL_SPEED } from '../utils/constants';
 import { clamp } from '../utils/math';
 import { choice } from '../utils/random';
@@ -147,7 +148,7 @@ export class EventSystem {
           state.player.gold -= choiceEntry.costGold;
           state.gold = state.player.gold;
         }
-        const spellId = choice<SpellId>(['fireball', 'frost-lock', 'bomb-rune', 'void-cut']);
+        const spellId = choice<SpellId>(SPELLS.map((spell) => spell.id));
         return {
           transition: 'map',
           messages: [this.rewardSystem.applySpellUpgrade(state, spellId)]

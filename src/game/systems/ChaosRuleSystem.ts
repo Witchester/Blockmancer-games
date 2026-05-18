@@ -1,6 +1,7 @@
 import type { GameplayEffect, RewardModifier, RunState } from '../types/GameTypes';
 import { weightedChoice } from '../utils/random';
 import { contentRegistry } from './ContentRegistry';
+import { GameplayEffectSystem } from './GameplayEffectSystem';
 
 export type ChaosRuleEntry = {
   id: string;
@@ -15,6 +16,8 @@ export type ChaosRuleEntry = {
 };
 
 export class ChaosRuleSystem {
+  private readonly effectSystem = new GameplayEffectSystem();
+
   rollForCombat(state: RunState): ChaosRuleEntry | null {
     if (!['fight', 'elite', 'boss'].includes(state.currentRoomType)) {
       state.activeChaosRule = undefined;
@@ -45,33 +48,13 @@ export class ChaosRuleSystem {
     return state.activeChaosRule ? contentRegistry.getOptionalById<ChaosRuleEntry>('chaosRule', state.activeChaosRule) : null;
   }
 
-  applyStartEffects(state: RunState, addLog: (message: string) => void, board?: { addConfettiBlocks(count: number): number; addJunkRows(count: number): void }): void {
+  applyStartEffects(state: RunState, addLog: (message: string) => void, board?: { addConfettiBlocks(count: number): number; addJunkRows(count: number): void; addStickyBlocks?(count: number): number; addRoyalBlocks?(count: number): number; addSpecialBlocksForSpell?(blockId: string, count: number): number; swapNextAndHold?(): boolean; clearRandomCluster?(count: number): number }): void {
     const rule = this.getActive(state);
     if (!rule) {
       return;
     }
     addLog(`Festival Chaos: ${rule.name} - ${rule.description}`);
-    for (const effect of rule.effects) {
-      switch (effect.type) {
-        case 'gain_mana':
-          state.player.mana = Math.min(state.player.maxMana, state.player.mana + (effect.value ?? 5));
-          break;
-        case 'gain_fever':
-          state.player.fever = Math.min(100, state.player.fever + (effect.value ?? 10));
-          break;
-        case 'add_confetti_blocks':
-          board?.addConfettiBlocks(effect.value ?? 1);
-          break;
-        case 'add_junk_rows':
-          board?.addJunkRows(Math.max(1, effect.value ?? 1));
-          break;
-        case 'increase_fall_speed':
-          state.fallSpeed += effect.value ?? 0.04;
-          break;
-        default:
-          break;
-      }
-    }
+    this.effectSystem.applyMany(rule.effects, { state, board: board as never, addLog, sourceName: rule.id });
   }
 
   clear(state: RunState): void {

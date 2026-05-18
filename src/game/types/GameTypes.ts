@@ -1,7 +1,7 @@
 export type RoomType = 'start' | 'fight' | 'event' | 'shop' | 'elite' | 'rest' | 'treasure' | 'boss';
 export type EncounterNodeType = 'normal' | 'hard_normal' | 'elite' | 'boss' | 'event' | 'shop' | 'rest' | 'treasure';
 export type TetrominoType = 'I' | 'O' | 'T' | 'S' | 'Z' | 'J' | 'L';
-export type SpellId = 'fireball' | 'frost-lock' | 'bomb-rune' | 'void-cut';
+export type SpellId = string;
 export type RunStatus = 'menu' | 'map' | 'battle' | 'reward' | 'game-over' | 'victory';
 export type RouteChoiceLane = 'practical' | 'true' | 'risky';
 export type RewardId = string;
@@ -511,9 +511,27 @@ export interface RunStats {
   damageTaken: number;
   spellsCast: number;
   itemsUsed: number;
+  holdsUsed: number;
+  enemyAttacks: number;
+  feverTriggers: number;
   roomsCleared: number;
   bossesDefeated: string[];
 }
+
+export type BattleObjectiveProgress = {
+  objectiveId: string;
+  startedAtPiecesLocked: number;
+  startedAtSpellsCast: number;
+  startedAtHoldsUsed: number;
+  startedAtEnemyAttacks: number;
+  maxCascade: number;
+  maxLinesWithOnePiece: number;
+  clearedBlockCounts: Record<string, number>;
+  usedHold: boolean;
+  spellsCast: number;
+  enemyAttacks: number;
+  feverTriggered: boolean;
+};
 
 export interface RunState {
   player: PlayerState;
@@ -547,6 +565,7 @@ export interface RunState {
   stageGoals: Record<string, StageGoalProgress>;
   activeChaosRule?: string;
   activeBattleObjective?: string;
+  battleObjectiveProgress?: BattleObjectiveProgress;
   completedBattleObjectives: string[];
   activeRandomGameplayEvents: string[];
   activeHazards: ActiveHazardState[];

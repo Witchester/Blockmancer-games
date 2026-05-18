@@ -1,12 +1,15 @@
 import type { RunState, SpellCatalystModifier, SpellId } from '../types/GameTypes';
 import { SPELLS } from '../data/spells';
 import { clamp } from '../utils/math';
+import { TETROMINO_COLORS } from '../utils/constants';
 import { CombatSystem } from './CombatSystem';
 import { BoardSystem } from './BoardSystem';
 import { OopsieSystem } from './OopsieSystem';
+import { WeaponSystem } from './WeaponSystem';
 
 export class SpellSystem {
   private readonly oopsieSystem = new OopsieSystem();
+  private readonly weaponSystem = new WeaponSystem();
 
   constructor(
     private readonly state: RunState,
@@ -53,9 +56,11 @@ export class SpellSystem {
       this.combat.addLog(`An oopsie nibbles ${hpCost} HP from the spell.`);
     }
 
+    const spellPowerBonus = this.weaponSystem.getSpellDamageBonus(this.state, spellId);
+
     switch (spellId) {
       case 'fireball':
-        this.combat.applyDirectDamage(22 + this.state.player.spellBonuses.fireball, 'Fireball');
+        this.combat.applyDirectDamage(22 + this.getSpellBonus('fireball') + spellPowerBonus, 'Fireball');
         if (this.state.hero.passiveId === 'passive_preheat_cleanup' || this.hasCleanupModifier(spellModifiers)) {
           const cleared = this.board.clearBlocksByIds(['block_sticky', 'block_crumb_junk', 'block_cloud_junk'], this.hasCleanupModifier(spellModifiers) ? 4 : 2);
           this.combat.addLog(`Preheat Cleanup burns ${cleared} sticky or junk-prone blocks.`);
@@ -78,7 +83,7 @@ export class SpellSystem {
         break;
       case 'bomb-rune': {
         const zuzuBonus = this.state.hero.passiveId === 'passive_bombs_are_features' ? 8 : 0;
-        const bonus = this.state.player.spellBonuses['bomb-rune'] + zuzuBonus;
+        const bonus = this.getSpellBonus('bomb-rune') + zuzuBonus + spellPowerBonus;
         this.combat.applyDirectDamage(35 + bonus, 'Bomb Rune');
         const radius = 1 + Math.max(0, ...spellModifiers.map((modifier) => modifier.bombRadiusBonus ?? 0));
         const removed = this.board.clearRandomFilledArea(radius);
@@ -106,20 +111,93 @@ export class SpellSystem {
         }
         break;
       }
-      case 'void-cut': {
-        this.combat.applyDirectDamage(15 + this.state.player.spellBonuses['void-cut'], 'Void Cut');
+      case 'void-cut':
+      case 'clean-cut': {
+        this.combat.applyDirectDamage(15 + this.getSpellBonus('clean-cut') + this.getSpellBonus('void-cut') + spellPowerBonus, 'Clean Cut');
         const cleared = this.board.clearMessiestRow();
         if (this.state.player.voidCutRefund && cleared >= 8) {
           this.state.player.mana = clamp(this.state.player.mana + 20, 0, this.state.player.maxMana);
-          this.combat.addLog('Void Cut refunds 20 mana.');
+          this.combat.addLog('Clean Cut refunds 20 mana.');
         }
-        this.combat.addLog(`Void Cut removes ${cleared} blocks from a row.`);
+        const cleaned = this.board.clearBlocksByIds(['block_sticky', 'block_crumb_junk', 'block_cloud_junk', 'block_cracked_junk', 'block_royal'], 3);
+        this.combat.addLog(`Clean Cut removes ${cleared} row blocks and tidies ${cleaned} hazard block${cleaned === 1 ? '' : 's'}.`);
         if (this.hasCleanupModifier(spellModifiers)) {
-          const cleaned = this.board.clearBlocksByIds(['block_sticky', 'block_crumb_junk', 'block_cloud_junk'], 4);
-          this.combat.addLog(`Cleaning Charm clears ${cleaned} extra sticky or junk block${cleaned === 1 ? '' : 's'}.`);
+          const extraCleaned = this.board.clearBlocksByIds(['block_sticky', 'block_crumb_junk', 'block_cloud_junk'], 4);
+          this.combat.addLog(`Cleaning Charm clears ${extraCleaned} extra sticky or junk block${extraCleaned === 1 ? '' : 's'}.`);
         }
         break;
       }
+      case 'sprinkle-shower': {
+        const added = this.board.addSpecialBlocksForSpell('block_sprinkle', 4);
+        this.state.player.mana = clamp(this.state.player.mana + 8, 0, this.state.player.maxMana);
+        this.combat.applyDirectDamage(4 + spellPowerBonus, 'Sprinkle Shower');
+        this.combat.addLog(`Sprinkle Shower adds ${added} mana-friendly sprinkle blocks.`);
+        break;
+      }
+      case 'cupcake-blast': {
+        this.state.player.hp = clamp(this.state.player.hp + 4, 0, this.state.player.maxHp);
+        const cleared = this.board.clearBlocksByIds(['block_sticky'], 3);
+        this.combat.applyDirectDamage(12 + spellPowerBonus, 'Cupcake Blast');
+        this.combat.addLog(`Cupcake Blast heals 4 HP and clears ${cleared} sticky block${cleared === 1 ? '' : 's'}.`);
+        break;
+      }
+      case 'confetti-pop': {
+        const added = this.board.addConfettiBlocks(3);
+        const cleared = this.board.clearRandomCluster(2);
+        this.combat.applyDirectDamage(8 + spellPowerBonus, 'Confetti Pop');
+        this.combat.addLog(`Confetti Pop adds ${added} confetti and pops ${cleared} blocks.`);
+        break;
+      }
+      case 'bubble-shield':
+        this.combat.addPlayerShield(10, 'Bubble Shield');
+        break;
+      case 'star-spark': {
+        const added = this.board.addSpecialBlocksForSpell('block_star', 1);
+        this.combat.applyDirectDamage(14 + spellPowerBonus, 'Star Spark');
+        this.combat.addLog(`Star Spark plants ${added} star block for cascade setups.`);
+        break;
+      }
+      case 'jelly-bounce': {
+        const added = this.board.addSpecialBlocksForSpell('block_jelly', 2);
+        this.state.fallSpeed = Math.max(0.7, this.state.fallSpeed - 0.04);
+        this.combat.applyDirectDamage(9 + spellPowerBonus, 'Jelly Bounce');
+        this.combat.addLog(`Jelly Bounce adds ${added} wobbly blocks and slows the room slightly.`);
+        break;
+      }
+      case 'snowcone-burst': {
+        const thawed = this.board.convertBlocksByIds(['block_ice'], TETROMINO_COLORS.I, 4);
+        if (this.state.activeEnemy) {
+          this.state.activeEnemy.frozenTurns += 1;
+        }
+        this.combat.applyDirectDamage(10 + spellPowerBonus, 'Snowcone Burst');
+        this.combat.addLog(`Snowcone Burst chills the enemy and thaws ${thawed} ice block${thawed === 1 ? '' : 's'}.`);
+        break;
+      }
+      case 'goblin-gadget': {
+        const converted = this.board.convertBlocksByIds(['block_crumb_junk', 'block_cloud_junk', 'block_royal'], TETROMINO_COLORS.T, 3);
+        this.combat.applyDirectDamage(10 + spellPowerBonus, 'Goblin Gadget');
+        this.combat.addLog(`Goblin Gadget recalibrates ${converted} messy block${converted === 1 ? '' : 's'}.`);
+        break;
+      }
+      case 'rainbow-reroll':
+        this.board.rerollActiveAndNext();
+        this.state.player.mana = clamp(this.state.player.mana + 5, 0, this.state.player.maxMana);
+        this.combat.addLog('Rainbow Reroll refreshes the active and next pieces.');
+        break;
+      case 'snack-break':
+        this.state.player.hp = clamp(this.state.player.hp + 6, 0, this.state.player.maxHp);
+        this.state.player.mana = clamp(this.state.player.mana + 8, 0, this.state.player.maxMana);
+        this.combat.addLog('Snack Break restores 6 HP and 8 mana.');
+        break;
+      case 'cascade-cheer':
+        this.state.player.fever = clamp(this.state.player.fever + 18, 0, 100);
+        this.state.player.lineDamageBonus += 1;
+        this.combat.applyDirectDamage(6 + spellPowerBonus, 'Cascade Cheer');
+        this.combat.addLog('Cascade Cheer boosts Fever and line damage for the run.');
+        break;
+      default:
+        this.combat.addLog(`${this.getSpellLabel(spellId)} is marked as a safe placeholder.`);
+        break;
     }
 
     this.applySharedSpellModifiers(spellModifiers);
@@ -140,6 +218,10 @@ export class SpellSystem {
 
   private getSpellLabel(spellId: SpellId): string {
     return SPELLS.find((spell) => spell.id === spellId)?.label ?? 'Unknown spell';
+  }
+
+  private getSpellBonus(spellId: SpellId): number {
+    return this.state.player.spellBonuses[spellId] ?? 0;
   }
 
   private hasCleanupModifier(modifiers: SpellCatalystModifier[]): boolean {

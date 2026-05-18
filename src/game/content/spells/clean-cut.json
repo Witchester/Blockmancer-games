@@ -1,0 +1,23 @@
+{
+  "id": "spl_clean_cut",
+  "name": "Clean Cut",
+  "description": "Slices through the messiest row and tidies junk, sticky, and royal blocks.",
+  "school": "arcane",
+  "cost": {
+    "mana": 42
+  },
+  "targetType": "row",
+  "effects": [
+    "clear_row",
+    "clean_hazards"
+  ],
+  "iconKey": "icon_void_cut",
+  "vfxKey": "anim_spell_clean_cut",
+  "tags": [
+    "cleanup",
+    "counter_junk",
+    "counter_sticky",
+    "counter_royal"
+  ],
+  "enabled": true
+}

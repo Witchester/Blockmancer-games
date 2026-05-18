@@ -16,7 +16,7 @@ export class ShopSystem {
   ) {}
 
   healForGold(state: RunState): ShopResolution {
-    const cost = this.oopsieSystem.adjustShopPrice(state, 30);
+    const cost = this.getScaledPrice(state, 30);
     if (state.player.gold < cost) {
       return {
         transition: 'stay',
@@ -34,7 +34,7 @@ export class ShopSystem {
   }
 
   buyRandomReward(state: RunState): ShopResolution {
-    const cost = this.oopsieSystem.adjustShopPrice(state, 60);
+    const cost = this.getScaledPrice(state, 60);
     if (state.player.gold < cost) {
       return {
         transition: 'stay',
@@ -45,6 +45,14 @@ export class ShopSystem {
     state.player.gold -= cost;
     state.gold = state.player.gold;
     const reward = this.rewardSystem.getRandomRewards(1, state, 'shop')[0];
+    if (reward?.type === 'Item' && state.inventory.length >= state.player.inventoryCapacity) {
+      state.player.gold += cost;
+      state.gold = state.player.gold;
+      return {
+        transition: 'stay',
+        messages: ['Your bag is full, so the merchant keeps that item on the shelf.']
+      };
+    }
     state.pendingRewards = [reward];
     const message = this.rewardSystem.applyReward(state, reward.id);
     state.pendingRewards = [];
@@ -78,7 +86,7 @@ export class ShopSystem {
   }
 
   buyItem(state: RunState): ShopResolution {
-    const cost = this.oopsieSystem.adjustShopPrice(state, 25);
+    const cost = this.getScaledPrice(state, 25);
     if (state.player.gold < cost) {
       return {
         transition: 'stay',
@@ -116,5 +124,10 @@ export class ShopSystem {
       transition: 'map',
       messages: ['You leave the shop with supplies untouched.']
     };
+  }
+
+  getScaledPrice(state: RunState, baseCost: number): number {
+    const stageMultiplier = 1 + Math.max(0, state.stage - 1) * 0.08;
+    return this.oopsieSystem.adjustShopPrice(state, Math.round(baseCost * stageMultiplier));
   }
 }

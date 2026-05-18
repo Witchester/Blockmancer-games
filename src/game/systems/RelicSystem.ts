@@ -1,6 +1,24 @@
 import type { RewardId, RunState } from '../types/GameTypes';
 import { clamp } from '../utils/math';
 
+export const SUPPORTED_RELIC_EFFECT_IDS = [
+  'rel_goblin_coin',
+  'rel_broken_hourglass',
+  'rel_slime_core',
+  'rel_arcane_lens',
+  'rel_stone_heart',
+  'rel_cracked_crown',
+  'rel_arcade_token',
+  'rel_bomb_charm',
+  'rel_cupcake_wrapper',
+  'rel_dragon_tooth',
+  'rel_frozen_dice',
+  'rel_royal_napkin',
+  'rel_sprinkle_spoon',
+  'rel_star_sticker',
+  'rel_void_eye'
+];
+
 export class RelicSystem {
   applyRelic(state: RunState, rewardId: RewardId): string {
     switch (rewardId) {
@@ -60,6 +78,7 @@ export class RelicSystem {
         state.player.voidCutRefund = true;
         return 'Void Eye lets Void Cut refund mana on large clears.';
       default:
+        console.warn(`[Blockmancer] Unsupported relic effect "${rewardId}" safely used as placeholder.`);
         return 'The relic hums, but nothing obvious happens.';
     }
   }

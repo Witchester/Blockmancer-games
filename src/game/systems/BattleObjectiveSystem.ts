@@ -1,4 +1,4 @@
-import type { RewardDefinition, RunState } from '../types/GameTypes';
+import type { BattleObjectiveProgress, BoardCell, CascadeResult, RewardDefinition, RunState } from '../types/GameTypes';
 import { choice } from '../utils/random';
 import { contentRegistry } from './ContentRegistry';
 import { RewardSystem } from './RewardSystem';
@@ -32,6 +32,7 @@ export class BattleObjectiveSystem {
     );
     const selected = candidates.length > 0 ? choice(candidates) : null;
     state.activeBattleObjective = selected?.id;
+    state.battleObjectiveProgress = selected ? this.createProgress(state, selected.id) : undefined;
     return selected;
   }
 
@@ -63,34 +64,151 @@ export class BattleObjectiveSystem {
 
   getSummary(state: RunState): string {
     const objective = this.getActive(state);
-    return objective ? `Objective: ${objective.name}` : 'Objective: none';
+    if (!objective) {
+      return 'Objective: none';
+    }
+    const progress = this.getProgressText(state, objective);
+    return progress ? `Objective: ${objective.name} (${progress})` : `Objective: ${objective.name}`;
+  }
+
+  recordHold(state: RunState): void {
+    if (state.battleObjectiveProgress) {
+      state.battleObjectiveProgress.usedHold = true;
+    }
+  }
+
+  recordSpellCast(state: RunState): void {
+    if (state.battleObjectiveProgress) {
+      state.battleObjectiveProgress.spellsCast += 1;
+    }
+  }
+
+  recordEnemyAttack(state: RunState): void {
+    if (state.battleObjectiveProgress) {
+      state.battleObjectiveProgress.enemyAttacks += 1;
+    }
+  }
+
+  recordCascade(state: RunState, cascade: CascadeResult): void {
+    const progress = state.battleObjectiveProgress;
+    if (!progress) {
+      return;
+    }
+    progress.maxCascade = Math.max(progress.maxCascade, cascade.cascadeCount);
+    progress.maxLinesWithOnePiece = Math.max(progress.maxLinesWithOnePiece, cascade.totalLinesCleared);
+    if (cascade.cascadeCount > 1) {
+      progress.maxCascade = Math.max(progress.maxCascade, cascade.cascadeCount);
+    }
+    for (const trigger of cascade.specialBlocksTriggered) {
+      const blockId = trigger.split(':')[0];
+      progress.clearedBlockCounts[blockId] = (progress.clearedBlockCounts[blockId] ?? 0) + 1;
+    }
+    if (cascade.totalLinesCleared > 0) {
+      const junkClears = cascade.specialBlocksTriggered.filter((trigger) => this.isJunkBlockId(trigger.split(':')[0])).length;
+      if (junkClears > 0) {
+        progress.clearedBlockCounts.block_any_junk = (progress.clearedBlockCounts.block_any_junk ?? 0) + junkClears;
+      }
+    }
+  }
+
+  recordFeverTriggered(state: RunState): void {
+    if (state.battleObjectiveProgress) {
+      state.battleObjectiveProgress.feverTriggered = true;
+    }
   }
 
   private isComplete(state: RunState, objective: BattleObjectiveEntry): boolean {
+    const progress = this.getProgress(state, objective.id);
     const amount = typeof objective.requiredAmount === 'number' ? objective.requiredAmount : 1;
     switch (objective.targetType) {
       case 'cascade_count':
-        return state.lastCascadeLevel >= amount || state.runStats.maxCascade >= amount + 1;
+        return (progress?.maxCascade ?? 0) > amount || (amount <= 1 && (progress?.maxCascade ?? 0) >= 2);
       case 'lines_with_one_piece':
-        return state.lastCascadeLines >= amount;
+        return (progress?.maxLinesWithOnePiece ?? 0) >= amount;
       case 'clear_block_type':
-        return state.runStats.linesCleared >= amount;
+        return (progress?.clearedBlockCounts[objective.targetId ?? ''] ?? 0) >= amount;
       case 'clear_all_junk':
-        return true;
+        return this.countBlocks(state.board.grid, (cell) => typeof cell !== 'number' && this.isJunkBlockId(cell.blockId)) === 0;
       case 'no_spell':
-        return state.runStats.spellsCast === 0;
+        return (progress?.spellsCast ?? 0) === 0;
       case 'win_before_enemy_attacks':
-        return state.runStats.damageTaken === 0 || state.activeEnemy?.attackCounter !== undefined;
+        return (progress?.enemyAttacks ?? amount) < amount;
       case 'use_hold':
-        return Boolean(state.board.holdPieceType);
+        return Boolean(progress?.usedHold);
       case 'cast_spells':
-        return state.runStats.spellsCast >= amount;
+        return (progress?.spellsCast ?? 0) >= amount;
       case 'low_board_height':
-        return true;
+        return this.isBoardBelowHalfHeight(state.board.grid);
       case 'trigger_fever':
-        return state.player.feverActiveLocks > 0 || state.player.fever >= 100;
+        return Boolean(progress?.feverTriggered) || state.player.feverActiveLocks > 0;
       default:
         return false;
     }
+  }
+
+  private createProgress(state: RunState, objectiveId: string): BattleObjectiveProgress {
+    return {
+      objectiveId,
+      startedAtPiecesLocked: state.runStats.piecesLocked,
+      startedAtSpellsCast: state.runStats.spellsCast,
+      startedAtHoldsUsed: state.runStats.holdsUsed,
+      startedAtEnemyAttacks: state.runStats.enemyAttacks,
+      maxCascade: 0,
+      maxLinesWithOnePiece: 0,
+      clearedBlockCounts: {},
+      usedHold: false,
+      spellsCast: 0,
+      enemyAttacks: 0,
+      feverTriggered: false
+    };
+  }
+
+  private getProgress(state: RunState, objectiveId: string): BattleObjectiveProgress | undefined {
+    if (state.battleObjectiveProgress?.objectiveId === objectiveId) {
+      return state.battleObjectiveProgress;
+    }
+    return undefined;
+  }
+
+  private getProgressText(state: RunState, objective: BattleObjectiveEntry): string {
+    const progress = this.getProgress(state, objective.id);
+    const amount = typeof objective.requiredAmount === 'number' ? objective.requiredAmount : 1;
+    switch (objective.targetType) {
+      case 'cascade_count':
+        return `${Math.min(amount, Math.max(0, (progress?.maxCascade ?? 0) - 1))}/${amount}`;
+      case 'lines_with_one_piece':
+        return `${progress?.maxLinesWithOnePiece ?? 0}/${amount}`;
+      case 'clear_block_type':
+        return `${progress?.clearedBlockCounts[objective.targetId ?? ''] ?? 0}/${amount}`;
+      case 'clear_all_junk':
+        return `${this.countBlocks(state.board.grid, (cell) => typeof cell !== 'number' && this.isJunkBlockId(cell.blockId))} junk left`;
+      case 'no_spell':
+        return `${progress?.spellsCast ?? 0} spells`;
+      case 'win_before_enemy_attacks':
+        return `${progress?.enemyAttacks ?? 0}/${amount} attacks`;
+      case 'use_hold':
+        return progress?.usedHold ? 'done' : '0/1';
+      case 'cast_spells':
+        return `${progress?.spellsCast ?? 0}/${amount}`;
+      case 'low_board_height':
+        return this.isBoardBelowHalfHeight(state.board.grid) ? 'tidy' : 'too tall';
+      case 'trigger_fever':
+        return progress?.feverTriggered || state.player.feverActiveLocks > 0 ? 'done' : 'waiting';
+      default:
+        return '';
+    }
+  }
+
+  private countBlocks(grid: BoardCell[][], predicate: (cell: BoardCell) => boolean): number {
+    return grid.reduce((total, row) => total + row.filter(predicate).length, 0);
+  }
+
+  private isBoardBelowHalfHeight(grid: BoardCell[][]): boolean {
+    const firstOccupied = grid.findIndex((row) => row.some((cell) => cell !== 0));
+    return firstOccupied === -1 || firstOccupied >= Math.floor(grid.length / 2);
+  }
+
+  private isJunkBlockId(blockId: string): boolean {
+    return blockId.includes('junk') || blockId === 'block_sticky' || blockId === 'block_royal';
   }
 }

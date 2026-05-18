@@ -1,5 +1,23 @@
 import type { RewardId, RunState, SpellId } from '../types/GameTypes';
 
+export const SUPPORTED_UPGRADE_EFFECT_IDS = [
+  'upg_line_sharp_edges',
+  'upg_mana_echo',
+  'upg_board_stable_hands',
+  'upg_spell_fire_mastery',
+  'upg_bomb_expert',
+  'upg_combo_heart',
+  'upg_arcane_preview',
+  'upg_stonebreaker',
+  'upg_emergency_barrier',
+  'upg_cascade_choir',
+  'upg_fever_fizz',
+  'upg_gold_sense',
+  'upg_heavy_drop',
+  'upg_snack_pockets',
+  'upg_spell_focus'
+];
+
 export class UpgradeSystem {
   applyUpgrade(state: RunState, rewardId: RewardId, level = 1): string {
     const player = state.player;
@@ -53,8 +71,10 @@ export class UpgradeSystem {
         player.spellBonuses.fireball += 5;
         player.spellBonuses['bomb-rune'] += 5;
         player.spellBonuses['void-cut'] += 5;
+        player.spellBonuses['clean-cut'] = (player.spellBonuses['clean-cut'] ?? 0) + 5;
         return `Spell Focus reaches level ${level}: spell damage +5.`;
       default:
+        console.warn(`[Blockmancer] Unsupported upgrade effect "${rewardId}" safely used as placeholder.`);
         return 'The upgrade settles in, but nothing obvious changes.';
     }
   }
@@ -71,8 +91,9 @@ export class UpgradeSystem {
         state.player.spellBonuses['bomb-rune'] += 10;
         return 'Bomb Rune damage increases by 10.';
       case 'void-cut':
+      case 'clean-cut':
         state.player.voidCutRefund = true;
-        return 'Void Cut can now refund mana on large clears.';
+        return 'Clean Cut can now refund mana on large clears.';
       default:
         return 'Arcane sparks fade without effect.';
     }

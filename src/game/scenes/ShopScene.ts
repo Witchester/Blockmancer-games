@@ -39,15 +39,15 @@ export class ShopScene extends Phaser.Scene {
       align: 'center'
     }).setOrigin(0.5);
 
-    this.createOption(compact, 340, 'Heal 8 HP', `Cost: ${game.oopsieSystem.adjustShopPrice(game.runState, 30)} gold`, () => {
+    this.createOption(compact, 340, 'Heal 8 HP', `Cost: ${game.shopSystem.getScaledPrice(game.runState, 30)} gold`, () => {
       this.resolveShopAction(game.shopSystem.healForGold(game.runState));
     });
 
-    this.createOption(compact, 456, 'Buy Random Reward', `Cost: ${game.oopsieSystem.adjustShopPrice(game.runState, 60)} gold`, () => {
+    this.createOption(compact, 456, 'Buy Random Reward', `Cost: ${game.shopSystem.getScaledPrice(game.runState, 60)} gold`, () => {
       this.resolveShopAction(game.shopSystem.buyRandomReward(game.runState));
     });
 
-    this.createOption(compact, 572, 'Buy Item', `Cost: ${game.oopsieSystem.adjustShopPrice(game.runState, 25)} gold`, () => {
+    this.createOption(compact, 572, 'Buy Item', `Cost: ${game.shopSystem.getScaledPrice(game.runState, 25)} gold`, () => {
       this.resolveShopAction(game.shopSystem.buyItem(game.runState));
     });
 

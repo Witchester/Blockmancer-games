@@ -64,6 +64,9 @@ function createDefaultRunStats(): RunStats {
     damageTaken: 0,
     spellsCast: 0,
     itemsUsed: 0,
+    holdsUsed: 0,
+    enemyAttacks: 0,
+    feverTriggers: 0,
     roomsCleared: 0,
     bossesDefeated: []
   };
@@ -325,6 +328,7 @@ export function createDefaultRunState(): RunState {
     stageGoals: {},
     activeChaosRule: undefined,
     activeBattleObjective: undefined,
+    battleObjectiveProgress: undefined,
     completedBattleObjectives: [],
     activeRandomGameplayEvents: [],
     activeHazards: [],
@@ -396,6 +400,22 @@ export function normalizeRunState(input: unknown): RunState {
     stageGoals: raw.stageGoals ? { ...raw.stageGoals } : { ...defaults.stageGoals },
     activeChaosRule: raw.activeChaosRule,
     activeBattleObjective: raw.activeBattleObjective,
+    battleObjectiveProgress: raw.battleObjectiveProgress ? {
+      objectiveId: String(raw.battleObjectiveProgress.objectiveId ?? raw.activeBattleObjective ?? ''),
+      startedAtPiecesLocked: Math.max(0, Number(raw.battleObjectiveProgress.startedAtPiecesLocked ?? 0)),
+      startedAtSpellsCast: Math.max(0, Number(raw.battleObjectiveProgress.startedAtSpellsCast ?? 0)),
+      startedAtHoldsUsed: Math.max(0, Number(raw.battleObjectiveProgress.startedAtHoldsUsed ?? 0)),
+      startedAtEnemyAttacks: Math.max(0, Number(raw.battleObjectiveProgress.startedAtEnemyAttacks ?? 0)),
+      maxCascade: Math.max(0, Number(raw.battleObjectiveProgress.maxCascade ?? 0)),
+      maxLinesWithOnePiece: Math.max(0, Number(raw.battleObjectiveProgress.maxLinesWithOnePiece ?? 0)),
+      clearedBlockCounts: raw.battleObjectiveProgress.clearedBlockCounts && typeof raw.battleObjectiveProgress.clearedBlockCounts === 'object'
+        ? Object.fromEntries(Object.entries(raw.battleObjectiveProgress.clearedBlockCounts).map(([key, value]) => [key, Math.max(0, Number(value))]))
+        : {},
+      usedHold: Boolean(raw.battleObjectiveProgress.usedHold),
+      spellsCast: Math.max(0, Number(raw.battleObjectiveProgress.spellsCast ?? 0)),
+      enemyAttacks: Math.max(0, Number(raw.battleObjectiveProgress.enemyAttacks ?? 0)),
+      feverTriggered: Boolean(raw.battleObjectiveProgress.feverTriggered)
+    } : undefined,
     completedBattleObjectives: raw.completedBattleObjectives ? [...raw.completedBattleObjectives] : [],
     activeRandomGameplayEvents: raw.activeRandomGameplayEvents ? [...raw.activeRandomGameplayEvents] : [],
     activeHazards: normalizeActiveHazards(raw.activeHazards),
@@ -408,6 +428,9 @@ export function normalizeRunState(input: unknown): RunState {
     runStats: {
       ...defaults.runStats,
       ...(raw.runStats ?? {}),
+      holdsUsed: Math.max(0, Number(raw.runStats?.holdsUsed ?? 0)),
+      enemyAttacks: Math.max(0, Number(raw.runStats?.enemyAttacks ?? 0)),
+      feverTriggers: Math.max(0, Number(raw.runStats?.feverTriggers ?? 0)),
       bossesDefeated: raw.runStats?.bossesDefeated ? [...raw.runStats.bossesDefeated] : []
     }
   };

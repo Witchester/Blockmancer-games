@@ -41,7 +41,11 @@ export class StageGoalSystem {
 
   addProgress(state: RunState, targetType: string, amount = 1, targetId?: string): string | null {
     const goal = this.ensureGoal(state);
-    if (!goal || goal.targetType !== targetType || (goal.targetId && targetId && goal.targetId !== targetId)) {
+    if (!goal) {
+      return null;
+    }
+    const targetMismatch = goal.targetType !== 'battle_objective' && goal.targetId && targetId && goal.targetId !== targetId;
+    if (goal.targetType !== targetType || targetMismatch) {
       return null;
     }
     const progress = state.stageGoals[goal.id];
@@ -84,6 +88,9 @@ export class StageGoalSystem {
         case 'start_fever':
           state.player.fever = Math.max(state.player.fever, 50);
           return `${goal.name} succeeded: Fever starts halfway charged.`;
+        case 'rare_treasure':
+          state.rewardRerolls += 1;
+          return `${goal.name} succeeded: the boss reward table gets one extra reroll.`;
         case 'weaken_boss':
           enemy.currentHp = Math.max(1, enemy.currentHp - Math.ceil(enemy.maxHp * 0.12));
           return `${goal.name} succeeded: ${enemy.name} starts weakened.`;
@@ -104,6 +111,13 @@ export class StageGoalSystem {
         return `${goal.name} missed: a freezer draft speeds up the board.`;
       case 'extra_royal_blocks':
         return `${goal.name} missed: royal blocks are ready for the finale.`;
+      case 'sleepier_boss':
+        enemy.sleepTurns += 1;
+        enemy.shield += 4;
+        return `${goal.name} missed: ${enemy.name} starts with a sleepy shield routine.`;
+      case 'hydra_combo_punishment':
+        enemy.shield += 6;
+        return `${goal.name} missed: ${enemy.name} starts with a bonus-round shield.`;
       default:
         return `${goal.name} missed: the boss keeps its full festival plan.`;
     }

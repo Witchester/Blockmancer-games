@@ -10,7 +10,23 @@ import { BOARD_COLS, BOARD_ROWS } from '../utils/constants';
 
 export const DEFAULT_HERO_ID = 'hero_blockmancer';
 export const DEFAULT_WEAPON_ID = 'wpn_basic_wand';
-export const DEFAULT_SPELL_IDS: SpellId[] = ['fireball', 'frost-lock'];
+export const DEFAULT_SPELL_IDS: SpellId[] = [
+  'fireball',
+  'frost-lock',
+  'bomb-rune',
+  'clean-cut',
+  'sprinkle-shower',
+  'cupcake-blast',
+  'confetti-pop',
+  'bubble-shield',
+  'star-spark',
+  'jelly-bounce',
+  'snowcone-burst',
+  'goblin-gadget',
+  'rainbow-reroll',
+  'snack-break',
+  'cascade-cheer'
+];
 export const DEFAULT_STAGE = 1;
 export const DEFAULT_FALL_SPEED = 1.0;
 export const DEFAULT_GOLD = 50;

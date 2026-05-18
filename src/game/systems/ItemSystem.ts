@@ -298,7 +298,7 @@ export class ItemSystem {
       case 'item_bomb_fuse':
         return 'bomb-rune';
       case 'item_cleaning_charm':
-        return 'void-cut';
+        return ['clean-cut', 'void-cut'];
       default:
         return undefined;
     }

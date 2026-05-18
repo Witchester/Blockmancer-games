@@ -4,6 +4,7 @@ import { clamp } from '../utils/math';
 import { OopsieSystem } from './OopsieSystem';
 import { RelicSystem } from './RelicSystem';
 import { FeverSystem } from './FeverSystem';
+import { WeaponSystem } from './WeaponSystem';
 
 export type EnemyAttackResult = {
   defeated: boolean;
@@ -22,6 +23,7 @@ export class CombatSystem {
   private readonly relicSystem = new RelicSystem();
   private readonly oopsieSystem = new OopsieSystem();
   private readonly feverSystem = new FeverSystem();
+  private readonly weaponSystem = new WeaponSystem();
 
   constructor(private readonly state: RunState) {}
 
@@ -128,6 +130,7 @@ export class CombatSystem {
       1,
       Math.round(this.getCascadeMultiplier(cascade.cascadeCount) * rawDamage - this.getMitigation(enemy))
     );
+    damage += this.weaponSystem.getCascadeDamageBonus(this.state, cascade);
     const feverMultiplier = this.feverSystem.getDamageMultiplier(this.state);
     if (feverMultiplier > 1) {
       damage = Math.round(damage * feverMultiplier);
@@ -144,7 +147,11 @@ export class CombatSystem {
     );
     const bonusMana = cascade.cascadeCount > 1 ? Math.floor(baseMana * CASCADE_MANA_BONUS_MULTIPLIER) : 0;
     const feverMana = this.feverSystem.getManaBonus(this.state, baseMana + bonusMana);
-    this.state.player.mana = clamp(this.state.player.mana + baseMana + bonusMana + feverMana, 0, this.state.player.maxMana);
+    const weaponMana = this.weaponSystem.getManaGainBonus(this.state);
+    this.state.player.mana = clamp(this.state.player.mana + baseMana + bonusMana + feverMana + weaponMana, 0, this.state.player.maxMana);
+    if (weaponMana > 0) {
+      this.addLog(`Your weapon adds ${weaponMana} mana.`);
+    }
     
     if (
       (this.state.hero.passiveId === 'passive_line_mage' ||
