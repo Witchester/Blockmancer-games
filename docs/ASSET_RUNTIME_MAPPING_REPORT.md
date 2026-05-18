@@ -1,5 +1,5 @@
 # Asset Runtime Mapping Report
-Generated: 2026-05-18T15:52:03.964Z
+Generated: 2026-05-18T16:07:56.931Z
 ## Inputs
 - Runtime path source: `src/game/data/assets.ts`
 - Workbook parsed: not found
