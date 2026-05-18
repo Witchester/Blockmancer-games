@@ -1,0 +1,2738 @@
+# Blockmancer Dungeon — Release 1.0 Agent Prompt Pack
+<!-- BLOCKMANCER_STATUS_UPDATE_2026-05-18 -->
+## Current Prompt Pack Overlay — 2026-05-18
+
+When using any prompt in this pack, add this current audit instruction:
+```text
+Before adding new features, check docs/RELEASE_1_CODE_AUDIT_REPORT.md and prioritize P0/P1 stabilization:
+- Fix placeholder battle objective checks.
+- Add/verify Cascade Gravity and save migration tests.
+- Finish Stage 1 vertical slice.
+- Import Priority 1 exact-frame PNG assets.
+- Verify boss rule mechanics.
+- Verify spell/item effect coverage.
+- Run desktop and portrait-mobile smoke tests.
+Do not migrate engines. Keep Phaser 3 + TypeScript + Vite + Capacitor unless a future vertical-slice review proves otherwise.
+```
+<!-- END_BLOCKMANCER_STATUS_UPDATE -->
+
+<!-- BLOCKMANCER_AGENT_AUDIT_MARKING_2026-05-18 -->
+## Audit-Based Phase Status Marking — 2026-05-18
+
+Source audit: `docs/RELEASE_1_CODE_AUDIT_REPORT.md`.
+
+Legend:
+
+| Marker | Meaning |
+| --- | --- |
+| ✅ DONE | Implemented enough to treat as complete for now. |
+| ✅ MOSTLY DONE | Implemented, but keep small stabilization checks. |
+| 🟡 PARTIAL | System/content exists but needs wiring, testing, polish, or effect coverage. |
+| 🔴 NOT DONE | No meaningful implementation evidence yet. |
+| P0 | Must fix before adding more feature work. |
+| P1 | Needed for Release 1.0 core loop. |
+| P2 | Polish/release readiness. |
+| P3 | Nice-to-have/future. |
+
+### Current phase status from audit
+
+| Phase | Audit status | What this means for agent use |
+| --- | --- | --- |
+| Phase 0 — Release Audit | ✅ DONE | Release audit exists and should now be treated as baseline input instead of re-running full audit work. |
+| Phase 1 — Architecture Stabilization | ✅ MOSTLY DONE | Systems, scenes, ContentRegistry, AssetSystem, SaveSystem, and fallbacks exist. Remaining risk: some behavior is still switch-based/hardcoded. |
+| Phase 2 — Content Data 1.0 Conversion | 🟡 PARTIAL / CONTENT EXISTS, TONE+EFFECT AUDIT NEEDED | Content folders and counts are present and validation passes, but legacy curse/blood naming and unsupported effect coverage remain. |
+| Phase 3 — Cascade Gravity 1.0 | ✅ DONE / P0 TESTS NEEDED | Cascade Gravity is implemented and integrated into combat. Add deterministic tests/smoke harness before expanding more board features. |
+| Phase 4 — Special Board Blocks | 🟡 PARTIAL | Board block content and some hooks exist, but normal tetromino cells are still numeric and not every content block type participates fully in generation/effects. |
+| Phase 5 — Portrait Mobile Layout 1.0 | 🟡 PARTIAL / DEVICE SMOKE NEEDED | Portrait layout and mobile controls exist, but real-device portrait touch/readability testing is not documented. |
+| Phase 6 — Input System 1.0 | ✅ IMPLEMENTED / DEVICE SMOKE NEEDED | Keyboard/mobile input helpers exist and are used by BattleScene. Needs portrait-device ergonomics verification. |
+| Phase 7 — Combat System 1.0 | ✅ CORE DONE / P1 STABILIZE | Combat loop works with damage, HP/mana/shield, enemy actions, rewards, victory/defeat. Boss/passive/switch-based modifiers need stabilization. |
+| Phase 8 — Spell System 1.0 | 🟡 PARTIAL / P1 | 21 spell content files exist, but runtime spell use is limited to four spells. Decide Release 1 roster and wire effects. |
+| Phase 9 — Inventory and Item System 1.0 | 🟡 PARTIAL / P1-P2 | Inventory and item systems exist, but wrapper is thin and item effects/content coverage need audit against ItemSystem.applyEffect. |
+| Phase 10 — Hero, Weapon, and Unlock System | 🟡 PARTIAL / WEAPON PLACEHOLDER | Hero system and meta unlock tracking exist but passives need depth; WeaponSystem is mostly lookup-only. |
+| Phase 11 — Roguelike Map and Stage System | ✅ IMPLEMENTED / P1 STAGE 6 CHECK | Six-stage map/stage flow exists. Stage 6 needs explicit mini-boss/royal-guard path check if required by GDD. |
+| Phase 12 — Boss System 1.0 | 🟡 PARTIAL / P1 | Six bosses and boss rule cards exist, but boss mechanics are shallow and need visible mechanical enforcement. |
+| Phase 13 — Reward, Relic, and Upgrade System 1.0 | 🟡 PARTIAL | Reward flow is implemented; relic and upgrade effects are hardcoded/switch-based and need supported-effect documentation/tests. |
+| Phase 14 — Events, Shops, Rest, and Treasure 1.0 | 🟡 PARTIAL | Scenes and systems exist, but shop economy/inventory, event tone cleanup, and effect support need smoke testing. |
+| Phase 15 — Oopsies / Silly Drawbacks System | 🟡 PARTIAL / TONE CLEANUP NEEDED | OopsieSystem exists, but legacy curse/blood filenames/effect identifiers remain and need compatibility-safe cleanup. |
+| Phase 16 — Fever / Combo / Cascade Meta System | 🟡 PARTIAL | Fever exists and hooks into combat, but needs UX balancing and manual verification. |
+| Phase 16.5 — Festival Chaos & Replayability | 🟡 PARTIAL / P0-P1 FIXES | Random events, stage goals, chaos rules, objectives, boss rules, board size, hub, and friendship exist but are uneven. Battle objective placeholder true checks are P0. |
+| Phase 17 — Tutorial and Onboarding | 🟡 PARTIAL | Tutorial scene exists, but tutorial does not cover all later replayability systems. |
+| Phase 18 — Save, Meta Progress, and Profiles | ✅ IMPLEMENTED / P0 MIGRATION TESTS NEEDED | Run/meta LocalStorage saves and migrations exist. Add migration tests before changing save shape again. |
+| Phase 19 — Art Asset Pipeline Integration | ✅ RUNTIME PIPELINE DONE / P1 REAL ASSETS NEEDED | Asset manifest, placeholders, exact-frame animation preload/playback, and fallbacks exist. Real release assets and PNG frames are missing. |
+| Phase 20 — UI Polish and Readability | 🟡 PARTIAL | UI scenes exist and portrait layout is aimed at mobile, but readability/device smoke and polish remain. |
+| Phase 21 — Audio and Feedback | 🟡 PARTIAL / REAL AUDIO MISSING | AudioSystem fallback tones exist; real music/SFX files are missing. |
+| Phase 22 — Settings, Accessibility, and UX Options | 🟡 PARTIAL | Settings scene/persistence exists; accessibility and device validation remain. |
+| Phase 23 — Story, Dialogue, and Endings | 🟡 PARTIAL / NARRATIVE DEPTH NEEDED | StoryScene/StorySystem exist, but story/dialogue/endings are thin. |
+| Phase 24 — Balance Pass 1 | 🔴 NOT DONE | No full balance pass evidence. Needs after Stage 1 vertical slice and spell/boss/item coverage. |
+| Phase 25 — QA Test Suite and Debug Tools | 🟡 PARTIAL / P0-P2 | DebugScene and validation scripts exist, but no npm test/lint scripts and no manual smoke evidence. |
+| Phase 26 — Performance Optimization | 🔴 NOT DONE / AFTER SMOKE | No focused performance pass evidence. Do after real assets and device smoke expose bottlenecks. |
+| Phase 27 — Android / Capacitor Release Build | 🟡 PARTIAL | Capacitor config and Android scripts exist; Android debug/device validation still needs to be run/documented. |
+| Phase 28 — Store / Release Metadata | 🔴 NOT DONE | Store metadata package is not complete. |
+| Phase 29 — Final Polish and Bug Fixing | 🔴 NOT DONE | Final polish depends on P0/P1 stabilization, assets, smoke tests, and balance. |
+| Phase 30 — Release Candidate | 🔴 NOT DONE | Release candidate is not ready until P0/P1/P2 release-readiness work is complete. |
+
+### Current milestone status from audit
+
+| Milestone | Audit status | What this means |
+| --- | --- | --- |
+| Milestone A — Foundation | ✅ DONE / KEEP AS BASELINE | Audit, architecture scaffold, content loading, validation baseline, and cheerful content conversion are broadly present. Still keep P0/P1 stabilization overlay active. |
+| Milestone B — Core Gameplay | 🟡 PARTIAL / STABILIZE NEXT | Core loop works, but spell roster, item behavior coverage, boss/passive hooks, real assets, and smoke tests still need work. |
+| Milestone C — Run Structure | 🟡 PARTIAL | Map/reward/run flow exists, but bosses, events, shops, oopsies, fever, hero/weapon depth, and progression loops need validation or completion. |
+| Milestone C+ — Festival Chaos & Replayability | 🟡 PARTIAL / P1 VALIDATION NEEDED | Replayability systems and content exist, but effects are shallow/switch-limited and require end-to-end verification plus objective fixes. |
+| Milestone D — Release Features | 🟡 PARTIAL | Tutorial, save, asset/audio fallback, settings, and story scenes exist, but real assets/audio, onboarding depth, accessibility validation, and endings need work. |
+| Milestone E — Release Polish | 🔴 NOT DONE / RELEASE READINESS BACKLOG | Validation scripts exist and debug scene exists, but test/lint scripts, mobile smoke evidence, Android validation, release metadata, and RC work remain. |
+
+### Recommended next agent prompt order
+```text
+1. P0 stabilization pass: battle objectives, Cascade Gravity test harness, save migration tests, soft-lock smoke checks.
+2. Stage 1 vertical slice: real Priority 1 board/VFX assets, Stage 1 boss mechanics, core spell/item effects.
+3. P1 content-effect validation: boss rules, random events, stage goals, chaos rules, item effects.
+4. Mobile smoke: portrait layout, touch controls, save/continue, full Stage 1 path.
+5. Then continue Phase 8/12/16.5/19/20/21 as needed.
+```
+<!-- END_BLOCKMANCER_AGENT_AUDIT_MARKING -->
+
+
+
+Use this file together with `AGENT.md` and `blockmancer_vibe_code_release_1_plan.md`.
+
+This document gives you **copy-paste prompts** for each milestone and phase. Each prompt includes:
+```text
+- Clear task instruction
+- What the agent should inspect first
+- What to look for
+- Expected output
+- Acceptance checks
+- Commands to run
+- Response format
+```
+
+---
+
+## How to Use This Prompt Pack
+
+Recommended workflow:
+```text
+1. Put AGENT.md in the project root.
+2. Put blockmancer_vibe_code_release_1_plan.md in docs/ or project root.
+3. Open your coding agent tool: Cursor, Windsurf, Codex, Claude Code, etc.
+4. Start with Milestone A or Phase 0.
+5. Paste only one phase prompt at a time.
+6. Let the agent inspect files first.
+7. Let it make the smallest safe change.
+8. Run build/validation.
+9. Commit.
+10. Move to the next phase.
+```
+
+Do **not** ask the agent to implement all 30 phases in one pass. That will usually cause messy rewrites.
+
+---
+
+## Universal Rules for Every Prompt
+
+Add this block to the top of every coding prompt:
+```text
+Read AGENT.md first and follow it as the main project instruction.
+Also read blockmancer_vibe_code_release_1_plan.md if it exists.
+
+Project goal:
+Turn Blockmancer Dungeon into a cheerful portrait-mobile falling-block roguelike RPG for Release 1.0.
+
+Core rules:
+- Keep the game playable after changes.
+- Keep cheerful festival / cute chaos tone.
+- Do not add dark/edgy curse lore.
+- Do not replace Cascade Gravity with classic row shifting.
+- Do not rewrite unrelated working systems.
+- Keep content data-driven.
+- Preserve placeholder-safe asset fallbacks.
+- Keep portrait mobile as the primary layout target.
+- Prefer Phaser 3 + TypeScript + Vite + Capacitor as the implementation stack unless the repo proves otherwise.
+- Keep replayability systems data-driven: random events, stage goals, chaos rules, mini-objectives, boss cards, hub buildings, and friendship.
+- Run build/validation if possible.
+
+After completing the task, respond with:
+Summary:
+- ...
+
+Files changed:
+- ...
+
+How to test:
+- ...
+
+Commands run:
+- ...
+
+Known limitations:
+- ...
+```
+
+---
+
+# Milestone Prompts
+
+---
+
+## Milestone A — Foundation — AUDIT STATUS: ✅ DONE / KEEP AS BASELINE
+> **Audit mark:** ✅ DONE / KEEP AS BASELINE. Audit, architecture scaffold, content loading, validation baseline, and cheerful content conversion are broadly present. Still keep P0/P1 stabilization overlay active.
+
+
+Includes:
+```text
+Phase 0 — Release Audit
+Phase 1 — Architecture Stabilization
+Phase 2 — Content Data 1.0 Conversion
+```
+
+### Milestone Goal
+
+Prepare the repo for safe Release 1.0 development. The agent should understand the current MVP, stabilize architecture, and convert/prepare content data for the cheerful festival direction.
+
+### Copy-Paste Prompt
+```text
+Read AGENT.md first and follow it as the main project instruction.
+
+Implement Milestone A — Foundation.
+
+Scope:
+- Phase 0: Release Audit
+- Phase 1: Architecture Stabilization
+- Phase 2: Content Data 1.0 Conversion
+
+Important:
+Do this milestone carefully and incrementally. Do not rewrite the whole game. If the repo is not ready for full implementation, create the audit and foundation docs first, then make only safe changes.
+
+What to inspect first:
+- package.json
+- README.md
+- docs/
+- src/game/
+- src/game/scenes/
+- src/game/systems/
+- src/game/content/
+- src/game/types/
+- public/assets/
+
+What to look for:
+- Current build status
+- Missing scripts
+- Existing scene flow
+- Existing board/combat systems
+- Whether ContentRegistry exists
+- Whether content is JSON/data-driven
+- Whether asset manifest exists
+- Broken imports or duplicate systems
+- Missing save/load support
+- Any dark content that conflicts with cheerful festival tone
+
+Expected output:
+- docs/RELEASE_1_GAP_AUDIT.md
+- Stabilized types/systems where safe
+- Content folders prepared or updated
+- Validation scripts verified or documented if missing
+- No major gameplay rewrite
+
+Acceptance criteria:
+- Game still builds, or failures are documented clearly
+- Existing MVP remains playable if it was playable before
+- Missing Release 1.0 features are listed
+- Content direction is aligned with cheerful festival concept
+- Safe fallback exists or is planned for missing content/assets
+
+Commands to run:
+- npm install, if needed
+- npm run build
+- npm run validate:content, if available
+- npm run validate:metadata, if available
+
+Finish by summarizing files changed, commands run, build status, and next recommended phase.
+```
+
+---
+
+## Milestone B — Core Gameplay — AUDIT STATUS: 🟡 PARTIAL / STABILIZE NEXT
+> **Audit mark:** 🟡 PARTIAL / STABILIZE NEXT. Core loop works, but spell roster, item behavior coverage, boss/passive hooks, real assets, and smoke tests still need work.
+
+
+Includes:
+```text
+Phase 3 — Cascade Gravity 1.0
+Phase 4 — Special Board Blocks
+Phase 5 — Portrait Mobile Layout 1.0
+Phase 6 — Input System 1.0
+Phase 7 — Combat System 1.0
+Phase 8 — Spell System 1.0
+Phase 9 — Inventory and Item System 1.0
+```
+
+### Milestone Goal
+
+Make the game’s core combat-puzzle loop feel complete and mobile-playable.
+
+### Copy-Paste Prompt
+```text
+Read AGENT.md first and follow it as the main project instruction.
+
+Implement Milestone B — Core Gameplay.
+
+Scope:
+- Cascade Gravity
+- Special board blocks
+- Portrait mobile layout
+- Desktop/mobile input
+- Combat loop
+- Spell system
+- Inventory and items
+
+Important:
+Break this milestone into small commits if possible. Start with Cascade Gravity and board behavior before UI polish. Keep the game playable after every step.
+
+What to inspect first:
+- BoardSystem
+- CombatSystem
+- EnemySystem
+- SpellSystem
+- InventorySystem / ItemSystem if present
+- BattleScene
+- Input handling
+- UI components
+- Content data for board-blocks, spells, items, enemies
+
+What to look for:
+- Classic row-shift line clear that must be replaced
+- Missing CascadeResult type
+- Whether CombatSystem can consume line clear/cascade results
+- Whether board cells support block types
+- Whether mobile controls exist
+- Whether next/hold/inventory overlays exist
+- Whether spells/items are hardcoded or data-driven
+
+Expected output:
+- Cascade Gravity implemented
+- Special block hooks implemented
+- Portrait battle layout improved
+- Mobile controls functional
+- Combat loop connected to board results
+- Spells and items functional enough for Release 1.0
+
+Acceptance criteria:
+- Clearing lines triggers Cascade Gravity
+- Cascades can create new line clears
+- Combat uses cascade damage/mana rewards
+- Board supports special block types safely
+- Mobile touch controls work
+- Spell buttons work
+- Inventory can be opened and items can be used
+- Build passes
+
+Commands to run:
+- npm run build
+- npm run validate:content, if content changed
+
+Finish with manual test steps for a battle from start to reward screen.
+```
+
+---
+
+## Milestone C — Run Structure — AUDIT STATUS: 🟡 PARTIAL
+> **Audit mark:** 🟡 PARTIAL. Map/reward/run flow exists, but bosses, events, shops, oopsies, fever, hero/weapon depth, and progression loops need validation or completion.
+
+
+Includes:
+```text
+Phase 10 — Hero, Weapon, and Unlock System
+Phase 11 — Roguelike Map and Stage System
+Phase 12 — Boss System 1.0
+Phase 13 — Reward, Relic, and Upgrade System 1.0
+Phase 14 — Events, Shops, Rest, and Treasure 1.0
+Phase 15 — Oopsies / Silly Drawbacks System
+Phase 16 — Fever / Combo / Cascade Meta System
+```
+
+### Milestone Goal
+
+Turn the battle MVP into a full roguelike run with stages, bosses, unlocks, rewards, events, shops, oopsies, and mastery systems.
+
+### Copy-Paste Prompt
+```text
+Read AGENT.md first and follow it as the main project instruction.
+
+Implement Milestone C — Run Structure.
+
+Scope:
+- Hero select and unlocks
+- Weapons and starting loadouts
+- 6-stage roguelike map progression
+- Boss encounters
+- Rewards, relics, upgrades
+- Events, shops, rest, treasure
+- Oopsies / silly drawbacks
+- Fever/combo/cascade mastery layer
+
+What to inspect first:
+- HeroSelectScene
+- MapScene
+- RewardScene
+- EventScene
+- ShopScene
+- RestScene
+- TreasureScene
+- VictoryScene
+- SaveSystem
+- HeroSystem
+- StageSystem
+- MapSystem
+- RewardSystem
+- RelicSystem
+- UpgradeSystem
+- Loot tables
+
+What to look for:
+- Missing scene transitions
+- Missing stage progression
+- Missing boss node logic
+- Missing unlock persistence
+- Hardcoded rewards
+- Missing relic/upgrade trigger hooks
+- Missing shop/event choice resolution
+- Missing oopsie effects
+- Missing fever/combo UI
+
+Expected output:
+- Player can start run with selected hero
+- Player can move across a map
+- Player can fight through stages
+- Bosses appear at stage ends
+- Rewards apply after battle
+- Non-combat rooms work
+- Oopsies and fever systems exist
+- Progress can be saved where relevant
+
+Acceptance criteria:
+- A run can progress from Stage 1 to at least Stage 2
+- Boss defeat advances stage
+- Rewards are generated from loot tables
+- Hero unlock conditions can be tracked
+- Oopsies can be gained/removed
+- Fever meter interacts with cascades
+- Build passes
+
+Commands to run:
+- npm run build
+- npm run validate:content
+
+Finish with a full run-path test checklist.
+```
+
+---
+
+## Milestone C+ — Festival Chaos & Replayability — AUDIT STATUS: 🟡 PARTIAL / P1 VALIDATION NEEDED
+> **Audit mark:** 🟡 PARTIAL / P1 VALIDATION NEEDED. Replayability systems and content exist, but effects are shallow/switch-limited and require end-to-end verification plus objective fixes.
+
+
+Includes:
+```text
+Phase 16.5 — Festival Chaos & Replayability
+```
+
+### Milestone Goal
+
+Add the requested replayability and strategic variety layer on top of the core run structure: random gameplay events, stage goals, chaos rules, battle mini-objectives, boss rule cards, dynamic board size modifiers, oopsie risk/reward, hero passives, festival hub progression, and monster friendship.
+
+### Copy-Paste Prompt
+```text
+Read AGENT.md first and follow it as the main project instruction.
+Also read blockmancer_vibe_code_release_1_plan.md and blockmancer_lighthearted_content_direction.md.
+
+Implement Milestone C+ — Festival Chaos & Replayability.
+
+Scope:
+- Random gameplay events
+- Stage goals
+- Festival chaos rules
+- Battle mini-objectives
+- Boss rule cards
+- Oopsie risk/reward event choices
+- Hero-specific playstyle passives
+- Dynamic board size modifiers
+- Festival hub progression
+- Monster friendship / collection
+
+Important:
+Do this after the core run structure exists. Do not rewrite unrelated working systems. Extend existing systems when possible. Keep all content data-driven, cheerful, safe for mobile portrait layout, and compatible with Cascade Gravity.
+
+What to inspect first:
+- BoardSystem
+- CombatSystem
+- EventSystem
+- RewardSystem
+- OopsieSystem
+- HeroSystem
+- MapSystem
+- StageSystem
+- BossSystem / EnemySystem
+- SaveSystem
+- ContentRegistry
+- BattleScene
+- MapScene
+- EventScene
+- RewardScene
+- HeroSelectScene
+
+What to look for:
+- Whether map nodes are generated or hardcoded
+- Whether board dimensions are configurable
+- Whether combat can accept room modifiers
+- Whether events can apply multiple result types
+- Whether reward bundles support gold/items/relics/upgrades/oopsies
+- Whether hero passives are data-driven or hardcoded
+- Whether save migration/defaults exist
+- Whether UI can show compact status cards
+
+Expected output:
+- RandomGameplayEventSystem
+- StageGoalSystem
+- ChaosRuleSystem
+- BattleObjectiveSystem
+- BossRuleSystem
+- BoardSizeModifierSystem
+- HubProgressionSystem
+- FriendshipSystem
+- Content folders for all new systems
+- Save fields and migration/defaults
+- Minimal readable UI for new information
+
+Acceptance criteria:
+- At least 10 random gameplay events are implemented.
+- Stage 1 has 6 main-path nodes.
+- Stage 2 has 8 main-path nodes.
+- Stage 3 has 10 main-path nodes.
+- Stage 4 has 12 main-path nodes.
+- Stage 5 has 14 main-path nodes.
+- Stage 6 has 16 main-path nodes.
+- Boss node is always the final required node.
+- Elite nodes begin from Stage 2.
+- Base board size scales by stage.
+- Encounter type can modify board size.
+- Board never shrinks below 6x12.
+- Each stage has 1 stage goal.
+- Combat rooms can roll 0–1 chaos rule.
+- Combat rooms can roll 0–1 mini-objective.
+- Bosses show boss rule cards before combat.
+- Events can grant Oopsies for stronger rewards.
+- Each hero has a unique passive.
+- Hub buildings can be upgraded.
+- Monster friendship points can be gained and saved.
+- Save/load supports all new systems.
+- Build passes.
+
+Commands to run:
+- npm run build
+- npm run validate:content, if available
+- npm run validate:metadata, if available
+
+Finish with:
+Summary / Files changed / Systems added / Systems updated / Content added / Gameplay impact / Save-load changes / UI changes / Commands run / How to test / Known limitations
+```
+
+---
+
+## Milestone D — Release Features — AUDIT STATUS: 🟡 PARTIAL
+> **Audit mark:** 🟡 PARTIAL. Tutorial, save, asset/audio fallback, settings, and story scenes exist, but real assets/audio, onboarding depth, accessibility validation, and endings need work.
+
+
+Includes:
+```text
+Phase 17 — Tutorial and Onboarding
+Phase 18 — Save, Meta Progress, and Profiles
+Phase 19 — Art Asset Pipeline Integration
+Phase 20 — UI Polish and Readability
+Phase 21 — Audio and Feedback
+Phase 22 — Settings, Accessibility, and UX Options
+Phase 23 — Story, Dialogue, and Endings
+```
+
+### Milestone Goal
+
+Make the game understandable, persistent, polished, accessible, and player-facing.
+
+### Copy-Paste Prompt
+```text
+Read AGENT.md first and follow it as the main project instruction.
+
+Implement Milestone D — Release Features.
+
+Scope:
+- Tutorial and onboarding
+- Save and meta progress
+- Asset pipeline
+- UI polish
+- Audio feedback
+- Settings/accessibility
+- Story/dialogue/endings
+
+What to inspect first:
+- MainMenuScene
+- TutorialScene
+- SettingsScene
+- SaveSystem
+- AssetSystem or asset manifest
+- BootScene
+- AudioSystem
+- UI components
+- Dialogue/story data
+- Victory/GameOver flow
+
+What to look for:
+- First-run player confusion points
+- Missing save versioning
+- Corrupt save crash risks
+- Hardcoded asset paths
+- Missing fallback textures/audio
+- UI readability problems on phone
+- Missing settings persistence
+- Missing story/endings
+
+Expected output:
+- First-run tutorial flow
+- Continue run / meta progress support
+- Asset manifest and safe fallbacks
+- Improved UI readability
+- Audio hooks with mute/volume settings
+- Accessibility options
+- Cheerful story flow and endings
+
+Acceptance criteria:
+- Tutorial can be completed or skipped
+- Refresh/continue works
+- Missing assets/audio do not crash
+- Settings persist
+- Screen shake/reduced flashing options work
+- Normal ending exists
+- Build passes
+
+Commands to run:
+- npm run build
+- npm run validate:content, if content changed
+
+Finish with new-player test steps and save/load test steps.
+```
+
+---
+
+## Milestone E — Release Polish — AUDIT STATUS: 🔴 NOT DONE / RELEASE READINESS BACKLOG
+> **Audit mark:** 🔴 NOT DONE / RELEASE READINESS BACKLOG. Validation scripts exist and debug scene exists, but test/lint scripts, mobile smoke evidence, Android validation, release metadata, and RC work remain.
+
+
+Includes:
+```text
+Phase 24 — Balance Pass 1
+Phase 25 — QA Test Suite and Debug Tools
+Phase 26 — Performance Optimization
+Phase 27 — Android / Capacitor Release Build
+Phase 28 — Store / Release Metadata
+Phase 29 — Final Polish and Bug Fixing
+Phase 30 — Release Candidate
+```
+
+### Milestone Goal
+
+Prepare the game for Release Candidate 1.0.
+
+### Copy-Paste Prompt
+```text
+Read AGENT.md first and follow it as the main project instruction.
+
+Implement Milestone E — Release Polish.
+
+Scope:
+- Balance pass
+- QA/debug tools
+- Mobile performance
+- Android/Capacitor release build
+- Store/release metadata
+- Final polish/bug fixing
+- Release candidate checklist
+
+What to inspect first:
+- Balance/content data
+- Difficulty scaling
+- Debug/dev tools
+- Performance-heavy board/VFX/UI code
+- package.json scripts
+- capacitor.config.ts
+- Android project if present
+- docs/QA_TEST_PLAN.md
+- docs/BUILD_APK.md
+- docs/RELEASE_1_0_NOTES.md
+
+What to look for:
+- Unfair difficulty spikes
+- Memory leaks or excessive allocations
+- Missing debug tools for QA
+- Missing Android scripts/config
+- Broken asset paths in production build
+- Missing release docs
+- Missing credits/licenses/privacy notes
+- Known blocker bugs
+
+Expected output:
+- Tuned balance data
+- QA checklist/debug tools
+- Performance improvements
+- Android build support documented
+- Store metadata docs
+- Release notes
+- Known issues list
+
+Acceptance criteria:
+- Web build passes
+- Android debug build path is documented or builds successfully
+- QA checklist exists
+- No known blocker bugs remain undocumented
+- Release notes exist
+- Version can be bumped to 1.0.0 when ready
+
+Commands to run:
+- npm run build
+- npm run validate:content
+- npm run android:sync, if configured
+- npm run android:build:debug, if configured
+
+Finish with Release Candidate readiness status.
+```
+
+---
+
+# Individual Phase Prompts
+
+---
+
+## Phase 0 — Release Audit — AUDIT STATUS: ✅ DONE
+> **Audit mark:** ✅ DONE. Release audit exists and should now be treated as baseline input instead of re-running full audit work.
+
+```text
+Read AGENT.md first and follow it as the main project instruction.
+
+Task:
+Audit the current Blockmancer Dungeon repo for Release 1.0 readiness. Do not rewrite systems yet unless a tiny build fix is required.
+
+Inspect first:
+- package.json
+- README.md
+- docs/
+- src/game/
+- src/game/scenes/
+- src/game/systems/
+- src/game/content/
+- public/assets/
+
+What to look for:
+- Current build status
+- Existing MVP features
+- Missing Release 1.0 features
+- Broken or placeholder systems
+- Missing content/data folders
+- Missing validation scripts
+- Missing asset pipeline
+- Mobile portrait layout issues
+- Save/load status
+
+Expected output:
+- Create or update docs/RELEASE_1_GAP_AUDIT.md
+- Include implemented features, missing features, broken/risky areas, recommended next phases, and commands run
+
+Acceptance criteria:
+- Current build status is known
+- Existing MVP features are listed
+- Missing Release 1.0 features are listed
+- Release checklist exists
+- No gameplay changes unless required to fix build
+
+Commands:
+- npm install, if needed
+- npm run build
+- npm run validate:content, if available
+- npm run validate:metadata, if available
+
+Response format:
+Summary / Files changed / Commands run / How to test / Known limitations / Recommended next phase
+```
+
+---
+
+## Phase 1 — Architecture Stabilization — AUDIT STATUS: ✅ MOSTLY DONE
+> **Audit mark:** ✅ MOSTLY DONE. Systems, scenes, ContentRegistry, AssetSystem, SaveSystem, and fallbacks exist. Remaining risk: some behavior is still switch-based/hardcoded.
+
+```text
+Read AGENT.md first and follow it as the main project instruction.
+
+Task:
+Stabilize the project architecture for Release 1.0 without changing core gameplay behavior unless needed for build stability.
+
+Inspect first:
+- src/game/types/
+- src/game/systems/
+- src/game/scenes/
+- src/game/data/
+- src/game/content/
+- BootScene.ts
+- BattleScene.ts
+
+What to look for:
+- Giant scene files with mixed logic
+- Missing types for game state/content
+- Missing ContentRegistry
+- Missing AssetSystem or asset manifest
+- Duplicate logic across scenes
+- Hardcoded content access
+- Missing fallbacks for missing assets/content
+- Circular imports
+
+Expected output:
+- Typed game state and content access patterns
+- Centralized constants where needed
+- ContentRegistry access pattern established
+- Asset manifest/fallback pattern established
+- Safe error handling for missing content/assets
+
+Acceptance criteria:
+- npm run build passes
+- No circular imports
+- Main game state is typed
+- Content can be loaded by ID
+- Missing content has safe fallback
+- Missing texture has safe fallback
+
+Commands:
+- npm run build
+
+Response format:
+Summary / Files changed / Architecture decisions / Commands run / How to test / Known limitations
+```
+
+---
+
+## Phase 2 — Content Data 1.0 Conversion — AUDIT STATUS: 🟡 PARTIAL / CONTENT EXISTS, TONE+EFFECT AUDIT NEEDED
+> **Audit mark:** 🟡 PARTIAL / CONTENT EXISTS, TONE+EFFECT AUDIT NEEDED. Content folders and counts are present and validation passes, but legacy curse/blood naming and unsupported effect coverage remain.
+
+```text
+Read AGENT.md first and follow it as the main project instruction.
+
+Task:
+Convert or create Release 1.0 content data for the cheerful festival concept.
+
+Inspect first:
+- src/game/content/
+- src/game/systems/ContentRegistry.ts
+- scripts/validate-content-data.mjs
+- docs/content docs if present
+
+What to look for:
+- Old dark/edgy content to rename or remove
+- Missing data folders
+- Missing metadata files
+- Invalid ID prefixes
+- Hardcoded content in code
+- Content not loaded by ContentRegistry
+
+Expected output:
+Create/update content for:
+- 6 stages
+- 6 bosses
+- 36 monsters
+- 6 heroes
+- 10 weapons
+- 15 spells
+- 15 relics
+- 15 upgrades
+- 15 board blocks
+- 10 items
+- 8 oopsies
+- 8 room events
+- NPCs
+- currencies
+- collectibles
+- loot tables
+- difficulty scaling
+
+Acceptance criteria:
+- All Release 1.0 content entries exist
+- All content uses cheerful tone
+- Old dark references are removed or renamed
+- JSON is valid
+- IDs match naming convention
+- ContentRegistry loads all content
+- validate:content passes
+
+Commands:
+- npm run validate:content
+- npm run validate:metadata, if available
+- npm run build
+
+Response format:
+Summary / Content added / Files changed / Commands run / How to test / Known limitations
+```
+
+---
+
+## Phase 3 — Cascade Gravity 1.0 — AUDIT STATUS: ✅ DONE / P0 TESTS NEEDED
+> **Audit mark:** ✅ DONE / P0 TESTS NEEDED. Cascade Gravity is implemented and integrated into combat. Add deterministic tests/smoke harness before expanding more board features.
+
+```text
+Read AGENT.md first and follow it as the main project instruction.
+
+Task:
+Implement Cascade Gravity as the core BoardSystem mechanic.
+
+Inspect first:
+- BoardSystem
+- CombatSystem
+- GameTypes / board types
+- BattleScene line-clear integration
+- EventLog/HUD if present
+
+What to look for:
+- Classic row-shift clearing
+- Missing line clear result type
+- Missing combat integration
+- Missing event log messages
+- Board mutation bugs
+- Places where line count is used directly
+
+Expected output:
+- detectCompletedLines()
+- removeCompletedLines()
+- applyCascadeGravity()
+- resolveCascadeClears()
+- CascadeResult type
+- Combat reward integration
+- Event log messages
+
+Acceptance criteria:
+- Clearing a line removes only cleared cells first
+- Blocks above fall down by column
+- New lines can form after falling
+- Cascades resolve automatically
+- Combat receives CascadeResult
+- Event log shows cascade messages
+- Build passes
+
+Commands:
+- npm run build
+
+Manual test:
+Create or simulate a board where a line clear causes blocks above to fall into a new completed line.
+
+Response format:
+Summary / Files changed / Cascade behavior / Commands run / How to test / Known limitations
+```
+
+---
+
+## Phase 4 — Special Board Blocks — AUDIT STATUS: 🟡 PARTIAL
+> **Audit mark:** 🟡 PARTIAL. Board block content and some hooks exist, but normal tetromino cells are still numeric and not every content block type participates fully in generation/effects.
+
+```text
+Read AGENT.md first and follow it as the main project instruction.
+
+Task:
+Add special board block support using content data and integrate effects with Cascade Gravity.
+
+Inspect first:
+- BoardSystem
+- board block content data
+- CombatSystem
+- ItemSystem/InventorySystem if present
+- type definitions for board cells
+
+What to look for:
+- Board cells storing only color instead of block type
+- No hooks for on-clear effects
+- No safe fallback for unknown block type
+- Bomb effects that could recurse infinitely
+
+Expected output:
+Implement support for:
+- block_sprinkle
+- block_cupcake
+- block_bomb
+- block_star
+- block_jelly
+- block_ice
+- block_sticky
+- block_crumb_junk
+- block_royal
+- block_confetti
+- block_toolbox
+
+Acceptance criteria:
+- Board supports block type data
+- Special block effects trigger on clear
+- Bomb can trigger additional cascade resolve safely
+- Junk blocks can appear from enemy attacks
+- Boss blocks can appear
+- Unknown block types use safe fallback
+
+Commands:
+- npm run build
+- npm run validate:content, if content changed
+
+Response format:
+Summary / Files changed / Block effects implemented / Commands run / How to test / Known limitations
+```
+
+---
+
+## Phase 5 — Portrait Mobile Layout 1.0 — AUDIT STATUS: 🟡 PARTIAL / DEVICE SMOKE NEEDED
+> **Audit mark:** 🟡 PARTIAL / DEVICE SMOKE NEEDED. Portrait layout and mobile controls exist, but real-device portrait touch/readability testing is not documented.
+
+```text
+Read AGENT.md first and follow it as the main project instruction.
+
+Task:
+Refactor BattleScene into the final portrait-only mobile layout.
+
+Inspect first:
+- BattleScene
+- UI components
+- MobileControls
+- Phaser scale config
+- CSS/style files
+- current board rendering dimensions
+
+What to look for:
+- Landscape assumptions
+- Fixed desktop-only dimensions
+- Board too small on phone
+- Controls too small for touch
+- Next/hold/inventory hidden or missing
+- UI overlap with safe areas/notches
+
+Expected layout:
+- Top 1/5: compact battle panel
+- Middle 3/5: falling-block board + next/hold/inventory overlays
+- Bottom 1/5: mobile controls + spell buttons
+
+Acceptance criteria:
+- Game is portrait-only
+- Top combat uses about 1/5 height
+- Board uses about 3/5 height
+- Controls use about 1/5 height
+- Next block is visible
+- Hold block is visible
+- Inventory is visible/expandable
+- Touch controls are playable
+- Desktop browser preview still works
+
+Commands:
+- npm run build
+
+Response format:
+Summary / Files changed / Layout decisions / Commands run / How to test / Known limitations
+```
+
+---
+
+## Phase 6 — Input System 1.0 — AUDIT STATUS: ✅ IMPLEMENTED / DEVICE SMOKE NEEDED
+> **Audit mark:** ✅ IMPLEMENTED / DEVICE SMOKE NEEDED. Keyboard/mobile input helpers exist and are used by BattleScene. Needs portrait-device ergonomics verification.
+
+```text
+Read AGENT.md first and follow it as the main project instruction.
+
+Task:
+Implement polished desktop and mobile input handling.
+
+Inspect first:
+- InputSystem
+- BattleScene input code
+- MobileControls
+- BoardSystem movement methods
+- Settings controls if present
+
+What to look for:
+- Input duplicated in scenes
+- No touch repeat for left/right
+- Soft drop not holdable
+- Hard drop repeat bugs
+- Hold not limited once per piece
+- Spell buttons disconnected
+- Inventory button missing
+
+Expected output:
+- Desktop controls: arrows/WASD, Space, Shift/C, 1-4, I, Esc
+- Mobile controls: left/right/rotate/soft drop/hard drop/hold/spells/inventory
+- Input repeat/cooldowns handled safely
+
+Acceptance criteria:
+- Mobile buttons feel responsive
+- Holding left/right repeats movement
+- Soft drop can be held
+- Hard drop is single tap
+- Rotate is single tap
+- Hold works once per piece
+- Spell buttons work
+- Inventory button works
+
+Commands:
+- npm run build
+
+Response format:
+Summary / Files changed / Controls implemented / Commands run / How to test / Known limitations
+```
+
+---
+
+## Phase 7 — Combat System 1.0 — AUDIT STATUS: ✅ CORE DONE / P1 STABILIZE
+> **Audit mark:** ✅ CORE DONE / P1 STABILIZE. Combat loop works with damage, HP/mana/shield, enemy actions, rewards, victory/defeat. Boss/passive/switch-based modifiers need stabilization.
+
+```text
+Read AGENT.md first and follow it as the main project instruction.
+
+Task:
+Upgrade CombatSystem and EnemySystem into a complete Release 1.0 battle loop.
+
+Inspect first:
+- CombatSystem
+- EnemySystem
+- BoardSystem cascade result integration
+- SpellSystem
+- RelicSystem / UpgradeSystem
+- BattleScene victory/defeat flow
+- enemy content data
+
+What to look for:
+- Line clears not dealing damage
+- Cascades not affecting combat
+- Enemy attacks not telegraphed
+- Missing status effect hooks
+- Missing player HP/shield handling
+- Missing victory/defeat transition
+- Missing safe placeholders for enemy behaviors
+
+Expected output:
+- Line clear damage
+- Cascade bonus damage/mana
+- Combo tracking
+- Fever gain hook
+- Enemy intent/attack counter
+- Player HP/shield
+- Enemy HP/armor
+- Status effect hooks
+- Victory/defeat flow
+
+Acceptance criteria:
+- Every enemy behavior has implementation or safe placeholder
+- Boss behaviors can be unique later
+- Cascades matter in combat
+- Combat logs are readable
+- Player can win/lose battle
+- Battle reward flow works
+
+Commands:
+- npm run build
+- npm run validate:content, if enemy data changed
+
+Response format:
+Summary / Files changed / Combat behavior / Commands run / How to test / Known limitations
+```
+
+---
+
+## Phase 8 — Spell System 1.0 — AUDIT STATUS: 🟡 PARTIAL / P1
+> **Audit mark:** 🟡 PARTIAL / P1. 21 spell content files exist, but runtime spell use is limited to four spells. Decide Release 1 roster and wire effects.
+
+```text
+Read AGENT.md first and follow it as the main project instruction.
+
+Task:
+Implement all 15 Release 1.0 spells as data-driven spell effects.
+
+Inspect first:
+- SpellSystem
+- spell content data
+- CombatSystem
+- BoardSystem
+- BattleScene spell buttons
+- mana UI/HUD
+
+What to look for:
+- Hardcoded spells
+- Missing mana cost checks
+- Missing disabled state
+- Missing spell effect routing
+- Board-targeting spells not safe
+- No feedback when not enough mana
+
+Expected output:
+Functional spells:
+- spl_fireball
+- spl_frost_lock
+- spl_bomb_rune
+- spl_clean_cut
+- spl_sprinkle_shower
+- spl_cupcake_blast
+- spl_confetti_pop
+- spl_bubble_shield
+- spl_star_spark
+- spl_jelly_bounce
+- spl_snowcone_burst
+- spl_goblin_gadget
+- spl_rainbow_reroll
+- spl_snack_break
+- spl_cascade_cheer
+
+Acceptance criteria:
+- All spells can be cast if available
+- Mana costs apply
+- Effects work
+- UI updates
+- Spell upgrades can modify effects where supported
+- Build passes
+
+Commands:
+- npm run build
+- npm run validate:content, if spell data changed
+
+Response format:
+Summary / Files changed / Spells implemented / Commands run / How to test / Known limitations
+```
+
+---
+
+## Phase 9 — Inventory and Item System 1.0 — AUDIT STATUS: 🟡 PARTIAL / P1-P2
+> **Audit mark:** 🟡 PARTIAL / P1-P2. Inventory and item systems exist, but wrapper is thin and item effects/content coverage need audit against ItemSystem.applyEffect.
+
+```text
+Read AGENT.md first and follow it as the main project instruction.
+
+Task:
+Implement InventorySystem and ItemSystem for battle and event usage.
+
+Inspect first:
+- InventorySystem / ItemSystem
+- BattleScene inventory UI
+- item content data
+- RewardSystem
+- ShopSystem if present
+- SaveSystem
+
+What to look for:
+- No inventory capacity
+- Items not stackable
+- Item use hardcoded or missing
+- No compact/expanded overlay
+- Item counts not saved
+- Items not integrated with rewards/shop
+
+Expected output:
+- Inventory slots/capacity
+- Stackable consumables
+- Item use effects
+- Compact/expanded inventory overlay
+- Item reward/pickup support
+- Shop purchase hooks
+- Save/load item state
+
+Acceptance criteria:
+- Inventory visible in middle board area
+- Inventory can expand/collapse
+- Items can be used
+- Item counts update
+- Items can be rewarded/bought
+- Inventory capacity upgrades work
+
+Commands:
+- npm run build
+- npm run validate:content, if item data changed
+
+Response format:
+Summary / Files changed / Item behavior / Commands run / How to test / Known limitations
+```
+
+---
+
+## Phase 10 — Hero, Weapon, and Unlock System — AUDIT STATUS: 🟡 PARTIAL / WEAPON PLACEHOLDER
+> **Audit mark:** 🟡 PARTIAL / WEAPON PLACEHOLDER. Hero system and meta unlock tracking exist but passives need depth; WeaponSystem is mostly lookup-only.
+
+```text
+Read AGENT.md first and follow it as the main project instruction.
+
+Task:
+Implement playable heroes, weapons, starting loadouts, passives, and unlock conditions.
+
+Inspect first:
+- HeroSelectScene
+- HeroSystem
+- WeaponSystem
+- SaveSystem
+- hero/weapon content data
+- MainMenuScene new run flow
+
+What to look for:
+- No locked/unlocked state
+- Missing meta progress
+- Hero stats not applied
+- Starting spells/weapons hardcoded
+- Hero passives not hooked
+- Unlock conditions not tracked
+
+Expected output:
+- Hero select scene with locked/unlocked UI
+- 6 playable heroes
+- Hero stats and passives
+- Starting weapons/spells
+- Unlock condition tracking
+- Persistent meta progress
+
+Acceptance criteria:
+- Hero select shows all heroes
+- Locked heroes show unlock condition
+- Unlocked heroes persist
+- Hero stats affect run
+- Hero starting loadout works
+- Hero passive works
+
+Commands:
+- npm run build
+- npm run validate:content, if content changed
+
+Response format:
+Summary / Files changed / Hero unlock behavior / Commands run / How to test / Known limitations
+```
+
+---
+
+## Phase 11 — Roguelike Map and Stage System — AUDIT STATUS: ✅ IMPLEMENTED / P1 STAGE 6 CHECK
+> **Audit mark:** ✅ IMPLEMENTED / P1 STAGE 6 CHECK. Six-stage map/stage flow exists. Stage 6 needs explicit mini-boss/royal-guard path check if required by GDD.
+
+```text
+Read AGENT.md first and follow it as the main project instruction.
+
+Task:
+Implement the 6-stage roguelike map and stage progression system.
+
+Inspect first:
+- MapScene
+- MapSystem
+- StageSystem
+- stage content data
+- monster pools
+- boss content data
+- SaveSystem
+- Loot tables
+
+What to look for:
+- Map nodes hardcoded or missing
+- No stage progression
+- No stage-specific monster pool
+- Boss not linked to stage
+- Map state not saved
+- Missing node completion/current state
+
+Expected output:
+- Fight/Event/Shop/Rest/Treasure/Elite/Boss nodes
+- Stage-specific monster pools
+- Boss node per stage
+- Stage advancement after boss
+- Persistent map state
+
+Acceptance criteria:
+- Player progresses through 6 stages
+- Each stage has unique monster pool
+- Boss appears at end of each stage
+- Defeating boss advances stage
+- Final boss victory ends run
+- Map state saves/loads
+
+Commands:
+- npm run build
+- npm run validate:content
+
+Response format:
+Summary / Files changed / Map progression behavior / Commands run / How to test / Known limitations
+```
+
+---
+
+## Phase 12 — Boss System 1.0 — AUDIT STATUS: 🟡 PARTIAL / P1
+> **Audit mark:** 🟡 PARTIAL / P1. Six bosses and boss rule cards exist, but boss mechanics are shallow and need visible mechanical enforcement.
+
+```text
+Read AGENT.md first and follow it as the main project instruction.
+
+Task:
+Implement boss behavior support, boss phases, boss intros, rewards, and final victory trigger.
+
+Inspect first:
+- EnemySystem
+- BossSystem if present
+- CombatSystem
+- StageSystem
+- boss content data
+- BattleScene boss UI
+- VictoryScene
+
+What to look for:
+- Bosses treated exactly like normal monsters
+- No phase threshold support
+- No boss intro
+- No unique boss mechanics
+- No final boss victory route
+- Boss rewards same as normal battle
+
+Expected output:
+Bosses:
+- Cupcake Slime King
+- Prototype No. 7
+- Gelato Golem
+- Sir Snore-a-Lot
+- High Score Hydra
+- King Bloxley
+
+Acceptance criteria:
+- All bosses spawn correctly
+- Each boss has at least one unique mechanic
+- Boss phase 2 exists or placeholder exists
+- Boss reward is better than normal
+- King Bloxley victory triggers final ending
+
+Commands:
+- npm run build
+- npm run validate:content
+
+Response format:
+Summary / Files changed / Boss mechanics / Commands run / How to test / Known limitations
+```
+
+---
+
+## Phase 13 — Reward, Relic, and Upgrade System 1.0 — AUDIT STATUS: 🟡 PARTIAL
+> **Audit mark:** 🟡 PARTIAL. Reward flow is implemented; relic and upgrade effects are hardcoded/switch-based and need supported-effect documentation/tests.
+
+```text
+Read AGENT.md first and follow it as the main project instruction.
+
+Task:
+Upgrade rewards, relics, upgrades, rarity weighting, rerolls, and loot table logic.
+
+Inspect first:
+- RewardSystem
+- RelicSystem
+- UpgradeSystem
+- RewardScene
+- loot table content
+- relic/upgrade content
+- SaveSystem
+
+What to look for:
+- Rewards hardcoded
+- No rarity weighting
+- No stage-specific loot
+- Relics not applying effects
+- Upgrades not stacking correctly
+- No reroll logic
+- Boss rewards not special
+
+Expected output:
+- 3 reward choices
+- Rarity weighting
+- Stage-specific loot
+- Reroll support
+- Relic effects
+- Upgrade stacking rules
+- Spell upgrade hooks
+- Item/gold/heal rewards
+
+Acceptance criteria:
+- Reward screen appears after battle
+- Rewards are valid from loot table
+- Relics apply effects
+- Upgrades apply effects
+- Reroll works if player has reroll
+- Duplicate/stack rules work
+- Boss rewards feel better
+
+Commands:
+- npm run build
+- npm run validate:content
+
+Response format:
+Summary / Files changed / Reward logic / Commands run / How to test / Known limitations
+```
+
+---
+
+## Phase 14 — Events, Shops, Rest, and Treasure 1.0 — AUDIT STATUS: 🟡 PARTIAL
+> **Audit mark:** 🟡 PARTIAL. Scenes and systems exist, but shop economy/inventory, event tone cleanup, and effect support need smoke testing.
+
+```text
+Read AGENT.md first and follow it as the main project instruction.
+
+Task:
+Implement all non-combat room systems and return-to-map flow.
+
+Inspect first:
+- EventScene
+- ShopScene
+- RestScene
+- TreasureScene
+- EventSystem
+- ShopSystem
+- room event content
+- item/relic/upgrade content
+- MapScene transitions
+
+What to look for:
+- Missing non-combat scenes
+- Events with no real choices
+- Shop not checking gold
+- No rest healing
+- Treasure rewards hardcoded
+- No stage-themed event pools
+- Missing return-to-map flow
+
+Expected output:
+- 8 cheerful room events
+- Shop purchases
+- Rest healing/benefits
+- Treasure rewards
+- Choice resolution
+- Return to map
+
+Acceptance criteria:
+- All room types work
+- Choices affect state
+- Shop prices check gold
+- Rest heals
+- Treasure rewards
+- Events are cheerful/funny
+
+Commands:
+- npm run build
+- npm run validate:content
+
+Response format:
+Summary / Files changed / Room behavior / Commands run / How to test / Known limitations
+```
+
+---
+
+## Phase 15 — Oopsies / Silly Drawbacks System — AUDIT STATUS: 🟡 PARTIAL / TONE CLEANUP NEEDED
+> **Audit mark:** 🟡 PARTIAL / TONE CLEANUP NEEDED. OopsieSystem exists, but legacy curse/blood filenames/effect identifiers remain and need compatibility-safe cleanup.
+
+```text
+Read AGENT.md first and follow it as the main project instruction.
+
+Task:
+Implement OopsieSystem as the cheerful replacement for curses.
+
+Inspect first:
+- oopsie content data
+- OopsieSystem if present
+- CombatSystem
+- BoardSystem
+- ShopSystem
+- EventSystem
+- SaveSystem
+- run HUD
+
+What to look for:
+- Player-facing use of “curse”
+- No oopsie UI
+- Oopsie effects not applied
+- Oopsies not removable
+- Oopsie save/load missing
+- Soft-lock risk
+
+Expected output:
+- Oopsie data support
+- Effects applied to gameplay
+- UI display
+- Shop/event removal
+- Save/load support
+
+Acceptance criteria:
+- Oopsies can be gained
+- Oopsies affect gameplay
+- Oopsies show in run UI
+- Oopsies can be removed
+- No oopsie soft-locks the player
+
+Commands:
+- npm run build
+- npm run validate:content
+
+Response format:
+Summary / Files changed / Oopsie effects / Commands run / How to test / Known limitations
+```
+
+---
+
+## Phase 16 — Fever / Combo / Cascade Meta System — AUDIT STATUS: 🟡 PARTIAL
+> **Audit mark:** 🟡 PARTIAL. Fever exists and hooks into combat, but needs UX balancing and manual verification.
+
+```text
+Read AGENT.md first and follow it as the main project instruction.
+
+Task:
+Implement FeverSystem tied to combos and Cascade Gravity.
+
+Inspect first:
+- CombatSystem
+- BoardSystem CascadeResult integration
+- FeverSystem if present
+- BattleScene/HUD
+- High Score Hydra boss behavior
+- stage 5 content
+
+What to look for:
+- Combo not tracked
+- Fever meter missing
+- Cascades not rewarding mastery
+- UI not showing cascade level
+- Stage 5 mechanics missing
+- Fever state not saved if needed
+
+Expected output:
+- Fever meter
+- Fever gain from cascades/combo
+- Fever activation or auto-trigger
+- Bonus effects
+- Cascade/combo UI
+- High Score Hydra interactions
+
+Acceptance criteria:
+- Fever meter fills
+- Fever can activate or auto-trigger
+- Fever improves rewards/damage temporarily
+- UI clearly shows fever state
+- High Score Hydra uses fever/combo mechanic
+
+Commands:
+- npm run build
+
+Response format:
+Summary / Files changed / Fever mechanics / Commands run / How to test / Known limitations
+```
+
+---
+
+## Phase 16.5 — Festival Chaos & Replayability — AUDIT STATUS: 🟡 PARTIAL / P0-P1 FIXES
+> **Audit mark:** 🟡 PARTIAL / P0-P1 FIXES. Random events, stage goals, chaos rules, objectives, boss rules, board size, hub, and friendship exist but are uneven. Battle objective placeholder true checks are P0.
+
+```text
+Read AGENT.md first and follow it as the main project instruction.
+Also read blockmancer_vibe_code_release_1_plan.md and blockmancer_lighthearted_content_direction.md.
+
+Task:
+Implement the designer-requested replayability expansion:
+1. More random gameplay events that can affect how the player completes a stage.
+2. Increased map node count per stage.
+3. Dynamic playing field / board size changes for bosses, elites, and normal encounters.
+4. Stage Goals.
+5. Festival Chaos Rules.
+6. Battle Mini-Objectives.
+7. Boss Rule Cards.
+8. Oopsie Risk/Reward Choices.
+9. Hero-Specific Playstyle Passives.
+10. Festival Hub Progression.
+11. Monster Friendship / Collection.
+
+Inspect first:
+- BoardSystem
+- CombatSystem
+- EventSystem
+- RewardSystem
+- OopsieSystem
+- HeroSystem
+- MapSystem
+- StageSystem
+- BossSystem / EnemySystem
+- SaveSystem
+- ContentRegistry
+- BattleScene
+- MapScene
+- EventScene
+- RewardScene
+- HeroSelectScene
+
+Expected systems:
+- RandomGameplayEventSystem
+- StageGoalSystem
+- ChaosRuleSystem
+- BattleObjectiveSystem
+- BossRuleSystem
+- BoardSizeModifierSystem
+- HubProgressionSystem
+- FriendshipSystem
+
+Expected content folders:
+- src/game/content/random-gameplay-events/
+- src/game/content/stage-goals/
+- src/game/content/chaos-rules/
+- src/game/content/battle-objectives/
+- src/game/content/boss-rules/
+- src/game/content/board-size-modifiers/
+- src/game/content/hub-buildings/
+- src/game/content/friendship/
+
+Random gameplay events to seed:
+- r_evt_jelly_surge
+- r_evt_sprinkle_rain
+- r_evt_sticky_spill
+- r_evt_lost_cake_alarm
+- r_evt_goblin_miswire
+- r_evt_button_panic
+- r_evt_bomb_delivery
+- r_evt_freezer_draft
+- r_evt_ice_slide
+- r_evt_sleepy_moment
+- r_evt_blanket_tangle
+- r_evt_arcade_combo_callout
+- r_evt_prize_claw_grab
+- r_evt_neon_flash
+- r_evt_royal_decree_square
+- r_evt_symmetry_check
+- r_evt_confetti_overload
+- r_evt_manual_page_tip
+- r_evt_snack_break
+- r_evt_machine_hiccup
+
+Map node scaling:
+- Stage 1: 6 main-path nodes, 9–11 total nodes, 0 elites
+- Stage 2: 8 main-path nodes, 12–14 total nodes, 1 elite
+- Stage 3: 10 main-path nodes, 15–17 total nodes, 1 elite
+- Stage 4: 12 main-path nodes, 18–21 total nodes, 1–2 elites
+- Stage 5: 14 main-path nodes, 22–25 total nodes, 2 elites
+- Stage 6: 16 main-path nodes, 26–30 total nodes, 2–3 elites plus special pre-boss
+
+Base board size:
+- Stage 1: 8x16
+- Stage 2: 9x17
+- Stage 3: 9x18
+- Stage 4: 10x18
+- Stage 5: 10x19
+- Stage 6: 10x20
+
+Board size safety:
+- Never shrink below 6x12.
+- Never expand beyond mobile-readable limits.
+- Preserve existing blocks safely or use a documented fallback.
+- Do not break Cascade Gravity.
+
+Stage goals:
+- Stage 1: Recover 3 Lost Cupcakes
+- Stage 2: Disable 2 Goblin Machines
+- Stage 3: Save 3 Ice Cream Crates
+- Stage 4: Keep 2 Guards Asleep
+- Stage 5: Reach Combo Score Target
+- Stage 6: Break 3 Royal Seals
+
+Chaos rules:
+- chaos_sprinkle_storm
+- chaos_wobbly_floor
+- chaos_snack_tax
+- chaos_confetti_fever
+- chaos_goblin_safety_test
+- chaos_freezer_draft
+- chaos_royal_inspection
+- chaos_jelly_bounce
+
+Battle mini-objectives:
+- mini_trigger_cascade
+- mini_clear_two_lines_one_piece
+- mini_clear_sprinkles
+- mini_clear_all_junk
+- mini_no_spell_win
+- mini_win_before_enemy_attacks
+- mini_use_hold
+- mini_cast_two_spells
+- mini_low_board_height
+- mini_trigger_fever
+
+Boss rule cards:
+- Cupcake Slime King: Sticky blocks spread if ignored.
+- Prototype No. 7: Machine drops junk or bombs every few pieces.
+- Gelato Golem: Board freezes during cold waves.
+- Sir Snore-a-Lot: Sleeps, shields, then wakes stronger.
+- High Score Hydra: Low combo play makes Hydra stronger.
+- King Bloxley: Symmetry patterns and royal blocks must be managed.
+
+Hero passives:
+- Milo: First cascade each battle gives bonus mana.
+- Pippa: Fire spells burn sticky/junk blocks.
+- Nixie: Once per room, can slow fall speed or soften speed spikes.
+- Bruk: Survive board overflow once per battle or gain emergency shield.
+- Zuzu: Bomb blocks appear more often, but junk increases slightly.
+- Lumi: Star blocks heavily boost cascade damage.
+
+Hub buildings:
+- hub_cake_stall
+- hub_ice_cream_cart
+- hub_goblin_workshop
+- hub_arcade_booth
+- hub_snack_table
+- hub_star_lantern_stage
+- hub_repair_tent
+- hub_bloxley_statue
+
+Monster friendship tracks:
+- Cupcake Slime
+- Sugar Bat
+- Crumb Goblin
+- Button Masher
+- Ice Cream Imp
+- Blanket Ghost
+- Combo Gremlin
+- Square Jester
+
+Save requirements:
+Add safe defaults/migration for:
+- hubBuildings
+- monsterFriendship
+- completedStageGoals
+- discoveredChaosRules
+- discoveredBossRules
+- stageGoals
+- activeChaosRule
+- activeBattleObjective
+- activeRandomGameplayEvents
+- currentBossRule
+- boardSizeModifier
+
+Acceptance criteria:
+- At least 10 random gameplay events work.
+- Each stage has 1 stage goal.
+- Combat can roll 0–1 chaos rule.
+- Combat can roll 0–1 mini-objective.
+- Boss rule cards appear.
+- Events can offer safe/risky/Oopsie choices.
+- Hero passives affect battle.
+- Board size modifiers work safely.
+- Hub progression can be upgraded.
+- Monster friendship points can be gained and saved.
+- Build passes.
+- Content validation passes if available.
+
+Commands:
+- npm run build
+- npm run validate:content, if available
+- npm run validate:metadata, if available
+
+Response format:
+Summary:
+- ...
+
+Files changed:
+- ...
+
+Systems added:
+- ...
+
+Systems updated:
+- ...
+
+Content added:
+- ...
+
+Gameplay impact:
+- ...
+
+Save/load changes:
+- ...
+
+UI changes:
+- ...
+
+Commands run:
+- ...
+
+How to test:
+1. Start a new run.
+2. Confirm Stage 1 map has 6 main-path nodes.
+3. Enter a battle and confirm chaos rule / mini-objective can appear.
+4. Trigger or simulate a random gameplay event.
+5. Confirm board size changes safely in elite or boss encounter.
+6. Reach Stage 1 boss and confirm Boss Rule Card appears.
+7. Complete/fail Stage 1 goal and confirm boss effect changes.
+8. Pick an event choice that grants an Oopsie.
+9. Confirm hero passive affects battle.
+10. End a run and confirm hub progression can be upgraded.
+11. Gain monster friendship and confirm it persists after reload.
+
+Known limitations:
+- ...
+
+Recommended next step:
+- ...
+```
+
+---
+
+## Phase 17 — Tutorial and Onboarding — AUDIT STATUS: 🟡 PARTIAL
+> **Audit mark:** 🟡 PARTIAL. Tutorial scene exists, but tutorial does not cover all later replayability systems.
+
+```text
+Read AGENT.md first and follow it as the main project instruction.
+
+Task:
+Implement first-run tutorial and help/onboarding flow.
+
+Inspect first:
+- TutorialScene
+- MainMenuScene
+- BattleScene
+- InputSystem
+- SaveSystem
+- Settings/help UI
+
+What to look for:
+- No first-run detection
+- Tutorial blocks returning players
+- No skip option
+- No control highlights
+- No Cascade Gravity explanation
+- No help screen
+
+Expected output:
+Tutorial lessons:
+1. Move piece
+2. Rotate piece
+3. Soft/hard drop
+4. Clear line
+5. Cascade Gravity
+6. Mana and spells
+7. Hold block
+8. Inventory item
+9. Enemy intent
+10. Rewards
+11. Map progression
+
+Acceptance criteria:
+- New player can learn core loop
+- Tutorial can be skipped
+- Tutorial state saves
+- Help screen exists
+- Tutorial does not block returning players
+
+Commands:
+- npm run build
+
+Response format:
+Summary / Files changed / Tutorial flow / Commands run / How to test / Known limitations
+```
+
+---
+
+## Phase 18 — Save, Meta Progress, and Profiles — AUDIT STATUS: ✅ IMPLEMENTED / P0 MIGRATION TESTS NEEDED
+> **Audit mark:** ✅ IMPLEMENTED / P0 MIGRATION TESTS NEEDED. Run/meta LocalStorage saves and migrations exist. Add migration tests before changing save shape again.
+
+```text
+Read AGENT.md first and follow it as the main project instruction.
+
+Task:
+Upgrade SaveSystem for current run, meta progress, settings, migration, and corrupt-save fallback.
+
+Inspect first:
+- SaveSystem
+- defaultRunState
+- GameTypes
+- Hero unlock logic
+- SettingsSystem
+- MainMenuScene continue/new run flow
+
+What to look for:
+- Save schema missing version
+- Current run not saved
+- Meta progress missing
+- Hero unlocks not persistent
+- Corrupt save crash risk
+- No clear save/new run flow
+- No migration pattern
+
+Expected output:
+Current run save:
+- Player state
+- Hero/weapon/spells
+- Relics/upgrades/items/oopsies
+- Stage/map/current room
+- Run stats
+
+Meta save:
+- Unlocked heroes
+- Total gold/cascades
+- Bosses defeated
+- Endings unlocked
+- Tutorial completed
+- Settings
+
+Acceptance criteria:
+- Refresh does not lose run
+- Continue works
+- Hero unlocks persist
+- Corrupt save does not crash
+- Save versioning exists
+
+Commands:
+- npm run build
+
+Response format:
+Summary / Files changed / Save schema / Migration notes / Commands run / How to test / Known limitations
+```
+
+---
+
+## Phase 19 — Art Asset Pipeline Integration — AUDIT STATUS: ✅ RUNTIME PIPELINE DONE / P1 REAL ASSETS NEEDED
+> **Audit mark:** ✅ RUNTIME PIPELINE DONE / P1 REAL ASSETS NEEDED. Asset manifest, placeholders, exact-frame animation preload/playback, and fallbacks exist. Real release assets and PNG frames are missing.
+
+```text
+Read AGENT.md first and follow it as the main project instruction.
+Also read blockmancer_sprite_asset_spec.md if available.
+
+Task:
+Integrate the Release 1.0 art asset pipeline with manifest-based loading and safe fallbacks.
+
+Inspect first:
+- public/assets/
+- src/game/data/assets.ts
+- AssetSystem
+- BootScene
+- UI components
+- Content JSON spriteKey/iconKey fields
+
+What to look for:
+- Hardcoded asset paths inside scenes
+- Missing fallback textures
+- Missing asset manifest
+- Content data not using asset keys
+- Missing preload in BootScene
+- Crashes on missing images
+
+Expected output:
+- Asset manifest
+- Texture preload
+- Missing texture fallback
+- UI sprite support
+- Board block sprite support
+- Hero/monster/boss sprite support
+- Spell/item/relic/upgrade icon support
+- Stage background support
+
+Acceptance criteria:
+- Game works without missing asset crash
+- Asset keys map to file paths
+- Content iconKey/spriteKey loads sprites
+- Placeholder fallback remains
+- Build passes
+
+Commands:
+- npm run build
+- npm run validate:content, if content changed
+
+Response format:
+Summary / Files changed / Asset manifest changes / Commands run / How to test / Known limitations
+```
+
+---
+
+## Phase 20 — UI Polish and Readability — AUDIT STATUS: 🟡 PARTIAL
+> **Audit mark:** 🟡 PARTIAL. UI scenes exist and portrait layout is aimed at mobile, but readability/device smoke and polish remain.
+
+```text
+Read AGENT.md first and follow it as the main project instruction.
+
+Task:
+Polish portrait mobile UI readability and presentation.
+
+Inspect first:
+- BattleScene
+- UI components
+- RewardScene
+- MapScene
+- ShopScene
+- InventoryPanel
+- MobileControls
+- HUD/EventLog
+
+What to look for:
+- Tiny text on phone
+- Cluttered board area
+- Unclear HP/mana/fever bars
+- Weak damage feedback
+- Poor reward card readability
+- Spell/item buttons missing disabled state
+- Next/hold/inventory not visible enough
+
+Expected output:
+- Better HUD
+- Clear HP/mana/fever bars
+- Better damage numbers
+- Better event log
+- Better reward cards
+- Better spell buttons
+- Better item/inventory UI
+- Better stage transitions and boss intro
+
+Acceptance criteria:
+- UI readable on phone
+- Important information visible
+- No clutter in portrait layout
+- Touch targets are large enough
+- Reward choices are understandable
+- Inventory/next/hold are visible
+
+Commands:
+- npm run build
+
+Response format:
+Summary / Files changed / UI changes / Commands run / How to test / Known limitations
+```
+
+---
+
+## Phase 21 — Audio and Feedback — AUDIT STATUS: 🟡 PARTIAL / REAL AUDIO MISSING
+> **Audit mark:** 🟡 PARTIAL / REAL AUDIO MISSING. AudioSystem fallback tones exist; real music/SFX files are missing.
+
+```text
+Read AGENT.md first and follow it as the main project instruction.
+
+Task:
+Implement AudioSystem and key gameplay feedback hooks.
+
+Inspect first:
+- AudioSystem if present
+- BootScene asset loading
+- BattleScene
+- RewardScene
+- ShopScene
+- SettingsSystem
+- public/assets/audio if present
+
+What to look for:
+- No mute/volume settings
+- SFX calls scattered or missing
+- Missing audio fallback
+- Missing hooks for line clear/cascade/spells
+- Audio crashing if file missing
+
+Expected output:
+Audio hooks for:
+- Line clear
+- Cascade
+- Spell cast
+- Enemy hit
+- Player hit
+- Reward pick
+- Button tap
+- Boss intro
+- Victory
+- Defeat
+- Shop purchase
+- Item use
+
+Acceptance criteria:
+- Audio can be muted
+- Volume settings persist
+- SFX trigger at right moments
+- Missing audio does not crash
+
+Commands:
+- npm run build
+
+Response format:
+Summary / Files changed / Audio hooks / Commands run / How to test / Known limitations
+```
+
+---
+
+## Phase 22 — Settings, Accessibility, and UX Options — AUDIT STATUS: 🟡 PARTIAL
+> **Audit mark:** 🟡 PARTIAL. Settings scene/persistence exists; accessibility and device validation remain.
+
+```text
+Read AGENT.md first and follow it as the main project instruction.
+
+Task:
+Add SettingsScene and accessibility/UX options.
+
+Inspect first:
+- SettingsScene
+- SettingsSystem if present
+- SaveSystem
+- BattleScene
+- InputSystem
+- AudioSystem
+- UI rendering for blocks/VFX
+
+What to look for:
+- Settings not persisted
+- No mute/volume controls
+- No reduced flashing
+- No screen shake toggle
+- No left-handed controls
+- No block symbol accessibility
+- No button size option
+
+Expected output settings:
+- Master volume
+- SFX volume
+- Music volume
+- Vibration on/off
+- Screen shake on/off
+- Reduced flashing on/off
+- Colorblind-friendly block symbols
+- Text speed
+- Left-handed controls
+- Button size
+- Show grid on/off
+- Tutorial reset
+
+Acceptance criteria:
+- Settings screen exists
+- Settings persist
+- Reduced flashing works
+- Screen shake can be disabled
+- Left-handed layout works
+- Block symbols improve readability
+
+Commands:
+- npm run build
+
+Response format:
+Summary / Files changed / Settings added / Commands run / How to test / Known limitations
+```
+
+---
+
+## Phase 23 — Story, Dialogue, and Endings — AUDIT STATUS: 🟡 PARTIAL / NARRATIVE DEPTH NEEDED
+> **Audit mark:** 🟡 PARTIAL / NARRATIVE DEPTH NEEDED. StoryScene/StorySystem exist, but story/dialogue/endings are thin.
+
+```text
+Read AGENT.md first and follow it as the main project instruction.
+
+Task:
+Implement cheerful story flow, dialogue, stage/boss intros, and endings.
+
+Inspect first:
+- Story/dialogue data if present
+- MainMenuScene
+- StageSystem
+- BossSystem/EnemySystem
+- VictoryScene
+- TutorialScene
+- NPC content data
+
+What to look for:
+- Missing opening story
+- Bosses without intros
+- Stage transitions with no flavor
+- Dark/edgy text that conflicts with tone
+- No ending conditions
+- Dialogue cannot be skipped
+
+Expected output:
+Story beats:
+- Opening: Block-O-Matic 3000 breaks festival
+- Stage intros
+- Boss intros
+- Hero unlock dialogue
+- King Bloxley intro
+- Normal ending
+- True ending condition and screen
+
+Acceptance criteria:
+- Story is cheerful
+- Each stage has intro
+- Each boss has intro
+- Normal ending works
+- True ending condition exists
+- Dialogue can be skipped
+
+Commands:
+- npm run build
+- npm run validate:content, if story content data changed
+
+Response format:
+Summary / Files changed / Story flow / Commands run / How to test / Known limitations
+```
+
+---
+
+## Phase 24 — Balance Pass 1 — AUDIT STATUS: 🔴 NOT DONE
+> **Audit mark:** 🔴 NOT DONE. No full balance pass evidence. Needs after Stage 1 vertical slice and spell/boss/item coverage.
+
+```text
+Read AGENT.md first and follow it as the main project instruction.
+
+Task:
+Perform a data-driven balance pass so a full run is playable from start to finish.
+
+Inspect first:
+- difficulty scaling content
+- monsters/bosses data
+- spells/items/relics/upgrades data
+- CombatSystem formulas
+- BoardSystem fall speed
+- RewardSystem loot frequency
+
+What to look for:
+- Early difficulty spikes
+- Boss HP/attack too high or too low
+- Mana gain too low/high
+- Spell cost imbalance
+- Relics/upgrades that dominate
+- Stage length too long
+- Unlock conditions too grindy
+
+Expected output:
+- Tuned fall speed curve
+- Tuned enemy HP/attack
+- Tuned mana gain/spell costs
+- Tuned item/relic/upgrade values
+- Tuned boss difficulty
+- Tuned stage length/reward frequency
+- Notes in docs/BALANCE_AND_PROGRESSION.md if present
+
+Acceptance criteria:
+- Average player can clear Stage 1
+- Skilled player can reach Stage 6
+- Bosses are challenging but fair
+- Cascade feels rewarding
+- No one strategy dominates too much
+- No required content is impossible to unlock
+
+Commands:
+- npm run build
+- npm run validate:content
+
+Response format:
+Summary / Files changed / Balance changes / Commands run / How to test / Known limitations
+```
+
+---
+
+## Phase 25 — QA Test Suite and Debug Tools — AUDIT STATUS: 🟡 PARTIAL / P0-P2
+> **Audit mark:** 🟡 PARTIAL / P0-P2. DebugScene and validation scripts exist, but no npm test/lint scripts and no manual smoke evidence.
+
+```text
+Read AGENT.md first and follow it as the main project instruction.
+
+Task:
+Add dev-only QA/debug tools and update QA documentation.
+
+Inspect first:
+- existing debug/dev flags
+- scenes/systems for test hooks
+- package.json scripts
+- docs/QA_TEST_PLAN.md
+- BoardSystem testability
+- SaveSystem reset tools
+
+What to look for:
+- No way to jump to stages
+- No way to force boss/reward/cascade
+- No content validation script
+- No smoke test checklist
+- Debug UI visible in production
+
+Expected output debug tools:
+- Give gold
+- Give item
+- Give relic/upgrade
+- Spawn monster
+- Jump to stage
+- Trigger boss
+- Force reward
+- Force cascade test
+- Clear save
+
+Acceptance criteria:
+- Debug mode only available in dev
+- QA docs exist
+- Basic smoke tests pass or are documented
+- Content validation passes
+
+Commands:
+- npm run build
+- npm run validate:content
+
+Response format:
+Summary / Files changed / Debug tools / Commands run / How to test / Known limitations
+```
+
+---
+
+## Phase 26 — Performance Optimization — AUDIT STATUS: 🔴 NOT DONE / AFTER SMOKE
+> **Audit mark:** 🔴 NOT DONE / AFTER SMOKE. No focused performance pass evidence. Do after real assets and device smoke expose bottlenecks.
+
+```text
+Read AGENT.md first and follow it as the main project instruction.
+
+Task:
+Optimize Blockmancer Dungeon for mobile performance without changing gameplay behavior.
+
+Inspect first:
+- BoardSystem loops
+- Cascade Gravity implementation
+- BattleScene update loop
+- VFX/particles
+- UI object creation
+- scene shutdown/cleanup
+- asset loading
+
+What to look for:
+- Allocations inside hot update loops
+- Recreating UI every frame
+- Unpooled VFX objects
+- Texture reloads during gameplay
+- Scene memory leaks
+- Expensive cascade loops
+
+Expected output:
+- Board/Cascade optimizations
+- VFX pooling where practical
+- UI object reuse
+- Scene cleanup fixes
+- Reduced particle counts if needed
+- Performance notes
+
+Acceptance criteria:
+- Board updates are smooth
+- Cascades do not freeze
+- Scene transitions are stable
+- No major memory leak after multiple runs
+- Build passes
+
+Commands:
+- npm run build
+
+Response format:
+Summary / Files changed / Optimization notes / Commands run / How to test / Known limitations
+```
+
+---
+
+## Phase 27 — Android / Capacitor Release Build — AUDIT STATUS: 🟡 PARTIAL
+> **Audit mark:** 🟡 PARTIAL. Capacitor config and Android scripts exist; Android debug/device validation still needs to be run/documented.
+
+```text
+Read AGENT.md first and follow it as the main project instruction.
+
+Task:
+Prepare Android build support for Release 1.0 using Capacitor.
+
+Inspect first:
+- package.json
+- capacitor.config.ts
+- vite.config.ts
+- android/ if present
+- public/assets/
+- docs/BUILD_APK.md
+- app icon/splash assets
+
+What to look for:
+- Missing Capacitor config
+- Wrong webDir
+- Asset path issues after build
+- Portrait orientation not locked
+- Missing Android scripts
+- Missing app icon/splash placeholders
+- Unnecessary permissions
+
+Expected output:
+- Capacitor config verified
+- Android sync/build scripts added or documented
+- Portrait orientation configured where possible
+- App icon/splash placeholders documented
+- Debug APK build instructions
+- Device testing checklist
+
+Acceptance criteria:
+- Debug APK builds or blockers are documented
+- App opens on Android if build is available
+- Portrait orientation works
+- Touch controls work
+- Save/load works on device
+- No broken asset paths
+
+Commands:
+- npm run build
+- npm run android:sync, if configured
+- npm run android:build:debug, if configured
+
+Response format:
+Summary / Files changed / Android setup / Commands run / How to test / Known limitations
+```
+
+---
+
+## Phase 28 — Store / Release Metadata — AUDIT STATUS: 🔴 NOT DONE
+> **Audit mark:** 🔴 NOT DONE. Store metadata package is not complete.
+
+```text
+Read AGENT.md first and follow it as the main project instruction.
+
+Task:
+Create store/release metadata docs for Blockmancer Dungeon Release 1.0.
+
+Inspect first:
+- docs/
+- branding assets if present
+- story/core concept docs
+- credits/licenses docs
+- privacy policy notes if present
+
+What to look for:
+- Missing store description
+- Missing screenshot plan
+- Missing trailer plan
+- Missing credits/licenses
+- Missing privacy policy notes
+- Trademark-risk wording like “Tetris”
+- Store assets not listed
+
+Expected output:
+Create/update docs such as:
+- docs/STORE_METADATA.md
+- docs/SCREENSHOT_PLAN.md
+- docs/TRAILER_PLAN.md
+- docs/PRIVACY_POLICY_NOTES.md
+- docs/CREDITS_AND_LICENSES.md
+
+Required materials:
+- Game title
+- Short description
+- Long description
+- Feature bullets
+- Screenshot plan
+- App icon requirement
+- Feature graphic requirement
+- Trailer plan
+- Privacy policy draft notes
+- Credits/licenses
+- Content rating notes
+- Support contact placeholder
+
+Acceptance criteria:
+- Store copy is cheerful and accurate
+- Screenshots match portrait gameplay
+- No trademark-risk wording like “Tetris”
+- Credits/licenses list exists
+- Privacy policy notes exist
+
+Commands:
+- npm run build, if code changed
+
+Response format:
+Summary / Docs changed / Store assets needed / Commands run / How to review / Known limitations
+```
+
+---
+
+## Phase 29 — Final Polish and Bug Fixing — AUDIT STATUS: 🔴 NOT DONE
+> **Audit mark:** 🔴 NOT DONE. Final polish depends on P0/P1 stabilization, assets, smoke tests, and balance.
+
+```text
+Read AGENT.md first and follow it as the main project instruction.
+
+Task:
+Perform final Release 1.0 polish and bug fixing. Prioritize blocker and critical bugs.
+
+Inspect first:
+- docs/RELEASE_1_GAP_AUDIT.md
+- docs/QA_TEST_PLAN.md
+- current bug list if present
+- BattleScene
+- SaveSystem
+- Android build config
+- UI and VFX-heavy scenes
+
+What to look for:
+- Blocker bugs
+- Critical crashes
+- Full-run blockers
+- Save/load edge cases
+- Android-specific issues
+- Portrait UI overlaps
+- Unclear tutorial/reward/boss feedback
+- Balance spikes
+
+Expected output:
+- Fixed top priority bugs
+- Polished transitions
+- Polished boss fights
+- Polished tutorial/reward pacing
+- Polished mobile UI
+- Save/load edge cases handled
+- Updated known issues list
+
+Acceptance criteria:
+- No known blocker bugs
+- No known critical bugs undocumented
+- Full run can be completed
+- Android build works or blockers documented
+- Web build works
+- QA checklist passes or remaining issues listed
+
+Commands:
+- npm run build
+- npm run validate:content
+- npm run android:build:debug, if configured
+
+Response format:
+Summary / Bugs fixed / Files changed / Commands run / QA status / Known remaining issues
+```
+
+---
+
+## Phase 30 — Release Candidate — AUDIT STATUS: 🔴 NOT DONE
+> **Audit mark:** 🔴 NOT DONE. Release candidate is not ready until P0/P1/P2 release-readiness work is complete.
+
+```text
+Read AGENT.md first and follow it as the main project instruction.
+
+Task:
+Prepare Blockmancer Dungeon Release Candidate 1.0.0.
+
+Inspect first:
+- package.json version
+- docs/RELEASE_1_0_NOTES.md
+- docs/QA_TEST_PLAN.md
+- docs/CREDITS_AND_LICENSES.md
+- docs/BUILD_APK.md
+- SaveSystem migration/version
+- Store metadata docs
+
+What to look for:
+- Version not updated
+- Release notes missing
+- QA pass not documented
+- Credits/licenses incomplete
+- Save migration not verified
+- Android build not verified
+- Known issues not listed
+
+Expected output:
+- Version bump to 1.0.0 if appropriate
+- Web production build verified
+- Android release/debug build status documented
+- QA checklist result documented
+- Release notes created/updated
+- Known issues list created/updated
+
+Acceptance criteria:
+- Version is 1.0.0 or release-candidate version is clearly documented
+- Web build passes
+- Android build passes or blocker is documented
+- QA pass is documented
+- Release notes exist
+- Known issues list exists
+
+Commands:
+- npm run build
+- npm run validate:content
+- npm run validate:metadata, if available
+- npm run android:build:debug, if configured
+
+Response format:
+Summary / Version status / Files changed / Commands run / Release candidate status / Known issues
+```
+
+---
+
+# Phase Prompt Response Template
+
+Use this response format for every phase:
+```text
+Summary:
+- ...
+
+Files changed:
+- ...
+
+What changed:
+- ...
+
+Commands run:
+- ...
+
+How to test:
+1. ...
+2. ...
+3. ...
+
+Acceptance status:
+- [x] ...
+- [ ] ...
+
+Known limitations:
+- ...
+
+Recommended next step:
+- ...
+```
+
+---
+
+# Phase Completion Checklist
+
+Before moving to the next phase, verify:
+```text
+[ ] Agent read AGENT.md
+[ ] Scope stayed inside the phase
+[ ] Game still builds or failure is documented
+[ ] Content validation passes if content changed
+[ ] No cheerful tone regression
+[ ] No mobile portrait regression
+[ ] Cascade Gravity remains core board behavior
+[ ] Missing assets/content do not crash
+[ ] Save compatibility considered
+[ ] New replayability systems are data-driven if in scope
+[ ] Board size changes preserve mobile readability if in scope
+[ ] Manual test steps provided
+[ ] Changes are small enough to review
+```
+
+---
+
+# Recommended First Prompt to Use
+
+Start here:
+```text
+Read AGENT.md first and follow it as the main project instruction.
+Also read blockmancer_vibe_code_release_1_plan.md.
+
+Implement Phase 0 — Release Audit only.
+Do not rewrite code yet unless a tiny build fix is required.
+
+Create docs/RELEASE_1_GAP_AUDIT.md with:
+- current implemented features
+- missing Release 1.0 features
+- broken/risky areas
+- current build status
+- validation script status
+- recommended next phases
+
+Inspect:
+- package.json
+- README.md
+- docs/
+- src/game/
+- src/game/scenes/
+- src/game/systems/
+- src/game/content/
+- public/assets/
+
+Run if possible:
+- npm install
+- npm run build
+- npm run validate:content
+- npm run validate:metadata
+
+If a command does not exist, document it instead of treating it as a fatal failure.
+
+Finish with:
+Summary / Files changed / Commands run / How to test / Known limitations / Recommended next phase
+```

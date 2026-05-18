@@ -1,0 +1,150 @@
+{
+  "routeId": "route_lumi_star_witch",
+  "heroId": "hero_lumi_star_witch",
+  "scenes": [
+    {
+      "id": "SCN_LUMI_01_SPRINKLE_SEWERS",
+      "heroId": "hero_lumi_star_witch",
+      "stageId": "stage_sprinkle_sewers",
+      "triggerId": "trig_lumi_01_unnamed_sprinkle_wish",
+      "triggerCondition": { "type": "first_eligible_event_node", "stageId": "stage_sprinkle_sewers", "heroId": "hero_lumi_star_witch", "oncePerRun": true },
+      "locationName": "Sprinkle Sewers - Glowing Sprinkle Pipe",
+      "title": "The Sprinkle Wish",
+      "storyBeat": "A sprinkle star carries a tiny unnamed wish.",
+      "storyboardPanels": ["A star-shaped sprinkle blinks near a pipe.", "Cupcake Slimes pass and the glow pulses.", "A paper star lands gently beside it."],
+      "preChoiceDialogue": [
+        { "speakerId": "hero_lumi_star_witch", "text": "Oh. That sprinkle has a wish tucked inside it." },
+        { "speakerId": "npc_block_o_matic", "text": "Confectionery star fragment emitting emotional glitter." },
+        { "speakerId": "hero_lumi_star_witch", "text": "It is not being difficult. It is trying to be found." }
+      ],
+      "choices": [
+        { "id": "lumi_01_practical", "lane": "practical", "label": "Pin the Little Star", "playerLine": "I will hold its light steady first.", "npcResponse": [{ "speakerId": "npc_cupcake_slime", "text": "Gloop?" }], "narration": "Lumi pins the star sprinkle with a soft lantern mark and slows the sticky current.", "gameplayResult": "Gain preview help.", "rewardConfig": { "rewardId": "route_lumi_01_pin_preview", "rewardType": "battle_modifier", "modifierId": "extra_preview", "duration": "next_battle" }, "statDelta": { "practicalScore": 1 } },
+        { "id": "lumi_01_true", "lane": "true", "label": "Name the Sprinkle Wish", "playerLine": "A nameless light gets lonely. I will call this one Sweetlittle Star.", "npcResponse": [{ "speakerId": "npc_cupcake_slime", "text": "Glooop..." }], "narration": "The star reveals a wish for the slimes who lost their cake table.", "gameplayResult": "Gain mana and a warmer slime callback.", "rewardConfig": { "rewardId": "route_lumi_01_wish_mana", "rewardType": "mana", "amount": 14 }, "statDelta": { "trueScore": 1 }, "grantFlag": "lumi_flag_named_sprinkle_wish" },
+        { "id": "lumi_01_risky", "lane": "risky", "label": "Trace the Sugar Comet", "playerLine": "If it wants to fly, I will draw the sky quickly.", "npcResponse": [{ "speakerId": "npc_festival_announcer", "text": "The comet is charming, sticky, and not fully scheduled." }], "narration": "A comet path clears a bright trail and shakes loose extra candy blocks.", "gameplayResult": "Gain gold with confetti risk.", "rewardConfig": { "rewardId": "route_lumi_01_comet_gold", "rewardType": "gold", "amount": 45 }, "statDelta": { "riskyScore": 1 }, "riskConfig": { "rewardTier": "stage", "oopsieChance": 0.25, "hazardIncrease": "hazard_sticky_route_pressure" } }
+      ],
+      "postChoiceBarks": [{ "speakerId": "hero_lumi_star_witch", "text": "That cascade looked like a spoonful of sky." }],
+      "victoryCallback": [{ "speakerId": "hero_lumi_star_witch", "text": "Sweetlittle Star is quieter now. Not dimmer." }],
+      "bossCallback": [{ "speakerId": "hero_lumi_star_witch", "text": "You may keep a star, Your Frostiness. Do not trap everyone else's wishes." }]
+    },
+    {
+      "id": "SCN_LUMI_02_GOBLIN_WORKSHOP",
+      "heroId": "hero_lumi_star_witch",
+      "stageId": "stage_goblin_workshop",
+      "triggerId": "trig_lumi_02_machine_constellation_missing_light",
+      "triggerCondition": { "type": "first_eligible_event_node", "stageId": "stage_goblin_workshop", "heroId": "hero_lumi_star_witch", "oncePerRun": true },
+      "locationName": "Goblin Workshop - Spark Balcony",
+      "title": "The Machine Constellation",
+      "storyBeat": "Gears form a machine constellation with one missing light.",
+      "storyboardPanels": ["Sparks form little constellations.", "A machine hides behind steam.", "Lumi traces a missing point with one finger."],
+      "preChoiceDialogue": [
+        { "speakerId": "hero_lumi_star_witch", "text": "Those sparks are writing in very nervous stars." },
+        { "speakerId": "hero_zuzu_goblin_engineer", "text": "Machines cannot apologize unless warranty allows emotional subroutines." },
+        { "speakerId": "hero_lumi_star_witch", "text": "Then I will read the parts too shy for the warranty." }
+      ],
+      "choices": [
+        { "id": "lumi_02_practical", "lane": "practical", "label": "Shade the Spark Gear", "playerLine": "Sparks shout when no one gives them a quiet wall.", "npcResponse": [{ "speakerId": "hero_zuzu_goblin_engineer", "text": "Emotional shouting reduced by a visible amount." }], "narration": "Lumi covers the brightest gear with a paper moon charm.", "gameplayResult": "Gain shield.", "rewardConfig": { "rewardId": "route_lumi_02_shade_shield", "rewardType": "shield", "amount": 5 }, "statDelta": { "practicalScore": 1 } },
+        { "id": "lumi_02_true", "lane": "true", "label": "Read the Machine Constellation", "playerLine": "This one says, I dropped the bolts because everyone clapped for fireworks.", "npcResponse": [{ "speakerId": "npc_block_o_matic", "text": "Translation accepted. Machine embarrassment detected." }], "narration": "Lumi reads the spark pattern as a constellation of mistakes and missing praise.", "gameplayResult": "Machine warnings improve.", "rewardConfig": { "rewardId": "route_lumi_02_constellation_warning", "rewardType": "boss_modifier", "modifierId": "route_preview_warning_machine", "amount": 3, "duration": "boss" }, "statDelta": { "trueScore": 1 }, "grantFlag": "lumi_flag_read_machine_constellation" },
+        { "id": "lumi_02_risky", "lane": "risky", "label": "Launch the Bolt Meteor", "playerLine": "If the sparks are falling, let us give them a graceful orbit.", "npcResponse": [{ "speakerId": "hero_zuzu_goblin_engineer", "text": "Graceful orbit is not a safety category, but I am interested." }], "narration": "A tiny meteor shower boosts star power and excites the workshop.", "gameplayResult": "Gain mana with junk risk.", "rewardConfig": { "rewardId": "route_lumi_02_meteor_mana", "rewardType": "mana", "amount": 24 }, "statDelta": { "riskyScore": 1 }, "riskConfig": { "rewardTier": "rare", "oopsieChance": 0.25, "hazardIncrease": "hazard_machine_junk_route" } }
+      ],
+      "postChoiceBarks": [{ "speakerId": "hero_lumi_star_witch", "text": "A messy sky can still have a map." }],
+      "victoryCallback": [{ "speakerId": "hero_lumi_star_witch", "text": "The machines blinked goodbye. One dropped a spring." }],
+      "bossCallback": [{ "speakerId": "hero_lumi_star_witch", "text": "I will draw you a softer confidence, with fewer flying bolts." }]
+    },
+    {
+      "id": "SCN_LUMI_03_FROSTY_PANTRY",
+      "heroId": "hero_lumi_star_witch",
+      "stageId": "stage_frosty_pantry",
+      "triggerId": "trig_lumi_03_melting_star_ribbon",
+      "triggerCondition": { "type": "first_eligible_event_node", "stageId": "stage_frosty_pantry", "heroId": "hero_lumi_star_witch", "oncePerRun": true },
+      "locationName": "Frosty Pantry - Wish-Ribbon Shelf",
+      "title": "The Melting Wish",
+      "storyBeat": "A melting star ribbon must be carried before its wish fades.",
+      "storyboardPanels": ["A paper star ribbon floats in clear ice.", "Frost symbols flicker over the active piece.", "Lumi speaks softly to the ribbon."],
+      "preChoiceDialogue": [
+        { "speakerId": "hero_lumi_star_witch", "text": "This ribbon is melting from the inside." },
+        { "speakerId": "hero_nixie_frostbinder", "text": "Do not rush it. Frozen things remember pressure." },
+        { "speakerId": "hero_lumi_star_witch", "text": "Then we will be careful enough for both science and poetry." }
+      ],
+      "choices": [
+        { "id": "lumi_03_practical", "lane": "practical", "label": "Warm the Star Ribbon", "playerLine": "A small lantern. Not enough to melt it. Enough to keep it company.", "npcResponse": [{ "speakerId": "hero_nixie_frostbinder", "text": "Warmth with manners." }], "narration": "The ribbon stops cracking and freeze warnings become easier to anticipate.", "gameplayResult": "Gain Hot Cocoa.", "rewardConfig": { "rewardId": "route_lumi_03_hot_cocoa", "rewardType": "item", "itemId": "item_hot_cocoa", "amount": 1 }, "statDelta": { "practicalScore": 1 } },
+        { "id": "lumi_03_true", "lane": "true", "label": "Save the Melting Wish", "playerLine": "I will not pull. I will wait until you remember which way is out.", "npcResponse": [{ "speakerId": "npc_snowcone_sprite", "text": "Ting..." }], "narration": "The ribbon unwinds by itself and keeps the first lantern wish whole.", "gameplayResult": "Gain preview guidance.", "rewardConfig": { "rewardId": "route_lumi_03_lantern_preview", "rewardType": "battle_modifier", "modifierId": "extra_preview", "duration": "stage" }, "statDelta": { "trueScore": 1 }, "grantFlag": "lumi_flag_saved_melting_star_ribbon" },
+        { "id": "lumi_03_risky", "lane": "risky", "label": "Skate the Moonlit Shelf", "playerLine": "The shelf is slippery, and I made questionable promises to gravity.", "npcResponse": [{ "speakerId": "hero_nixie_frostbinder", "text": "I object calmly." }], "narration": "Lumi skates a crescent through the ice and wins a cascade boost.", "gameplayResult": "Gain mana with speed-wave risk.", "rewardConfig": { "rewardId": "route_lumi_03_moon_mana", "rewardType": "mana", "amount": 26 }, "statDelta": { "riskyScore": 1 }, "riskConfig": { "rewardTier": "stage", "oopsieChance": 0.25, "hazardIncrease": "hazard_speed_wave_route" } }
+      ],
+      "postChoiceBarks": [{ "speakerId": "hero_lumi_star_witch", "text": "The ice is singing slowly. We should answer slowly." }],
+      "victoryCallback": [{ "speakerId": "hero_lumi_star_witch", "text": "The wish still has its ribbon." }],
+      "bossCallback": [{ "speakerId": "hero_lumi_star_witch", "text": "Gelato Golem, this wish is cold but not gone." }]
+    },
+    {
+      "id": "SCN_LUMI_04_PILLOW_CASTLE",
+      "heroId": "hero_lumi_star_witch",
+      "stageId": "stage_pillow_castle",
+      "triggerId": "trig_lumi_04_sleeping_window_gentle_light",
+      "triggerCondition": { "type": "first_eligible_event_node", "stageId": "stage_pillow_castle", "heroId": "hero_lumi_star_witch", "oncePerRun": true },
+      "locationName": "Pillow Castle - Dream Window",
+      "title": "The Sleeping Window",
+      "storyBeat": "A sleeping window asks to be lit gently, not brightly.",
+      "storyboardPanels": ["A moonlit window dozes behind curtains.", "Paper stars dim themselves.", "Lumi cups a lantern with both hands."],
+      "preChoiceDialogue": [
+        { "speakerId": "hero_lumi_star_witch", "text": "The window is dreaming of the festival lights." },
+        { "speakerId": "npc_sleepy_guard", "text": "Bright wakes. Gentle guides." },
+        { "speakerId": "hero_lumi_star_witch", "text": "Then we will guide, not glare." }
+      ],
+      "choices": [
+        { "id": "lumi_04_practical", "lane": "practical", "label": "Dim the Dream Lantern", "playerLine": "A little less shimmer, so the room can keep sleeping.", "npcResponse": [{ "speakerId": "npc_sleepy_guard", "text": "Soft light..." }], "narration": "Lumi dims the lantern and keeps the sleepy room readable.", "gameplayResult": "Gain shield.", "rewardConfig": { "rewardId": "route_lumi_04_lantern_shield", "rewardType": "shield", "amount": 6 }, "statDelta": { "practicalScore": 1 } },
+        { "id": "lumi_04_true", "lane": "true", "label": "Light the Sleeping Window", "playerLine": "I will light the path without asking the dream to wake.", "npcResponse": [{ "speakerId": "npc_block_o_matic", "text": "Gentle illumination accepted." }], "narration": "The window glows just enough to show a safe path through soft blocks.", "gameplayResult": "Sleepy warnings improve.", "rewardConfig": { "rewardId": "route_lumi_04_window_warning", "rewardType": "boss_modifier", "modifierId": "route_preview_warning_sleep", "amount": 3, "duration": "boss" }, "statDelta": { "trueScore": 1 }, "grantFlag": "lumi_flag_lit_the_sleeping_window" },
+        { "id": "lumi_04_risky", "lane": "risky", "label": "Toss the Pillow Moon", "playerLine": "A small moon toss. Harmless if the sky catches.", "npcResponse": [{ "speakerId": "npc_festival_announcer", "text": "Indoor moon activity under review." }], "narration": "A pillow moon arcs through the hall and makes every blanket shimmer.", "gameplayResult": "Gain Fever with sleepy risk.", "rewardConfig": { "rewardId": "route_lumi_04_moon_fever", "rewardType": "battle_modifier", "modifierId": "route_fever", "amount": 14 }, "statDelta": { "riskyScore": 1 }, "riskConfig": { "rewardTier": "stage", "oopsieChance": 0.25, "hazardIncrease": "hazard_sleep_route_pressure" } }
+      ],
+      "postChoiceBarks": [{ "speakerId": "hero_lumi_star_witch", "text": "Some lights are lullabies." }],
+      "victoryCallback": [{ "speakerId": "hero_lumi_star_witch", "text": "The window is still asleep, but it knows the way." }],
+      "bossCallback": [{ "speakerId": "hero_lumi_star_witch", "text": "Sir Snore-a-Lot, I brought a lantern with a very quiet flame." }]
+    },
+    {
+      "id": "SCN_LUMI_05_STARFALL_ARCADE",
+      "heroId": "hero_lumi_star_witch",
+      "stageId": "stage_starfall_arcade",
+      "triggerId": "trig_lumi_05_wishlight_shared",
+      "triggerCondition": { "type": "first_eligible_event_node", "stageId": "stage_starfall_arcade", "heroId": "hero_lumi_star_witch", "oncePerRun": true },
+      "locationName": "Starfall Arcade - Wishlight Score",
+      "title": "The Wishlight Score",
+      "storyBeat": "The arcade wishlight must be shared, not hoarded as a score.",
+      "storyboardPanels": ["Wishlights gather around high-score initials.", "Low scores flicker at the edge.", "Lumi reads names in the glow."],
+      "preChoiceDialogue": [
+        { "speakerId": "npc_high_score_hydra", "text": "Only the highest score shines!" },
+        { "speakerId": "hero_lumi_star_witch", "text": "No. The highest score shines loudly. That is different." },
+        { "speakerId": "hero_lumi_star_witch", "text": "The quiet lights are names too." }
+      ],
+      "choices": [
+        { "id": "lumi_05_practical", "lane": "practical", "label": "Count the Honest Lights", "playerLine": "Every light that played gets counted.", "npcResponse": [{ "speakerId": "npc_festival_announcer", "text": "Honest light count opened." }], "narration": "Lumi marks the low-score lights so the board becomes easier to read.", "gameplayResult": "Gain Preview Glasses.", "rewardConfig": { "rewardId": "route_lumi_05_preview", "rewardType": "item", "itemId": "item_preview_glasses", "amount": 1 }, "statDelta": { "practicalScore": 1 } },
+        { "id": "lumi_05_true", "lane": "true", "label": "Share the Wishlight", "playerLine": "A wish is not smaller because it scored lower.", "npcResponse": [{ "speakerId": "npc_high_score_hydra", "text": "LOW SCORE... STILL SHINES?" }], "narration": "The wishlight spreads from the top score to every player who tried.", "gameplayResult": "Arcade boss warnings improve.", "rewardConfig": { "rewardId": "route_lumi_05_wish_warning", "rewardType": "boss_modifier", "modifierId": "route_preview_warning_arcade", "amount": 3, "duration": "boss" }, "statDelta": { "trueScore": 1 }, "grantFlag": "lumi_flag_shared_arcade_wishlight" },
+        { "id": "lumi_05_risky", "lane": "risky", "label": "Spin the Meteor Jackpot", "playerLine": "That sparkle wants an entrance.", "npcResponse": [{ "speakerId": "npc_festival_announcer", "text": "Meteor jackpot condition detected." }], "narration": "The jackpot spins into a meteor shower of tickets and pressure.", "gameplayResult": "Gain gold with preview risk.", "rewardConfig": { "rewardId": "route_lumi_05_meteor_gold", "rewardType": "gold", "amount": 70 }, "statDelta": { "riskyScore": 1 }, "riskConfig": { "rewardTier": "rare", "oopsieChance": 0.25, "hazardIncrease": "hazard_preview_route_pressure" } }
+      ],
+      "postChoiceBarks": [{ "speakerId": "hero_lumi_star_witch", "text": "The score is not the wish. The wish is why it glows." }],
+      "victoryCallback": [{ "speakerId": "hero_lumi_star_witch", "text": "The arcade remembered more names now." }],
+      "bossCallback": [{ "speakerId": "hero_lumi_star_witch", "text": "The highest score shines loudly. The shared light guides." }]
+    },
+    {
+      "id": "SCN_LUMI_06_BLOXLEY_PALACE",
+      "heroId": "hero_lumi_star_witch",
+      "stageId": "stage_bloxley_block_palace",
+      "triggerId": "trig_lumi_06_crownlight_carried_alone",
+      "triggerCondition": { "type": "first_eligible_event_node", "stageId": "stage_bloxley_block_palace", "heroId": "hero_lumi_star_witch", "oncePerRun": true },
+      "locationName": "Bloxley's Block Palace - Crownlight Hall",
+      "title": "The Crownlight",
+      "storyBeat": "Bloxley's crownlight is crooked because it has been carried alone.",
+      "storyboardPanels": ["The crown shines with a crooked light.", "A paper-star shadow hides under the frame.", "Lumi opens her lantern."],
+      "preChoiceDialogue": [
+        { "speakerId": "npc_king_bloxley", "text": "My crown shines with rectangular authority!" },
+        { "speakerId": "hero_lumi_star_witch", "text": "The little light inside keeps looking for the exit." },
+        { "speakerId": "hero_lumi_star_witch", "text": "Even a crown should have a window." }
+      ],
+      "choices": [
+        { "id": "lumi_06_practical", "lane": "practical", "label": "Mark the Crooked Crown", "playerLine": "Once we can see it, we stop tripping over its shadow.", "npcResponse": [{ "speakerId": "npc_king_bloxley", "text": "My crown has character under royal review!" }], "narration": "Lumi marks the unstable crownlight with a lantern seal.", "gameplayResult": "Royal warnings improve slightly.", "rewardConfig": { "rewardId": "route_lumi_06_crown_warning", "rewardType": "boss_modifier", "modifierId": "route_preview_warning_royal", "amount": 3, "duration": "boss" }, "statDelta": { "practicalScore": 1 } },
+        { "id": "lumi_06_true", "lane": "true", "label": "Carry the Crownlight", "playerLine": "You do not have to rule the room to be seen. I can carry you to the sky.", "npcResponse": [{ "speakerId": "npc_king_bloxley", "text": "But then what will prove I matter?" }], "narration": "Lumi lets the crownlight step into her lantern. The palace exhales.", "gameplayResult": "Royal patterns become less punishing.", "rewardConfig": { "rewardId": "route_lumi_06_carry_warning", "rewardType": "boss_modifier", "modifierId": "route_preview_warning_royal", "amount": 4, "duration": "boss" }, "statDelta": { "trueScore": 1 }, "grantFlag": "lumi_flag_carried_bloxley_crownlight" },
+        { "id": "lumi_06_risky", "lane": "risky", "label": "Bend the Royal Constellation", "playerLine": "Squares are lovely, but tonight the sky would like to try a curve.", "npcResponse": [{ "speakerId": "npc_king_bloxley", "text": "Guards, fetch the geometry cushion!" }], "narration": "A looping constellation bends the palace into dazzling asymmetry.", "gameplayResult": "Gain mana with royal risk.", "rewardConfig": { "rewardId": "route_lumi_06_constellation_mana", "rewardType": "mana", "amount": 32 }, "statDelta": { "riskyScore": 1 }, "riskConfig": { "rewardTier": "hero_themed", "oopsieChance": 0.25, "hazardIncrease": "hazard_royal_pattern_route" } }
+      ],
+      "postChoiceBarks": [{ "speakerId": "hero_lumi_star_witch", "text": "Royal blocks are lonely stars with too many rules." }],
+      "victoryCallback": [{ "speakerId": "hero_lumi_star_witch", "text": "The crownlight is in my lantern now. Still bright. Maybe brighter." }],
+      "bossCallback": [{ "speakerId": "hero_lumi_star_witch", "text": "I can help royalty see where everyone else is standing." }]
+    }
+  ]
+}

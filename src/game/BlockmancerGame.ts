@@ -10,6 +10,7 @@ import { CollectionScene } from './scenes/CollectionScene';
 import { MapScene } from './scenes/MapScene';
 import { BattleScene } from './scenes/BattleScene';
 import { RewardScene } from './scenes/RewardScene';
+import { RouteDialogueScene } from './scenes/RouteDialogueScene';
 import { EventScene } from './scenes/EventScene';
 import { ShopScene } from './scenes/ShopScene';
 import { RestScene } from './scenes/RestScene';
@@ -40,6 +41,8 @@ import { ItemSystem } from './systems/ItemSystem';
 import { MetaSystem } from './systems/MetaSystem';
 import { OopsieSystem } from './systems/OopsieSystem';
 import { RandomGameplayEventSystem } from './systems/RandomGameplayEventSystem';
+import { DialogueSystem } from './systems/DialogueSystem';
+import { RouteStorySystem } from './systems/RouteStorySystem';
 import { SettingsSystem } from './systems/SettingsSystem';
 import { StageSystem } from './systems/StageSystem';
 import { StageGoalSystem } from './systems/StageGoalSystem';
@@ -75,6 +78,8 @@ export class BlockmancerGame extends Phaser.Game {
   readonly randomGameplayEventSystem = new RandomGameplayEventSystem();
   readonly eventSystem = new EventSystem(this.rewardSystem, this.enemySystem, this.inventorySystem, this.oopsieSystem);
   readonly shopSystem = new ShopSystem(this.rewardSystem, this.oopsieSystem);
+  readonly dialogueSystem = new DialogueSystem();
+  readonly routeStorySystem = new RouteStorySystem(this.rewardSystem, this.inventorySystem, this.oopsieSystem);
   readonly storySystem = new StorySystem();
   readonly tutorialSystem = new TutorialSystem();
   readonly settingsSystem = new SettingsSystem();
@@ -103,6 +108,7 @@ export class BlockmancerGame extends Phaser.Game {
         MapScene,
         BattleScene,
         RewardScene,
+        RouteDialogueScene,
         EventScene,
         ShopScene,
         RestScene,

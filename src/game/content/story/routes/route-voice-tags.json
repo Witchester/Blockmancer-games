@@ -1,0 +1,10 @@
+{
+  "voiceTags": {
+    "milo_soft": ["quiet", "space", "plink", "listening"],
+    "pippa_hearth": ["oven", "tray", "batch", "serve"],
+    "zuzu_accountable": ["prototype", "calibration", "ledger", "safety"],
+    "nixie_thaw": ["chill", "settle", "flavor", "thaw"],
+    "bruk_hospitality": ["oath", "table", "shield", "guest"],
+    "lumi_wishkeeper": ["lantern", "wish", "constellation", "shimmer"]
+  }
+}

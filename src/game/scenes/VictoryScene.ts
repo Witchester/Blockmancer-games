@@ -7,6 +7,8 @@ import { getPortraitLayout } from '../utils/layout';
 type VictorySceneData = {
   endingKind?: 'normal' | 'true';
   heroUnlocks?: string[];
+  routeEndingId?: string;
+  routeVariantEndingId?: string;
 };
 
 export class VictoryScene extends Phaser.Scene {
@@ -17,7 +19,17 @@ export class VictoryScene extends Phaser.Scene {
   create(data?: VictorySceneData): void {
     const game = this.game as BlockmancerGame;
     const endingKind = data?.endingKind ?? 'normal';
-    const beat = game.storySystem.getEnding(endingKind);
+    const routeEnding = data?.routeEndingId ? game.routeStorySystem.getEndingById(data.routeEndingId) : null;
+    const routeVariant = data?.routeVariantEndingId ? game.routeStorySystem.getEndingById(data.routeVariantEndingId) : null;
+    const beat = routeEnding
+      ? {
+          title: routeEnding.title,
+          lines: [
+            ...routeEnding.lines.map((line) => game.dialogueSystem.formatLine(line)),
+            ...(routeVariant ? ['', routeVariant.title, ...routeVariant.lines.map((line) => game.dialogueSystem.formatLine(line))] : [])
+          ]
+        }
+      : game.storySystem.getEnding(endingKind);
     const layout = getPortraitLayout(this);
 
     this.cameras.main.setBackgroundColor(COLORS.background);
@@ -33,13 +45,13 @@ export class VictoryScene extends Phaser.Scene {
       wordWrap: { width: layout.contentWidth - 80 }
     }).setOrigin(0.5);
 
-    this.add.text(layout.centerX, 390, beat.lines.join('\n\n'), {
+    this.add.text(layout.centerX, routeVariant ? 372 : 390, beat.lines.join('\n\n'), {
       color: '#f6f7ff',
       fontFamily: FONT_FAMILY,
-      fontSize: '24px',
+      fontSize: routeVariant ? '20px' : '24px',
       align: 'center',
       wordWrap: { width: layout.contentWidth - 96 },
-      lineSpacing: 8
+      lineSpacing: routeVariant ? 5 : 8
     }).setOrigin(0.5);
 
     const unlocks = data?.heroUnlocks ?? [];

@@ -1,0 +1,151 @@
+{
+  "routeId": "route_zuzu_goblin_engineer",
+  "heroId": "hero_zuzu_goblin_engineer",
+  "scenes": [
+    {
+      "id": "SCN_ZUZU_01_SPRINKLE_SEWERS",
+      "heroId": "hero_zuzu_goblin_engineer",
+      "stageId": "stage_sprinkle_sewers",
+      "triggerId": "trig_zuzu_01_old_pressure_patch",
+      "triggerCondition": { "type": "first_eligible_event_node", "stageId": "stage_sprinkle_sewers", "heroId": "hero_zuzu_goblin_engineer", "oncePerRun": true },
+      "locationName": "Sprinkle Sewers - Candy Pressure Valve",
+      "title": "The Valve With Old Initials",
+      "storyBeat": "An old quick patch worsens the candy pressure loop.",
+      "storyboardPanels": ["A brass pressure valve puffs sugar steam.", "Zuzu spots Z.Z. scratched into the metal.", "Sticky blocks glow too brightly."],
+      "preChoiceDialogue": [
+        { "speakerId": "hero_zuzu_goblin_engineer", "text": "Terrible, but interesting. Parade-strength frosting in a sewer-rated pipe." },
+        { "speakerId": "npc_professor_poplin", "text": "Zuzu, is that your handwriting?" },
+        { "speakerId": "hero_zuzu_goblin_engineer", "text": "Emergency handwriting. Limited supervision. Excellent confidence." }
+      ],
+      "choices": [
+        { "id": "zuzu_01_practical", "lane": "practical", "label": "Tighten the Sprinkle Valve", "playerLine": "Stop the part currently screaming. Pretend the initials are historical graffiti.", "npcResponse": [{ "speakerId": "npc_professor_poplin", "text": "Sensible, despite the pretending." }], "narration": "Zuzu clamps the valve and drops the sticky pressure.", "gameplayResult": "Gain a Toolbox.", "rewardConfig": { "rewardId": "route_zuzu_01_toolbox", "rewardType": "item", "itemId": "item_toolbox", "amount": 1 }, "statDelta": { "practicalScore": 1 } },
+        { "id": "zuzu_01_true", "lane": "true", "label": "Log the Pressure Fault", "playerLine": "If my patch caused this, the repair says so in ink big enough for future goblins to resent.", "npcResponse": [{ "speakerId": "npc_block_o_matic", "text": "Previous note found: temporary sugar-flow shortcut. Expired three festivals ago." }], "narration": "Zuzu reads the note instead of hiding it. The valve obeyed a shortcut for far too long.", "gameplayResult": "Sticky warnings become easier to read.", "rewardConfig": { "rewardId": "route_zuzu_01_pressure_warning", "rewardType": "stage_modifier", "modifierId": "route_preview_warning_sticky", "amount": 3, "duration": "stage" }, "statDelta": { "trueScore": 1 }, "grantFlag": "zuzu_flag_logged_sprinkle_pressure_fault" },
+        { "id": "zuzu_01_risky", "lane": "risky", "label": "Overclock the Candy Pump", "playerLine": "Route the excess through a controlled sparkle burst and harvest candy kinetic optimism.", "npcResponse": [{ "speakerId": "npc_bloop", "text": "Bloop?" }], "narration": "A ribbon of sprinkle light clears sticky patches before the tunnel hiccups out fresh frosting.", "gameplayResult": "Gain gold with sticky risk.", "rewardConfig": { "rewardId": "route_zuzu_01_overclock_gold", "rewardType": "gold", "amount": 45 }, "statDelta": { "riskyScore": 1 }, "riskConfig": { "rewardTier": "rare", "oopsieChance": 0.25, "hazardIncrease": "hazard_sticky_route_pressure" } }
+      ],
+      "postChoiceBarks": [{ "speakerId": "hero_zuzu_goblin_engineer", "text": "Sprinkle flow now within legal joy limits. Probably." }],
+      "victoryCallback": [{ "speakerId": "hero_zuzu_goblin_engineer", "text": "Sewer stable. Initials unexploded. Graph trending." }],
+      "bossCallback": [{ "speakerId": "hero_zuzu_goblin_engineer", "text": "The slimes followed pressure, not orders. Beautiful chain. Slightly embarrassing chain." }]
+    },
+    {
+      "id": "SCN_ZUZU_02_GOBLIN_WORKSHOP",
+      "heroId": "hero_zuzu_goblin_engineer",
+      "stageId": "stage_goblin_workshop",
+      "triggerId": "trig_zuzu_02_hidden_prototype_override",
+      "triggerCondition": { "type": "first_eligible_event_node", "stageId": "stage_goblin_workshop", "heroId": "hero_zuzu_goblin_engineer", "oncePerRun": true },
+      "locationName": "Goblin Workshop - Intern Bench",
+      "title": "The Override Still Running",
+      "storyBeat": "Prototype No. 7 exposes a hidden override Zuzu avoided documenting.",
+      "storyboardPanels": ["Zuzu's old intern bench still smokes.", "A receipt prints OVERRIDE STILL ACTIVE.", "Junk blocks line up in the warning tray."],
+      "preChoiceDialogue": [
+        { "speakerId": "hero_zuzu_goblin_engineer", "text": "My beloved terrible bench. Each scorch mark represents learning or insufficient ventilation." },
+        { "speakerId": "npc_block_o_matic", "text": "Temporary override has operated continuously for two years." },
+        { "speakerId": "hero_zuzu_goblin_engineer", "text": "That is a very committed temporary." }
+      ],
+      "choices": [
+        { "id": "zuzu_02_practical", "lane": "practical", "label": "Clamp the Rattle Belt", "playerLine": "Contain first, confess later. The belt stops donating junk to columns.", "npcResponse": [{ "speakerId": "npc_professor_poplin", "text": "Efficient, if noisy." }], "narration": "Zuzu clamps the conveyor and slows the junk queue.", "gameplayResult": "Gain shield.", "rewardConfig": { "rewardId": "route_zuzu_02_clamp_shield", "rewardType": "shield", "amount": 5 }, "statDelta": { "practicalScore": 1 } },
+        { "id": "zuzu_02_true", "lane": "true", "label": "Open the Intern Ledger", "playerLine": "No heroic wrenching until I read the ledger.", "npcResponse": [{ "speakerId": "npc_block_o_matic", "text": "Entry found: remove override before final celebration. Removal status: not removed." }], "narration": "Zuzu goes quiet for three whole seconds, which is a public ceremony in goblin engineering.", "gameplayResult": "Machine warnings improve.", "rewardConfig": { "rewardId": "route_zuzu_02_override_warning", "rewardType": "boss_modifier", "modifierId": "route_preview_warning_machine", "amount": 3, "duration": "boss" }, "statDelta": { "trueScore": 1 }, "grantFlag": "zuzu_flag_admitted_prototype_override" },
+        { "id": "zuzu_02_risky", "lane": "risky", "label": "Boot Prototype No. 7 1/2", "playerLine": "Launch a legally distinct helper prototype. Machines respect peer review.", "npcResponse": [{ "speakerId": "npc_professor_poplin", "text": "Machines do not respect peer review." }], "narration": "Version 7 1/2 redirects junk, then sneezes a spring into the hold queue.", "gameplayResult": "Gain mana with machine risk.", "rewardConfig": { "rewardId": "route_zuzu_02_boot_mana", "rewardType": "mana", "amount": 24 }, "statDelta": { "riskyScore": 1 }, "riskConfig": { "rewardTier": "hero_themed", "oopsieChance": 0.25, "hazardIncrease": "hazard_machine_junk_route" } }
+      ],
+      "postChoiceBarks": [{ "speakerId": "hero_zuzu_goblin_engineer", "text": "Prototype behavior reduced from catastrophic to educational." }],
+      "victoryCallback": [{ "speakerId": "hero_zuzu_goblin_engineer", "text": "Override noted. Pride dented. Repair improved." }],
+      "bossCallback": [{ "speakerId": "hero_zuzu_goblin_engineer", "text": "No more blaming the machine. I left the override in. Now we fix it." }]
+    },
+    {
+      "id": "SCN_ZUZU_03_FROSTY_PANTRY",
+      "heroId": "hero_zuzu_goblin_engineer",
+      "stageId": "stage_frosty_pantry",
+      "triggerId": "trig_zuzu_03_thaw_protocol_needed",
+      "triggerCondition": { "type": "first_eligible_event_node", "stageId": "stage_frosty_pantry", "heroId": "hero_zuzu_goblin_engineer", "oncePerRun": true },
+      "locationName": "Frosty Pantry - Thermal Correction Coil",
+      "title": "The Thaw Protocol",
+      "storyBeat": "The pantry needs a proper thaw protocol.",
+      "storyboardPanels": ["A copper coil hums inside an icebox.", "The active piece freezes, then drops too fast.", "A label says DO NOT HUG."],
+      "preChoiceDialogue": [
+        { "speakerId": "hero_zuzu_goblin_engineer", "text": "Thermal device alternating between chill and dramatic panic. Classic unhelpful helpfulness." },
+        { "speakerId": "hero_nixie_frostbinder", "text": "Do not reverse it too quickly." },
+        { "speakerId": "hero_zuzu_goblin_engineer", "text": "Fine. Protocol instead of theatrical polarity. Growth is inconvenient." }
+      ],
+      "choices": [
+        { "id": "zuzu_03_practical", "lane": "practical", "label": "Rewire the Thaw Relay", "playerLine": "Relay first. Less drama, fewer frozen eyebrows.", "npcResponse": [{ "speakerId": "hero_nixie_frostbinder", "text": "A reasonable temperature." }], "narration": "Zuzu rewires the relay and steadies the worst speed swings.", "gameplayResult": "Gain Speed Brake.", "rewardConfig": { "rewardId": "route_zuzu_03_speed_brake", "rewardType": "item", "itemId": "item_speed_brake", "amount": 1 }, "statDelta": { "practicalScore": 1 } },
+        { "id": "zuzu_03_true", "lane": "true", "label": "Write the Thaw Protocol", "playerLine": "Step one: ask pantry. Step two: label heat. Step three: no surprise soup.", "npcResponse": [{ "speakerId": "npc_block_o_matic", "text": "Protocol accepted. Dramatic reversal disabled." }], "narration": "The pantry receives instructions that future goblins can read before touching the coil.", "gameplayResult": "Freeze guard applies.", "rewardConfig": { "rewardId": "route_zuzu_03_protocol_guard", "rewardType": "hazard_modifier", "modifierId": "route_freeze_warning_guard", "amount": 4, "duration": "stage" }, "statDelta": { "trueScore": 1 }, "grantFlag": "zuzu_flag_wrote_thaw_protocol" },
+        { "id": "zuzu_03_risky", "lane": "risky", "label": "Reverse Snowcone Polarity", "playerLine": "Educational reversal, tiny scale, excellent goggles.", "npcResponse": [{ "speakerId": "hero_nixie_frostbinder", "text": "I object calmly." }], "narration": "The coil bursts into glittering frost and spits rare parts across the shelf.", "gameplayResult": "Gain gold with speed-wave risk.", "rewardConfig": { "rewardId": "route_zuzu_03_polarity_gold", "rewardType": "gold", "amount": 55 }, "statDelta": { "riskyScore": 1 }, "riskConfig": { "rewardTier": "rare", "oopsieChance": 0.25, "hazardIncrease": "hazard_speed_wave_route" } }
+      ],
+      "postChoiceBarks": [{ "speakerId": "hero_zuzu_goblin_engineer", "text": "Documentation is engineering that talks after you leave." }],
+      "victoryCallback": [{ "speakerId": "hero_zuzu_goblin_engineer", "text": "Pantry thawing legally. Mostly." }],
+      "bossCallback": [{ "speakerId": "hero_zuzu_goblin_engineer", "text": "Gelato Golem, we have a protocol. It includes fewer dramatic freezes." }]
+    },
+    {
+      "id": "SCN_ZUZU_04_PILLOW_CASTLE",
+      "heroId": "hero_zuzu_goblin_engineer",
+      "stageId": "stage_pillow_castle",
+      "triggerId": "trig_zuzu_04_alarm_with_consent",
+      "triggerCondition": { "type": "first_eligible_event_node", "stageId": "stage_pillow_castle", "heroId": "hero_zuzu_goblin_engineer", "oncePerRun": true },
+      "locationName": "Pillow Castle - Alarm Gear Nook",
+      "title": "The Quiet Warranty",
+      "storyBeat": "A pillow alarm must be repaired with consent, not forced testing.",
+      "storyboardPanels": ["A plush alarm clicks under blankets.", "Sleepy guards wear tiny consent ribbons.", "Zuzu holds a very loud spring."],
+      "preChoiceDialogue": [
+        { "speakerId": "hero_zuzu_goblin_engineer", "text": "Alarm status: fixable. Resident status: asleep and not volunteers." },
+        { "speakerId": "npc_sleepy_guard", "text": "No surprise testing..." },
+        { "speakerId": "hero_zuzu_goblin_engineer", "text": "New rule. No participants by accident." }
+      ],
+      "choices": [
+        { "id": "zuzu_04_practical", "lane": "practical", "label": "Muffle the Gearbox", "playerLine": "Felt pads. Soft clamps. No heroic clang.", "npcResponse": [{ "speakerId": "npc_sleepy_guard", "text": "Mmm. Acceptable wrench." }], "narration": "Zuzu muffles the gearbox and stabilizes the sleepy room.", "gameplayResult": "Gain shield.", "rewardConfig": { "rewardId": "route_zuzu_04_muffle_shield", "rewardType": "shield", "amount": 6 }, "statDelta": { "practicalScore": 1 } },
+        { "id": "zuzu_04_true", "lane": "true", "label": "Issue a Quiet Warranty", "playerLine": "Warranty clause: no sudden bells without resident approval.", "npcResponse": [{ "speakerId": "npc_block_o_matic", "text": "Consent clause archived. Alarm humility increased." }], "narration": "The alarm learns to ask before helping, which makes the whole castle less tense.", "gameplayResult": "Boss warning visibility improves.", "rewardConfig": { "rewardId": "route_zuzu_04_quiet_warning", "rewardType": "boss_modifier", "modifierId": "route_preview_warning_sleep", "amount": 3, "duration": "boss" }, "statDelta": { "trueScore": 1 }, "grantFlag": "zuzu_flag_quieted_alarm_with_consent" },
+        { "id": "zuzu_04_risky", "lane": "risky", "label": "Launch the Pillow Spring", "playerLine": "One tiny launch. Educational arc. Soft landing assumed.", "npcResponse": [{ "speakerId": "npc_festival_announcer", "text": "Pillow trajectory filed under brave upholstery." }], "narration": "The spring launches a pillow into a perfect defensive bounce and wakes one curtain.", "gameplayResult": "Gain Fever with sleepy risk.", "rewardConfig": { "rewardId": "route_zuzu_04_spring_fever", "rewardType": "battle_modifier", "modifierId": "route_fever", "amount": 14 }, "statDelta": { "riskyScore": 1 }, "riskConfig": { "rewardTier": "stage", "oopsieChance": 0.25, "hazardIncrease": "hazard_sleep_route_pressure" } }
+      ],
+      "postChoiceBarks": [{ "speakerId": "hero_zuzu_goblin_engineer", "text": "The lever is reachable. Drama reduced. Fine." }],
+      "victoryCallback": [{ "speakerId": "hero_zuzu_goblin_engineer", "text": "Alarm repaired. No accidental test subjects." }],
+      "bossCallback": [{ "speakerId": "hero_zuzu_goblin_engineer", "text": "Sir Snore-a-Lot, all wake-up features now require permission." }]
+    },
+    {
+      "id": "SCN_ZUZU_05_STARFALL_ARCADE",
+      "heroId": "hero_zuzu_goblin_engineer",
+      "stageId": "stage_starfall_arcade",
+      "triggerId": "trig_zuzu_05_fair_score_formula",
+      "triggerCondition": { "type": "first_eligible_event_node", "stageId": "stage_starfall_arcade", "heroId": "hero_zuzu_goblin_engineer", "oncePerRun": true },
+      "locationName": "Starfall Arcade - Score Cabinet",
+      "title": "The Formula Behind the Lights",
+      "storyBeat": "The score formula must become fair instead of mysterious.",
+      "storyboardPanels": ["A score cabinet hides its math behind prize curtains.", "Tickets print unevenly.", "Zuzu finds a locked formula panel."],
+      "preChoiceDialogue": [
+        { "speakerId": "hero_zuzu_goblin_engineer", "text": "This game is obeying secret math. Secret math near prizes is suspicious math." },
+        { "speakerId": "npc_high_score_hydra", "text": "MYSTERY MULTIPLIER!" },
+        { "speakerId": "hero_zuzu_goblin_engineer", "text": "Mystery is not a balancing tool. It is a hiding place with fonts." }
+      ],
+      "choices": [
+        { "id": "zuzu_05_practical", "lane": "practical", "label": "Cap the Prize Multiplier", "playerLine": "Multiplier cap first. Fewer jackpot tantrums.", "npcResponse": [{ "speakerId": "npc_festival_announcer", "text": "Prize ceiling installed." }], "narration": "Zuzu caps the cabinet's wildest score jumps.", "gameplayResult": "Gain a Lucky Ticket.", "rewardConfig": { "rewardId": "route_zuzu_05_ticket", "rewardType": "item", "itemId": "item_lucky_ticket", "amount": 1 }, "statDelta": { "practicalScore": 1 } },
+        { "id": "zuzu_05_true", "lane": "true", "label": "Share the Score Formula", "playerLine": "Open the panel. Everyone gets to know how the points happen.", "npcResponse": [{ "speakerId": "npc_block_o_matic", "text": "Formula visibility improved. Arcade fairness rising." }], "narration": "Players finally see why cascades score and why some lights were hogging attention.", "gameplayResult": "Preview and combo warnings improve.",
+          "rewardConfig": { "rewardId": "route_zuzu_05_formula_warning", "rewardType": "boss_modifier", "modifierId": "route_preview_warning_arcade", "amount": 3, "duration": "boss" }, "statDelta": { "trueScore": 1 }, "grantFlag": "zuzu_flag_open_sourced_score_formula" },
+        { "id": "zuzu_05_risky", "lane": "risky", "label": "Run the Jackpot Spiral", "playerLine": "One supervised spiral. Fine print glowing. Fingers away from jackpot mouth.", "npcResponse": [{ "speakerId": "npc_high_score_hydra", "text": "JACKPOT ARGUMENT ACCEPTED!" }], "narration": "The cabinet showers tickets and immediately demands a harder combo.", "gameplayResult": "Gain gold with preview risk.", "rewardConfig": { "rewardId": "route_zuzu_05_jackpot_gold", "rewardType": "gold", "amount": 70 }, "statDelta": { "riskyScore": 1 }, "riskConfig": { "rewardTier": "rare", "oopsieChance": 0.25, "hazardIncrease": "hazard_preview_route_pressure" } }
+      ],
+      "postChoiceBarks": [{ "speakerId": "hero_zuzu_goblin_engineer", "text": "Fair games still explode with joy. They just warn you first." }],
+      "victoryCallback": [{ "speakerId": "hero_zuzu_goblin_engineer", "text": "Score formula readable. Profit mystery sulking." }],
+      "bossCallback": [{ "speakerId": "hero_zuzu_goblin_engineer", "text": "Hydra, no hidden multiplier. Everyone gets the formula." }]
+    },
+    {
+      "id": "SCN_ZUZU_06_BLOXLEY_PALACE",
+      "heroId": "hero_zuzu_goblin_engineer",
+      "stageId": "stage_bloxley_block_palace",
+      "triggerId": "trig_zuzu_06_royal_clamp_notes",
+      "triggerCondition": { "type": "first_eligible_event_node", "stageId": "stage_bloxley_block_palace", "heroId": "hero_zuzu_goblin_engineer", "oncePerRun": true },
+      "locationName": "Bloxley's Block Palace - Royal Clamp Gate",
+      "title": "The Clamp Patent Problem",
+      "storyBeat": "Royal clamps reveal the cost of clever design without safety notes.",
+      "storyboardPanels": ["Royal seals lock a gate with elegant brass clamps.", "Zuzu recognizes the hinge angle.", "The board narrows with pattern warnings."],
+      "preChoiceDialogue": [
+        { "speakerId": "npc_king_bloxley", "text": "My palace holds because every corner obeys!" },
+        { "speakerId": "hero_zuzu_goblin_engineer", "text": "That clamp profile. That smug little pressure notch." },
+        { "speakerId": "hero_zuzu_goblin_engineer", "text": "I made it to help stalls stand quickly. He used it to make rooms stop arguing." }
+      ],
+      "choices": [
+        { "id": "zuzu_06_practical", "lane": "practical", "label": "Unscrew the Royal Brackets", "playerLine": "Remove brackets, loosen seals, stop the board becoming a filing cabinet.", "npcResponse": [{ "speakerId": "npc_professor_poplin", "text": "A clean reversal." }], "narration": "Zuzu unscrews the brackets and downgrades several royal blocks.", "gameplayResult": "Gain shield.", "rewardConfig": { "rewardId": "route_zuzu_06_bracket_shield", "rewardType": "shield", "amount": 8 }, "statDelta": { "practicalScore": 1 } },
+        { "id": "zuzu_06_true", "lane": "true", "label": "Invalidate the Clamp Patent", "playerLine": "Any clamp that silences a room gets a release lever anyone can reach.", "npcResponse": [{ "speakerId": "npc_block_o_matic", "text": "Public safety revision accepted. Accessibility lever required." }], "narration": "Zuzu stamps the blueprint with a red revision mark. The seals become answerable.", "gameplayResult": "Royal warnings improve.", "rewardConfig": { "rewardId": "route_zuzu_06_clamp_warning", "rewardType": "boss_modifier", "modifierId": "route_preview_warning_royal", "amount": 4, "duration": "boss" }, "statDelta": { "trueScore": 1 }, "grantFlag": "zuzu_flag_invalidated_royal_clamp_design" },
+        { "id": "zuzu_06_risky", "lane": "risky", "label": "Detonate Corner Theory", "playerLine": "One careful, educational, corner-adjacent boom.", "npcResponse": [{ "speakerId": "npc_king_bloxley", "text": "You would explode a royal corner?" }], "narration": "The blast pops royal blocks into confetti, and the palace retaliates with stricter square rules.", "gameplayResult": "Gain mana with royal risk.", "rewardConfig": { "rewardId": "route_zuzu_06_corner_boom", "rewardType": "mana", "amount": 32 }, "statDelta": { "riskyScore": 1 }, "riskConfig": { "rewardTier": "hero_themed", "oopsieChance": 0.25, "hazardIncrease": "hazard_royal_pattern_route" } }
+      ],
+      "postChoiceBarks": [{ "speakerId": "hero_zuzu_goblin_engineer", "text": "Corners still legal, but no longer in charge." }],
+      "victoryCallback": [{ "speakerId": "hero_zuzu_goblin_engineer", "text": "Clamps corrected. Release levers handsome." }],
+      "bossCallback": [{ "speakerId": "hero_zuzu_goblin_engineer", "text": "I built a thing that made control too easy. That part is mine. Locking people in was yours." }]
+    }
+  ]
+}

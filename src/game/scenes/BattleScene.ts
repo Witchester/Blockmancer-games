@@ -285,6 +285,13 @@ export class BattleScene extends Phaser.Scene {
       const fallbackIntro = this.sharedGame.bossSystem.getIntro(state.activeEnemy);
       const bossBeat = this.sharedGame.storySystem.getBossIntro(state.activeEnemy.id, fallbackIntro);
       bossBeat.lines.forEach((line) => this.combat.addLog(line));
+      const stageId = this.sharedGame.stageSystem.getStageByIndex(state.stage)?.id ?? 'stage_sprinkle_sewers';
+      const routeLines = this.sharedGame.routeStorySystem.getBossCallback(state.hero.id, stageId, state.routeProgress);
+      routeLines.forEach((line) => this.combat.addLog(this.sharedGame.dialogueSystem.formatLine(line)));
+      const routeModifierMessage = this.sharedGame.routeStorySystem.applyBossCallbackModifier(state);
+      if (routeModifierMessage) {
+        this.combat.addLog(routeModifierMessage);
+      }
       this.sharedGame.audioSystem.play('boss_intro', this);
       this.showBossIntro(state.activeEnemy.name, bossBeat.lines[0] ?? fallbackIntro);
       this.showBossRuleCard(state.activeEnemy.id);
@@ -1717,16 +1724,30 @@ export class BattleScene extends Phaser.Scene {
       if (this.sharedGame.stageSystem.isFinalStage(state.stage)) {
         this.sharedGame.mapSystem.advanceAfterBoss(state, this.sharedGame.stageSystem);
         state.victory = true;
-        const endingKind = this.sharedGame.storySystem.getEndingKind(this.sharedGame.metaSystem.state);
+        const routeEnding = this.sharedGame.routeStorySystem.resolveHeroEnding(state.hero.id, state.routeProgress);
+        const endingKind = routeEnding.endingKind;
+        const heroRouteProgress = state.routeProgress.heroes[state.hero.id];
+        if (heroRouteProgress) {
+          this.sharedGame.routeStorySystem.recordEndingUnlock(heroRouteProgress, routeEnding.ending, routeEnding.variant);
+        }
         const beforeUnlocks = [...this.sharedGame.metaSystem.state.unlockedHeroes];
         this.sharedGame.metaSystem.recordRunEnd(state, true);
         if (endingKind === 'true') {
           this.sharedGame.metaSystem.unlockTrueEnding();
         }
+        this.sharedGame.metaSystem.unlockRouteEnding(routeEnding.ending.id);
+        if (routeEnding.variant) {
+          this.sharedGame.metaSystem.unlockRouteVariantEnding(routeEnding.variant.id);
+        }
         const heroUnlocks = this.sharedGame.storySystem.getHeroUnlockMessages(beforeUnlocks, this.sharedGame.metaSystem.state.unlockedHeroes);
         this.sharedGame.audioSystem.play('victory', this);
         this.sharedGame.clearSave();
-        this.scene.start('VictoryScene', { endingKind, heroUnlocks });
+        this.scene.start('VictoryScene', {
+          endingKind,
+          heroUnlocks,
+          routeEndingId: routeEnding.ending.id,
+          routeVariantEndingId: routeEnding.variant?.id
+        });
         return;
       }
 
@@ -1744,6 +1765,20 @@ export class BattleScene extends Phaser.Scene {
     state.currentRoomProgress = 'reward';
     state.runStatus = 'reward';
     this.sharedGame.saveRun();
+    const stageId = this.sharedGame.stageSystem.getStageByIndex(state.stage)?.id ?? 'stage_sprinkle_sewers';
+    const routeScene = this.sharedGame.routeStorySystem.shouldTriggerRouteScene(
+      state,
+      state.hero.id,
+      stageId,
+      'after_first_combat_victory'
+    );
+    if (routeScene) {
+      this.scene.start('RouteDialogueScene', {
+        sceneId: routeScene.id,
+        returnScene: 'RewardScene'
+      });
+      return;
+    }
     this.scene.start('RewardScene');
   }
 

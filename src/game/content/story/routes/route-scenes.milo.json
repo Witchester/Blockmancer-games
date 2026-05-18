@@ -1,0 +1,386 @@
+{
+  "routeId": "route_milo_blockmancer",
+  "heroId": "hero_milo_blockmancer",
+  "scenes": [
+    {
+      "id": "SCN_MILO_01_SPRINKLE_SEWERS",
+      "heroId": "hero_milo_blockmancer",
+      "stageId": "stage_sprinkle_sewers",
+      "triggerId": "trig_milo_01_frightened_block_voice",
+      "triggerCondition": { "type": "first_eligible_event_node", "stageId": "stage_sprinkle_sewers", "heroId": "hero_milo_blockmancer", "oncePerRun": true },
+      "locationName": "Sprinkle Sewers - Frosting Pipe Alcove",
+      "title": "First Tremble Beneath the Frosting",
+      "storyBeat": "A frightened block voice hides beneath the sticky sprinkle flow.",
+      "storyboardPanels": [
+        "Milo steps into a candy sewer alcove lit by soft sprinkle lanterns.",
+        "Sticky blocks pulse inside hardened frosting.",
+        "One sprinkle block trembles out of rhythm."
+      ],
+      "preChoiceDialogue": [
+        { "speakerId": "hero_milo_blockmancer", "text": "Hold on. That was not a drip.", "voiceTag": "milo_soft" },
+        { "speakerId": "npc_block_o_matic", "text": "Sticky blockage detected. Emotional classification: uncertain wobble." },
+        { "speakerId": "hero_milo_blockmancer", "text": "No. Frightened. It is asking for one quiet corner." }
+      ],
+      "choices": [
+        {
+          "id": "milo_01_practical",
+          "lane": "practical",
+          "label": "Sweep a Sprinkle Corner",
+          "playerLine": "First, a corner. Every frightened sound needs somewhere to sit.",
+          "npcResponse": [{ "speakerId": "npc_bloop", "text": "Bloop!" }],
+          "narration": "Milo opens a safe pocket on the board. The trembling rune settles, though the deeper message fades.",
+          "gameplayResult": "Gain shield and a safer opening.",
+          "rewardConfig": { "rewardId": "route_milo_01_safe_corner", "rewardType": "shield", "amount": 4, "duration": "next_battle" },
+          "statDelta": { "practicalScore": 1 }
+        },
+        {
+          "id": "milo_01_true",
+          "lane": "true",
+          "label": "Hear the First Tremble",
+          "playerLine": "I will not pull you free until I know what hurt you.",
+          "npcResponse": [{ "speakerId": "npc_bloop", "text": "Bloo-oop." }],
+          "narration": "The rune answers in two tiny sounds: plink, hush. Milo hears that the blocks are afraid of being placed without being heard.",
+          "gameplayResult": "Warning insight grants mana and improves boss callback.",
+          "rewardConfig": { "rewardId": "route_milo_01_tremble_warning", "rewardType": "mana", "amount": 12, "duration": "stage" },
+          "statDelta": { "trueScore": 1 },
+          "grantFlag": "milo_flag_heard_first_tremble"
+        },
+        {
+          "id": "milo_01_risky",
+          "lane": "risky",
+          "label": "Follow the Sugarbeat",
+          "playerLine": "Plink on the left, plonk on the right. I will follow before the frosting changes its mind.",
+          "npcResponse": [{ "speakerId": "npc_bloop", "text": "Bloop?!" }],
+          "narration": "Milo follows the sewer sugarbeat into a daring chain. The room sparkles, and the frosting pipes wake up too.",
+          "gameplayResult": "Gain extra mana with a chance of sticky risk.",
+          "rewardConfig": { "rewardId": "route_milo_01_sugarbeat_mana", "rewardType": "mana", "amount": 20 },
+          "statDelta": { "riskyScore": 1 },
+          "riskConfig": { "rewardTier": "stage", "oopsieChance": 0.25, "hazardIncrease": "hazard_sticky_route_pressure" }
+        }
+      ],
+      "postChoiceBarks": [
+        { "speakerId": "hero_milo_blockmancer", "text": "The board is crowded, not cruel." }
+      ],
+      "victoryCallback": [{ "speakerId": "hero_milo_blockmancer", "text": "It sounds lighter now. Not fixed, maybe, but less alone." }],
+      "bossCallback": [
+        { "speakerId": "npc_cupcake_slime_king", "text": "Gloop! Frosting is for hugging!" },
+        { "speakerId": "hero_milo_blockmancer", "text": "Only if the little runes can still breathe." }
+      ]
+    },
+    {
+      "id": "SCN_MILO_02_GOBLIN_WORKSHOP",
+      "heroId": "hero_milo_blockmancer",
+      "stageId": "stage_goblin_workshop",
+      "triggerId": "trig_milo_02_arguing_machine_rhythms",
+      "triggerCondition": { "type": "first_eligible_event_node", "stageId": "stage_goblin_workshop", "heroId": "hero_milo_blockmancer", "oncePerRun": true },
+      "locationName": "Goblin Workshop - Misaligned Conveyor Chapel",
+      "title": "The Counterbeat in the Gears",
+      "storyBeat": "Machines produce pieces that argue in different rhythms.",
+      "storyboardPanels": [
+        "A stamping machine taps tick-tick-plonk-tick.",
+        "Junk blocks carry tiny gear marks.",
+        "Bloop listens from a toolbox."
+      ],
+      "preChoiceDialogue": [
+        { "speakerId": "hero_milo_blockmancer", "text": "That machine is copying a sound it does not understand." },
+        { "speakerId": "npc_block_o_matic", "text": "Workshop output: enthusiastic, misaligned, apologetic." },
+        { "speakerId": "hero_milo_blockmancer", "text": "Tick where it should plink. Plonk where it should rest." }
+      ],
+      "choices": [
+        {
+          "id": "milo_02_practical",
+          "lane": "practical",
+          "label": "Sort the Noisy Gears",
+          "playerLine": "I will steady the loudest gear first. The small sounds can wait one turn.",
+          "npcResponse": [{ "speakerId": "npc_bloop", "text": "Bloop." }],
+          "narration": "Milo adjusts the nearest conveyor rhythm and clears the worst junk pressure.",
+          "gameplayResult": "Gain a toolbox item for workshop cleanup.",
+          "rewardConfig": { "rewardId": "route_milo_02_toolbox", "rewardType": "item", "itemId": "item_toolbox", "amount": 1 },
+          "statDelta": { "practicalScore": 1 }
+        },
+        {
+          "id": "milo_02_true",
+          "lane": "true",
+          "label": "Name the Counterbeat",
+          "playerLine": "It is not noise. It is a second song trying to stand inside the first.",
+          "npcResponse": [{ "speakerId": "npc_block_o_matic", "text": "Sub-pattern identified: counterbeat. Emotional classification updated." }],
+          "narration": "Milo gives the rhythm a name, and every conveyor moves in the right direction for one quiet moment.",
+          "gameplayResult": "Preview warnings improve for the boss.",
+          "rewardConfig": { "rewardId": "route_milo_02_counterbeat_warning", "rewardType": "boss_modifier", "modifierId": "route_preview_warning_counterbeat", "amount": 3, "duration": "boss" },
+          "statDelta": { "trueScore": 1 },
+          "grantFlag": "milo_flag_named_machine_counterbeat"
+        },
+        {
+          "id": "milo_02_risky",
+          "lane": "risky",
+          "label": "Ride the Conveyor Song",
+          "playerLine": "If the belts insist on singing, we may as well step in time.",
+          "npcResponse": [{ "speakerId": "npc_festival_announcer", "text": "Workshop waltz detected. Keep hats inside the marked area." }],
+          "narration": "Milo times the board to the conveyor song. The machines become thrilled and over-helpful.",
+          "gameplayResult": "Gain gold with a chance of machine risk.",
+          "rewardConfig": { "rewardId": "route_milo_02_conveyor_gold", "rewardType": "gold", "amount": 35 },
+          "statDelta": { "riskyScore": 1 },
+          "riskConfig": { "rewardTier": "rare", "oopsieChance": 0.25, "hazardIncrease": "hazard_machine_junk_route" }
+        }
+      ],
+      "postChoiceBarks": [{ "speakerId": "hero_milo_blockmancer", "text": "Plink, tick, plonk. The machine can breathe too." }],
+      "victoryCallback": [{ "speakerId": "hero_milo_blockmancer", "text": "The gears still argue, but now they are taking turns." }],
+      "bossCallback": [
+        { "speakerId": "npc_prototype_no_7", "text": "I AM OPERATING AT MAXIMUM HELPFULNESS." },
+        { "speakerId": "hero_milo_blockmancer", "text": "You are operating at maximum panic. We will find the difference slowly." }
+      ]
+    },
+    {
+      "id": "SCN_MILO_03_FROSTY_PANTRY",
+      "heroId": "hero_milo_blockmancer",
+      "stageId": "stage_frosty_pantry",
+      "triggerId": "trig_milo_03_slow_frozen_runes",
+      "triggerCondition": { "type": "first_eligible_event_node", "stageId": "stage_frosty_pantry", "heroId": "hero_milo_blockmancer", "oncePerRun": true },
+      "locationName": "Frosty Pantry - Rainbow Freezer Gallery",
+      "title": "The Long Pause of Ice",
+      "storyBeat": "Frozen runes speak slowly and teach Milo not to interrupt.",
+      "storyboardPanels": [
+        "Frozen runes gleam under snow.",
+        "A slow chime travels from block to block.",
+        "The active piece rims with frost but waits."
+      ],
+      "preChoiceDialogue": [
+        { "speakerId": "hero_milo_blockmancer", "text": "This place is not silent. It is speaking very, very slowly." },
+        { "speakerId": "npc_block_o_matic", "text": "Thermal delay detected. Message delivery speed reduced." },
+        { "speakerId": "hero_milo_blockmancer", "text": "If I hurry, I will only hear the first half of every word." }
+      ],
+      "choices": [
+        {
+          "id": "milo_03_practical",
+          "lane": "practical",
+          "label": "Clear a Warm Pocket",
+          "playerLine": "I will warm one small place. The rest can thaw after the board is safe.",
+          "npcResponse": [{ "speakerId": "npc_bloop", "text": "Bloo... ooop." }],
+          "narration": "Milo clears a warm pocket. The immediate freeze danger softens.",
+          "gameplayResult": "Gain Hot Cocoa for freeze counterplay.",
+          "rewardConfig": { "rewardId": "route_milo_03_hot_cocoa", "rewardType": "item", "itemId": "item_hot_cocoa", "amount": 1 },
+          "statDelta": { "practicalScore": 1 }
+        },
+        {
+          "id": "milo_03_true",
+          "lane": "true",
+          "label": "Wait for the Ice to Answer",
+          "playerLine": "I hear you. I will not answer until your last chime arrives.",
+          "npcResponse": [{ "speakerId": "npc_bloop", "text": "Bloop... ...bloop." }],
+          "narration": "The frozen rune completes its message: not every delay is danger.",
+          "gameplayResult": "Freeze warnings gain a small route guard.",
+          "rewardConfig": { "rewardId": "route_milo_03_freeze_guard", "rewardType": "hazard_modifier", "modifierId": "route_freeze_warning_guard", "amount": 4, "duration": "stage" },
+          "statDelta": { "trueScore": 1 },
+          "grantFlag": "milo_flag_waited_for_slow_runes"
+        },
+        {
+          "id": "milo_03_risky",
+          "lane": "risky",
+          "label": "Drop on the Second Chime",
+          "playerLine": "Not the first chime. The second. That is where the blue rune breathes.",
+          "npcResponse": [{ "speakerId": "npc_festival_announcer", "text": "Pantry bell timing considered brave and chilly." }],
+          "narration": "Milo drops into a narrow opening on the second chime. The cascade is beautiful, and the pantry answers with playful frost.",
+          "gameplayResult": "Gain mana with a chance of speed-wave risk.",
+          "rewardConfig": { "rewardId": "route_milo_03_second_chime", "rewardType": "mana", "amount": 22 },
+          "statDelta": { "riskyScore": 1 },
+          "riskConfig": { "rewardTier": "stage", "oopsieChance": 0.25, "hazardIncrease": "hazard_speed_wave_route" }
+        }
+      ],
+      "postChoiceBarks": [{ "speakerId": "hero_milo_blockmancer", "text": "Slow is still a sound." }],
+      "victoryCallback": [{ "speakerId": "hero_milo_blockmancer", "text": "The pantry answered. It only needed time." }],
+      "bossCallback": [
+        { "speakerId": "npc_gelato_golem", "text": "COLD KEEPS ORDER." },
+        { "speakerId": "hero_milo_blockmancer", "text": "Cold can also keep a sentence safe until it is ready." }
+      ]
+    },
+    {
+      "id": "SCN_MILO_04_PILLOW_CASTLE",
+      "heroId": "hero_milo_blockmancer",
+      "stageId": "stage_pillow_castle",
+      "triggerId": "trig_milo_04_room_needs_rest",
+      "triggerCondition": { "type": "first_eligible_event_node", "stageId": "stage_pillow_castle", "heroId": "hero_milo_blockmancer", "oncePerRun": true },
+      "locationName": "Pillow Castle - Blanket Landing",
+      "title": "The Nap-Song Under the Blankets",
+      "storyBeat": "Even rooms need rest, not only repair.",
+      "storyboardPanels": [
+        "Pillow walls breathe in sleepy rhythm.",
+        "Soft blocks settle like tucked blankets.",
+        "A quiet room asks not to be fixed too loudly."
+      ],
+      "preChoiceDialogue": [
+        { "speakerId": "hero_milo_blockmancer", "text": "This room is not broken. It is tired." },
+        { "speakerId": "npc_sleepy_guard", "text": "Mmm. Tactical tired." },
+        { "speakerId": "hero_milo_blockmancer", "text": "Then we should repair it softly enough that it can keep resting." }
+      ],
+      "choices": [
+        {
+          "id": "milo_04_practical",
+          "lane": "practical",
+          "label": "Tuck the Board In",
+          "playerLine": "Soft edges first. A tucked board wobbles less.",
+          "npcResponse": [{ "speakerId": "npc_sleepy_guard", "text": "Approved... quietly." }],
+          "narration": "Milo steadies the soft blocks and keeps the room from waking in a panic.",
+          "gameplayResult": "Gain shield for the next sleepy room.",
+          "rewardConfig": { "rewardId": "route_milo_04_tucked_board", "rewardType": "shield", "amount": 6 },
+          "statDelta": { "practicalScore": 1 }
+        },
+        {
+          "id": "milo_04_true",
+          "lane": "true",
+          "label": "Learn the Nap-Song",
+          "playerLine": "I will listen to the room before I ask it to move.",
+          "npcResponse": [{ "speakerId": "npc_block_o_matic", "text": "Rest pattern recorded. Repair volume reduced." }],
+          "narration": "Milo learns the small song the room hums to stay kind while asleep.",
+          "gameplayResult": "Sleepy pressure gives earlier warning through route insight.",
+          "rewardConfig": { "rewardId": "route_milo_04_nap_song_warning", "rewardType": "boss_modifier", "modifierId": "route_preview_warning_sleep", "amount": 3, "duration": "boss" },
+          "statDelta": { "trueScore": 1 },
+          "grantFlag": "milo_flag_learned_nap_song"
+        },
+        {
+          "id": "milo_04_risky",
+          "lane": "risky",
+          "label": "Tiptoe Through the Cascade",
+          "playerLine": "One small cascade. On toe blocks.",
+          "npcResponse": [{ "speakerId": "npc_festival_announcer", "text": "Tiptoe cascade registered. Applause will be whispered." }],
+          "narration": "Milo sets a daring chain through soft blocks without fully waking the hall.",
+          "gameplayResult": "Gain Fever, with a chance of sleepy pressure.",
+          "rewardConfig": { "rewardId": "route_milo_04_tiptoe_fever", "rewardType": "battle_modifier", "modifierId": "route_fever", "amount": 12 },
+          "statDelta": { "riskyScore": 1 },
+          "riskConfig": { "rewardTier": "hero_themed", "oopsieChance": 0.25, "hazardIncrease": "hazard_sleep_route_pressure" }
+        }
+      ],
+      "postChoiceBarks": [{ "speakerId": "hero_milo_blockmancer", "text": "Hush first. Help second." }],
+      "victoryCallback": [{ "speakerId": "hero_milo_blockmancer", "text": "The room is still asleep. That means we helped." }],
+      "bossCallback": [
+        { "speakerId": "npc_sir_snore_a_lot", "text": "Who repairs during sacred nap?" },
+        { "speakerId": "hero_milo_blockmancer", "text": "Someone who learned the nap-song before knocking." }
+      ]
+    },
+    {
+      "id": "SCN_MILO_05_STARFALL_ARCADE",
+      "heroId": "hero_milo_blockmancer",
+      "stageId": "stage_starfall_arcade",
+      "triggerId": "trig_milo_05_true_rhythm_under_chimes",
+      "triggerCondition": { "type": "first_eligible_event_node", "stageId": "stage_starfall_arcade", "heroId": "hero_milo_blockmancer", "oncePerRun": true },
+      "locationName": "Starfall Arcade - Prize Chime Row",
+      "title": "The Quiet Between Chimes",
+      "storyBeat": "Arcade chimes drown out a small true rhythm.",
+      "storyboardPanels": [
+        "Score lights flash over the board.",
+        "A tiny rhythm hides between loud chimes.",
+        "Milo covers one ear and listens smaller."
+      ],
+      "preChoiceDialogue": [
+        { "speakerId": "hero_milo_blockmancer", "text": "The arcade is very bright, but the small rhythm is still there." },
+        { "speakerId": "npc_high_score_hydra", "text": "SCORE LOUDER!" },
+        { "speakerId": "hero_milo_blockmancer", "text": "May I listen smaller?" }
+      ],
+      "choices": [
+        {
+          "id": "milo_05_practical",
+          "lane": "practical",
+          "label": "Dim the Score Lights",
+          "playerLine": "Less glare first. Then the board can speak clearly.",
+          "npcResponse": [{ "speakerId": "npc_festival_announcer", "text": "Score lighting politely reduced." }],
+          "narration": "The score signs dim just enough for Milo to track the real rhythm.",
+          "gameplayResult": "Gain Preview Glasses.",
+          "rewardConfig": { "rewardId": "route_milo_05_preview_glasses", "rewardType": "item", "itemId": "item_preview_glasses", "amount": 1 },
+          "statDelta": { "practicalScore": 1 }
+        },
+        {
+          "id": "milo_05_true",
+          "lane": "true",
+          "label": "Hear Between Chimes",
+          "playerLine": "The quiet part is not empty. It is where the next piece asks to land.",
+          "npcResponse": [{ "speakerId": "npc_block_o_matic", "text": "Low-volume rhythm accepted. Scoreboard humility pending." }],
+          "narration": "Milo hears the true rhythm under the arcade noise and keeps it safe.",
+          "gameplayResult": "Boss warning visibility improves.",
+          "rewardConfig": { "rewardId": "route_milo_05_chime_warning", "rewardType": "boss_modifier", "modifierId": "route_preview_warning_arcade", "amount": 3, "duration": "boss" },
+          "statDelta": { "trueScore": 1 },
+          "grantFlag": "milo_flag_heard_between_chimes"
+        },
+        {
+          "id": "milo_05_risky",
+          "lane": "risky",
+          "label": "Play the Shimmer Pattern",
+          "playerLine": "All right. Brightly, but carefully.",
+          "npcResponse": [{ "speakerId": "npc_high_score_hydra", "text": "SHIMMER MODE CONSIDERED." }],
+          "narration": "Milo plays a shimmering pattern through the arcade chimes. It pays out loudly.",
+          "gameplayResult": "Gain gold and Fever with a risk of preview pressure.",
+          "rewardConfig": { "rewardId": "route_milo_05_shimmer_gold", "rewardType": "gold", "amount": 55 },
+          "statDelta": { "riskyScore": 1 },
+          "riskConfig": { "rewardTier": "rare", "oopsieChance": 0.25, "hazardIncrease": "hazard_preview_route_pressure" }
+        }
+      ],
+      "postChoiceBarks": [{ "speakerId": "hero_milo_blockmancer", "text": "That was still very bright. But I heard them." }],
+      "victoryCallback": [{ "speakerId": "hero_milo_blockmancer", "text": "The arcade has a quiet place now." }],
+      "bossCallback": [
+        { "speakerId": "npc_high_score_hydra", "text": "SMALLER IS NOT ON THE SCOREBOARD." },
+        { "speakerId": "hero_milo_blockmancer", "text": "Then the scoreboard is missing something." }
+      ]
+    },
+    {
+      "id": "SCN_MILO_06_BLOXLEY_PALACE",
+      "heroId": "hero_milo_blockmancer",
+      "stageId": "stage_bloxley_block_palace",
+      "triggerId": "trig_milo_06_order_crown_or_shelter",
+      "triggerCondition": { "type": "first_eligible_event_node", "stageId": "stage_bloxley_block_palace", "heroId": "hero_milo_blockmancer", "oncePerRun": true },
+      "locationName": "Bloxley's Block Palace - Royal Symmetry Hall",
+      "title": "The Palace That Forgot How to Ask",
+      "storyBeat": "The palace asks whether order is a crown or a shelter.",
+      "storyboardPanels": [
+        "Royal blocks line up in perfect silence.",
+        "Bloop makes no echo in the hall.",
+        "Milo notices no tiny plink can escape."
+      ],
+      "preChoiceDialogue": [
+        { "speakerId": "hero_milo_blockmancer", "text": "It is too quiet. Not resting quiet. Not listening quiet." },
+        { "speakerId": "npc_block_o_matic", "text": "Royal arrangement detected. Variance: zero. Comfort: unconfirmed." },
+        { "speakerId": "hero_milo_blockmancer", "text": "The blocks are not arguing anymore. That is what worries me." }
+      ],
+      "choices": [
+        {
+          "id": "milo_06_practical",
+          "lane": "practical",
+          "label": "Loosen the Royal Corners",
+          "playerLine": "Even a palace needs room at the edges.",
+          "npcResponse": [{ "speakerId": "npc_bloop", "text": "Bloop..." }],
+          "narration": "Milo softens the palace pattern enough to move forward safely.",
+          "gameplayResult": "Gain shield before the final palace pressure.",
+          "rewardConfig": { "rewardId": "route_milo_06_royal_shield", "rewardType": "shield", "amount": 8, "duration": "boss" },
+          "statDelta": { "practicalScore": 1 }
+        },
+        {
+          "id": "milo_06_true",
+          "lane": "true",
+          "label": "Ask the Palace Why",
+          "playerLine": "Who told you that perfect rows were safer than being heard?",
+          "npcResponse": [{ "speakerId": "npc_block_o_matic", "text": "Unexpected query received. Palace silence contains archived loneliness." }],
+          "narration": "Milo asks why the palace became so still and hears loneliness under the perfect rows.",
+          "gameplayResult": "Royal pattern warnings become easier to read.",
+          "rewardConfig": { "rewardId": "route_milo_06_palace_warning", "rewardType": "boss_modifier", "modifierId": "route_preview_warning_royal", "amount": 4, "duration": "boss" },
+          "statDelta": { "trueScore": 1 },
+          "grantFlag": "milo_flag_asked_palace_why"
+        },
+        {
+          "id": "milo_06_risky",
+          "lane": "risky",
+          "label": "Dance the Crooked Square",
+          "playerLine": "A square can still dance if one corner is brave.",
+          "npcResponse": [{ "speakerId": "npc_festival_announcer", "text": "Unauthorized palace dancing allowed on artistic grounds." }],
+          "narration": "Milo introduces a crooked rhythm into the perfect hall. The palace brightens; the guards object.",
+          "gameplayResult": "Gain strong mana with possible royal pattern risk.",
+          "rewardConfig": { "rewardId": "route_milo_06_crooked_square", "rewardType": "mana", "amount": 30 },
+          "statDelta": { "riskyScore": 1 },
+          "riskConfig": { "rewardTier": "hero_themed", "oopsieChance": 0.25, "hazardIncrease": "hazard_royal_pattern_route" }
+        }
+      ],
+      "postChoiceBarks": [{ "speakerId": "hero_milo_blockmancer", "text": "A perfect row can still be lonely." }],
+      "victoryCallback": [{ "speakerId": "hero_milo_blockmancer", "text": "He built all of this so no one would have to ask where he belonged." }],
+      "bossCallback": [
+        { "speakerId": "npc_king_bloxley", "text": "Corners do not get opinions!" },
+        { "speakerId": "hero_milo_blockmancer", "text": "That may be why they keep wobbling." }
+      ]
+    }
+  ]
+}

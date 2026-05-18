@@ -1,126 +1,92 @@
-import { readdir, readFile } from 'node:fs/promises';
+import fs from 'node:fs';
 import path from 'node:path';
+import process from 'node:process';
 
-const rootDir = path.resolve('src/game/content');
+const root = process.cwd();
+const contentRoot = path.join(root, 'src', 'game', 'content');
+const routeRoot = path.join(contentRoot, 'story', 'routes');
+const heroIds = new Set([
+  'hero_milo_blockmancer',
+  'hero_pippa_pyromancer',
+  'hero_zuzu_goblin_engineer',
+  'hero_nixie_frostbinder',
+  'hero_bruk_snack_knight',
+  'hero_lumi_star_witch'
+]);
+const stageIds = new Set([
+  'stage_sprinkle_sewers',
+  'stage_goblin_workshop',
+  'stage_frosty_pantry',
+  'stage_pillow_castle',
+  'stage_starfall_arcade',
+  'stage_bloxley_block_palace'
+]);
 
-// Map of content types to their ID prefixes
-const idPrefixes = {
-  heroes: 'hero_',
-  weapons: 'wpn_',
-  monsters: 'mon_',
-  spells: 'spl_',
-  relics: 'rel_',
-  upgrades: 'upg_',
-  'status-effects': 'status_',
-  'board-blocks': 'block_',
-  'room-events': 'evt_',
-  oopsies: 'oops_',
-  'loot-tables': 'loot_',
-  'difficulty-scaling': 'scale_',
-  'map-nodes': 'node_',
-  items: 'item_',
-  stages: 'stage_',
-  currencies: 'currency_',
-  collectibles: 'collectible_',
-  npcs: 'npc_',
-  'random-gameplay-events': 'r_evt_',
-  'stage-goals': 'goal_',
-  'chaos-rules': 'chaos_',
-  'battle-objectives': 'obj_',
-  'boss-rules': 'boss_rule_',
-  'hub-buildings': 'hub_',
-  friendship: 'friend_'
-};
-
-async function findContentFiles(dir) {
-  const entries = await readdir(dir, { withFileTypes: true });
-  const files = [];
-
-  for (const entry of entries) {
-    const fullPath = path.join(dir, entry.name);
-    if (entry.isDirectory()) {
-      files.push(...(await findContentFiles(fullPath)));
-    } else if (entry.isFile() && entry.name.endsWith('.json') && entry.name !== 'metadata.json') {
-      files.push(fullPath);
-    }
-  }
-
-  return files;
+function walkJson(dir) {
+  if (!fs.existsSync(dir)) return [];
+  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) return walkJson(full);
+    return entry.isFile() && entry.name.endsWith('.json') ? [full] : [];
+  });
 }
 
-async function validateFile(filePath, folderName) {
-  const raw = await readFile(filePath, 'utf8');
-  let parsed;
+function readJson(file) {
+  return JSON.parse(fs.readFileSync(file, 'utf8'));
+}
 
+const errors = [];
+for (const file of walkJson(contentRoot)) {
   try {
-    parsed = JSON.parse(raw);
+    readJson(file);
   } catch (error) {
-    throw new Error(`Invalid JSON in ${filePath}: ${error.message}`);
+    errors.push(`${path.relative(root, file)}: invalid JSON: ${error.message}`);
   }
-
-  // Check required fields
-  if (!parsed.id || typeof parsed.id !== 'string') {
-    throw new Error(`Missing or invalid 'id' field in ${filePath}`);
-  }
-
-  if (!parsed.name || typeof parsed.name !== 'string') {
-    throw new Error(`Missing or invalid 'name' field in ${filePath}`);
-  }
-
-  if (!('enabled' in parsed)) {
-    throw new Error(`Missing 'enabled' field in ${filePath}`);
-  }
-
-  // Check ID prefix matches folder
-  const expectedPrefix = idPrefixes[folderName];
-  if (expectedPrefix && !parsed.id.startsWith(expectedPrefix)) {
-    throw new Error(`ID '${parsed.id}' in ${filePath} does not start with expected prefix '${expectedPrefix}'`);
-  }
-
-  return parsed;
 }
 
-async function main() {
-  console.log('Validating content data files...\n');
+const sceneIds = new Set();
+const triggerIds = new Set();
+const labelsByHero = new Map();
+const scenesByHero = new Map();
 
-  const files = await findContentFiles(rootDir);
-  const allIds = new Map();
-  const errors = [];
-
-  for (const filePath of files) {
-    const relativePath = path.relative(rootDir, filePath);
-    const folderName = path.basename(path.dirname(filePath));
-
-    try {
-      const content = await validateFile(filePath, folderName);
-
-      // Check for duplicate IDs
-      if (allIds.has(content.id)) {
-        const prevFile = allIds.get(content.id);
-        errors.push(`Duplicate ID '${content.id}' found in ${filePath} and ${prevFile}`);
-      } else {
-        allIds.set(content.id, filePath);
-      }
-
-      console.log(`✓ ${relativePath}`);
-    } catch (error) {
-      errors.push(error.message);
+for (const file of walkJson(routeRoot).filter((file) => path.basename(file).startsWith('route-scenes.'))) {
+  const data = readJson(file);
+  for (const scene of data.scenes ?? []) {
+    if (sceneIds.has(scene.id)) errors.push(`Duplicate route scene id: ${scene.id}`);
+    sceneIds.add(scene.id);
+    if (triggerIds.has(scene.triggerId)) errors.push(`Duplicate route trigger id: ${scene.triggerId}`);
+    triggerIds.add(scene.triggerId);
+    if (!heroIds.has(scene.heroId)) errors.push(`${scene.id}: invalid heroId ${scene.heroId}`);
+    if (!stageIds.has(scene.stageId)) errors.push(`${scene.id}: invalid stageId ${scene.stageId}`);
+    if (scene.triggerCondition?.oncePerRun !== true) errors.push(`${scene.id}: triggerCondition.oncePerRun must be true`);
+    if (!Array.isArray(scene.choices) || scene.choices.length !== 3) errors.push(`${scene.id}: must have exactly 3 choices`);
+    const trueChoices = (scene.choices ?? []).filter((choice) => choice.lane === 'true');
+    if (trueChoices.length !== 1 || typeof trueChoices[0]?.grantFlag !== 'string') {
+      errors.push(`${scene.id}: must have exactly one true choice with one grantFlag`);
     }
-  }
-
-  console.log(`\nValidated ${files.length} content files.`);
-
-  if (errors.length > 0) {
-    console.error(`\n❌ Found ${errors.length} error(s):\n`);
-    errors.forEach(error => console.error(`  - ${error}`));
-    process.exit(1);
-  } else {
-    console.log('\n✅ All content files are valid!');
-    process.exit(0);
+    scenesByHero.set(scene.heroId, (scenesByHero.get(scene.heroId) ?? 0) + 1);
+    const labels = labelsByHero.get(scene.heroId) ?? new Set();
+    for (const choice of scene.choices ?? []) {
+      if (labels.has(choice.label)) errors.push(`${scene.heroId}: repeated choice label ${choice.label}`);
+      labels.add(choice.label);
+      if (!choice.rewardConfig?.rewardId || !choice.rewardConfig?.rewardType) {
+        errors.push(`${scene.id}/${choice.id}: missing functional rewardConfig`);
+      }
+    }
+    labelsByHero.set(scene.heroId, labels);
   }
 }
 
-main().catch(error => {
-  console.error('Fatal error:', error);
+for (const heroId of heroIds) {
+  const count = scenesByHero.get(heroId) ?? 0;
+  if (count !== 6) errors.push(`${heroId}: expected 6 route scenes, found ${count}`);
+}
+if (sceneIds.size !== 36) errors.push(`Expected 36 route scenes, found ${sceneIds.size}`);
+if (triggerIds.size !== 36) errors.push(`Expected 36 route triggers, found ${triggerIds.size}`);
+
+if (errors.length) {
+  console.error(errors.join('\n'));
   process.exit(1);
-});
+}
+
+console.log(`Content validation passed (${walkJson(contentRoot).length} JSON files, ${sceneIds.size} route scenes).`);

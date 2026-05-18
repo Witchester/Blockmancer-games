@@ -1,0 +1,360 @@
+{
+  "routeId": "route_pippa_pyromancer",
+  "heroId": "hero_pippa_pyromancer",
+  "scenes": [
+    {
+      "id": "SCN_PIPPA_01_SPRINKLE_SEWERS",
+      "heroId": "hero_pippa_pyromancer",
+      "stageId": "stage_sprinkle_sewers",
+      "triggerId": "trig_pippa_01_cupcake_slime_batch",
+      "triggerCondition": { "type": "first_eligible_event_node", "stageId": "stage_sprinkle_sewers", "heroId": "hero_pippa_pyromancer", "oncePerRun": true },
+      "locationName": "Sprinkle Sewers - Frosting Overflow Gate",
+      "title": "The Batch That Bit Back",
+      "storyBeat": "A cupcake slime batch is hungry, sticky, and wrongly blamed.",
+      "storyboardPanels": ["Cupcake Slimes huddle around a dented tray.", "A tiny slime gives a crumb to a jelly rat.", "Pippa lowers her whisk-wand."],
+      "preChoiceDialogue": [
+        { "speakerId": "hero_pippa_pyromancer", "text": "That is my tray, my frosting, and my emergency cupcake batch." },
+        { "speakerId": "npc_block_o_matic", "text": "Dessert recovery target is also an improvised community meal." },
+        { "speakerId": "hero_pippa_pyromancer", "text": "I did not come here to steal dinner from something smaller than my mixing bowl." }
+      ],
+      "choices": [
+        {
+          "id": "pippa_01_practical",
+          "lane": "practical",
+          "label": "Scrape the Frosting Valve",
+          "playerLine": "Nobody eats beside a leaking valve. Back up. I am scraping this clean.",
+          "npcResponse": [{ "speakerId": "npc_cupcake_slime", "text": "Gloop!" }],
+          "narration": "Pippa clears the frosting spill with careful bursts of fire. The slimes return when the floor is safe.",
+          "gameplayResult": "Gain a sticky-cleanup item.",
+          "rewardConfig": { "rewardId": "route_pippa_01_festival_mop", "rewardType": "item", "itemId": "item_festival_mop", "amount": 1 },
+          "statDelta": { "practicalScore": 1 }
+        },
+        {
+          "id": "pippa_01_true",
+          "lane": "true",
+          "label": "Split the Emergency Batch",
+          "playerLine": "Half the tray comes home. Half stays here. Sit in a line and chew slowly.",
+          "npcResponse": [{ "speakerId": "npc_cupcake_slime", "text": "Gloooop." }],
+          "narration": "The smallest slime reveals a sugar-marked tunnel map. The slimes were hiding food from a larger bully.",
+          "gameplayResult": "Gain healing and a warmer slime callback.",
+          "rewardConfig": { "rewardId": "route_pippa_01_shared_batch", "rewardType": "heal", "amount": 6 },
+          "statDelta": { "trueScore": 1 },
+          "grantFlag": "pippa_flag_spared_cupcake_slime_batch"
+        },
+        {
+          "id": "pippa_01_risky",
+          "lane": "risky",
+          "label": "Caramelize the Spillway",
+          "playerLine": "Stand clear. I am giving this sewer one proper caramel shell.",
+          "npcResponse": [{ "speakerId": "npc_block_o_matic", "text": "Caramelization radius exceeds polite dessert boundaries." }],
+          "narration": "Pippa seals the leak in a shining amber crust. It is beautiful, effective, and too dramatic.",
+          "gameplayResult": "Gain rare gold with sticky risk.",
+          "rewardConfig": { "rewardId": "route_pippa_01_caramel_gold", "rewardType": "gold", "amount": 45 },
+          "statDelta": { "riskyScore": 1 },
+          "riskConfig": { "rewardTier": "rare", "oopsieChance": 0.25, "hazardIncrease": "hazard_sticky_route_pressure" }
+        }
+      ],
+      "postChoiceBarks": [{ "speakerId": "hero_pippa_pyromancer", "text": "A tidy flame is still a flame. Respect both parts." }],
+      "victoryCallback": [{ "speakerId": "hero_pippa_pyromancer", "text": "The tray is lighter, the floor is safer, and nobody chewed through the handle." }],
+      "bossCallback": [
+        { "speakerId": "npc_cupcake_slime_king", "text": "GLOOOOP!" },
+        { "speakerId": "hero_pippa_pyromancer", "text": "I fed your little ones. We are having a very loud table-manners lesson." }
+      ]
+    },
+    {
+      "id": "SCN_PIPPA_02_GOBLIN_WORKSHOP",
+      "heroId": "hero_pippa_pyromancer",
+      "stageId": "stage_goblin_workshop",
+      "triggerId": "trig_pippa_02_oven_taught_to_rest",
+      "triggerCondition": { "type": "first_eligible_event_node", "stageId": "stage_goblin_workshop", "heroId": "hero_pippa_pyromancer", "oncePerRun": true },
+      "locationName": "Goblin Workshop - Trial Oven Assembly Line",
+      "title": "The Oven That Would Not Listen",
+      "storyBeat": "A goblin oven overheats because it was never taught to rest.",
+      "storyboardPanels": ["A sign reads PREHEAT FOREVER FOR BEST RESULTS.", "The Trial Oven spits bomb blocks.", "Pippa stares in professional horror."],
+      "preChoiceDialogue": [
+        { "speakerId": "hero_pippa_pyromancer", "text": "Preheat forever? Who wrote this? A spoon with confidence?" },
+        { "speakerId": "npc_wrench_goblin", "text": "It gets very hot very quickly! That is like baking, yes?" },
+        { "speakerId": "hero_pippa_pyromancer", "text": "That is arson wearing an apron." }
+      ],
+      "choices": [
+        {
+          "id": "pippa_02_practical",
+          "lane": "practical",
+          "label": "Douse the Overheat Tray",
+          "playerLine": "Water pan under the rack, vents open, sparks away from the dough.",
+          "npcResponse": [{ "speakerId": "npc_wrench_goblin", "text": "But the sparks make it look successful!" }],
+          "narration": "Pippa lowers the oven heat and clears the most dangerous bomb blocks.",
+          "gameplayResult": "Gain a Firecracker Sugar catalyst.",
+          "rewardConfig": { "rewardId": "route_pippa_02_firecracker", "rewardType": "item", "itemId": "item_firecracker_sugar", "amount": 1 },
+          "statDelta": { "practicalScore": 1 }
+        },
+        {
+          "id": "pippa_02_true",
+          "lane": "true",
+          "label": "Teach the Oven to Rest",
+          "playerLine": "A good oven breathes. Hot, then steady. Bright, then patient.",
+          "npcResponse": [{ "speakerId": "npc_block_o_matic", "text": "Oven temperament adjusted. Probability of edible machinery improved." }],
+          "narration": "The oven glow softens. It learns heat can help without shouting.",
+          "gameplayResult": "Boss hazards reveal earlier.",
+          "rewardConfig": { "rewardId": "route_pippa_02_oven_warning", "rewardType": "boss_modifier", "modifierId": "route_preview_warning_oven", "amount": 3, "duration": "boss" },
+          "statDelta": { "trueScore": 1 },
+          "grantFlag": "pippa_flag_relit_responsible_oven"
+        },
+        {
+          "id": "pippa_02_risky",
+          "lane": "risky",
+          "label": "Flash-Bake the Gear Jam",
+          "playerLine": "Three seconds of festival heat and a lesson in crisp edges.",
+          "npcResponse": [{ "speakerId": "npc_block_o_matic", "text": "Temperature spike noted. Aromatic but hazardous." }],
+          "narration": "Pippa flash-bakes the jammed gears loose. The belts run beautifully, then throw a warm screw.",
+          "gameplayResult": "Gain gold with machine risk.",
+          "rewardConfig": { "rewardId": "route_pippa_02_flash_gold", "rewardType": "gold", "amount": 50 },
+          "statDelta": { "riskyScore": 1 },
+          "riskConfig": { "rewardTier": "rare", "oopsieChance": 0.25, "hazardIncrease": "hazard_machine_junk_route" }
+        }
+      ],
+      "postChoiceBarks": [{ "speakerId": "hero_pippa_pyromancer", "text": "Proper heat, proper timing, fewer goblin lawsuits." }],
+      "victoryCallback": [{ "speakerId": "hero_pippa_pyromancer", "text": "Still ridiculous, but now it is ridiculous with a timer." }],
+      "bossCallback": [
+        { "speakerId": "npc_prototype_no_7", "text": "MAXIMUM PREHEAT ENGAGED!" },
+        { "speakerId": "hero_pippa_pyromancer", "text": "No. Steady heat. You will rise properly." }
+      ]
+    },
+    {
+      "id": "SCN_PIPPA_03_FROSTY_PANTRY",
+      "heroId": "hero_pippa_pyromancer",
+      "stageId": "stage_frosty_pantry",
+      "triggerId": "trig_pippa_03_frozen_share_crates",
+      "triggerCondition": { "type": "first_eligible_event_node", "stageId": "stage_frosty_pantry", "heroId": "hero_pippa_pyromancer", "oncePerRun": true },
+      "locationName": "Frosty Pantry - Gelato Crate Hall",
+      "title": "The Batch Under Ice",
+      "storyBeat": "Frozen share-crates must be warmed without spoiling food.",
+      "storyboardPanels": ["Cake crates sit sealed beside gelato tubs.", "Pippa's whisk flares, then lowers.", "An imp sneezes frost onto a pastry label."],
+      "preChoiceDialogue": [
+        { "speakerId": "hero_pippa_pyromancer", "text": "Those are my festival sponge rolls. Frozen solid beside gelato. Storage crime with witnesses." },
+        { "speakerId": "hero_nixie_frostbinder", "text": "Warm too quickly and the cream splits." },
+        { "speakerId": "hero_pippa_pyromancer", "text": "That is why I am measuring my fury." }
+      ],
+      "choices": [
+        {
+          "id": "pippa_03_practical",
+          "lane": "practical",
+          "label": "Clear the Freezer Vents",
+          "playerLine": "Vents first. Then crates. Then a strongly worded tart.",
+          "npcResponse": [{ "speakerId": "hero_nixie_frostbinder", "text": "A tart can be strongly worded?" }],
+          "narration": "Pippa clears ice from the vents with small controlled flames.",
+          "gameplayResult": "Gain freeze counterplay.",
+          "rewardConfig": { "rewardId": "route_pippa_03_hot_cocoa", "rewardType": "item", "itemId": "item_hot_cocoa", "amount": 1 },
+          "statDelta": { "practicalScore": 1 }
+        },
+        {
+          "id": "pippa_03_true",
+          "lane": "true",
+          "label": "Thaw by the Crumb",
+          "playerLine": "Low flame. Slow circle. A cake comes back quietly if you respect it.",
+          "npcResponse": [{ "speakerId": "npc_snowcone_sprite", "text": "Brrip?" }],
+          "narration": "The crates thaw without splitting, sagging, or flooding. Pippa sets aside a shared dessert bundle.",
+          "gameplayResult": "Heal and protect the pantry route.",
+          "rewardConfig": { "rewardId": "route_pippa_03_shared_crate", "rewardType": "heal", "amount": 8 },
+          "statDelta": { "trueScore": 1 },
+          "grantFlag": "pippa_flag_warmed_frozen_share_crates"
+        },
+        {
+          "id": "pippa_03_risky",
+          "lane": "risky",
+          "label": "Crack the Sugar Ice",
+          "playerLine": "One clean crack. No crumbs lost, no gelato bullied.",
+          "npcResponse": [{ "speakerId": "npc_block_o_matic", "text": "Thermal confidence high. Dessert regret possible." }],
+          "narration": "Pippa cracks the sugar ice in a bright ring. Rare ingredients tumble free with extra frost.",
+          "gameplayResult": "Gain mana with freeze risk.",
+          "rewardConfig": { "rewardId": "route_pippa_03_sugar_ice", "rewardType": "mana", "amount": 24 },
+          "statDelta": { "riskyScore": 1 },
+          "riskConfig": { "rewardTier": "stage", "oopsieChance": 0.25, "hazardIncrease": "hazard_freeze_route_pressure" }
+        }
+      ],
+      "postChoiceBarks": [{ "speakerId": "hero_pippa_pyromancer", "text": "Nobody is becoming regret on my watch." }],
+      "victoryCallback": [{ "speakerId": "hero_pippa_pyromancer", "text": "The cakes held shape. The gelato kept dignity. Acceptable." }],
+      "bossCallback": [
+        { "speakerId": "npc_gelato_golem", "text": "FROZEN STORES ARE SAFE STORES." },
+        { "speakerId": "hero_pippa_pyromancer", "text": "Safe food still needs to be served." }
+      ]
+    },
+    {
+      "id": "SCN_PIPPA_04_PILLOW_CASTLE",
+      "heroId": "hero_pippa_pyromancer",
+      "stageId": "stage_pillow_castle",
+      "triggerId": "trig_pippa_04_midnight_rolls",
+      "triggerCondition": { "type": "first_eligible_event_node", "stageId": "stage_pillow_castle", "heroId": "hero_pippa_pyromancer", "oncePerRun": true },
+      "locationName": "Pillow Castle - Moonlit Guard Pantry",
+      "title": "The Rolls Before the Alarm",
+      "storyBeat": "Sleepy guards need midnight rolls more than alarms.",
+      "storyboardPanels": ["Guards nap beside cold crumb plates.", "A blanket alarm twitches.", "Pippa finds an unused roll tray."],
+      "preChoiceDialogue": [
+        { "speakerId": "hero_pippa_pyromancer", "text": "Those guards are not lazy. They are empty." },
+        { "speakerId": "npc_sleepy_guard", "text": "Alarm later. Roll now?" },
+        { "speakerId": "hero_pippa_pyromancer", "text": "Finally, a castle policy I can support." }
+      ],
+      "choices": [
+        {
+          "id": "pippa_04_practical",
+          "lane": "practical",
+          "label": "Toast the Guard Crumbs",
+          "playerLine": "Crumbs first. Warm crumbs are morale with edges.",
+          "npcResponse": [{ "speakerId": "npc_sleepy_guard", "text": "Mmm. Tactical toast." }],
+          "narration": "Pippa toasts stale crumbs into quick guard snacks and steadies the room.",
+          "gameplayResult": "Gain shield.",
+          "rewardConfig": { "rewardId": "route_pippa_04_toast_shield", "rewardType": "shield", "amount": 6 },
+          "statDelta": { "practicalScore": 1 }
+        },
+        {
+          "id": "pippa_04_true",
+          "lane": "true",
+          "label": "Bake Midnight Rolls",
+          "playerLine": "No alarms. Rolls. A warm guard wakes kindly.",
+          "npcResponse": [{ "speakerId": "npc_sleepy_guard", "text": "Kindly... with butter." }],
+          "narration": "Pippa bakes small midnight rolls and the guards wake by scent instead of panic.",
+          "gameplayResult": "Heal and soften Sleepy boss pressure.",
+          "rewardConfig": { "rewardId": "route_pippa_04_midnight_heal", "rewardType": "heal", "amount": 7 },
+          "statDelta": { "trueScore": 1 },
+          "grantFlag": "pippa_flag_baked_midnight_rolls"
+        },
+        {
+          "id": "pippa_04_risky",
+          "lane": "risky",
+          "label": "Torch the Blanket Tangle",
+          "playerLine": "I am using a precise flame. Anyone saying bonfire gets no roll.",
+          "npcResponse": [{ "speakerId": "npc_festival_announcer", "text": "Blanket safety review begins immediately." }],
+          "narration": "Pippa burns away the tangle fast. It works, but the castle wakes brighter than planned.",
+          "gameplayResult": "Gain Fever with sleepy risk.",
+          "rewardConfig": { "rewardId": "route_pippa_04_blanket_fever", "rewardType": "battle_modifier", "modifierId": "route_fever", "amount": 14 },
+          "statDelta": { "riskyScore": 1 },
+          "riskConfig": { "rewardTier": "stage", "oopsieChance": 0.25, "hazardIncrease": "hazard_sleep_route_pressure" }
+        }
+      ],
+      "postChoiceBarks": [{ "speakerId": "hero_pippa_pyromancer", "text": "No panic near rising dough." }],
+      "victoryCallback": [{ "speakerId": "hero_pippa_pyromancer", "text": "Fed, rested, and no one yelled into a pillow. Good service." }],
+      "bossCallback": [
+        { "speakerId": "npc_sir_snore_a_lot", "text": "Who disturbs the sacred nap?" },
+        { "speakerId": "hero_pippa_pyromancer", "text": "The baker with rolls. Sit up slowly." }
+      ]
+    },
+    {
+      "id": "SCN_PIPPA_05_STARFALL_ARCADE",
+      "heroId": "hero_pippa_pyromancer",
+      "stageId": "stage_starfall_arcade",
+      "triggerId": "trig_pippa_05_prize_cake_share",
+      "triggerCondition": { "type": "first_eligible_event_node", "stageId": "stage_starfall_arcade", "heroId": "hero_pippa_pyromancer", "oncePerRun": true },
+      "locationName": "Starfall Arcade - Prize Cake Counter",
+      "title": "The Prize Cake Problem",
+      "storyBeat": "The prize cake tempts Pippa to win loudly or share fairly.",
+      "storyboardPanels": ["A prize cake spins under neon lights.", "Players crowd around ticket slots.", "Pippa notices no serving knife."],
+      "preChoiceDialogue": [
+        { "speakerId": "hero_pippa_pyromancer", "text": "That cake is being treated like a trophy. Terrible use of cake." },
+        { "speakerId": "npc_high_score_hydra", "text": "WINNER EATS!" },
+        { "speakerId": "hero_pippa_pyromancer", "text": "Incorrect. Winner serves." }
+      ],
+      "choices": [
+        {
+          "id": "pippa_05_practical",
+          "lane": "practical",
+          "label": "Win the Cake Fairly",
+          "playerLine": "Clean score, clean slice, clean tray.",
+          "npcResponse": [{ "speakerId": "npc_festival_announcer", "text": "Cake competition standards restored." }],
+          "narration": "Pippa wins without scorching the scoreboard and secures the prize table.",
+          "gameplayResult": "Gain a Lucky Ticket.",
+          "rewardConfig": { "rewardId": "route_pippa_05_lucky_ticket", "rewardType": "item", "itemId": "item_lucky_ticket", "amount": 1 },
+          "statDelta": { "practicalScore": 1 }
+        },
+        {
+          "id": "pippa_05_true",
+          "lane": "true",
+          "label": "Open the Shared Plate",
+          "playerLine": "Cake tastes better when nobody has to beat a hydra to smell it.",
+          "npcResponse": [{ "speakerId": "npc_high_score_hydra", "text": "SHARED SCORE CONFUSING." }],
+          "narration": "Pippa cuts the prize cake into fair slices. The arcade crowd cheers for the first low score that gets a plate.",
+          "gameplayResult": "Heal and improve final arcade callback.",
+          "rewardConfig": { "rewardId": "route_pippa_05_shared_plate", "rewardType": "heal", "amount": 8 },
+          "statDelta": { "trueScore": 1 },
+          "grantFlag": "pippa_flag_shared_prize_cakes"
+        },
+        {
+          "id": "pippa_05_risky",
+          "lane": "risky",
+          "label": "Flambe the Scoreboard",
+          "playerLine": "If the board insists on drama, I can plate drama.",
+          "npcResponse": [{ "speakerId": "npc_festival_announcer", "text": "Scoreboard garnish escalating." }],
+          "narration": "Pippa turns the score display into a harmless crown of fire. The crowd loves it; the machine gets competitive.",
+          "gameplayResult": "Gain gold with preview pressure risk.",
+          "rewardConfig": { "rewardId": "route_pippa_05_flambe_gold", "rewardType": "gold", "amount": 65 },
+          "statDelta": { "riskyScore": 1 },
+          "riskConfig": { "rewardTier": "rare", "oopsieChance": 0.25, "hazardIncrease": "hazard_preview_route_pressure" }
+        }
+      ],
+      "postChoiceBarks": [{ "speakerId": "hero_pippa_pyromancer", "text": "A prize not shared is just frosting with an ego." }],
+      "victoryCallback": [{ "speakerId": "hero_pippa_pyromancer", "text": "The cake is gone. The plate is full of crumbs. Correct ending." }],
+      "bossCallback": [
+        { "speakerId": "npc_high_score_hydra", "text": "ONLY HIGHEST SCORE EATS!" },
+        { "speakerId": "hero_pippa_pyromancer", "text": "Then your rules are underbaked." }
+      ]
+    },
+    {
+      "id": "SCN_PIPPA_06_BLOXLEY_PALACE",
+      "heroId": "hero_pippa_pyromancer",
+      "stageId": "stage_bloxley_block_palace",
+      "triggerId": "trig_pippa_06_square_cake_soft_center",
+      "triggerCondition": { "type": "first_eligible_event_node", "stageId": "stage_bloxley_block_palace", "heroId": "hero_pippa_pyromancer", "oncePerRun": true },
+      "locationName": "Bloxley's Block Palace - Square Banquet Hall",
+      "title": "The Cake With No Give",
+      "storyBeat": "Bloxley demands a square cake, but Pippa can bake structure with a soft center.",
+      "storyboardPanels": ["A flawless square cake sits under glass.", "Royal blocks line up like hard frosting seams.", "Pippa taps the cake and frowns."],
+      "preChoiceDialogue": [
+        { "speakerId": "hero_pippa_pyromancer", "text": "This cake is perfect. That was not a compliment." },
+        { "speakerId": "npc_king_bloxley", "text": "A cake should stand straight and never sag into sentiment!" },
+        { "speakerId": "hero_pippa_pyromancer", "text": "A cake should make someone glad they came in from the cold." }
+      ],
+      "choices": [
+        {
+          "id": "pippa_06_practical",
+          "lane": "practical",
+          "label": "Loosen the Royal Frosting",
+          "playerLine": "Too tight, and the whole thing cracks under the knife.",
+          "npcResponse": [{ "speakerId": "npc_king_bloxley", "text": "My frosting seams are regal!" }],
+          "narration": "Pippa softens the palace's frosting-like seals.",
+          "gameplayResult": "Gain shield for the final boss.",
+          "rewardConfig": { "rewardId": "route_pippa_06_frosting_shield", "rewardType": "shield", "amount": 8, "duration": "boss" },
+          "statDelta": { "practicalScore": 1 }
+        },
+        {
+          "id": "pippa_06_true",
+          "lane": "true",
+          "label": "Bake the Crooked Center",
+          "playerLine": "Proper edges. Clean corners. But the center stays soft.",
+          "npcResponse": [{ "speakerId": "npc_king_bloxley", "text": "A soft center is structural weakness!" }],
+          "narration": "Pippa bakes a square cake with warm golden edges and a tender center. The palace smells butter and reconsiders.",
+          "gameplayResult": "Royal warnings improve for the final boss.",
+          "rewardConfig": { "rewardId": "route_pippa_06_soft_center", "rewardType": "boss_modifier", "modifierId": "route_preview_warning_royal", "amount": 4, "duration": "boss" },
+          "statDelta": { "trueScore": 1 },
+          "grantFlag": "pippa_flag_baked_square_cake_soft_center"
+        },
+        {
+          "id": "pippa_06_risky",
+          "lane": "risky",
+          "label": "Crown the Cake in Fire",
+          "playerLine": "If His Majesty insists on theater, I can provide theater.",
+          "npcResponse": [{ "speakerId": "npc_block_o_matic", "text": "Royal flambe event detected. Dessert visibility exceptional." }],
+          "narration": "Pippa crowns the square cake with harmless festival fire. The palace gasps and tightens its patterns.",
+          "gameplayResult": "Gain mana with royal risk.",
+          "rewardConfig": { "rewardId": "route_pippa_06_fire_crown", "rewardType": "mana", "amount": 30 },
+          "statDelta": { "riskyScore": 1 },
+          "riskConfig": { "rewardTier": "hero_themed", "oopsieChance": 0.25, "hazardIncrease": "hazard_royal_pattern_route" }
+        }
+      ],
+      "postChoiceBarks": [{ "speakerId": "hero_pippa_pyromancer", "text": "Corners are fine. Cruelty is not." }],
+      "victoryCallback": [{ "speakerId": "hero_pippa_pyromancer", "text": "The square held. The center stayed soft. That is baking." }],
+      "bossCallback": [
+        { "speakerId": "npc_king_bloxley", "text": "Order must be firm! Corners must command!" },
+        { "speakerId": "hero_pippa_pyromancer", "text": "A table can have corners and still make room." }
+      ]
+    }
+  ]
+}

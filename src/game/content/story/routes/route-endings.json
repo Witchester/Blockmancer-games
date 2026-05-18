@@ -1,0 +1,197 @@
+{
+  "endings": [
+    {
+      "id": "ending_milo_normal",
+      "heroId": "hero_milo_blockmancer",
+      "kind": "normal",
+      "title": "Junior Emergency Dungeon Organizer",
+      "panels": ["Milo returns to the festival with a clipboard.", "The blocks settle into friendlier corners."],
+      "lines": [
+        { "speakerId": "npc_festival_announcer", "text": "Milo is hereby promoted to Junior Emergency Dungeon Organizer." },
+        { "speakerId": "hero_milo_blockmancer", "text": "Acceptable corners are a fine beginning." }
+      ]
+    },
+    {
+      "id": "ending_milo_true",
+      "heroId": "hero_milo_blockmancer",
+      "kind": "true",
+      "title": "The Block Listener",
+      "panels": ["Milo invites the Block-O-Matic to the festival.", "The dungeon unfolds into safe festival games."],
+      "lines": [
+        { "speakerId": "hero_milo_blockmancer", "text": "Would you like to come to the festival as a guest?" },
+        { "speakerId": "npc_block_o_matic", "text": "Response: yes. Festival status: imperfect, audible, accepted." }
+      ]
+    },
+    {
+      "id": "ending_milo_festival_grace_variant",
+      "heroId": "hero_milo_blockmancer",
+      "kind": "variant",
+      "title": "Festival Grace Variant",
+      "panels": ["One crooked floor square begins to dance."],
+      "lines": [
+        { "speakerId": "npc_king_bloxley", "text": "The rhythm is irregular." },
+        { "speakerId": "hero_milo_blockmancer", "text": "Yes. Would you like the first dance?" }
+      ]
+    },
+    {
+      "id": "ending_pippa_normal",
+      "heroId": "hero_pippa_pyromancer",
+      "kind": "normal",
+      "title": "Emergency Festival Baker",
+      "panels": ["The Cake Stall reopens.", "Pippa pins NO PREHEAT WITHOUT PURPOSE above the oven."],
+      "lines": [
+        { "speakerId": "hero_pippa_pyromancer", "text": "The cakes smell like three hours of work, six ruined towels, and victory." },
+        { "speakerId": "npc_cupcake_slime", "text": "Gloop?" }
+      ]
+    },
+    {
+      "id": "ending_pippa_true",
+      "heroId": "hero_pippa_pyromancer",
+      "kind": "true",
+      "title": "The Hearthkeeper of Brixonia",
+      "panels": ["A long table unfolds from Bloxley's banquet hall.", "Pippa places a square cake with a soft center in the middle."],
+      "lines": [
+        { "speakerId": "npc_king_bloxley", "text": "This cake is square, but the center is soft." },
+        { "speakerId": "hero_pippa_pyromancer", "text": "Take a bite before filing a royal complaint." }
+      ]
+    },
+    {
+      "id": "ending_pippa_flambe_variant",
+      "heroId": "hero_pippa_pyromancer",
+      "kind": "variant",
+      "title": "Festival Flambe Variant",
+      "panels": ["A harmless golden fire blooms above a cake."],
+      "lines": [
+        { "speakerId": "npc_festival_announcer", "text": "Festival Flambe has passed safety review." },
+        { "speakerId": "hero_pippa_pyromancer", "text": "Barely is still baked." }
+      ]
+    },
+    {
+      "id": "ending_zuzu_normal",
+      "heroId": "hero_zuzu_goblin_engineer",
+      "kind": "normal",
+      "title": "Questionable Gadget Supervisor",
+      "panels": ["Zuzu gathers clamps and springs into a rolling toolbox.", "New warning labels appear across the festival."],
+      "lines": [
+        { "speakerId": "hero_zuzu_goblin_engineer", "text": "My repairs saved the festival from several problems, including possibly two that were mine." },
+        { "speakerId": "npc_block_o_matic", "text": "Warning-label compliance improved." }
+      ]
+    },
+    {
+      "id": "ending_zuzu_true",
+      "heroId": "hero_zuzu_goblin_engineer",
+      "kind": "true",
+      "title": "The Public Safety Engineer",
+      "panels": ["Zuzu opens the Public Test Garden.", "Every invention has a readable label and a reachable stop lever."],
+      "lines": [
+        { "speakerId": "hero_zuzu_goblin_engineer", "text": "No hidden overrides. No surprise participants. No clamp without a release lever." },
+        { "speakerId": "npc_king_bloxley", "text": "It is at least a well-aligned lever." }
+      ]
+    },
+    {
+      "id": "ending_zuzu_overclock_variant",
+      "heroId": "hero_zuzu_goblin_engineer",
+      "kind": "variant",
+      "title": "Festival Overclock Variant",
+      "panels": ["Fireworks bloom into wrench-shaped stars."],
+      "lines": [
+        { "speakerId": "hero_zuzu_goblin_engineer", "text": "Perfect. Terrifying. I have never been prouder of a non-explosion." }
+      ]
+    },
+    {
+      "id": "ending_nixie_normal",
+      "heroId": "hero_nixie_frostbinder",
+      "kind": "normal",
+      "title": "Festival Freezer Keeper",
+      "panels": ["Nixie's ice cream cart reopens.", "Some flavor labels remain shy."],
+      "lines": [
+        { "speakerId": "hero_nixie_frostbinder", "text": "Some flavors are still shy. I will not rush them." },
+        { "speakerId": "npc_block_o_matic", "text": "Frozen dessert availability restored. Public joy rising." }
+      ]
+    },
+    {
+      "id": "ending_nixie_true",
+      "heroId": "hero_nixie_frostbinder",
+      "kind": "true",
+      "title": "The Gentle Thaw",
+      "panels": ["Every flavor name returns to Nixie's ledger.", "Bloxley receives a round scoop in a square cup."],
+      "lines": [
+        { "speakerId": "hero_nixie_frostbinder", "text": "They were waiting to be called by name." },
+        { "speakerId": "npc_king_bloxley", "text": "I find this arrangement tolerable." }
+      ]
+    },
+    {
+      "id": "ending_nixie_aurora_variant",
+      "heroId": "hero_nixie_frostbinder",
+      "kind": "variant",
+      "title": "Aurora Variant",
+      "panels": ["The festival square becomes a harmless snowlight rink."],
+      "lines": [
+        { "speakerId": "hero_nixie_frostbinder", "text": "A little shimmer is allowed, if everyone lands softly." }
+      ]
+    },
+    {
+      "id": "ending_bruk_normal",
+      "heroId": "hero_bruk_snack_knight",
+      "kind": "normal",
+      "title": "Captain of Festival Provisions",
+      "panels": ["Bruk repairs the snack table with royal blocks.", "A polite line forms for seconds."],
+      "lines": [
+        { "speakerId": "hero_bruk_snack_knight", "text": "Let the table stand. Let the line move kindly. Let no snack be left behind." },
+        { "speakerId": "npc_cupcake_slime", "text": "Gloop? Seconds?" }
+      ]
+    },
+    {
+      "id": "ending_bruk_true",
+      "heroId": "hero_bruk_snack_knight",
+      "kind": "true",
+      "title": "The Knight of the Shared Table",
+      "panels": ["The palace becomes the Hall of Many Plates.", "Bruk places his shield at the center as a serving tray."],
+      "lines": [
+        { "speakerId": "npc_king_bloxley", "text": "This table is uneven." },
+        { "speakerId": "hero_bruk_snack_knight", "text": "More guests arrived than expected. Hospitality often is inefficient." }
+      ]
+    },
+    {
+      "id": "ending_bruk_banquet_variant",
+      "heroId": "hero_bruk_snack_knight",
+      "kind": "variant",
+      "title": "Festival Banquet Parade Variant",
+      "panels": ["The snack table grows wheels and marches under lanterns."],
+      "lines": [
+        { "speakerId": "hero_bruk_snack_knight", "text": "A table that cannot reach hungry guests must be carried." }
+      ]
+    },
+    {
+      "id": "ending_lumi_normal",
+      "heroId": "hero_lumi_star_witch",
+      "kind": "normal",
+      "title": "The Star Lantern Decorator",
+      "panels": ["Lumi repairs paper stars.", "Some wishes still flicker at the edge of the palace."],
+      "lines": [
+        { "speakerId": "hero_lumi_star_witch", "text": "Not every star comes home at once. Some need another night." }
+      ]
+    },
+    {
+      "id": "ending_lumi_true",
+      "heroId": "hero_lumi_star_witch",
+      "kind": "true",
+      "title": "The Wishkeeper of Falling Stars",
+      "panels": ["Lumi releases every wishlight gathered from the stages.", "The lights form a path, not a square."],
+      "lines": [
+        { "speakerId": "hero_lumi_star_witch", "text": "Now everyone has a way back." },
+        { "speakerId": "npc_block_o_matic", "text": "Festival sky configuration: acceptably wonderful." }
+      ]
+    },
+    {
+      "id": "ending_lumi_meteor_variant",
+      "heroId": "hero_lumi_star_witch",
+      "kind": "variant",
+      "title": "Meteor Parade Variant",
+      "panels": ["A meteor sparkle loops around the jelly fountain."],
+      "lines": [
+        { "speakerId": "npc_festival_announcer", "text": "Meteor Parade approved. Future meteors must register at the lantern booth." }
+      ]
+    }
+  ]
+}

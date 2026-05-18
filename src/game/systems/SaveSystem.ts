@@ -153,6 +153,29 @@ export class SaveSystem {
       };
     }
 
+    if (version < 5 || !isObject(migrated.routeProgress)) {
+      const heroId = isObject(migrated.hero) && typeof migrated.hero.id === 'string'
+        ? migrated.hero.id
+        : 'hero_milo_blockmancer';
+      migrated.routeProgress = {
+        activeHeroId: heroId,
+        routeVersion: 1,
+        heroes: {
+          [heroId]: {
+            heroId,
+            practicalScore: 0,
+            trueScore: 0,
+            riskyScore: 0,
+            trueFlags: [],
+            chosenScenes: {},
+            triggeredScenes: [],
+            unlockedEndingIds: [],
+            variantEndingIds: []
+          }
+        }
+      };
+    }
+
     return migrated;
   }
 
@@ -166,6 +189,8 @@ export class SaveSystem {
       ...(stage2BossDefeated ? ['stage_2_boss'] : [])
     ]);
     const endingsUnlocked = uniqueStrings(raw.endingsUnlocked, normalEndingFinished ? ['normal'] : []);
+    const routeEndingsUnlocked = uniqueStrings(raw.routeEndingsUnlocked);
+    const routeVariantEndingsUnlocked = uniqueStrings(raw.routeVariantEndingsUnlocked);
 
     return {
       saveVersion: CURRENT_SAVE_VERSION,
@@ -178,6 +203,8 @@ export class SaveSystem {
           : 0,
       bossesDefeated,
       endingsUnlocked,
+      routeEndingsUnlocked,
+      routeVariantEndingsUnlocked,
       hubBuildings: isObject(raw.hubBuildings) ? raw.hubBuildings as Record<string, number> : {},
       monsterFriendship: isObject(raw.monsterFriendship) ? raw.monsterFriendship as Record<string, number> : {},
       completedStageGoals: uniqueStrings(raw.completedStageGoals),

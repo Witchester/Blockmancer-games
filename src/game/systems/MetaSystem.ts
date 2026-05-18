@@ -11,6 +11,8 @@ const DEFAULT_META_STATE: MetaState = {
   totalCascades: 0,
   bossesDefeated: [],
   endingsUnlocked: [],
+  routeEndingsUnlocked: [],
+  routeVariantEndingsUnlocked: [],
   hubBuildings: {},
   monsterFriendship: {},
   completedStageGoals: [],
@@ -42,6 +44,8 @@ export class MetaSystem {
       unlockedHeroes: loaded?.unlockedHeroes ? [...loaded.unlockedHeroes] : [],
       bossesDefeated: loaded?.bossesDefeated ? [...loaded.bossesDefeated] : [],
       endingsUnlocked: loaded?.endingsUnlocked ? [...loaded.endingsUnlocked] : [],
+      routeEndingsUnlocked: loaded?.routeEndingsUnlocked ? [...loaded.routeEndingsUnlocked] : [],
+      routeVariantEndingsUnlocked: loaded?.routeVariantEndingsUnlocked ? [...loaded.routeVariantEndingsUnlocked] : [],
       hubBuildings: { ...(loaded?.hubBuildings || {}) },
       monsterFriendship: { ...(loaded?.monsterFriendship || {}) },
       completedStageGoals: loaded?.completedStageGoals ? [...loaded.completedStageGoals] : [],
@@ -147,6 +151,26 @@ export class MetaSystem {
   unlockTrueEnding(): void {
     if (!this.meta.endingsUnlocked.includes('true')) {
       this.meta.endingsUnlocked.push('true');
+    }
+    this.save();
+  }
+
+  unlockRouteEnding(endingId: string): void {
+    if (!this.meta.routeEndingsUnlocked.includes(endingId)) {
+      this.meta.routeEndingsUnlocked.push(endingId);
+    }
+    if (!this.meta.endingsUnlocked.includes(endingId)) {
+      this.meta.endingsUnlocked.push(endingId);
+    }
+    this.save();
+  }
+
+  unlockRouteVariantEnding(endingId: string): void {
+    if (!this.meta.routeVariantEndingsUnlocked.includes(endingId)) {
+      this.meta.routeVariantEndingsUnlocked.push(endingId);
+    }
+    if (!this.meta.endingsUnlocked.includes(endingId)) {
+      this.meta.endingsUnlocked.push(endingId);
     }
     this.save();
   }

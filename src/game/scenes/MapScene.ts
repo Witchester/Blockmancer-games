@@ -244,6 +244,9 @@ export class MapScene extends Phaser.Scene {
 
     switch (node.roomType) {
       case 'event':
+        if (this.startRouteSceneIfNeeded('first_eligible_event_node', 'EventScene')) {
+          return;
+        }
         this.gameState.runState.runStatus = 'map';
         this.gameState.saveRun();
         this.scene.start('EventScene');
@@ -311,6 +314,23 @@ export class MapScene extends Phaser.Scene {
     this.log(`${enemy.name} emerges with ${enemy.maxHp} HP.`);
     this.gameState.saveRun();
     this.scene.start('BattleScene');
+  }
+
+  private startRouteSceneIfNeeded(context: 'first_eligible_event_node' | 'after_first_combat_victory', returnScene: string): boolean {
+    const state = this.gameState.runState;
+    const stageId = this.gameState.stageSystem.getStageByIndex(state.stage)?.id ?? 'stage_sprinkle_sewers';
+    const scene = this.gameState.routeStorySystem.shouldTriggerRouteScene(state, state.hero.id, stageId, context);
+    if (!scene) {
+      return false;
+    }
+    this.log(`Route story: ${scene.title}.`);
+    state.runStatus = 'map';
+    this.gameState.saveRun();
+    this.scene.start('RouteDialogueScene', {
+      sceneId: scene.id,
+      returnScene
+    });
+    return true;
   }
 
   private isCompactLayout(): boolean {

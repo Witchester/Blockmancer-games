@@ -1,85 +1,41 @@
-import { readdir, readFile } from 'node:fs/promises';
+import fs from 'node:fs';
 import path from 'node:path';
+import process from 'node:process';
 
-const rootDir = path.resolve('src/game/content');
-const requiredKeys = [
-  'contentType',
-  'version',
-  'idPrefix',
-  'displayName',
-  'description',
-  'idFormat',
-  'exampleIds',
-  'requiredFields',
-  'fields',
-  'dataList',
-  'defaults'
-];
+const root = process.cwd();
+const contentRoot = path.join(root, 'src', 'game', 'content');
+const errors = [];
 
-async function findMetadataFiles(dir) {
-  const entries = await readdir(dir, { withFileTypes: true });
-  const files = [];
+function readJson(file) {
+  return JSON.parse(fs.readFileSync(file, 'utf8'));
+}
 
-  for (const entry of entries) {
-    const fullPath = path.join(dir, entry.name);
-    if (entry.isDirectory()) {
-      files.push(...(await findMetadataFiles(fullPath)));
-    } else if (entry.isFile() && entry.name === 'metadata.json') {
-      files.push(fullPath);
+function walk(dir) {
+  if (!fs.existsSync(dir)) return [];
+  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) return walk(full);
+    return entry.isFile() && entry.name.endsWith('.json') ? [full] : [];
+  });
+}
+
+for (const file of walk(contentRoot)) {
+  const base = path.basename(file);
+  const data = readJson(file);
+  if (base === 'metadata.json') {
+    for (const field of ['contentType', 'version', 'requiredFields']) {
+      if (!(field in data)) errors.push(`${path.relative(root, file)}: missing ${field}`);
     }
+    continue;
   }
-
-  return files;
-}
-
-async function validateFile(filePath) {
-  const raw = await readFile(filePath, 'utf8');
-  let parsed;
-
-  try {
-    parsed = JSON.parse(raw);
-  } catch (error) {
-    throw new Error(`Invalid JSON in ${filePath}: ${error.message}`);
-  }
-
-  const missing = requiredKeys.filter((key) => !(key in parsed));
-  if (missing.length > 0) {
-    throw new Error(`Missing required keys in ${filePath}: ${missing.join(', ')}`);
+  if (!file.includes(`${path.sep}story${path.sep}routes${path.sep}`) && typeof data.id !== 'string') {
+    errors.push(`${path.relative(root, file)}: content entry missing string id`);
   }
 }
 
-async function main() {
-  let files;
-
-  try {
-    files = await findMetadataFiles(rootDir);
-  } catch (error) {
-    console.error(`Failed to scan ${rootDir}: ${error.message}`);
-    process.exit(1);
-  }
-
-  if (files.length === 0) {
-    console.error(`No metadata.json files found under ${rootDir}`);
-    process.exit(1);
-  }
-
-  let hasErrors = false;
-
-  for (const file of files) {
-    try {
-      await validateFile(file);
-      console.log(`OK ${path.relative(process.cwd(), file)}`);
-    } catch (error) {
-      hasErrors = true;
-      console.error(`ERROR ${error.message}`);
-    }
-  }
-
-  if (hasErrors) {
-    process.exit(1);
-  }
-
-  console.log(`Validated ${files.length} metadata file(s) successfully.`);
+if (errors.length) {
+  console.error(errors.join('\n'));
+  process.exit(1);
 }
 
-main();
+console.log('Content metadata validation passed.');

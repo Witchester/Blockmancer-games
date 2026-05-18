@@ -1,0 +1,150 @@
+{
+  "routeId": "route_nixie_frostbinder",
+  "heroId": "hero_nixie_frostbinder",
+  "scenes": [
+    {
+      "id": "SCN_NIXIE_01_SPRINKLE_SEWERS",
+      "heroId": "hero_nixie_frostbinder",
+      "stageId": "stage_sprinkle_sewers",
+      "triggerId": "trig_nixie_01_warm_syrup_hidden",
+      "triggerCondition": { "type": "first_eligible_event_node", "stageId": "stage_sprinkle_sewers", "heroId": "hero_nixie_frostbinder", "oncePerRun": true },
+      "locationName": "Sprinkle Sewers - Warm Syrup Grate",
+      "title": "The Warm Syrup Under the Frosting",
+      "storyBeat": "Warm syrup hides inside the chilled frosting flow.",
+      "storyboardPanels": ["Rainbow syrup glows beneath grates.", "Bloop melts into a tiny puddle shape.", "Nixie cools only the edge."],
+      "preChoiceDialogue": [
+        { "speakerId": "npc_block_o_matic", "text": "Syrup velocity exceeds recommended festival sweetness." },
+        { "speakerId": "hero_nixie_frostbinder", "text": "Poor thing. You are not melting. You are being hurried." },
+        { "speakerId": "hero_nixie_frostbinder", "text": "Let me cool the edge. Not the heart." }
+      ],
+      "choices": [
+        { "id": "nixie_01_practical", "lane": "practical", "label": "Cool the Frosting Flow", "playerLine": "A calmer syrup makes a cleaner board.", "npcResponse": [{ "speakerId": "npc_bloop", "text": "Bloop." }], "narration": "Nixie cools the pipe seams without freezing them shut.", "gameplayResult": "Gain a Snowcone.", "rewardConfig": { "rewardId": "route_nixie_01_snowcone", "rewardType": "item", "itemId": "item_snowcone", "amount": 1 }, "statDelta": { "practicalScore": 1 } },
+        { "id": "nixie_01_true", "lane": "true", "label": "Taste the Rainbow Melt", "playerLine": "This syrup is carrying a flavor. I should know it before I silence it.", "npcResponse": [{ "speakerId": "npc_bloop", "text": "Bloo...op." }], "narration": "Nixie recognizes part of her rainbow gelato supply, warmed until it forgot its shape.", "gameplayResult": "Gain freeze and sticky warning guard.", "rewardConfig": { "rewardId": "route_nixie_01_melt_warning", "rewardType": "hazard_modifier", "modifierId": "route_freeze_warning_guard", "amount": 4, "duration": "stage" }, "statDelta": { "trueScore": 1 }, "grantFlag": "nixie_flag_sensed_warm_syrup" },
+        { "id": "nixie_01_risky", "lane": "risky", "label": "Freeze the Sprinkle Tide", "playerLine": "A bright freeze, quick and just dramatic enough.", "npcResponse": [{ "speakerId": "npc_bloop", "text": "Bloop-bloop!" }], "narration": "The syrup becomes glittering candy glass. The floor sparkles and slides.", "gameplayResult": "Gain gold with slippery risk.", "rewardConfig": { "rewardId": "route_nixie_01_freeze_gold", "rewardType": "gold", "amount": 45 }, "statDelta": { "riskyScore": 1 }, "riskConfig": { "rewardTier": "stage", "oopsieChance": 0.25, "hazardIncrease": "hazard_speed_wave_route" } }
+      ],
+      "postChoiceBarks": [{ "speakerId": "hero_nixie_frostbinder", "text": "Slow hands. Clear eyes. Let the board cool into place." }],
+      "victoryCallback": [{ "speakerId": "hero_nixie_frostbinder", "text": "The syrup remembers it is sweet, not frantic." }],
+      "bossCallback": [{ "speakerId": "hero_nixie_frostbinder", "text": "Your frosting is too warm, little king. Sit still. We will save the flavor." }]
+    },
+    {
+      "id": "SCN_NIXIE_02_GOBLIN_WORKSHOP",
+      "heroId": "hero_nixie_frostbinder",
+      "stageId": "stage_goblin_workshop",
+      "triggerId": "trig_nixie_02_cool_machine_keep_purpose",
+      "triggerCondition": { "type": "first_eligible_event_node", "stageId": "stage_goblin_workshop", "heroId": "hero_nixie_frostbinder", "oncePerRun": true },
+      "locationName": "Goblin Workshop - Boiler Belt",
+      "title": "Heat in the Helpful Machine",
+      "storyBeat": "A machine needs cooling without being forced silent.",
+      "storyboardPanels": ["A gauge trembles at Completely Fine.", "Toy bombs roll in polite circles.", "Nixie traces frost along one gear tooth."],
+      "preChoiceDialogue": [
+        { "speakerId": "hero_zuzu_goblin_engineer", "text": "If the gauge is shaking, it is technically still attached." },
+        { "speakerId": "hero_nixie_frostbinder", "text": "That is not a rule. That is a confession with bolts." },
+        { "speakerId": "hero_nixie_frostbinder", "text": "It wants to help. Stopping it is simple, but not kind." }
+      ],
+      "choices": [
+        { "id": "nixie_02_practical", "lane": "practical", "label": "Lower the Boiler Heat", "playerLine": "Helpful machines should not steam like soup.", "npcResponse": [{ "speakerId": "npc_block_o_matic", "text": "Workshop fever reduced." }], "narration": "Nixie lowers the boiler heat and slows the worst junk bursts.", "gameplayResult": "Gain Speed Brake.", "rewardConfig": { "rewardId": "route_nixie_02_speed_brake", "rewardType": "item", "itemId": "item_speed_brake", "amount": 1 }, "statDelta": { "practicalScore": 1 } },
+        { "id": "nixie_02_true", "lane": "true", "label": "Cool the Machine Without Stopping It", "playerLine": "Little engine, keep your purpose. Lose only the fever.", "npcResponse": [{ "speakerId": "hero_zuzu_goblin_engineer", "text": "That is annoyingly good engineering." }], "narration": "The machine keeps helping, slowly enough to choose what help means.", "gameplayResult": "Gadget hazards warn earlier.", "rewardConfig": { "rewardId": "route_nixie_02_cool_warning", "rewardType": "stage_modifier", "modifierId": "route_preview_warning_machine", "amount": 3, "duration": "stage" }, "statDelta": { "trueScore": 1 }, "grantFlag": "nixie_flag_cooled_machine_without_stopping_it" },
+        { "id": "nixie_02_risky", "lane": "risky", "label": "Skate the Conveyor Loop", "playerLine": "If the belt insists on moving, I will make it graceful.", "npcResponse": [{ "speakerId": "hero_zuzu_goblin_engineer", "text": "Not a standard safety category. Deeply interesting." }], "narration": "The belt becomes a glittering track. Pieces arrive faster, but clearer.", "gameplayResult": "Gain extra preview with speed risk.", "rewardConfig": { "rewardId": "route_nixie_02_extra_preview", "rewardType": "battle_modifier", "modifierId": "extra_preview", "duration": "next_battle" }, "statDelta": { "riskyScore": 1 }, "riskConfig": { "rewardTier": "hero_themed", "oopsieChance": 0.25, "hazardIncrease": "hazard_speed_wave_route" } }
+      ],
+      "postChoiceBarks": [{ "speakerId": "hero_nixie_frostbinder", "text": "Cool the belt, not the idea." }],
+      "victoryCallback": [{ "speakerId": "hero_nixie_frostbinder", "text": "The machine is still helpful, and no longer sweating screws." }],
+      "bossCallback": [{ "speakerId": "hero_nixie_frostbinder", "text": "Keep the assistance. Lower the panic." }]
+    },
+    {
+      "id": "SCN_NIXIE_03_FROSTY_PANTRY",
+      "heroId": "hero_nixie_frostbinder",
+      "stageId": "stage_frosty_pantry",
+      "triggerId": "trig_nixie_03_lost_flavors_named",
+      "triggerCondition": { "type": "first_eligible_event_node", "stageId": "stage_frosty_pantry", "heroId": "hero_nixie_frostbinder", "oncePerRun": true },
+      "locationName": "Frosty Pantry - Rainbow Gelato Ledger",
+      "title": "The Names of Missing Flavors",
+      "storyBeat": "Lost flavors ask to be named before they melt.",
+      "storyboardPanels": ["Gelato crates sit under blurred labels.", "Nixie opens her ledger.", "Colors wait beneath the frost."],
+      "preChoiceDialogue": [
+        { "speakerId": "npc_block_o_matic", "text": "Flavor identity stored beneath layered ice." },
+        { "speakerId": "hero_nixie_frostbinder", "text": "This shelf knows me." },
+        { "speakerId": "hero_nixie_frostbinder", "text": "They are still here. Just under too much winter." }
+      ],
+      "choices": [
+        { "id": "nixie_03_practical", "lane": "practical", "label": "Stabilize the Gelato Shelves", "playerLine": "Nothing can be recovered while the pantry is sliding.", "npcResponse": [{ "speakerId": "npc_snowcone_sprite", "text": "Brrr." }], "narration": "Nixie braces the shelves with careful frost.", "gameplayResult": "Gain shield.", "rewardConfig": { "rewardId": "route_nixie_03_shelf_shield", "rewardType": "shield", "amount": 8 }, "statDelta": { "practicalScore": 1 } },
+        { "id": "nixie_03_true", "lane": "true", "label": "Name Every Lost Flavor", "playerLine": "Sprinkle Sunrise. Moonmint. Lanternberry. Come back slowly.", "npcResponse": [{ "speakerId": "npc_bloop", "text": "Bloopberry?" }], "narration": "The labels sharpen one by one. The flavors answer as faint colors under frost.", "gameplayResult": "Freeze route guard strengthens.", "rewardConfig": { "rewardId": "route_nixie_03_flavor_guard", "rewardType": "hazard_modifier", "modifierId": "route_freeze_warning_guard", "amount": 5, "duration": "stage" }, "statDelta": { "trueScore": 1 }, "grantFlag": "nixie_flag_named_the_lost_flavors" },
+        { "id": "nixie_03_risky", "lane": "risky", "label": "Crack the Crystal Scoops", "playerLine": "A clean fracture, pretty enough to forgive.", "npcResponse": [{ "speakerId": "npc_festival_announcer", "text": "Recovered flavor sparkles should report to the cart." }], "narration": "Crystal scoops burst into rare ingredients and tricky ice.", "gameplayResult": "Gain mana with freeze risk.", "rewardConfig": { "rewardId": "route_nixie_03_crystal_mana", "rewardType": "mana", "amount": 26 }, "statDelta": { "riskyScore": 1 }, "riskConfig": { "rewardTier": "rare", "oopsieChance": 0.25, "hazardIncrease": "hazard_freeze_route_pressure" } }
+      ],
+      "postChoiceBarks": [{ "speakerId": "hero_nixie_frostbinder", "text": "A frozen block is not quiet. It is waiting." }],
+      "victoryCallback": [{ "speakerId": "hero_nixie_frostbinder", "text": "The pantry is breathing again. Coldly, but that is its preference." }],
+      "bossCallback": [{ "speakerId": "hero_nixie_frostbinder", "text": "Gelato Golem, the flavors have names. They do not need to shout in ice." }]
+    },
+    {
+      "id": "SCN_NIXIE_04_PILLOW_CASTLE",
+      "heroId": "hero_nixie_frostbinder",
+      "stageId": "stage_pillow_castle",
+      "triggerId": "trig_nixie_04_quiet_is_alive",
+      "triggerCondition": { "type": "first_eligible_event_node", "stageId": "stage_pillow_castle", "heroId": "hero_nixie_frostbinder", "oncePerRun": true },
+      "locationName": "Pillow Castle - Sleeping Room",
+      "title": "The Room That Breathes",
+      "storyBeat": "The sleeping room teaches that quiet is alive.",
+      "storyboardPanels": ["Blankets rise and fall like breathing.", "A draft curls around soft blocks.", "Nixie waits before speaking."],
+      "preChoiceDialogue": [
+        { "speakerId": "hero_nixie_frostbinder", "text": "This quiet is not empty." },
+        { "speakerId": "npc_sleepy_guard", "text": "Shhh. Room dreaming." },
+        { "speakerId": "hero_nixie_frostbinder", "text": "Then we should not freeze its dream in place." }
+      ],
+      "choices": [
+        { "id": "nixie_04_practical", "lane": "practical", "label": "Quiet the Blanket Draft", "playerLine": "Cool the draft. Let the blankets choose the rest.", "npcResponse": [{ "speakerId": "npc_sleepy_guard", "text": "Gentle draft..." }], "narration": "Nixie settles the blanket draft and softens Sleepy pressure.", "gameplayResult": "Gain shield.", "rewardConfig": { "rewardId": "route_nixie_04_draft_shield", "rewardType": "shield", "amount": 6 }, "statDelta": { "practicalScore": 1 } },
+        { "id": "nixie_04_true", "lane": "true", "label": "Hear the Sleeping Room", "playerLine": "I will listen to the silence without making it still.", "npcResponse": [{ "speakerId": "npc_block_o_matic", "text": "Living quiet registered." }], "narration": "The room hums with safe rest, not absence. Nixie lets it stay alive.", "gameplayResult": "Sleepy boss warnings improve.", "rewardConfig": { "rewardId": "route_nixie_04_sleep_warning", "rewardType": "boss_modifier", "modifierId": "route_preview_warning_sleep", "amount": 3, "duration": "boss" }, "statDelta": { "trueScore": 1 }, "grantFlag": "nixie_flag_heard_the_sleeping_room" },
+        { "id": "nixie_04_risky", "lane": "risky", "label": "Slide Through the Sock-Ice", "playerLine": "Small slides only. We are festive, not reckless.", "npcResponse": [{ "speakerId": "npc_bloop", "text": "Bloop whee." }], "narration": "Nixie turns the floor into a moonlit sock-ice path and glides through sleepy blocks.", "gameplayResult": "Gain Fever with slippery risk.", "rewardConfig": { "rewardId": "route_nixie_04_sock_fever", "rewardType": "battle_modifier", "modifierId": "route_fever", "amount": 14 }, "statDelta": { "riskyScore": 1 }, "riskConfig": { "rewardTier": "stage", "oopsieChance": 0.25, "hazardIncrease": "hazard_speed_wave_route" } }
+      ],
+      "postChoiceBarks": [{ "speakerId": "hero_nixie_frostbinder", "text": "Quiet is allowed to move." }],
+      "victoryCallback": [{ "speakerId": "hero_nixie_frostbinder", "text": "The room can keep dreaming." }],
+      "bossCallback": [{ "speakerId": "hero_nixie_frostbinder", "text": "Sir Snore-a-Lot, we will pass between snores, not through them." }]
+    },
+    {
+      "id": "SCN_NIXIE_05_STARFALL_ARCADE",
+      "heroId": "hero_nixie_frostbinder",
+      "stageId": "stage_starfall_arcade",
+      "triggerId": "trig_nixie_05_slow_score_shared",
+      "triggerCondition": { "type": "first_eligible_event_node", "stageId": "stage_starfall_arcade", "heroId": "hero_nixie_frostbinder", "oncePerRun": true },
+      "locationName": "Starfall Arcade - Slow Score Cabinet",
+      "title": "The Score That Needed Time",
+      "storyBeat": "The arcade score should slow down enough for everyone to understand it.",
+      "storyboardPanels": ["Neon numbers spin too fast.", "Players squint at tickets.", "Nixie frosts the display edge."],
+      "preChoiceDialogue": [
+        { "speakerId": "hero_nixie_frostbinder", "text": "A score no one can read is not a score. It is weather." },
+        { "speakerId": "npc_high_score_hydra", "text": "FASTER SCORE!" },
+        { "speakerId": "hero_nixie_frostbinder", "text": "No. We will let meaning catch up." }
+      ],
+      "choices": [
+        { "id": "nixie_05_practical", "lane": "practical", "label": "Dim the Neon Frost", "playerLine": "Dim the glare. Leave the game.", "npcResponse": [{ "speakerId": "npc_festival_announcer", "text": "Neon chilled to readable." }], "narration": "The display slows just enough for players to plan.", "gameplayResult": "Gain Preview Glasses.", "rewardConfig": { "rewardId": "route_nixie_05_preview", "rewardType": "item", "itemId": "item_preview_glasses", "amount": 1 }, "statDelta": { "practicalScore": 1 } },
+        { "id": "nixie_05_true", "lane": "true", "label": "Share the Slow Score", "playerLine": "Everyone should see how the points arrive.", "npcResponse": [{ "speakerId": "npc_high_score_hydra", "text": "SLOW POINTS STILL POINTS?" }], "narration": "The cabinet displays each cascade long enough for the crowd to cheer the pattern.", "gameplayResult": "Arcade boss warnings improve.", "rewardConfig": { "rewardId": "route_nixie_05_slow_warning", "rewardType": "boss_modifier", "modifierId": "route_preview_warning_arcade", "amount": 3, "duration": "boss" }, "statDelta": { "trueScore": 1 }, "grantFlag": "nixie_flag_shared_the_slow_score" },
+        { "id": "nixie_05_risky", "lane": "risky", "label": "Spin the Prize Chill", "playerLine": "One clean spin, then we let it settle.", "npcResponse": [{ "speakerId": "npc_festival_announcer", "text": "Prize wheel chilled and dramatic." }], "narration": "The wheel spins in glittering frost, pays out, and nearly speeds away.", "gameplayResult": "Gain gold with preview risk.", "rewardConfig": { "rewardId": "route_nixie_05_prize_gold", "rewardType": "gold", "amount": 65 }, "statDelta": { "riskyScore": 1 }, "riskConfig": { "rewardTier": "rare", "oopsieChance": 0.25, "hazardIncrease": "hazard_preview_route_pressure" } }
+      ],
+      "postChoiceBarks": [{ "speakerId": "hero_nixie_frostbinder", "text": "A slow score is still a victory." }],
+      "victoryCallback": [{ "speakerId": "hero_nixie_frostbinder", "text": "The arcade understands itself a little better." }],
+      "bossCallback": [{ "speakerId": "hero_nixie_frostbinder", "text": "Hydra, slow enough for everyone to see is still bright enough." }]
+    },
+    {
+      "id": "SCN_NIXIE_06_BLOXLEY_PALACE",
+      "heroId": "hero_nixie_frostbinder",
+      "stageId": "stage_bloxley_block_palace",
+      "triggerId": "trig_nixie_06_hidden_corner_thaw",
+      "triggerCondition": { "type": "first_eligible_event_node", "stageId": "stage_bloxley_block_palace", "heroId": "hero_nixie_frostbinder", "oncePerRun": true },
+      "locationName": "Bloxley's Block Palace - Hidden Corner",
+      "title": "The Corner Under Frost",
+      "storyBeat": "Bloxley's hidden corner must thaw before the palace can soften.",
+      "storyboardPanels": ["A royal corner glitters too cold.", "Ribbons hide under square stone.", "Nixie warms one edge with her palm."],
+      "preChoiceDialogue": [
+        { "speakerId": "npc_king_bloxley", "text": "Perfect rooms cannot be laughed at." },
+        { "speakerId": "hero_nixie_frostbinder", "text": "No. But they cannot rest either." },
+        { "speakerId": "hero_nixie_frostbinder", "text": "This corner is not cold from command. It is cold from fear." }
+      ],
+      "choices": [
+        { "id": "nixie_06_practical", "lane": "practical", "label": "Soften the Royal Edges", "playerLine": "Edges first. Sharp things thaw unevenly.", "npcResponse": [{ "speakerId": "npc_king_bloxley", "text": "My edges are regulation!" }], "narration": "Nixie softens the royal edges without melting the palace shape.", "gameplayResult": "Gain shield.", "rewardConfig": { "rewardId": "route_nixie_06_edge_shield", "rewardType": "shield", "amount": 8 }, "statDelta": { "practicalScore": 1 } },
+        { "id": "nixie_06_true", "lane": "true", "label": "Thaw the Hidden Corner", "playerLine": "I will warm what you hid, not what you command.", "npcResponse": [{ "speakerId": "npc_block_o_matic", "text": "Hidden festival contents emotionally significant." }], "narration": "The hidden corner thaws and reveals old festival ribbons. The palace remains standing, less afraid of curves.", "gameplayResult": "Royal warnings improve.", "rewardConfig": { "rewardId": "route_nixie_06_corner_warning", "rewardType": "boss_modifier", "modifierId": "route_preview_warning_royal", "amount": 4, "duration": "boss" }, "statDelta": { "trueScore": 1 }, "grantFlag": "nixie_flag_thawed_the_hidden_corner" },
+        { "id": "nixie_06_risky", "lane": "risky", "label": "Crown the Crooked Snow", "playerLine": "If he wants a crown, let it be snow that refuses to stay square.", "npcResponse": [{ "speakerId": "npc_king_bloxley", "text": "Those ribbons are not regulation!" }], "narration": "Aurora frost curls over the palace. It is beautiful and deeply un-square.", "gameplayResult": "Gain mana with royal risk.", "rewardConfig": { "rewardId": "route_nixie_06_snow_crown", "rewardType": "mana", "amount": 30 }, "statDelta": { "riskyScore": 1 }, "riskConfig": { "rewardTier": "hero_themed", "oopsieChance": 0.25, "hazardIncrease": "hazard_royal_pattern_route" } }
+      ],
+      "postChoiceBarks": [{ "speakerId": "hero_nixie_frostbinder", "text": "Thaw slowly. Truth cracks if rushed." }],
+      "victoryCallback": [{ "speakerId": "hero_nixie_frostbinder", "text": "The palace is still standing. It is simply less afraid of curves." }],
+      "bossCallback": [{ "speakerId": "hero_nixie_frostbinder", "text": "Bloxley, borrow a pillow. Brixonia has plenty." }]
+    }
+  ]
+}

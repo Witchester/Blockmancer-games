@@ -153,16 +153,30 @@ export class RewardScene extends Phaser.Scene {
       if (result === 'final-victory') {
         state.victory = true;
         state.runStatus = 'victory';
-        const endingKind = game.storySystem.getEndingKind(game.metaSystem.state);
+        const routeEnding = game.routeStorySystem.resolveHeroEnding(state.hero.id, state.routeProgress);
+        const endingKind = routeEnding.endingKind;
+        const heroRouteProgress = state.routeProgress.heroes[state.hero.id];
+        if (heroRouteProgress) {
+          game.routeStorySystem.recordEndingUnlock(heroRouteProgress, routeEnding.ending, routeEnding.variant);
+        }
         const beforeUnlocks = [...game.metaSystem.state.unlockedHeroes];
         game.metaSystem.recordRunEnd(state, true);
         if (endingKind === 'true') {
           game.metaSystem.unlockTrueEnding();
         }
+        game.metaSystem.unlockRouteEnding(routeEnding.ending.id);
+        if (routeEnding.variant) {
+          game.metaSystem.unlockRouteVariantEnding(routeEnding.variant.id);
+        }
         const heroUnlocks = game.storySystem.getHeroUnlockMessages(beforeUnlocks, game.metaSystem.state.unlockedHeroes);
         game.audioSystem.play('victory', this);
         game.clearSave();
-        this.scene.start('VictoryScene', { endingKind, heroUnlocks });
+        this.scene.start('VictoryScene', {
+          endingKind,
+          heroUnlocks,
+          routeEndingId: routeEnding.ending.id,
+          routeVariantEndingId: routeEnding.variant?.id
+        });
         return;
       }
     } else {

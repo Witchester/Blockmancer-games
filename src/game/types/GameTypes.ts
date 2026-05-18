@@ -3,6 +3,7 @@ export type EncounterNodeType = 'normal' | 'hard_normal' | 'elite' | 'boss' | 'e
 export type TetrominoType = 'I' | 'O' | 'T' | 'S' | 'Z' | 'J' | 'L';
 export type SpellId = 'fireball' | 'frost-lock' | 'bomb-rune' | 'void-cut';
 export type RunStatus = 'menu' | 'map' | 'battle' | 'reward' | 'game-over' | 'victory';
+export type RouteChoiceLane = 'practical' | 'true' | 'risky';
 export type RewardId = string;
 export type EnemyId = string;
 export type EventId = 'shrine-of-gravity' | 'broken-anvil' | 'strange-mirror' | 'lost-knight';
@@ -150,6 +151,96 @@ export type GameplayEffect = {
   text?: string;
   targetId?: string;
   duration?: number;
+};
+
+export type DialogueLine = {
+  speakerId: string;
+  text: string;
+  expression?: string;
+  voiceTag?: string;
+};
+
+export type RouteTriggerCondition = {
+  type: 'first_eligible_event_node' | 'after_first_combat_victory' | 'before_boss';
+  stageId: string;
+  heroId: string;
+  oncePerRun: true;
+};
+
+export type RouteRewardConfig = {
+  rewardId: string;
+  rewardType:
+    | 'gold'
+    | 'heal'
+    | 'mana'
+    | 'shield'
+    | 'item'
+    | 'relic'
+    | 'upgrade'
+    | 'stage_modifier'
+    | 'boss_modifier'
+    | 'hazard_modifier'
+    | 'battle_modifier';
+  amount?: number;
+  itemId?: string;
+  relicId?: string;
+  upgradeId?: string;
+  modifierId?: string;
+  duration?: 'next_battle' | 'stage' | 'boss' | 'run';
+};
+
+export type RouteChoiceContent = {
+  id: string;
+  lane: RouteChoiceLane;
+  label: string;
+  playerLine: string;
+  npcResponse: DialogueLine[];
+  narration: string;
+  gameplayResult: string;
+  rewardConfig: RouteRewardConfig;
+  statDelta: Record<string, number>;
+  grantFlag?: string;
+  riskConfig?: {
+    rewardTier?: 'stage' | 'rare' | 'hero_themed';
+    oopsieChance?: number;
+    hazardIncrease?: string;
+  };
+};
+
+export type RouteSceneContent = {
+  id: string;
+  heroId: string;
+  stageId: string;
+  triggerId: string;
+  triggerCondition: RouteTriggerCondition;
+  locationName: string;
+  title: string;
+  storyBeat: string;
+  storyboardPanels: string[];
+  preChoiceDialogue: DialogueLine[];
+  choices: RouteChoiceContent[];
+  postChoiceBarks: DialogueLine[];
+  victoryCallback: DialogueLine[];
+  bossCallback?: DialogueLine[];
+  bossCallbackByLane?: Partial<Record<RouteChoiceLane, DialogueLine[]>>;
+};
+
+export type HeroRouteProgress = {
+  heroId: string;
+  practicalScore: number;
+  trueScore: number;
+  riskyScore: number;
+  trueFlags: string[];
+  chosenScenes: Record<string, RouteChoiceLane>;
+  triggeredScenes: string[];
+  unlockedEndingIds: string[];
+  variantEndingIds: string[];
+};
+
+export type RouteProgressState = {
+  activeHeroId: string;
+  routeVersion: number;
+  heroes: Record<string, HeroRouteProgress>;
 };
 
 export type RewardModifier = {
@@ -416,6 +507,7 @@ export interface RunState {
   activeOopsies: string[];
   currentBossRule?: string;
   boardSizeModifier?: BoardSizeModifier;
+  routeProgress: RouteProgressState;
   festivalHubVisited: boolean;
   lastBattleWasBoss: boolean;
   pendingStageAdvance: boolean;

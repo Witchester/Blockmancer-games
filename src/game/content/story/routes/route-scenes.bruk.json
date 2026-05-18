@@ -1,0 +1,150 @@
+{
+  "routeId": "route_bruk_snack_knight",
+  "heroId": "hero_bruk_snack_knight",
+  "scenes": [
+    {
+      "id": "SCN_BRUK_01_SPRINKLE_SEWERS",
+      "heroId": "hero_bruk_snack_knight",
+      "stageId": "stage_sprinkle_sewers",
+      "triggerId": "trig_bruk_01_small_slime_plates",
+      "triggerCondition": { "type": "first_eligible_event_node", "stageId": "stage_sprinkle_sewers", "heroId": "hero_bruk_snack_knight", "oncePerRun": true },
+      "locationName": "Sprinkle Sewers - Collapsed Snack Cart",
+      "title": "The Crumb Line",
+      "storyBeat": "Small sugar-rushed slimes need plates, not punishment.",
+      "storyboardPanels": ["A snack cart lies tilted.", "Cupcake Slimes crowd the crumb trail.", "Bruk studies crumbs like a battlefield map."],
+      "preChoiceDialogue": [
+        { "speakerId": "hero_bruk_snack_knight", "text": "Hold position. This is no ordinary crumb trail." },
+        { "speakerId": "npc_block_o_matic", "text": "Sugar-rushed slimes have insufficient napkin protocol." },
+        { "speakerId": "hero_bruk_snack_knight", "text": "They are not raiders. They are hungry, frightened, and poorly queued." }
+      ],
+      "choices": [
+        { "id": "bruk_01_practical", "lane": "practical", "label": "Raise the Crumb Shield", "playerLine": "Let no cupcake fall unguarded.", "npcResponse": [{ "speakerId": "npc_festival_announcer", "text": "Defensive snack formation declared." }], "narration": "Bruk plants his shield and slows the sugar-rushed charge.", "gameplayResult": "Gain shield.", "rewardConfig": { "rewardId": "route_bruk_01_crumb_shield", "rewardType": "shield", "amount": 8 }, "statDelta": { "practicalScore": 1 } },
+        { "id": "bruk_01_true", "lane": "true", "label": "Serve the Smallest Plate", "playerLine": "Small portions. Fair turns. No pushing.", "npcResponse": [{ "speakerId": "npc_cupcake_slime", "text": "Gloop? Plate?" }], "narration": "Bruk uses his shield as a serving tray. The slimes stop surging and discover manners.", "gameplayResult": "Heal through hospitality.", "rewardConfig": { "rewardId": "route_bruk_01_small_plate", "rewardType": "heal", "amount": 7 }, "statDelta": { "trueScore": 1 }, "grantFlag": "bruk_flag_served_sugar_rushed_slimes" },
+        { "id": "bruk_01_risky", "lane": "risky", "label": "Charge the Frosting Line", "playerLine": "By crumb and crust, we charge before the frosting hardens.", "npcResponse": [{ "speakerId": "npc_block_o_matic", "text": "Heroic snack momentum may exceed frosting traction." }], "narration": "Bruk scatters sprinkles and opens the path, but the board inherits slippery enthusiasm.", "gameplayResult": "Gain gold with sticky risk.", "rewardConfig": { "rewardId": "route_bruk_01_charge_gold", "rewardType": "gold", "amount": 45 }, "statDelta": { "riskyScore": 1 }, "riskConfig": { "rewardTier": "stage", "oopsieChance": 0.25, "hazardIncrease": "hazard_sticky_route_pressure" } }
+      ],
+      "postChoiceBarks": [{ "speakerId": "hero_bruk_snack_knight", "text": "Shield high. Tray steady." }],
+      "victoryCallback": [{ "speakerId": "hero_bruk_snack_knight", "text": "The cart stands. The slimes are seated. Victory with napkins." }],
+      "bossCallback": [{ "speakerId": "hero_bruk_snack_knight", "text": "Fair portions, Your Wobbliness. Seconds after the battle." }]
+    },
+    {
+      "id": "SCN_BRUK_02_GOBLIN_WORKSHOP",
+      "heroId": "hero_bruk_snack_knight",
+      "stageId": "stage_goblin_workshop",
+      "triggerId": "trig_bruk_02_feed_goblin_shift",
+      "triggerCondition": { "type": "first_eligible_event_node", "stageId": "stage_goblin_workshop", "heroId": "hero_bruk_snack_knight", "oncePerRun": true },
+      "locationName": "Goblin Workshop - Lunch Belt",
+      "title": "The Lunch Belt",
+      "storyBeat": "Hungry goblin testers keep breaking machines because no one feeds the shift.",
+      "storyboardPanels": ["Warning placards blink SAFE AFTER LUNCH.", "Goblins argue near a junk press.", "Unopened lunch tins sit behind a guard rail."],
+      "preChoiceDialogue": [
+        { "speakerId": "npc_wrench_goblin", "text": "Lunch is delay!" },
+        { "speakerId": "hero_bruk_snack_knight", "text": "Lunch is maintenance for courage." },
+        { "speakerId": "hero_zuzu_goblin_engineer", "text": "Workshop running on zero percent sandwiches." }
+      ],
+      "choices": [
+        { "id": "bruk_02_practical", "lane": "practical", "label": "Barricade the Lunch Belt", "playerLine": "The junk press will not dine on crumbs while I stand here.", "npcResponse": [{ "speakerId": "hero_zuzu_goblin_engineer", "text": "Heavy-handed, attached to a knight, so that tracks." }], "narration": "Bruk wedges his shield across the belt and slows the junk press.", "gameplayResult": "Gain shield.", "rewardConfig": { "rewardId": "route_bruk_02_lunch_shield", "rewardType": "shield", "amount": 6 }, "statDelta": { "practicalScore": 1 } },
+        { "id": "bruk_02_true", "lane": "true", "label": "Feed the Tired Testers", "playerLine": "Three bites each. Then we fix the machine with wiser hands.", "npcResponse": [{ "speakerId": "npc_wrench_goblin", "text": "Three bites? Official?" }], "narration": "The goblins eat, blink, and finally point out the lever nobody should pull during snack hour.", "gameplayResult": "Machine warnings improve.", "rewardConfig": { "rewardId": "route_bruk_02_feed_warning", "rewardType": "boss_modifier", "modifierId": "route_preview_warning_machine", "amount": 3, "duration": "boss" }, "statDelta": { "trueScore": 1 }, "grantFlag": "bruk_flag_fed_goblin_testers" },
+        { "id": "bruk_02_risky", "lane": "risky", "label": "Ram the Gear Buffet", "playerLine": "The table marches.", "npcResponse": [{ "speakerId": "npc_block_o_matic", "text": "Mobile buffet tactics are outside warranty." }], "narration": "A snack cart rolls through the workshop like a banquet battering ram.", "gameplayResult": "Gain Toolbox with junk risk.", "rewardConfig": { "rewardId": "route_bruk_02_toolbox", "rewardType": "item", "itemId": "item_toolbox", "amount": 1 }, "statDelta": { "riskyScore": 1 }, "riskConfig": { "rewardTier": "rare", "oopsieChance": 0.25, "hazardIncrease": "hazard_machine_junk_route" } }
+      ],
+      "postChoiceBarks": [{ "speakerId": "hero_bruk_snack_knight", "text": "Eat first. Explode later, preferably never." }],
+      "victoryCallback": [{ "speakerId": "hero_bruk_snack_knight", "text": "The machines are quieter. The goblins are chewing." }],
+      "bossCallback": [{ "speakerId": "hero_bruk_snack_knight", "text": "A fed worker makes wiser mistakes." }]
+    },
+    {
+      "id": "SCN_BRUK_03_FROSTY_PANTRY",
+      "heroId": "hero_bruk_snack_knight",
+      "stageId": "stage_frosty_pantry",
+      "triggerId": "trig_bruk_03_warm_rations_save_crates",
+      "triggerCondition": { "type": "first_eligible_event_node", "stageId": "stage_frosty_pantry", "heroId": "hero_bruk_snack_knight", "oncePerRun": true },
+      "locationName": "Frosty Pantry - Emergency Ration Wall",
+      "title": "The Warm Ration",
+      "storyBeat": "Warm rations save more crates than a shield wall alone.",
+      "storyboardPanels": ["Ration crates are sealed in ice.", "Snowcone Sprites shiver beside them.", "Bruk warms a thermos between gauntlets."],
+      "preChoiceDialogue": [
+        { "speakerId": "hero_bruk_snack_knight", "text": "A ration locked away is no ration at all." },
+        { "speakerId": "hero_nixie_frostbinder", "text": "Careful. That shelf is holding more flavors than it should." },
+        { "speakerId": "hero_bruk_snack_knight", "text": "Then we warm the courage before we move the crates." }
+      ],
+      "choices": [
+        { "id": "bruk_03_practical", "lane": "practical", "label": "Stack the Ration Crates", "playerLine": "Supplies rescued at the cost of supplies are not rescued.", "npcResponse": [{ "speakerId": "hero_nixie_frostbinder", "text": "Sturdy. The pantry appreciates sturdy." }], "narration": "Bruk braces the shelf with a small fortress of provisions.", "gameplayResult": "Gain shield.", "rewardConfig": { "rewardId": "route_bruk_03_crate_shield", "rewardType": "shield", "amount": 8 }, "statDelta": { "practicalScore": 1 } },
+        { "id": "bruk_03_true", "lane": "true", "label": "Share the Warm Thermos", "playerLine": "Before the crates, the guards. A warm drink steadies watchful hands.", "npcResponse": [{ "speakerId": "npc_snowcone_sprite", "text": "Warm? For guard?" }], "narration": "Bruk shares the thermos, and the sprites show which crates can thaw safely.", "gameplayResult": "Heal and improve freeze warning.", "rewardConfig": { "rewardId": "route_bruk_03_thermos_heal", "rewardType": "heal", "amount": 8 }, "statDelta": { "trueScore": 1 }, "grantFlag": "bruk_flag_shared_warm_rations" },
+        { "id": "bruk_03_risky", "lane": "risky", "label": "Shoulder the Ice Door", "playerLine": "Stand behind my shield. This door has mistaken itself for a wall.", "npcResponse": [{ "speakerId": "npc_block_o_matic", "text": "Knightly shoulder pressure rising." }], "narration": "Bruk shoulders the door open and showers the hall with useful frost and risky ice.", "gameplayResult": "Gain mana with freeze risk.", "rewardConfig": { "rewardId": "route_bruk_03_ice_door_mana", "rewardType": "mana", "amount": 24 }, "statDelta": { "riskyScore": 1 }, "riskConfig": { "rewardTier": "stage", "oopsieChance": 0.25, "hazardIncrease": "hazard_freeze_route_pressure" } }
+      ],
+      "postChoiceBarks": [{ "speakerId": "hero_bruk_snack_knight", "text": "Warmth is a provision too." }],
+      "victoryCallback": [{ "speakerId": "hero_bruk_snack_knight", "text": "Crates saved. Guards warmed. The pantry holds." }],
+      "bossCallback": [{ "speakerId": "hero_bruk_snack_knight", "text": "Safe from spoiling, yes. Not safe from being forgotten." }]
+    },
+    {
+      "id": "SCN_BRUK_04_PILLOW_CASTLE",
+      "heroId": "hero_bruk_snack_knight",
+      "stageId": "stage_pillow_castle",
+      "triggerId": "trig_bruk_04_sacred_nap_table",
+      "triggerCondition": { "type": "first_eligible_event_node", "stageId": "stage_pillow_castle", "heroId": "hero_bruk_snack_knight", "oncePerRun": true },
+      "locationName": "Pillow Castle - Sacred Nap Table",
+      "title": "The Nap Table Oath",
+      "storyBeat": "The Pillow Castle has a sacred nap table.",
+      "storyboardPanels": ["A tiny table holds milk and biscuits.", "Blanket ghosts guard the quiet.", "Bruk removes his helmet respectfully."],
+      "preChoiceDialogue": [
+        { "speakerId": "npc_sleepy_guard", "text": "Sacred nap table. No loud forks." },
+        { "speakerId": "hero_bruk_snack_knight", "text": "A table with rest upon it is a table under oath." },
+        { "speakerId": "hero_bruk_snack_knight", "text": "We pass with biscuits and respect." }
+      ],
+      "choices": [
+        { "id": "bruk_04_practical", "lane": "practical", "label": "Hold the Blanket Line", "playerLine": "No blanket will tangle the table while I stand.", "npcResponse": [{ "speakerId": "npc_sleepy_guard", "text": "Quiet shield." }], "narration": "Bruk holds the blanket line and stabilizes sleepy pressure.", "gameplayResult": "Gain shield.", "rewardConfig": { "rewardId": "route_bruk_04_blanket_shield", "rewardType": "shield", "amount": 8 }, "statDelta": { "practicalScore": 1 } },
+        { "id": "bruk_04_true", "lane": "true", "label": "Honor the Nap Table", "playerLine": "No snack left behind. No nap dishonored.", "npcResponse": [{ "speakerId": "npc_sleepy_guard", "text": "Oath accepted." }], "narration": "Bruk sets biscuits in fair portions and the castle lets him pass between snores.", "gameplayResult": "Heal and improve Sleepy warnings.", "rewardConfig": { "rewardId": "route_bruk_04_nap_heal", "rewardType": "heal", "amount": 8 }, "statDelta": { "trueScore": 1 }, "grantFlag": "bruk_flag_respected_pillow_oath" },
+        { "id": "bruk_04_risky", "lane": "risky", "label": "Trumpet the Midnight Feast", "playerLine": "If supper must come, let it arrive with honor and a very soft horn.", "npcResponse": [{ "speakerId": "npc_festival_announcer", "text": "Midnight feast declared at pillow-safe volume." }], "narration": "A gentle trumpet wakes appetites without waking the whole castle. Mostly.", "gameplayResult": "Gain Fever with sleepy risk.", "rewardConfig": { "rewardId": "route_bruk_04_feast_fever", "rewardType": "battle_modifier", "modifierId": "route_fever", "amount": 14 }, "statDelta": { "riskyScore": 1 }, "riskConfig": { "rewardTier": "stage", "oopsieChance": 0.25, "hazardIncrease": "hazard_sleep_route_pressure" } }
+      ],
+      "postChoiceBarks": [{ "speakerId": "hero_bruk_snack_knight", "text": "A nap table is still a table. Guard it well." }],
+      "victoryCallback": [{ "speakerId": "hero_bruk_snack_knight", "text": "The table rests. So does my oath." }],
+      "bossCallback": [{ "speakerId": "hero_bruk_snack_knight", "text": "One who respects the sacred nap requests passage between snores." }]
+    },
+    {
+      "id": "SCN_BRUK_05_STARFALL_ARCADE",
+      "heroId": "hero_bruk_snack_knight",
+      "stageId": "stage_starfall_arcade",
+      "triggerId": "trig_bruk_05_split_prize_table",
+      "triggerCondition": { "type": "first_eligible_event_node", "stageId": "stage_starfall_arcade", "heroId": "hero_bruk_snack_knight", "oncePerRun": true },
+      "locationName": "Starfall Arcade - Prize Table",
+      "title": "The Winning Tickets",
+      "storyBeat": "Winning tickets matter less than splitting the prize table honestly.",
+      "storyboardPanels": ["Tickets pile higher than a child.", "Prize snacks sit behind glass.", "Bruk counts guests before tickets."],
+      "preChoiceDialogue": [
+        { "speakerId": "npc_high_score_hydra", "text": "ONLY THE HIGHEST SCORE SHALL FEAST!" },
+        { "speakerId": "hero_bruk_snack_knight", "text": "Then your rules are hungry." },
+        { "speakerId": "hero_bruk_snack_knight", "text": "I have come to feed them better manners." }
+      ],
+      "choices": [
+        { "id": "bruk_05_practical", "lane": "practical", "label": "Guard the Prize Counter", "playerLine": "First, no one tramples the snacks.", "npcResponse": [{ "speakerId": "npc_festival_announcer", "text": "Prize counter secured." }], "narration": "Bruk holds the prize counter and calms the ticket rush.", "gameplayResult": "Gain Lucky Ticket.", "rewardConfig": { "rewardId": "route_bruk_05_ticket", "rewardType": "item", "itemId": "item_lucky_ticket", "amount": 1 }, "statDelta": { "practicalScore": 1 } },
+        { "id": "bruk_05_true", "lane": "true", "label": "Split the Winning Tickets", "playerLine": "Victory is sweeter when the second plate also moves.", "npcResponse": [{ "speakerId": "npc_high_score_hydra", "text": "SHARING SCORE... PROCESSING." }], "narration": "Bruk splits the tickets into prize hampers for winners and watchers alike.", "gameplayResult": "Heal and improve arcade callback.", "rewardConfig": { "rewardId": "route_bruk_05_shared_tickets", "rewardType": "heal", "amount": 8 }, "statDelta": { "trueScore": 1 }, "grantFlag": "bruk_flag_shared_arcade_winnings" },
+        { "id": "bruk_05_risky", "lane": "risky", "label": "Win the Snack Jackpot", "playerLine": "For the table. For the guests. For the extremely visible hamper.", "npcResponse": [{ "speakerId": "npc_festival_announcer", "text": "Snack jackpot challenge accepted." }], "narration": "Bruk wins a tower of snacks, then must keep the prize surge from becoming a stampede.", "gameplayResult": "Gain gold with preview risk.", "rewardConfig": { "rewardId": "route_bruk_05_jackpot_gold", "rewardType": "gold", "amount": 65 }, "statDelta": { "riskyScore": 1 }, "riskConfig": { "rewardTier": "rare", "oopsieChance": 0.25, "hazardIncrease": "hazard_preview_route_pressure" } }
+      ],
+      "postChoiceBarks": [{ "speakerId": "hero_bruk_snack_knight", "text": "Count the guests. Then count the tickets." }],
+      "victoryCallback": [{ "speakerId": "hero_bruk_snack_knight", "text": "The prize table is lighter and the crowd is fairer." }],
+      "bossCallback": [{ "speakerId": "hero_bruk_snack_knight", "text": "The highest score may shine. The table still serves everyone." }]
+    },
+    {
+      "id": "SCN_BRUK_06_BLOXLEY_PALACE",
+      "heroId": "hero_bruk_snack_knight",
+      "stageId": "stage_bloxley_block_palace",
+      "triggerId": "trig_bruk_06_set_bloxley_place",
+      "triggerCondition": { "type": "first_eligible_event_node", "stageId": "stage_bloxley_block_palace", "heroId": "hero_bruk_snack_knight", "oncePerRun": true },
+      "locationName": "Bloxley's Block Palace - Banquet Gate",
+      "title": "A Chair for the King",
+      "storyBeat": "Victory is setting Bloxley a place at the table.",
+      "storyboardPanels": ["A banquet gate locks away round cakes.", "A throne sits higher than every chair.", "Bruk sets one plain plate at the end."],
+      "preChoiceDialogue": [
+        { "speakerId": "npc_king_bloxley", "text": "Round cakes are disorder!" },
+        { "speakerId": "hero_bruk_snack_knight", "text": "Round cakes are diplomacy." },
+        { "speakerId": "hero_bruk_snack_knight", "text": "Everyone receives a fair slice if the hand is steady." }
+      ],
+      "choices": [
+        { "id": "bruk_06_practical", "lane": "practical", "label": "Brace the Banquet Gate", "playerLine": "The pantry opens only if the gate holds.", "npcResponse": [{ "speakerId": "npc_king_bloxley", "text": "My gate is superior!" }], "narration": "Bruk braces the gate and weakens the royal block pattern.", "gameplayResult": "Gain shield.", "rewardConfig": { "rewardId": "route_bruk_06_gate_shield", "rewardType": "shield", "amount": 10 }, "statDelta": { "practicalScore": 1 } },
+        { "id": "bruk_06_true", "lane": "true", "label": "Set a Place for the King", "playerLine": "The first plate is yours, if you can share the second.", "npcResponse": [{ "speakerId": "npc_king_bloxley", "text": "A chair? Not a throne?" }], "narration": "Bruk pulls out a chair and the palace's table grows long enough for a king and guests.", "gameplayResult": "Royal warnings improve.", "rewardConfig": { "rewardId": "route_bruk_06_place_warning", "rewardType": "boss_modifier", "modifierId": "route_preview_warning_royal", "amount": 4, "duration": "boss" }, "statDelta": { "trueScore": 1 }, "grantFlag": "bruk_flag_invited_bloxley_to_table" },
+        { "id": "bruk_06_risky", "lane": "risky", "label": "Declare the Grand Snack Charge", "playerLine": "The pantry opens, the table marches, and every locked cake rides with us!", "npcResponse": [{ "speakerId": "npc_festival_announcer", "text": "Grand Snack Charge declared." }], "narration": "Bruk charges down the royal hall with a banquet table like a shield-wall.", "gameplayResult": "Gain mana with royal risk.", "rewardConfig": { "rewardId": "route_bruk_06_charge_mana", "rewardType": "mana", "amount": 30 }, "statDelta": { "riskyScore": 1 }, "riskConfig": { "rewardTier": "hero_themed", "oopsieChance": 0.25, "hazardIncrease": "hazard_royal_pattern_route" } }
+      ],
+      "postChoiceBarks": [{ "speakerId": "hero_bruk_snack_knight", "text": "A table is measured by welcome." }],
+      "victoryCallback": [{ "speakerId": "hero_bruk_snack_knight", "text": "The gate is open. The table is set." }],
+      "bossCallback": [{ "speakerId": "hero_bruk_snack_knight", "text": "Supper tastes better when no one must climb a throne to reach it." }]
+    }
+  ]
+}

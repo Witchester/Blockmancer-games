@@ -7,6 +7,8 @@ export interface MetaState {
   totalCascades: number;
   bossesDefeated: string[];
   endingsUnlocked: string[];
+  routeEndingsUnlocked: string[];
+  routeVariantEndingsUnlocked: string[];
   hubBuildings: Record<string, number>;
   monsterFriendship: Record<string, number>;
   completedStageGoals: string[];

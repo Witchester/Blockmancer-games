@@ -1,0 +1,28 @@
+{
+  "barks": {
+    "hero_milo_blockmancer": [
+      "The board is crowded, not cruel.",
+      "Plink first. Then wait."
+    ],
+    "hero_pippa_pyromancer": [
+      "Edges first. The center will follow.",
+      "Fire is preheating with boundaries."
+    ],
+    "hero_zuzu_goblin_engineer": [
+      "Board state unstable. Excellent. I brought tools.",
+      "A warning sign is a love letter to everyone nearby."
+    ],
+    "hero_nixie_frostbinder": [
+      "Cold enough to help. Warm enough to care.",
+      "Do not hurry. Hurrying is how things crack."
+    ],
+    "hero_bruk_snack_knight": [
+      "Shield ready. Snacks accounted for.",
+      "A snack at the right moment is strategy."
+    ],
+    "hero_lumi_star_witch": [
+      "Let us draw a small sky on the board.",
+      "Some lights are asking to be carried."
+    ]
+  }
+}

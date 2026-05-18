@@ -18,10 +18,12 @@ import type {
   BoardCell,
   CurrentRoomProgress,
   EnemyInstance,
+  HeroRouteProgress,
   HeroState,
   ReactiveBattleState,
   RewardDefinition,
   RewardId,
+  RouteProgressState,
   RunStats,
   RunState,
   SpellId,
@@ -194,6 +196,80 @@ function normalizeEnemy(enemy: EnemyInstance | null | undefined): EnemyInstance 
 }
 
 const oopsieSystem = new OopsieSystem();
+const ROUTE_VERSION = 1;
+
+function createDefaultHeroRouteProgress(heroId: string): HeroRouteProgress {
+  return {
+    heroId,
+    practicalScore: 0,
+    trueScore: 0,
+    riskyScore: 0,
+    trueFlags: [],
+    chosenScenes: {},
+    triggeredScenes: [],
+    unlockedEndingIds: [],
+    variantEndingIds: []
+  };
+}
+
+export function createDefaultRouteProgress(heroId = 'hero_milo_blockmancer'): RouteProgressState {
+  return {
+    activeHeroId: heroId,
+    routeVersion: ROUTE_VERSION,
+    heroes: {
+      [heroId]: createDefaultHeroRouteProgress(heroId)
+    }
+  };
+}
+
+function normalizeHeroRouteProgress(heroId: string, value: unknown): HeroRouteProgress {
+  const raw = value && typeof value === 'object' && !Array.isArray(value)
+    ? value as Partial<HeroRouteProgress>
+    : {};
+  const stringArray = (input: unknown) => Array.isArray(input)
+    ? [...new Set(input.filter((item): item is string => typeof item === 'string'))]
+    : [];
+  const chosenScenes = raw.chosenScenes && typeof raw.chosenScenes === 'object' && !Array.isArray(raw.chosenScenes)
+    ? Object.fromEntries(Object.entries(raw.chosenScenes).filter(([, lane]) => lane === 'practical' || lane === 'true' || lane === 'risky'))
+    : {};
+
+  return {
+    heroId: typeof raw.heroId === 'string' ? raw.heroId : heroId,
+    practicalScore: Math.max(0, Number(raw.practicalScore ?? 0)),
+    trueScore: Math.max(0, Number(raw.trueScore ?? 0)),
+    riskyScore: Math.max(0, Number(raw.riskyScore ?? 0)),
+    trueFlags: stringArray(raw.trueFlags),
+    chosenScenes,
+    triggeredScenes: stringArray(raw.triggeredScenes),
+    unlockedEndingIds: stringArray(raw.unlockedEndingIds),
+    variantEndingIds: stringArray(raw.variantEndingIds)
+  };
+}
+
+function normalizeRouteProgress(value: unknown, activeHeroId: string): RouteProgressState {
+  const raw = value && typeof value === 'object' && !Array.isArray(value)
+    ? value as Partial<RouteProgressState>
+    : {};
+  const heroes: Record<string, HeroRouteProgress> = {};
+  if (raw.heroes && typeof raw.heroes === 'object' && !Array.isArray(raw.heroes)) {
+    for (const [heroId, progress] of Object.entries(raw.heroes)) {
+      if (typeof heroId === 'string') {
+        heroes[heroId] = normalizeHeroRouteProgress(heroId, progress);
+      }
+    }
+  }
+
+  const normalizedActiveHeroId = typeof raw.activeHeroId === 'string' ? raw.activeHeroId : activeHeroId;
+  if (!heroes[normalizedActiveHeroId]) {
+    heroes[normalizedActiveHeroId] = createDefaultHeroRouteProgress(normalizedActiveHeroId);
+  }
+
+  return {
+    activeHeroId: normalizedActiveHeroId,
+    routeVersion: ROUTE_VERSION,
+    heroes
+  };
+}
 
 export function createDefaultRunState(): RunState {
   const player = createDefaultPlayerState();
@@ -236,6 +312,7 @@ export function createDefaultRunState(): RunState {
     activeOopsies: [],
     currentBossRule: undefined,
     boardSizeModifier: undefined,
+    routeProgress: createDefaultRouteProgress(),
     festivalHubVisited: false,
     lastBattleWasBoss: false,
     pendingStageAdvance: false,
@@ -306,6 +383,7 @@ export function normalizeRunState(input: unknown): RunState {
     activeOopsies: raw.activeOopsies ? [...raw.activeOopsies] : [...player.oopsies],
     currentBossRule: raw.currentBossRule,
     boardSizeModifier: raw.boardSizeModifier ? { ...raw.boardSizeModifier } : undefined,
+    routeProgress: normalizeRouteProgress(raw.routeProgress, raw.hero?.id ?? defaults.hero.id),
     festivalHubVisited: Boolean(raw.festivalHubVisited),
     runStats: {
       ...defaults.runStats,
@@ -331,6 +409,11 @@ export function normalizeRunState(input: unknown): RunState {
   merged.saveVersion = SAVE_VERSION;
   oopsieSystem.normalizeState(merged);
   merged.activeOopsies = [...merged.player.oopsies];
+  merged.routeProgress = normalizeRouteProgress(merged.routeProgress, merged.hero.id);
+  merged.routeProgress.activeHeroId = merged.hero.id;
+  if (!merged.routeProgress.heroes[merged.hero.id]) {
+    merged.routeProgress.heroes[merged.hero.id] = createDefaultHeroRouteProgress(merged.hero.id);
+  }
 
   return merged;
 }
