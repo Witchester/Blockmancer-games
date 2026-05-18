@@ -41,7 +41,7 @@
     },
     "assetRefs": {
       "type": "object",
-      "description": "Optional variant asset keys for base, glow, clear, icon, glowFrames, and clearFrames textures. Runtime normalization infers these when omitted."
+      "description": "Optional variant asset keys for base, glow, clear, icon, glowFrames, clearFrames, and specialFrames textures. Final exact-frame keys use asset_id__animation_name__f00 naming; old _frame_01 keys are fallback-only."
     },
     "clearEffects": {
       "type": "array",

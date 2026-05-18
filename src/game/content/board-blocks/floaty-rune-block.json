@@ -13,10 +13,23 @@
   ],
   "enabled": true,
   "assetRefs": {
-    "base": "spr_block_floaty_rune",
-    "glow": "spr_block_floaty_rune_glow",
-    "clear": "spr_block_floaty_rune_clear",
-    "icon": "ico_block_floaty_rune"
+    "base": "block_floaty_rune",
+    "glow": "block_floaty_rune_glow",
+    "clear": "block_floaty_rune_clear",
+    "icon": "ico_block_floaty_rune",
+    "clearFrames": [
+      "block_floaty_rune__expire_to_junk__f00",
+      "block_floaty_rune__expire_to_junk__f01",
+      "block_floaty_rune__expire_to_junk__f02",
+      "block_floaty_rune__expire_to_junk__f03",
+      "block_floaty_rune__expire_to_junk__f04"
+    ],
+    "specialFrames": [
+      "block_floaty_rune__hover__f00",
+      "block_floaty_rune__hover__f01",
+      "block_floaty_rune__hover__f02",
+      "block_floaty_rune__hover__f03"
+    ]
   },
   "animations": {
     "hover": "anim_block_floaty_rune_hover",

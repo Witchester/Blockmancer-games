@@ -39,6 +39,17 @@ export type HeroVisualState = 'idle' | 'cast' | 'attack' | 'hit' | 'victory' | '
 export type MonsterVisualState = 'idle' | 'attack' | 'hit' | 'defeat' | 'special' | 'phase_2' | 'intro_portrait' | 'icon';
 export type StageBackgroundState = 'battle' | 'battleFar' | 'battleMid' | 'battleNear' | 'map' | 'bossArena';
 export type MapNodeVisualState = 'available' | 'current' | 'completed' | 'locked';
+export type RouteStoryAssetType =
+  | 'dialoguePanel'
+  | 'choiceCardPractical'
+  | 'choiceCardTrue'
+  | 'choiceCardRisky'
+  | 'routeTrigger'
+  | 'routeBadge'
+  | 'heroPortrait'
+  | 'npcPortrait'
+  | 'ending'
+  | 'routeScene';
 
 export class AssetSystem {
   private readonly fallbackKey = 'asset_missing';
@@ -192,17 +203,17 @@ export class AssetSystem {
 
   getBoardBlockBaseKey(blockId: string | null | undefined): string {
     const block = blockId ? contentRegistry.getBoardBlock(blockId) as AssetRefContent | null : null;
-    return this.getAssetRef(block, 'base') ?? this.boardBlockStem(blockId, block);
+    return this.getAssetRef(block, 'base') ?? `${this.boardBlockStem(blockId, block)}__base__f00`;
   }
 
   getBoardBlockGlowKey(blockId: string | null | undefined): string {
     const block = blockId ? contentRegistry.getBoardBlock(blockId) as AssetRefContent | null : null;
-    return this.getAssetRef(block, 'glow') ?? `${this.boardBlockStem(blockId, block)}_glow`;
+    return this.getAssetRef(block, 'glow') ?? `${this.boardBlockStem(blockId, block)}__glow__f00`;
   }
 
   getBoardBlockClearKey(blockId: string | null | undefined): string {
     const block = blockId ? contentRegistry.getBoardBlock(blockId) as AssetRefContent | null : null;
-    return this.getAssetRef(block, 'clear') ?? `${this.boardBlockStem(blockId, block)}_clear`;
+    return this.getAssetRef(block, 'clear') ?? `${this.boardBlockStem(blockId, block)}__clear__f00`;
   }
 
   getBoardBlockGlowFrames(blockId: string | null | undefined): string[] {
@@ -223,6 +234,26 @@ export class AssetSystem {
     }
     const stem = this.boardBlockStem(blockId, block);
     return this.inferBoardBlockFrameKeys(stem, 'clear');
+  }
+
+  getBoardBlockFrames(blockId: string | null | undefined, animationName: string): string[] {
+    if (animationName === 'glow') {
+      return this.getBoardBlockGlowFrames(blockId);
+    }
+    if (animationName === 'clear') {
+      return this.getBoardBlockClearFrames(blockId);
+    }
+    const block = blockId ? contentRegistry.getBoardBlock(blockId) as AssetRefContent | null : null;
+    const special = block?.assetRefs?.specialFrames;
+    if (Array.isArray(special)) {
+      return special.filter((key): key is string => typeof key === 'string' && key.length > 0);
+    }
+    const standard = blockId ? getBoardBlockStandard(blockId) : null;
+    if (!standard) {
+      return [];
+    }
+    const inferredId = `anim_${standard.assetId.replace(/^spr_/, '')}_${animationName}`;
+    return getAnimationFrameKeys(inferredId);
   }
 
   getLoadedBoardBlockGlowFrames(scene: Phaser.Scene, blockId: string | null | undefined): string[] {
@@ -266,7 +297,7 @@ export class AssetSystem {
 
   getBoardBlockIconKey(blockId: string | null | undefined): string {
     const block = blockId ? contentRegistry.getBoardBlock(blockId) as AssetRefContent | null : null;
-    return this.getAssetRef(block, 'icon') ?? block?.iconKey ?? this.boardBlockStem(blockId, block).replace(/^spr_/, 'ico_');
+    return this.getAssetRef(block, 'icon') ?? block?.iconKey ?? `ico_${this.boardBlockStem(blockId, block)}`;
   }
 
   getBoardBlockTexture(
@@ -288,17 +319,20 @@ export class AssetSystem {
       ...this.withLegacyTextureKeys(stateKey),
       ...(state !== 'base' && state !== 'icon' ? this.withLegacyTextureKeys(baseKey) : []),
       ...this.withLegacyTextureKeys(stem),
+      blockId,
+      state === 'icon' ? this.legacyBoardBlockIconKey(blockId) : undefined,
       block?.spriteKey,
-      blockId
+      this.legacyBoardBlockSpriteKey(blockId)
     ], state === 'icon' ? 'icon' : 'block');
   }
 
   getHeroTexture(scene: Phaser.Scene, heroId: string | null | undefined, state: HeroVisualState = 'portrait'): string {
     const hero = heroId ? contentRegistry.getHero(heroId) as AssetRefContent | null : null;
-    const normalizedState = state === 'locked' ? 'silhouette_locked' : state;
+    const normalizedState = state === 'locked' ? 'silhouette_locked' : state === 'cast' ? 'cast_spell' : state === 'defeat' ? 'defeat_tired' : state;
     return this.getFirstTextureKey(scene, [
       this.getAssetRef(hero, state),
       this.getAssetRef(hero, normalizedState),
+      state !== 'icon' && state !== 'portrait' && heroId ? `${heroId}__${normalizedState}__f00` : undefined,
       state === 'icon' ? `ico_${heroId}` : undefined,
       heroId ? `spr_${heroId}_${normalizedState}` : undefined,
       hero?.portraitKey,
@@ -310,14 +344,21 @@ export class AssetSystem {
 
   getMonsterTexture(scene: Phaser.Scene, monsterId: string | null | undefined, state: MonsterVisualState = 'idle'): string {
     const monster = monsterId ? contentRegistry.getMonster(monsterId) as AssetRefContent | null : null;
+    const actorId = monsterId?.startsWith('mon_boss_') ? monsterId.replace(/^mon_/, '') : monsterId;
     return this.getFirstTextureKey(scene, [
       this.getAssetRef(monster, state),
-      state === 'icon' ? `ico_${monsterId}` : undefined,
+      state === 'icon' ? `ico_${actorId}` : undefined,
+      state !== 'icon' && actorId ? `${actorId}__${state}__f00` : undefined,
       monsterId ? `spr_${monsterId}_${state}` : undefined,
       monsterId ? `spr_${monsterId}_idle` : undefined,
       monster?.spriteKey,
       monsterId
     ], state === 'icon' ? 'icon' : 'sprite');
+  }
+
+  getBossTexture(scene: Phaser.Scene, bossId: string | null | undefined, state: MonsterVisualState = 'idle'): string {
+    const monsterId = bossId?.startsWith('mon_boss_') ? bossId : bossId ? `mon_${bossId}` : bossId;
+    return this.getMonsterTexture(scene, monsterId, state);
   }
 
   getStageBackground(scene: Phaser.Scene, stageIdOrIndex: string | number | null | undefined, state: StageBackgroundState = 'battle'): string {
@@ -403,6 +444,40 @@ export class AssetSystem {
     return this.getFirstTextureKey(scene, [explicitKey, folderIconKey, genericIconKey, id], 'icon');
   }
 
+  getIconTexture(
+    scene: Phaser.Scene,
+    category: string,
+    id: string | null | undefined,
+    explicitKey?: string | null
+  ): string {
+    return this.getIcon(scene, category, id, explicitKey);
+  }
+
+  getRouteStoryTexture(scene: Phaser.Scene, type: RouteStoryAssetType, id: string | null | undefined): string {
+    const keys: Record<RouteStoryAssetType, Array<string | undefined>> = {
+      dialoguePanel: ['ui_route_dialogue_panel'],
+      choiceCardPractical: ['ui_route_choice_card_practical'],
+      choiceCardTrue: ['ui_route_choice_card_true'],
+      choiceCardRisky: ['ui_route_choice_card_risky'],
+      routeTrigger: id ? [`ico_route_trigger_${id}`] : [],
+      routeBadge: id ? [`ico_route_badge_${id}`] : [],
+      heroPortrait: id ? [`prt_route_${id}`, `prt_route_${id}_neutral`, id] : [],
+      npcPortrait: id ? [`prt_route_${id}`, `prt_route_${id}_neutral`] : [],
+      ending: id ? [`story_end_${id}`, `story_end_${id}_normal`] : [],
+      routeScene: id ? [`bg_route_${id}`] : []
+    };
+    const kind = type === 'routeTrigger' || type === 'routeBadge'
+      ? 'icon'
+      : type === 'ending' || type === 'routeScene'
+        ? 'background'
+        : 'sprite';
+    return this.getFirstTextureKey(scene, keys[type], kind);
+  }
+
+  getVfxFrames(scene: Phaser.Scene, vfxId: string | null | undefined): string[] {
+    return this.getLoadedAnimationFrameKeys(scene, vfxId?.startsWith('anim_') ? vfxId : vfxId ? `anim_${vfxId}` : null);
+  }
+
   getMapNodeTexture(
     scene: Phaser.Scene,
     roomType: string,
@@ -440,20 +515,26 @@ export class AssetSystem {
 
   resolveBoardBlockAssetPath(
     key: string,
-    variant: 'base' | 'glow' | 'clear' | 'glowFrame' | 'clearFrame' | 'icon' = 'base'
+    variant: 'base' | 'glow' | 'clear' | 'glowFrame' | 'clearFrame' | 'specialFrame' | 'icon' = 'base'
   ): string {
     if (variant === 'icon') {
       return `assets/icons/board-blocks/${key}.png`;
     }
 
-    const type = this.boardBlockTypeFromKey(key);
+    const blockId = this.normalizeFinalBoardBlockId(key.replace(/__(?:base|glow|clear|[a-z0-9_]+)__f\d{2}$/, '').replace(/_(?:glow|clear)(?:_frame_\d{2})?$/, ''));
+    if (variant === 'base') {
+      return `assets/sprites/board-blocks/${blockId}/base/${blockId}__base__f00.png`;
+    }
     if (variant === 'glowFrame') {
-      return `assets/sprites/board-blocks/${type}/animations/glow/${key}.png`;
+      return `assets/sprites/board-blocks/${blockId}/glow/${key}.png`;
     }
     if (variant === 'clearFrame') {
-      return `assets/sprites/board-blocks/${type}/animations/clear/${key}.png`;
+      return `assets/sprites/board-blocks/${blockId}/clear/${key}.png`;
     }
-    return `assets/sprites/board-blocks/${type}/${key}.png`;
+    if (variant === 'specialFrame') {
+      return `assets/sprites/board-blocks/${blockId}/special/${key}.png`;
+    }
+    return `assets/sprites/board-blocks/${blockId}/${variant}/${key}.png`;
   }
 
   ensureFallbackTextures(scene: Phaser.Scene): void {
@@ -499,17 +580,21 @@ export class AssetSystem {
   private boardBlockStem(blockId: string | null | undefined, block: AssetRefContent | null): string {
     const key = this.getAssetRef(block, 'base') ?? block?.spriteKey ?? blockId ?? 'block_red';
     const aliases: Record<string, string> = {
-      block_red: 'spr_block_red_rune',
-      block_blue: 'spr_block_blue_rune',
-      block_green: 'spr_block_green_rune',
-      block_yellow: 'spr_block_yellow_rune'
+      block_red_rune: 'block_red',
+      block_blue_rune: 'block_blue',
+      block_green_rune: 'block_green',
+      block_yellow_rune: 'block_yellow',
+      spr_block_red_rune: 'block_red',
+      spr_block_blue_rune: 'block_blue',
+      spr_block_green_rune: 'block_green',
+      spr_block_yellow_rune: 'block_yellow'
     };
-    return aliases[key] ?? (key.startsWith('spr_') ? key : `spr_${key}`);
+    return aliases[key] ?? key.replace(/^spr_/, '').replace(/__(?:base|glow|clear)__f\d{2}$/, '');
   }
 
   private inferBoardBlockFrameKeys(stem: string, state: 'glow' | 'clear'): string[] {
     const count = state === 'glow' ? BLOCK_ANIM.GLOW_FRAME_COUNT : BLOCK_ANIM.CLEAR_FRAME_COUNT;
-    return Array.from({ length: count }, (_, index) => `${stem}_${state}_frame_${String(index + 1).padStart(2, '0')}`);
+    return Array.from({ length: count }, (_, index) => `${stem}__${state}__f${String(index).padStart(2, '0')}`);
   }
 
   private createAnimationIfLoaded(scene: Phaser.Scene, animationId: string): boolean {
@@ -576,7 +661,10 @@ export class AssetSystem {
   }
 
   private withLegacyTextureKeys(key: string | null | undefined): string[] {
-    return key ? [key, `${key}__legacy`] : [];
+    if (!key) {
+      return [];
+    }
+    return [key, `${key}__legacy`, this.legacyBoardBlockSpriteKey(key)].filter((value): value is string => Boolean(value));
   }
 
   private getLoadedBoardBlockFrames(scene: Phaser.Scene, keys: string[]): string[] {
@@ -591,6 +679,54 @@ export class AssetSystem {
       .replace(/^spr_block_/, '')
       .replace(/_(?:glow|clear)(?:_frame_\d{2})?$/, '');
     return stem.endsWith('_rune') ? stem.slice(0, -'_rune'.length) : stem;
+  }
+
+  private normalizeFinalBoardBlockId(key: string): string {
+    const aliases: Record<string, string> = {
+      block_red_rune: 'block_red',
+      block_blue_rune: 'block_blue',
+      block_green_rune: 'block_green',
+      block_yellow_rune: 'block_yellow',
+      spr_block_red_rune: 'block_red',
+      spr_block_blue_rune: 'block_blue',
+      spr_block_green_rune: 'block_green',
+      spr_block_yellow_rune: 'block_yellow'
+    };
+    return aliases[key] ?? key.replace(/^spr_/, '');
+  }
+
+  private legacyBoardBlockSpriteKey(key: string | null | undefined): string | undefined {
+    if (!key) {
+      return undefined;
+    }
+    const aliases: Record<string, string> = {
+      block_red: 'spr_block_red_rune',
+      block_blue: 'spr_block_blue_rune',
+      block_green: 'spr_block_green_rune',
+      block_yellow: 'spr_block_yellow_rune'
+    };
+    const normalized = key.replace(/__(?:base|glow|clear)__f\d{2}$/, '');
+    const legacyStem = aliases[normalized] ?? (normalized.startsWith('block_') ? `spr_${normalized}` : undefined);
+    if (!legacyStem) {
+      return undefined;
+    }
+    if (key.includes('__glow__')) {
+      return `${legacyStem}_glow`;
+    }
+    if (key.includes('__clear__')) {
+      return `${legacyStem}_clear`;
+    }
+    return legacyStem;
+  }
+
+  private legacyBoardBlockIconKey(blockId: string | null | undefined): string | undefined {
+    const aliases: Record<string, string> = {
+      block_red: 'ico_block_red_rune',
+      block_blue: 'ico_block_blue_rune',
+      block_green: 'ico_block_green_rune',
+      block_yellow: 'ico_block_yellow_rune'
+    };
+    return blockId ? aliases[blockId] ?? `ico_${blockId}` : undefined;
   }
 
   private getStageByIndex(index: number): AssetRefContent | null {

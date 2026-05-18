@@ -1,28 +1,14 @@
 # Asset Runtime Mapping Report
-<!-- BLOCKMANCER_STATUS_UPDATE_2026-05-18 -->
-## Current Interpretation — 2026-05-18
-
-This report should be read as **runtime safety**, not final art completion.
-
-| Metric | Meaning |
-| --- | --- |
-| 199 runtime keys | Runtime knows what to load. |
-| 187 runtime files ready | Required image paths are present or covered. |
-| 12 audio files missing but fallback-safe | Runtime will not crash, but final audio is still needed. |
-| 0 unresolved runtime assets | Asset resolver has no current hard blockers. |
-
-Next asset update: import final Priority 1 PNG animation frame packages and final OGG audio at the expected runtime paths.
-<!-- END_BLOCKMANCER_STATUS_UPDATE -->
-Generated: 2026-05-15T18:35:04.333Z
+Generated: 2026-05-18T15:52:03.964Z
 ## Inputs
 - Runtime path source: `src/game/data/assets.ts`
-- Workbook parsed: `blockmancer_release_1_asset_checklist.xlsx`
-- Checklist rows parsed: 992
-- Physical assets scanned: 1072
-- Asset reference hits scanned: 246
+- Workbook parsed: not found
+- Checklist rows parsed: 0
+- Physical assets scanned: 1694
+- Asset reference hits scanned: 335
 ## Summary
-- Runtime asset keys found: 199
-- Runtime files already OK: 187
+- Runtime asset keys found: 209
+- Runtime files already OK: 197
 - Files copied from designer/planned path: 0
 - Placeholders generated: 0
 - Existing files skipped: 0
@@ -129,8 +115,6 @@ Generated: 2026-05-15T18:35:04.333Z
 - public/assets/backgrounds/stages/bg_stage_starfall_arcade_battle_far.png
 - public/assets/backgrounds/stages/bg_stage_starfall_arcade_battle_mid.png
 - public/assets/backgrounds/stages/bg_stage_starfall_arcade_battle_near.png
-- public/assets/board-blocks/block_red_clear.png
-- public/assets/board-blocks/block_red_glow.png
 - public/assets/icons/board-blocks/ico_block_blue_rune.png
 - public/assets/icons/board-blocks/ico_block_bomb.png
 - public/assets/icons/board-blocks/ico_block_cloud_junk.png
@@ -384,11 +368,11 @@ Generated: 2026-05-15T18:35:04.333Z
 - public/assets/icons/upgrades/ico_upg_hotter_oven.png
 - public/assets/icons/upgrades/ico_upg_inventory_pouch.png
 - public/assets/icons/upgrades/ico_upg_lucky_roll.png
+- public/assets/icons/upgrades/ico_upg_mana_lemonade.png
+- public/assets/icons/upgrades/ico_upg_pocket_snack.png
 
-- ...and 492 more.
+- ...and 512 more.
 ## Clear/Glow/Icon Variants Not Currently Used
-- public/assets/board-blocks/block_red_clear.png
-- public/assets/board-blocks/block_red_glow.png
 - public/assets/icons/board-blocks/ico_block_blue_rune.png
 - public/assets/icons/board-blocks/ico_block_bomb.png
 - public/assets/icons/board-blocks/ico_block_cloud_junk.png
@@ -657,6 +641,10 @@ Generated: 2026-05-15T18:35:04.333Z
 - public/assets/icons/weapons/ico_wpn_snowcone_staff.png
 - public/assets/icons/weapons/ico_wpn_spring_hammer.png
 - public/assets/icons/weapons/ico_wpn_star_scepter.png
+- public/assets/sprites/board-blocks/blue-rune/spr_block_blue_rune_clear.png
+- public/assets/sprites/board-blocks/blue-rune/spr_block_blue_rune_glow.png
+- public/assets/sprites/board-blocks/green-rune/spr_block_green_rune_clear.png
+- public/assets/sprites/board-blocks/green-rune/spr_block_green_rune_glow.png
 - public/assets/sprites/board-blocks/spr_block_blue_rune_clear.png
 - public/assets/sprites/board-blocks/spr_block_blue_rune_glow.png
 - public/assets/sprites/board-blocks/spr_block_bomb_clear.png
@@ -695,6 +683,7 @@ Generated: 2026-05-15T18:35:04.333Z
 - public/assets/sprites/board-blocks/spr_block_toolbox_glow.png
 - public/assets/sprites/board-blocks/spr_block_yellow_rune_clear.png
 - public/assets/sprites/board-blocks/spr_block_yellow_rune_glow.png
+- public/assets/sprites/board-blocks/yellow-rune/spr_block_yellow_rune_glow.png
 ## Existing Files Preserved
 - Existing non-empty runtime files were not overwritten.
 - Designer/checklist files were left in place.

@@ -13,15 +13,27 @@
   ],
   "enabled": true,
   "assetRefs": {
-    "base": "spr_block_blue_rune",
-    "glow": "spr_block_blue_rune_glow",
-    "clear": "spr_block_blue_rune_clear",
-    "icon": "ico_block_blue_rune"
+    "base": "block_blue",
+    "glow": "block_blue_glow",
+    "clear": "block_blue_clear",
+    "icon": "ico_block_blue",
+    "glowFrames": [
+      "block_blue__glow__f00",
+      "block_blue__glow__f01",
+      "block_blue__glow__f02"
+    ],
+    "clearFrames": [
+      "block_blue__clear__f00",
+      "block_blue__clear__f01",
+      "block_blue__clear__f02",
+      "block_blue__clear__f03",
+      "block_blue__clear__f04"
+    ]
   },
   "animations": {
-    "glow": "anim_block_blue_rune_glow",
-    "clear": "anim_block_blue_rune_clear"
+    "glow": "anim_block_blue_glow",
+    "clear": "anim_block_blue_clear"
   },
-  "glowAnimationKey": "anim_block_blue_rune_glow",
-  "clearAnimationKey": "anim_block_blue_rune_clear"
+  "glowAnimationKey": "anim_block_blue_glow",
+  "clearAnimationKey": "anim_block_blue_clear"
 }

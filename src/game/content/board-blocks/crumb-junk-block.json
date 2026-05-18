@@ -11,10 +11,22 @@
   ],
   "enabled": true,
   "assetRefs": {
-    "base": "spr_block_crumb_junk",
-    "glow": "spr_block_crumb_junk_glow",
-    "clear": "spr_block_crumb_junk_clear",
-    "icon": "ico_block_crumb_junk"
+    "base": "block_crumb_junk",
+    "glow": "block_crumb_junk_glow",
+    "clear": "block_crumb_junk_clear",
+    "icon": "ico_block_crumb_junk",
+    "clearFrames": [
+      "block_crumb_junk__break__f00",
+      "block_crumb_junk__break__f01",
+      "block_crumb_junk__break__f02",
+      "block_crumb_junk__break__f03",
+      "block_crumb_junk__break__f04"
+    ],
+    "specialFrames": [
+      "block_crumb_junk__damaged__f00",
+      "block_crumb_junk__damaged__f01",
+      "block_crumb_junk__damaged__f02"
+    ]
   },
   "animations": {
     "damaged": "anim_block_crumb_junk_damaged",

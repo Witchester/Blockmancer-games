@@ -1,44 +1,32 @@
 # Asset Variant Audit
-<!-- BLOCKMANCER_STATUS_UPDATE_2026-05-18 -->
-## Current Interpretation — 2026-05-18
 
-Variant audit confirms the **variant system is working and fallback-safe**.
-
-### Production notes
-
-- Release 1 heroes are ready; Bloop and Professor Poplin are future/backlog unless explicitly promoted.
-- Board blocks are mostly ready, but `block_junk`, `block_magic`, `block_stone`, and `block_void` still fall back for expanded variants.
-- All six stage variants are ready and should be smoke-tested in portrait mobile.
-- Variant readiness does not guarantee final polished art; it means runtime can resolve a usable asset or fallback.
-<!-- END_BLOCKMANCER_STATUS_UPDATE -->
-
-Generated: 2026-05-15T18:51:22.797Z
+Generated: 2026-05-18T15:52:03.974Z
 
 ## Board Blocks
 
 | ID | Base | Glow | Clear | Icon |
 | --- | --- | --- | --- | --- |
-| block_blue | ready | ready | ready | ready |
-| block_bomb | ready | ready | ready | ready |
-| block_cloud_junk | ready | ready | ready | ready |
-| block_confetti | ready | ready | ready | ready |
-| block_crumb_junk | ready | ready | ready | ready |
-| block_cupcake | ready | ready | ready | ready |
-| block_floaty_rune | ready | ready | ready | ready |
-| block_green | ready | ready | ready | ready |
-| block_ice | ready | ready | ready | ready |
-| block_jelly | ready | ready | ready | ready |
-| block_junk | fallback | fallback | fallback | fallback |
-| block_magic | fallback | fallback | fallback | fallback |
-| block_red | ready | ready | ready | ready |
-| block_royal | ready | ready | ready | ready |
-| block_sprinkle | ready | ready | ready | ready |
-| block_star | ready | ready | ready | ready |
-| block_sticky | ready | ready | ready | ready |
-| block_stone | fallback | fallback | fallback | fallback |
-| block_toolbox | ready | ready | ready | ready |
-| block_void | fallback | fallback | fallback | fallback |
-| block_yellow | ready | ready | ready | ready |
+| block_blue | ready | fallback | fallback | fallback |
+| block_bomb | ready | fallback | fallback | ready |
+| block_cloud_junk | ready | fallback | fallback | ready |
+| block_confetti | ready | fallback | fallback | ready |
+| block_crumb_junk | ready | fallback | fallback | ready |
+| block_cupcake | ready | fallback | fallback | ready |
+| block_floaty_rune | ready | fallback | fallback | ready |
+| block_green | ready | fallback | fallback | fallback |
+| block_ice | ready | fallback | fallback | ready |
+| block_jelly | ready | fallback | fallback | ready |
+| block_junk | ready | fallback | fallback | fallback |
+| block_magic | ready | fallback | fallback | fallback |
+| block_red | ready | fallback | fallback | fallback |
+| block_royal | ready | fallback | fallback | ready |
+| block_sprinkle | ready | fallback | fallback | ready |
+| block_star | ready | fallback | fallback | ready |
+| block_sticky | ready | fallback | fallback | ready |
+| block_stone | ready | fallback | fallback | fallback |
+| block_toolbox | ready | fallback | fallback | ready |
+| block_void | ready | fallback | fallback | fallback |
+| block_yellow | ready | fallback | fallback | fallback |
 
 ## Heroes
 

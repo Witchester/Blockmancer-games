@@ -13,15 +13,27 @@
   ],
   "enabled": true,
   "assetRefs": {
-    "base": "spr_block_green_rune",
-    "glow": "spr_block_green_rune_glow",
-    "clear": "spr_block_green_rune_clear",
-    "icon": "ico_block_green_rune"
+    "base": "block_green",
+    "glow": "block_green_glow",
+    "clear": "block_green_clear",
+    "icon": "ico_block_green",
+    "glowFrames": [
+      "block_green__glow__f00",
+      "block_green__glow__f01",
+      "block_green__glow__f02"
+    ],
+    "clearFrames": [
+      "block_green__clear__f00",
+      "block_green__clear__f01",
+      "block_green__clear__f02",
+      "block_green__clear__f03",
+      "block_green__clear__f04"
+    ]
   },
   "animations": {
-    "glow": "anim_block_green_rune_glow",
-    "clear": "anim_block_green_rune_clear"
+    "glow": "anim_block_green_glow",
+    "clear": "anim_block_green_clear"
   },
-  "glowAnimationKey": "anim_block_green_rune_glow",
-  "clearAnimationKey": "anim_block_green_rune_clear"
+  "glowAnimationKey": "anim_block_green_glow",
+  "clearAnimationKey": "anim_block_green_clear"
 }

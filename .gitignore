@@ -50,5 +50,10 @@ _bmad-output/
 scripts/
 !scripts/
 scripts/*
+!scripts/ensure-final-asset-folders.mjs
 !scripts/validate-animations.mjs
-public/
+public/*
+!public/assets/
+public/assets/**
+!public/assets/**/
+!public/assets/**/.gitkeep

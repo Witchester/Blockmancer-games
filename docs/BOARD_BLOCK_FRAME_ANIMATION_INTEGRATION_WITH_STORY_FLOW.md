@@ -49,22 +49,22 @@ Clear animation is visual-only and follows board logic. The board cell is cleare
 Preferred still sprite paths:
 
 ```text
-public/assets/sprites/board-blocks/[color/type]/spr_block_[color/type]_rune.png
-public/assets/sprites/board-blocks/[color/type]/spr_block_[color/type]_rune_glow.png
-public/assets/sprites/board-blocks/[color/type]/spr_block_[color/type]_rune_clear.png
+public/assets/board-blocks/block_[color/type].png
+public/assets/sprites/board-blocks/block_[color/type]/glow/block_[color/type]__glow__f00.png
+public/assets/sprites/board-blocks/block_[color/type]/clear/block_[color/type]__clear__f00.png
 ```
 
 Preferred exact-frame paths:
 
 ```text
-public/assets/sprites/board-blocks/block_[color/type]_rune/glow/spr_block_[color/type]_rune__glow__f00.png
-public/assets/sprites/board-blocks/block_[color/type]_rune/clear/spr_block_[color/type]_rune__clear__f00.png
+public/assets/sprites/board-blocks/block_[color/type]/glow/block_[color/type]__glow__f00.png
+public/assets/sprites/board-blocks/block_[color/type]/clear/block_[color/type]__clear__f00.png
 ```
 
 Icon paths:
 
 ```text
-public/assets/icons/board-blocks/ico_block_[color/type]_rune.png
+public/assets/icons/board-blocks/ico_block_[color/type].png
 ```
 
 ## Backward Compatibility Paths
@@ -116,24 +116,24 @@ Board block content may optionally provide:
 
 ```json
 {
-  "spriteKey": "spr_block_red_rune",
-  "iconKey": "ico_block_red_rune",
+  "spriteKey": "block_red",
+  "iconKey": "ico_block_red",
   "assetRefs": {
-    "base": "spr_block_red_rune",
-    "glow": "spr_block_red_rune_glow",
-    "clear": "spr_block_red_rune_clear",
-    "icon": "ico_block_red_rune",
+    "base": "block_red",
+    "glow": "block_red_glow",
+    "clear": "block_red_clear",
+    "icon": "ico_block_red",
     "glowFrames": [
-      "spr_block_red_rune_glow_frame_01",
-      "spr_block_red_rune_glow_frame_02",
-      "spr_block_red_rune_glow_frame_03"
+      "block_red__glow__f00",
+      "block_red__glow__f01",
+      "block_red__glow__f02"
     ],
     "clearFrames": [
-      "spr_block_red_rune_clear_frame_01",
-      "spr_block_red_rune_clear_frame_02",
-      "spr_block_red_rune_clear_frame_03",
-      "spr_block_red_rune_clear_frame_04",
-      "spr_block_red_rune_clear_frame_05"
+      "block_red__clear__f00",
+      "block_red__clear__f01",
+      "block_red__clear__f02",
+      "block_red__clear__f03",
+      "block_red__clear__f04"
     ]
   }
 }

@@ -23,10 +23,29 @@
   ],
   "enabled": true,
   "assetRefs": {
-    "base": "spr_block_bomb",
-    "glow": "spr_block_bomb_glow",
-    "clear": "spr_block_bomb_clear",
-    "icon": "ico_block_bomb"
+    "base": "block_bomb",
+    "glow": "block_bomb_glow",
+    "clear": "block_bomb_clear",
+    "icon": "ico_block_bomb",
+    "glowFrames": [
+      "block_bomb__glow__f00",
+      "block_bomb__glow__f01",
+      "block_bomb__glow__f02"
+    ],
+    "clearFrames": [
+      "block_bomb__explode__f00",
+      "block_bomb__explode__f01",
+      "block_bomb__explode__f02",
+      "block_bomb__explode__f03",
+      "block_bomb__explode__f04",
+      "block_bomb__explode__f05"
+    ],
+    "specialFrames": [
+      "block_bomb__idle__f00",
+      "block_bomb__idle__f01",
+      "block_bomb__idle__f02",
+      "block_bomb__idle__f03"
+    ]
   },
   "animations": {
     "idle": "anim_block_bomb_idle",

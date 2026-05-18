@@ -33,8 +33,8 @@ asset_id__animation_name__f02.png
 Static assets use their static key:
 
 ```text
-spr_block_red_rune.png
-ico_block_red_rune.png
+block_red.png
+ico_block_red.png
 ```
 
 ## Folder Structure

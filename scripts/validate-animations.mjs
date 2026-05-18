@@ -8,8 +8,8 @@ const docsRoot = path.join(projectRoot, 'docs');
 const publicRoot = path.join(projectRoot, 'public');
 
 const requiredAnimationIds = [
-  'anim_block_red_rune_glow',
-  'anim_block_red_rune_clear',
+  'anim_block_red_glow',
+  'anim_block_red_clear',
   'anim_block_bomb_explode',
   'anim_vfx_line_clear',
   'anim_vfx_cascade_pop',
@@ -77,7 +77,7 @@ function folderFor(category, assetId, animationName) {
     const blockId = assetId.replace(/^spr_/, '');
     return animationName === 'glow' || animationName === 'clear'
       ? `assets/sprites/board-blocks/${blockId}/${animationName}`
-      : `assets/sprites/board-blocks/${blockId}/special/${animationName}`;
+      : `assets/sprites/board-blocks/${blockId}/special`;
   }
   if (category === 'spell') return `assets/effects/${assetId}`;
   if (category === 'item') return `assets/effects/items/${assetId}/${animationName}`;
@@ -115,7 +115,7 @@ async function buildDefinitions(standards, errors) {
   Object.values(standards.boardBlocks).forEach((block) => {
     Object.entries(block.animations).forEach(([name, count]) => addDefinition(definitions, 'boardBlock', block.assetId, name, count, errors));
   });
-  Object.entries(standards.coreVfx).forEach(([id, count]) => addDefinition(definitions, 'vfx', id, 'default', count, errors));
+  Object.entries(standards.coreVfx).forEach(([id, count]) => addDefinition(definitions, 'vfx', id, 'play', count, errors));
   Object.entries(standards.spellVfx).forEach(([id, count]) => addDefinition(definitions, 'spell', id, 'cast', count, errors));
   standards.items.basicUseVfx.forEach((id) => addDefinition(definitions, 'item', id, 'use_vfx', 5, errors));
   standards.items.reactiveCounterVfx.forEach((id) => {

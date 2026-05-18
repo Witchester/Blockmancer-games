@@ -98,7 +98,7 @@ function boardBlockFolder(assetId: string, animationName: string): string {
   if (animationName === 'glow' || animationName === 'clear') {
     return `assets/sprites/board-blocks/${blockId}/${animationName}`;
   }
-  return `assets/sprites/board-blocks/${blockId}/special/${animationName}`;
+  return `assets/sprites/board-blocks/${blockId}/special`;
 }
 
 function folderFor(category: AnimationCategory, assetId: string, animationName: string): string {
@@ -204,7 +204,7 @@ function createDefinitions(): AnimationSequenceDefinition[] {
   }
 
   for (const [assetId, count] of Object.entries(standards.coreVfx)) {
-    addDefinition(entries, 'vfx', assetId, 'default', count);
+    addDefinition(entries, 'vfx', assetId, 'play', count);
   }
 
   for (const [assetId, count] of Object.entries(standards.spellVfx)) {
@@ -302,14 +302,14 @@ export function getFallbackAnimation(category: AnimationCategory): AnimationSequ
 export function getBoardBlockStandard(blockId: string): { assetId: string; animations: Record<string, number> } | null {
   const normalized = blockId in standards.boardBlocks
     ? blockId
-    : blockId === 'block_red'
-      ? 'block_red_rune'
-      : blockId === 'block_blue'
-        ? 'block_blue_rune'
-        : blockId === 'block_green'
-          ? 'block_green_rune'
-          : blockId === 'block_yellow'
-            ? 'block_yellow_rune'
+    : blockId === 'block_red_rune'
+      ? 'block_red'
+      : blockId === 'block_blue_rune'
+        ? 'block_blue'
+        : blockId === 'block_green_rune'
+          ? 'block_green'
+          : blockId === 'block_yellow_rune'
+            ? 'block_yellow'
             : blockId;
   return (standards.boardBlocks as Record<string, { assetId: string; animations: Record<string, number> }>)[normalized] ?? null;
 }

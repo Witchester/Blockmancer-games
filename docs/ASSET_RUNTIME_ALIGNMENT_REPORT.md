@@ -4,6 +4,14 @@
 
 This report is the current runtime key/path reference. Use it to avoid generating assets with outdated `spr_`/`ico_` names when the runtime expects current content keys.
 
+### Final folder contract update
+
+- `docs/FINAL_ASSET_FOLDER_STRUCTURE.md` is now the folder and naming contract.
+- Final PNG frame paths use current runtime asset IDs such as `block_red__glow__f00.png` under `public/assets/sprites/board-blocks/block_red/glow/`.
+- Static board blocks continue to resolve first from `public/assets/board-blocks/block_red.png` style paths.
+- Old flat `spr_` / `_frame_01` board-block paths are compatibility fallback only.
+- Route-story UI, portraits, endings, route-scene backgrounds, route trigger icons, and route VFX are registered as UI/story assets, not board-block animations.
+
 ### Current rule
 
 - Do not rename content IDs or asset keys just for old checklist compatibility.

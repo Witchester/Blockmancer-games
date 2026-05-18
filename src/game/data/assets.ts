@@ -96,6 +96,20 @@ function assetPath(folder: string, key: string): string {
   return `assets/${folder}/${key}.png`;
 }
 
+function normalizeFinalBoardBlockId(key: string): string {
+  const aliases: Record<string, string> = {
+    block_red_rune: 'block_red',
+    block_blue_rune: 'block_blue',
+    block_green_rune: 'block_green',
+    block_yellow_rune: 'block_yellow',
+    spr_block_red_rune: 'block_red',
+    spr_block_blue_rune: 'block_blue',
+    spr_block_green_rune: 'block_green',
+    spr_block_yellow_rune: 'block_yellow'
+  };
+  return aliases[key] ?? key.replace(/^spr_/, '');
+}
+
 function addAsset(assets: Map<string, AssetManifestEntry>, key: string | null | undefined, folder: string, kind: AssetKind): void {
   if (!key || assets.has(key)) {
     return;
@@ -130,27 +144,36 @@ function addAnimationFrameAssets(assets: Map<string, AssetManifestEntry>): void 
 }
 
 function boardBlockStem(entry: ContentAssetEntry): string {
-  return boardBlockStemFromKey(getAssetValue(entry, 'spriteKey') ?? entry.id);
+  return normalizeFinalBoardBlockId(getAssetValue(entry, 'spriteKey') ?? entry.id);
 }
 
 function boardBlockStemFromKey(key: string): string {
   const aliases: Record<string, string> = {
-    block_red: 'spr_block_red_rune',
-    block_blue: 'spr_block_blue_rune',
-    block_green: 'spr_block_green_rune',
-    block_yellow: 'spr_block_yellow_rune'
+    block_red_rune: 'block_red',
+    block_blue_rune: 'block_blue',
+    block_green_rune: 'block_green',
+    block_yellow_rune: 'block_yellow',
+    spr_block_red_rune: 'block_red',
+    spr_block_blue_rune: 'block_blue',
+    spr_block_green_rune: 'block_green',
+    spr_block_yellow_rune: 'block_yellow'
   };
-  return aliases[key] ?? (key.startsWith('spr_') ? key : `spr_${key}`);
+  return aliases[key] ?? key.replace(/^spr_/, '');
 }
 
 function boardBlockTypeFromKey(key: string): string {
   const stem = boardBlockStemFromKey(key)
-    .replace(/^spr_block_/, '')
-    .replace(/_(?:glow|clear)(?:_frame_\d{2})?$/, '');
+    .replace(/^block_/, '')
+    .replace(/_(?:glow|clear)(?:_frame_\d{2})?$/, '')
+    .replace(/__(?:base|glow|clear|[a-z0-9_]+)__f\d{2}$/, '');
   return stem.endsWith('_rune') ? stem.slice(0, -'_rune'.length) : stem;
 }
 
-function boardBlockAssetPath(key: string, variant: 'base' | 'glow' | 'clear' | 'glowFrame' | 'clearFrame' | 'icon', legacy = false): string {
+function boardBlockIdFromFrameKey(key: string): string {
+  return normalizeFinalBoardBlockId(key.replace(/__(?:base|glow|clear|[a-z0-9_]+)__f\d{2}$/, '').replace(/_(?:glow|clear)(?:_frame_\d{2})?$/, ''));
+}
+
+function boardBlockAssetPath(key: string, variant: 'base' | 'glow' | 'clear' | 'glowFrame' | 'clearFrame' | 'specialFrame' | 'icon', legacy = false): string {
   if (variant === 'icon') {
     return `assets/icons/board-blocks/${key}.png`;
   }
@@ -159,14 +182,21 @@ function boardBlockAssetPath(key: string, variant: 'base' | 'glow' | 'clear' | '
     return `assets/sprites/board-blocks/${key}.png`;
   }
 
-  const type = boardBlockTypeFromKey(key);
+  const blockId = boardBlockIdFromFrameKey(key);
+  if (variant === 'base') {
+    return `assets/sprites/board-blocks/${blockId}/base/${blockId}__base__f00.png`;
+  }
   if (variant === 'glowFrame') {
-    return `assets/sprites/board-blocks/${type}/animations/glow/${key}.png`;
+    return `assets/sprites/board-blocks/${blockId}/glow/${key}.png`;
   }
   if (variant === 'clearFrame') {
-    return `assets/sprites/board-blocks/${type}/animations/clear/${key}.png`;
+    return `assets/sprites/board-blocks/${blockId}/clear/${key}.png`;
   }
-  return `assets/sprites/board-blocks/${type}/${key}.png`;
+  if (variant === 'specialFrame') {
+    return `assets/sprites/board-blocks/${blockId}/special/${key}.png`;
+  }
+  const animationName = variant === 'glow' ? 'glow' : 'clear';
+  return `assets/sprites/board-blocks/${blockId}/${animationName}/${key}.png`;
 }
 
 function stageSlug(stage: ContentAssetEntry): string {
@@ -187,13 +217,13 @@ function collectExplicitRefs(entry: ContentAssetEntry): string[] {
 
 function inferBoardBlockFrameKeys(stem: string, state: 'glow' | 'clear'): string[] {
   const count = state === 'glow' ? BLOCK_ANIM.GLOW_FRAME_COUNT : BLOCK_ANIM.CLEAR_FRAME_COUNT;
-  return Array.from({ length: count }, (_, index) => `${stem}_${state}_frame_${String(index + 1).padStart(2, '0')}`);
+  return Array.from({ length: count }, (_, index) => `${stem}__${state}__f${String(index).padStart(2, '0')}`);
 }
 
 function addBoardBlockAsset(
   assets: Map<string, AssetManifestEntry>,
   key: string,
-  variant: 'base' | 'glow' | 'clear' | 'glowFrame' | 'clearFrame' | 'icon'
+  variant: 'base' | 'glow' | 'clear' | 'glowFrame' | 'clearFrame' | 'specialFrame' | 'icon'
 ): void {
   addAssetPath(assets, key, boardBlockAssetPath(key, variant), variant === 'icon' ? 'icon' : 'sprite');
   if (variant !== 'icon') {
@@ -243,20 +273,28 @@ export function createContentImageAssets(): AssetManifestEntry[] {
 
   for (const block of contentRegistry.list<ContentAssetEntry>('boardBlock')) {
     const stem = boardBlockStem(block);
-    const base = typeof block.assetRefs?.base === 'string' ? block.assetRefs.base : stem;
-    const glow = typeof block.assetRefs?.glow === 'string' ? block.assetRefs.glow : `${stem}_glow`;
-    const clear = typeof block.assetRefs?.clear === 'string' ? block.assetRefs.clear : `${stem}_clear`;
+    addAssetPath(assets, block.id, `assets/board-blocks/${block.id}.png`, 'sprite');
+    if (typeof block.spriteKey === 'string' && block.spriteKey !== block.id) {
+      addAssetPath(assets, block.spriteKey, `assets/board-blocks/${block.spriteKey}.png`, 'sprite');
+    }
+
+    const base = typeof block.assetRefs?.base === 'string' ? block.assetRefs.base : `${stem}__base__f00`;
+    const glow = typeof block.assetRefs?.glow === 'string' ? block.assetRefs.glow : `${stem}__glow__f00`;
+    const clear = typeof block.assetRefs?.clear === 'string' ? block.assetRefs.clear : `${stem}__clear__f00`;
     const icon = typeof block.assetRefs?.icon === 'string'
       ? block.assetRefs.icon
       : typeof block.iconKey === 'string'
         ? block.iconKey
-        : stem.replace(/^spr_/, 'ico_');
+        : `ico_${stem}`;
     const glowFrames = Array.isArray(block.assetRefs?.glowFrames)
       ? block.assetRefs.glowFrames.filter((key): key is string => typeof key === 'string' && key.length > 0)
       : inferBoardBlockFrameKeys(stem, 'glow');
     const clearFrames = Array.isArray(block.assetRefs?.clearFrames)
       ? block.assetRefs.clearFrames.filter((key): key is string => typeof key === 'string' && key.length > 0)
       : inferBoardBlockFrameKeys(stem, 'clear');
+    const specialFrames = Array.isArray(block.assetRefs?.specialFrames)
+      ? block.assetRefs.specialFrames.filter((key): key is string => typeof key === 'string' && key.length > 0)
+      : [];
 
     addBoardBlockAsset(assets, base, 'base');
     addBoardBlockAsset(assets, glow, 'glow');
@@ -264,36 +302,45 @@ export function createContentImageAssets(): AssetManifestEntry[] {
     addBoardBlockAsset(assets, icon, 'icon');
     glowFrames.forEach((key) => addBoardBlockAsset(assets, key, 'glowFrame'));
     clearFrames.forEach((key) => addBoardBlockAsset(assets, key, 'clearFrame'));
+    specialFrames.forEach((key) => addBoardBlockAsset(assets, key, 'specialFrame'));
   }
 
   for (const hero of contentRegistry.list<ContentAssetEntry>('hero')) {
-    for (const state of ['idle', 'cast', 'attack', 'hit', 'victory', 'defeat', 'portrait', 'silhouette_locked']) {
+    addAsset(assets, hero.id, 'heroes', 'sprite');
+    for (const state of ['idle', 'cast_spell', 'attack', 'hit', 'victory', 'defeat_tired', 'portrait', 'silhouette_locked']) {
+      addAssetPath(assets, `${hero.id}__${state}__f00`, `assets/sprites/heroes/${hero.id}/${state}/${hero.id}__${state}__f00.png`, 'sprite');
       addAsset(assets, `spr_${hero.id}_${state}`, 'sprites/heroes', 'sprite');
     }
     addAsset(assets, `ico_${hero.id}`, 'icons/heroes', 'icon');
   }
 
   for (const monster of contentRegistry.list<ContentAssetEntry>('monster')) {
-    const folder = monster.id.startsWith('mon_boss_') ? 'sprites/bosses' : 'sprites/monsters';
+    const isBoss = monster.id.startsWith('mon_boss_');
+    const actorId = isBoss ? monster.id.replace(/^mon_/, '') : monster.id;
+    const folder = isBoss ? 'sprites/bosses' : 'sprites/monsters';
     const states = monster.id.startsWith('mon_boss_')
-      ? ['idle', 'attack', 'special', 'phase_2', 'hit', 'defeat', 'intro_portrait']
+      ? ['idle', 'attack', 'hit', 'phase_change', 'special_attack', 'defeat', 'intro_portrait']
       : ['idle', 'attack', 'hit', 'defeat'];
+    addAsset(assets, actorId, isBoss ? 'bosses' : 'monsters', 'sprite');
     for (const state of states) {
+      addAssetPath(assets, `${actorId}__${state}__f00`, `assets/${folder}/${actorId}/${state}/${actorId}__${state}__f00.png`, 'sprite');
       addAsset(assets, `spr_${monster.id}_${state}`, folder, 'sprite');
     }
+    addAsset(assets, `ico_${actorId}`, monster.id.startsWith('mon_boss_') ? 'icons/bosses' : 'icons/monsters', 'icon');
     addAsset(assets, `ico_${monster.id}`, monster.id.startsWith('mon_boss_') ? 'icons/bosses' : 'icons/monsters', 'icon');
   }
 
   for (const stage of contentRegistry.list<ContentAssetEntry>('stage')) {
     const slug = stageSlug(stage);
     const boss = bossSlug(stage);
-    addAsset(assets, `bg_stage_${slug}_battle`, 'backgrounds/stages', 'background');
-    addAsset(assets, `bg_stage_${slug}_battle_far`, 'backgrounds/stages', 'background');
-    addAsset(assets, `bg_stage_${slug}_battle_mid`, 'backgrounds/stages', 'background');
-    addAsset(assets, `bg_stage_${slug}_battle_near`, 'backgrounds/stages', 'background');
-    addAsset(assets, `bg_map_${slug}`, 'backgrounds/maps', 'background');
+    addAsset(assets, `bg_${slug}`, 'stages', 'background');
+    addAsset(assets, `bg_stage_${slug}_battle`, 'stages', 'background');
+    addAsset(assets, `bg_stage_${slug}_battle_far`, 'stages', 'background');
+    addAsset(assets, `bg_stage_${slug}_battle_mid`, 'stages', 'background');
+    addAsset(assets, `bg_stage_${slug}_battle_near`, 'stages', 'background');
+    addAsset(assets, `bg_map_${slug}`, 'stage-backgrounds/route-scenes', 'background');
     if (boss) {
-      addAsset(assets, `bg_boss_${boss}_arena`, 'backgrounds/stages', 'background');
+      addAsset(assets, `bg_boss_${boss}_arena`, 'stages', 'background');
     }
   }
 
@@ -301,7 +348,7 @@ export function createContentImageAssets(): AssetManifestEntry[] {
     const room = node.id.replace(/^node_/, '');
     const stem = room === 'fight' ? 'map_node_normal' : `map_node_${room}`;
     for (const state of ['available', 'current', 'completed', 'locked']) {
-      addAsset(assets, `${stem}_${state}`, 'map/nodes', 'icon');
+      addAsset(assets, `${stem}_${state}`, 'icons/map', 'icon');
     }
   }
 
@@ -311,7 +358,7 @@ export function createContentImageAssets(): AssetManifestEntry[] {
     ['id', 'icons/relics', 'relic'],
     ['id', 'icons/upgrades', 'upgrade'],
     ['id', 'icons/weapons', 'weapon'],
-    ['id', 'icons/statuses', 'statusEffect'],
+    ['id', 'icons/status-effects', 'statusEffect'],
     ['id', 'icons/oopsies', 'oopsie'],
     ['id', 'icons/currencies', 'currency'],
     ['id', 'icons/collectibles', 'collectible'],
@@ -323,6 +370,31 @@ export function createContentImageAssets(): AssetManifestEntry[] {
       addAsset(assets, `icon_${entry.id}`, folder, 'icon');
     }
   }
+
+  addAsset(assets, 'ui_route_dialogue_panel', 'ui/story-routes', 'ui');
+  addAsset(assets, 'ui_route_choice_card_practical', 'ui/story-routes', 'ui');
+  addAsset(assets, 'ui_route_choice_card_true', 'ui/story-routes', 'ui');
+  addAsset(assets, 'ui_route_choice_card_risky', 'ui/story-routes', 'ui');
+  ['practical', 'true', 'risky'].forEach((lane) => addAsset(assets, `ico_route_badge_${lane}`, 'icons/story-routes', 'icon'));
+  for (const hero of contentRegistry.list<ContentAssetEntry>('hero')) {
+    for (const stage of contentRegistry.list<ContentAssetEntry>('stage')) {
+      addAsset(assets, `ico_route_trigger_${hero.id}_${stage.id}`, 'icons/story-routes', 'icon');
+      addAsset(assets, `bg_route_${hero.id}_${stage.id}`, 'stage-backgrounds/route-scenes', 'background');
+    }
+    for (const expression of ['neutral', 'happy', 'worried', 'determined']) {
+      addAsset(assets, `prt_route_${hero.id}_${expression}`, 'portraits/heroes', 'sprite');
+    }
+    for (const ending of ['normal', 'true', 'variant']) {
+      addAsset(assets, `story_end_${hero.id}_${ending}`, 'story/endings', 'background');
+    }
+  }
+  for (const npc of contentRegistry.list<ContentAssetEntry>('npc')) {
+    for (const expression of ['neutral', 'happy', 'worried']) {
+      addAsset(assets, `prt_route_${npc.id}_${expression}`, 'portraits/npcs', 'sprite');
+    }
+  }
+  addAssetPath(assets, 'vfx_route_reward_sparkle__play__f00', 'assets/effects/vfx_route_reward_sparkle/vfx_route_reward_sparkle__play__f00.png', 'sprite');
+  addAssetPath(assets, 'vfx_route_risky_oopsie__play__f00', 'assets/effects/vfx_route_risky_oopsie/vfx_route_risky_oopsie__play__f00.png', 'sprite');
 
   addAnimationFrameAssets(assets);
 

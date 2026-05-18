@@ -70,6 +70,21 @@ const allJsonFiles = walkJson(contentRoot);
 for (const file of allJsonFiles) {
   try {
     const data = readJson(file);
+    for (const keyField of ['spriteKey', 'iconKey', 'portraitKey', 'backgroundKey']) {
+      if (data[keyField] !== undefined && (typeof data[keyField] !== 'string' || data[keyField].length === 0)) {
+        errors.push(`${path.relative(root, file)}: ${keyField} must be a non-empty string when present`);
+      }
+    }
+    if (data.assetRefs !== undefined) {
+      if (!data.assetRefs || typeof data.assetRefs !== 'object' || Array.isArray(data.assetRefs)) {
+        errors.push(`${path.relative(root, file)}: assetRefs must be an object`);
+      } else {
+        for (const [refKey, refValue] of Object.entries(data.assetRefs)) {
+          const valid = typeof refValue === 'string' || (Array.isArray(refValue) && refValue.every((entry) => typeof entry === 'string' && entry.length > 0));
+          if (!valid) errors.push(`${path.relative(root, file)}: assetRefs.${refKey} must be a string or string array`);
+        }
+      }
+    }
     if (file.includes(`${path.sep}items${path.sep}`) && path.basename(file) !== 'metadata.json') {
       if (data.itemCategory && !itemCategories.has(data.itemCategory)) errors.push(`${path.relative(root, file)}: invalid itemCategory ${data.itemCategory}`);
       if (data.timing && !itemTimings.has(data.timing)) errors.push(`${path.relative(root, file)}: invalid timing ${data.timing}`);

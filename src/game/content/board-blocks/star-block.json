@@ -16,10 +16,28 @@
   ],
   "enabled": true,
   "assetRefs": {
-    "base": "spr_block_star",
-    "glow": "spr_block_star_glow",
-    "clear": "spr_block_star_clear",
-    "icon": "ico_block_star"
+    "base": "block_star",
+    "glow": "block_star_glow",
+    "clear": "block_star_clear",
+    "icon": "ico_block_star",
+    "glowFrames": [
+      "block_star__glow__f00",
+      "block_star__glow__f01",
+      "block_star__glow__f02"
+    ],
+    "clearFrames": [
+      "block_star__clear_burst__f00",
+      "block_star__clear_burst__f01",
+      "block_star__clear_burst__f02",
+      "block_star__clear_burst__f03",
+      "block_star__clear_burst__f04"
+    ],
+    "specialFrames": [
+      "block_star__idle_sparkle__f00",
+      "block_star__idle_sparkle__f01",
+      "block_star__idle_sparkle__f02",
+      "block_star__idle_sparkle__f03"
+    ]
   },
   "animations": {
     "idle_sparkle": "anim_block_star_idle_sparkle",

@@ -10,6 +10,7 @@
     "validate:metadata": "node scripts/validate-content-metadata.mjs",
     "validate:content": "node scripts/validate-content-data.mjs",
     "validate:animations": "node scripts/validate-animations.mjs",
+    "assets:folders": "node scripts/ensure-final-asset-folders.mjs",
     "assets:placeholders": "node scripts/generate-placeholder-assets.mjs",
     "sync:assets": "node scripts/sync-asset-runtime-map.mjs",
     "audit:asset-variants": "node scripts/audit-asset-variants.mjs",
