@@ -25,5 +25,9 @@
     "board_control",
     "defense"
   ],
-  "enabled": true
+  "enabled": true,
+  "vfxKey": "anim_spell_frost_lock",
+  "animations": {
+    "cast": "anim_spell_frost_lock"
+  }
 }

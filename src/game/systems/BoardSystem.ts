@@ -3,6 +3,7 @@ import type {
   BoardCell,
   BoardTickResult,
   CascadeResult,
+  ClearedBoardCell,
   PieceState,
   RunState,
   TetrominoType
@@ -323,16 +324,23 @@ export class BoardSystem {
     }
   }
 
-  private removeCompletedLines(rowIndices: number[], triggered: string[]): void {
+  private removeCompletedLines(rowIndices: number[], triggered: string[]): ClearedBoardCell[] {
+    const clearedCells: ClearedBoardCell[] = [];
     for (const rowIndex of rowIndices) {
       for (let columnIndex = 0; columnIndex < this.columns; columnIndex += 1) {
         const cellValue = this.grid[rowIndex][columnIndex];
         if (cellValue !== 0) {
+          clearedCells.push({
+            row: rowIndex,
+            col: columnIndex,
+            cell: this.cloneCell(cellValue)
+          });
           this.handleSpecialBlockClear(rowIndex, columnIndex, cellValue, triggered);
           this.grid[rowIndex][columnIndex] = 0;
         }
       }
     }
+    return clearedCells;
   }
 
   private applyCascadeGravity(): { blocksDropped: number; maxDroppedRows: number } {
@@ -406,12 +414,13 @@ export class BoardSystem {
       result.totalLinesCleared += completedLines.length;
 
       const clearedLineCount = completedLines.length;
-      this.removeCompletedLines(completedLines, result.specialBlocksTriggered);
+      const clearedCells = this.removeCompletedLines(completedLines, result.specialBlocksTriggered);
       result.animationFrames?.push({
         type: 'clear',
         grid: this.cloneGrid(this.grid),
         clearedLines: clearedLineCount,
-        droppedRows: 0
+        droppedRows: 0,
+        clearedCells
       });
 
       const gravity = this.applyCascadeGravity();

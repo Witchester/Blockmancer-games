@@ -17,11 +17,14 @@
     "baseLineDamage": 6,
     "baseFallSpeed": 1.1,
     "spellCostModifier": 1,
-    "manaGainModifier": 1.0
+    "manaGainModifier": 1
   },
   "startingLoadout": {
     "weaponId": "wpn_plush_lance",
-    "spellIds": ["spl_snack_break", "spl_bomb_rune"],
+    "spellIds": [
+      "spl_snack_break",
+      "spl_bomb_rune"
+    ],
     "relicIds": [],
     "upgradeIds": []
   },
@@ -41,6 +44,18 @@
     "isUnlockedByDefault": false,
     "condition": "collect_500_gold"
   },
-  "tags": ["defense", "heavy", "unlockable"],
-  "enabled": true
+  "tags": [
+    "defense",
+    "heavy",
+    "unlockable"
+  ],
+  "enabled": true,
+  "iconKey": "ico_hero_bruk_snack_knight",
+  "animations": {
+    "idle": "anim_hero_bruk_snack_knight_idle",
+    "cast_spell": "anim_hero_bruk_snack_knight_cast_spell",
+    "hit": "anim_hero_bruk_snack_knight_hit",
+    "victory": "anim_hero_bruk_snack_knight_victory",
+    "defeat_tired": "anim_hero_bruk_snack_knight_defeat_tired"
+  }
 }

@@ -27,5 +27,14 @@
     "glow": "spr_block_bomb_glow",
     "clear": "spr_block_bomb_clear",
     "icon": "ico_block_bomb"
-  }
+  },
+  "animations": {
+    "idle": "anim_block_bomb_idle",
+    "fuse": "anim_block_bomb_fuse",
+    "glow": "anim_block_bomb_glow",
+    "explode": "anim_block_bomb_explode"
+  },
+  "glowAnimationKey": "anim_block_bomb_glow",
+  "clearAnimationKey": "anim_block_bomb_explode",
+  "animationKey": "anim_block_bomb_fuse"
 }

@@ -20,5 +20,13 @@
     "glow": "spr_block_confetti_glow",
     "clear": "spr_block_confetti_clear",
     "icon": "ico_block_confetti"
-  }
+  },
+  "animations": {
+    "idle": "anim_block_confetti_idle",
+    "glow": "anim_block_confetti_glow",
+    "clear": "anim_block_confetti_clear"
+  },
+  "glowAnimationKey": "anim_block_confetti_glow",
+  "clearAnimationKey": "anim_block_confetti_clear",
+  "animationKey": "anim_block_confetti_idle"
 }

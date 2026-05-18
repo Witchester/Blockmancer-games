@@ -1,4 +1,6 @@
 import { contentRegistry } from '../systems/ContentRegistry';
+import { ANIMATION_DEFINITIONS, getAnimationFrameKeys } from './animations';
+import { BLOCK_ANIM } from '../utils/constants';
 
 export type AssetKind = 'sprite' | 'icon' | 'audio' | 'background' | 'ui';
 
@@ -13,7 +15,7 @@ type ContentAssetEntry = {
   id: string;
   theme?: string;
   bossId?: string;
-  assetRefs?: Record<string, string>;
+  assetRefs?: Record<string, string | string[]>;
   backgrounds?: Record<string, string>;
   [key: string]: unknown;
 };
@@ -106,8 +108,32 @@ function addAsset(assets: Map<string, AssetManifestEntry>, key: string | null | 
   });
 }
 
+function addAssetPath(assets: Map<string, AssetManifestEntry>, key: string | null | undefined, path: string, kind: AssetKind): void {
+  if (!key || assets.has(key)) {
+    return;
+  }
+
+  assets.set(key, {
+    key,
+    path,
+    kind
+  });
+}
+
+function addAnimationFrameAssets(assets: Map<string, AssetManifestEntry>): void {
+  for (const definition of ANIMATION_DEFINITIONS) {
+    const keys = getAnimationFrameKeys(definition.id);
+    keys.forEach((key, index) => {
+      addAssetPath(assets, key, definition.expectedFiles[index], definition.category === 'ui' || definition.category === 'hazardUi' ? 'ui' : 'sprite');
+    });
+  }
+}
+
 function boardBlockStem(entry: ContentAssetEntry): string {
-  const key = getAssetValue(entry, 'spriteKey') ?? entry.id;
+  return boardBlockStemFromKey(getAssetValue(entry, 'spriteKey') ?? entry.id);
+}
+
+function boardBlockStemFromKey(key: string): string {
   const aliases: Record<string, string> = {
     block_red: 'spr_block_red_rune',
     block_blue: 'spr_block_blue_rune',
@@ -115,6 +141,32 @@ function boardBlockStem(entry: ContentAssetEntry): string {
     block_yellow: 'spr_block_yellow_rune'
   };
   return aliases[key] ?? (key.startsWith('spr_') ? key : `spr_${key}`);
+}
+
+function boardBlockTypeFromKey(key: string): string {
+  const stem = boardBlockStemFromKey(key)
+    .replace(/^spr_block_/, '')
+    .replace(/_(?:glow|clear)(?:_frame_\d{2})?$/, '');
+  return stem.endsWith('_rune') ? stem.slice(0, -'_rune'.length) : stem;
+}
+
+function boardBlockAssetPath(key: string, variant: 'base' | 'glow' | 'clear' | 'glowFrame' | 'clearFrame' | 'icon', legacy = false): string {
+  if (variant === 'icon') {
+    return `assets/icons/board-blocks/${key}.png`;
+  }
+
+  if (legacy) {
+    return `assets/sprites/board-blocks/${key}.png`;
+  }
+
+  const type = boardBlockTypeFromKey(key);
+  if (variant === 'glowFrame') {
+    return `assets/sprites/board-blocks/${type}/animations/glow/${key}.png`;
+  }
+  if (variant === 'clearFrame') {
+    return `assets/sprites/board-blocks/${type}/animations/clear/${key}.png`;
+  }
+  return `assets/sprites/board-blocks/${type}/${key}.png`;
 }
 
 function stageSlug(stage: ContentAssetEntry): string {
@@ -126,16 +178,37 @@ function bossSlug(stage: ContentAssetEntry): string | null {
 }
 
 function collectExplicitRefs(entry: ContentAssetEntry): string[] {
+  const assetRefs = Object.values(entry.assetRefs ?? {}).flatMap((value) => Array.isArray(value) ? value : [value]);
   return [
-    ...Object.values(entry.assetRefs ?? {}),
+    ...assetRefs,
     ...Object.values(entry.backgrounds ?? {})
   ].filter((value): value is string => typeof value === 'string' && value.length > 0);
+}
+
+function inferBoardBlockFrameKeys(stem: string, state: 'glow' | 'clear'): string[] {
+  const count = state === 'glow' ? BLOCK_ANIM.GLOW_FRAME_COUNT : BLOCK_ANIM.CLEAR_FRAME_COUNT;
+  return Array.from({ length: count }, (_, index) => `${stem}_${state}_frame_${String(index + 1).padStart(2, '0')}`);
+}
+
+function addBoardBlockAsset(
+  assets: Map<string, AssetManifestEntry>,
+  key: string,
+  variant: 'base' | 'glow' | 'clear' | 'glowFrame' | 'clearFrame' | 'icon'
+): void {
+  addAssetPath(assets, key, boardBlockAssetPath(key, variant), variant === 'icon' ? 'icon' : 'sprite');
+  if (variant !== 'icon') {
+    addAssetPath(assets, `${key}__legacy`, boardBlockAssetPath(key, variant, true), 'sprite');
+  }
 }
 
 export function createContentImageAssets(): AssetManifestEntry[] {
   const assets = new Map<string, AssetManifestEntry>();
 
   for (const source of CONTENT_ASSET_SOURCES) {
+    if (source.contentType === 'boardBlock') {
+      continue;
+    }
+
     for (const entry of contentRegistry.list<ContentAssetEntry>(source.contentType)) {
       const key = getAssetValue(entry, source.field);
       if (!key || assets.has(key)) {
@@ -170,10 +243,27 @@ export function createContentImageAssets(): AssetManifestEntry[] {
 
   for (const block of contentRegistry.list<ContentAssetEntry>('boardBlock')) {
     const stem = boardBlockStem(block);
-    addAsset(assets, stem, 'sprites/board-blocks', 'sprite');
-    addAsset(assets, `${stem}_glow`, 'sprites/board-blocks', 'sprite');
-    addAsset(assets, `${stem}_clear`, 'sprites/board-blocks', 'sprite');
-    addAsset(assets, stem.replace(/^spr_/, 'ico_'), 'icons/board-blocks', 'icon');
+    const base = typeof block.assetRefs?.base === 'string' ? block.assetRefs.base : stem;
+    const glow = typeof block.assetRefs?.glow === 'string' ? block.assetRefs.glow : `${stem}_glow`;
+    const clear = typeof block.assetRefs?.clear === 'string' ? block.assetRefs.clear : `${stem}_clear`;
+    const icon = typeof block.assetRefs?.icon === 'string'
+      ? block.assetRefs.icon
+      : typeof block.iconKey === 'string'
+        ? block.iconKey
+        : stem.replace(/^spr_/, 'ico_');
+    const glowFrames = Array.isArray(block.assetRefs?.glowFrames)
+      ? block.assetRefs.glowFrames.filter((key): key is string => typeof key === 'string' && key.length > 0)
+      : inferBoardBlockFrameKeys(stem, 'glow');
+    const clearFrames = Array.isArray(block.assetRefs?.clearFrames)
+      ? block.assetRefs.clearFrames.filter((key): key is string => typeof key === 'string' && key.length > 0)
+      : inferBoardBlockFrameKeys(stem, 'clear');
+
+    addBoardBlockAsset(assets, base, 'base');
+    addBoardBlockAsset(assets, glow, 'glow');
+    addBoardBlockAsset(assets, clear, 'clear');
+    addBoardBlockAsset(assets, icon, 'icon');
+    glowFrames.forEach((key) => addBoardBlockAsset(assets, key, 'glowFrame'));
+    clearFrames.forEach((key) => addBoardBlockAsset(assets, key, 'clearFrame'));
   }
 
   for (const hero of contentRegistry.list<ContentAssetEntry>('hero')) {
@@ -233,6 +323,8 @@ export function createContentImageAssets(): AssetManifestEntry[] {
       addAsset(assets, `icon_${entry.id}`, folder, 'icon');
     }
   }
+
+  addAnimationFrameAssets(assets);
 
   return [...assets.values()].sort((left, right) => left.key.localeCompare(right.key));
 }

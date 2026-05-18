@@ -1,1 +1,24 @@
-{"id":"item_return_stamp","name":"Return Stamp","description":"Stamp some incoming junk back at the monster.","effect":{"type":"reflect_incoming_junk"},"itemCategory":"enemy_pressure","counterTags":["counter_incoming_junk"],"timing":"during_enemy_warning","rarity":"uncommon","maxStack":2,"effectConfig":{},"iconKey":"item_return_stamp","enabled":true}
+{
+  "id": "item_return_stamp",
+  "name": "Return Stamp",
+  "description": "Stamp some incoming junk back at the monster.",
+  "effect": {
+    "type": "reflect_incoming_junk"
+  },
+  "itemCategory": "enemy_pressure",
+  "counterTags": [
+    "counter_incoming_junk"
+  ],
+  "timing": "during_enemy_warning",
+  "rarity": "uncommon",
+  "maxStack": 2,
+  "effectConfig": {},
+  "iconKey": "item_return_stamp",
+  "enabled": true,
+  "animations": {
+    "use_vfx": "anim_item_return_stamp_use",
+    "counter_success_vfx": "anim_item_return_stamp_counter_success"
+  },
+  "useVfxKey": "anim_item_return_stamp_use",
+  "counterSuccessVfxKey": "anim_item_return_stamp_counter_success"
+}

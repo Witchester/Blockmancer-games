@@ -17,5 +17,11 @@
     "glow": "spr_block_green_rune_glow",
     "clear": "spr_block_green_rune_clear",
     "icon": "ico_block_green_rune"
-  }
+  },
+  "animations": {
+    "glow": "anim_block_green_rune_glow",
+    "clear": "anim_block_green_rune_clear"
+  },
+  "glowAnimationKey": "anim_block_green_rune_glow",
+  "clearAnimationKey": "anim_block_green_rune_clear"
 }

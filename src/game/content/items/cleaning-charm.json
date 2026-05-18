@@ -1,1 +1,34 @@
-{"id":"item_cleaning_charm","name":"Cleaning Charm","description":"Your next cleanup spell removes extra sticky and junk blocks.","effect":{"type":"spell_catalyst"},"itemCategory":"spell_catalyst","counterTags":["counter_junk","counter_sticky"],"timing":"before_spell","rarity":"uncommon","maxStack":2,"spellSynergyTags":["void"],"effectConfig":{"modifierId":"cleaning_charm","cleanupTags":["counter_junk","counter_sticky"]},"iconKey":"item_cleaning_charm","enabled":true}
+{
+  "id": "item_cleaning_charm",
+  "name": "Cleaning Charm",
+  "description": "Your next cleanup spell removes extra sticky and junk blocks.",
+  "effect": {
+    "type": "spell_catalyst"
+  },
+  "itemCategory": "spell_catalyst",
+  "counterTags": [
+    "counter_junk",
+    "counter_sticky"
+  ],
+  "timing": "before_spell",
+  "rarity": "uncommon",
+  "maxStack": 2,
+  "spellSynergyTags": [
+    "void"
+  ],
+  "effectConfig": {
+    "modifierId": "cleaning_charm",
+    "cleanupTags": [
+      "counter_junk",
+      "counter_sticky"
+    ]
+  },
+  "iconKey": "item_cleaning_charm",
+  "enabled": true,
+  "animations": {
+    "catalyst_ready_vfx": "anim_item_cleaning_charm_catalyst_ready",
+    "catalyst_consume_vfx": "anim_item_cleaning_charm_catalyst_consume"
+  },
+  "catalystReadyVfxKey": "anim_item_cleaning_charm_catalyst_ready",
+  "catalystConsumeVfxKey": "anim_item_cleaning_charm_catalyst_consume"
+}

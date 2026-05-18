@@ -37,5 +37,13 @@
   "tags": [
     "early_game"
   ],
-  "enabled": true
+  "enabled": true,
+  "iconKey": "ico_mon_dream_drummer",
+  "animations": {
+    "idle": "anim_mon_dream_drummer_idle",
+    "attack": "anim_mon_dream_drummer_attack",
+    "hit": "anim_mon_dream_drummer_hit",
+    "defeat": "anim_mon_dream_drummer_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
 }

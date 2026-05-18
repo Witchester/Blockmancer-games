@@ -13,6 +13,7 @@ export class BootScene extends Phaser.Scene {
 
   async create(): Promise<void> {
     (this.game as BlockmancerGame).assetSystem.ensureFallbackTextures(this);
+    (this.game as BlockmancerGame).assetSystem.registerGameAnimations(this);
 
     if ('fonts' in document) {
       await Promise.race([

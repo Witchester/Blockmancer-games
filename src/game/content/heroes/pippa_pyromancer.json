@@ -17,11 +17,15 @@
     "baseLineDamage": 4,
     "baseFallSpeed": 1.05,
     "spellCostModifier": 1,
-    "manaGainModifier": 1.0
+    "manaGainModifier": 1
   },
   "startingLoadout": {
     "weaponId": "wpn_cookie_spatula",
-    "spellIds": ["spl_fireball", "spl_cupcake_blast", "spl_bomb_rune"],
+    "spellIds": [
+      "spl_fireball",
+      "spl_cupcake_blast",
+      "spl_bomb_rune"
+    ],
     "relicIds": [],
     "upgradeIds": []
   },
@@ -41,6 +45,18 @@
     "isUnlockedByDefault": false,
     "condition": "defeat_stage_1_boss"
   },
-  "tags": ["fire", "damage", "unlockable"],
-  "enabled": true
+  "tags": [
+    "fire",
+    "damage",
+    "unlockable"
+  ],
+  "enabled": true,
+  "iconKey": "ico_hero_pippa_pyromancer",
+  "animations": {
+    "idle": "anim_hero_pippa_pyromancer_idle",
+    "cast_spell": "anim_hero_pippa_pyromancer_cast_spell",
+    "hit": "anim_hero_pippa_pyromancer_hit",
+    "victory": "anim_hero_pippa_pyromancer_victory",
+    "defeat_tired": "anim_hero_pippa_pyromancer_defeat_tired"
+  }
 }

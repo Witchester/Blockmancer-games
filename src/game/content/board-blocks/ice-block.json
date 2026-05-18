@@ -22,5 +22,14 @@
     "glow": "spr_block_ice_glow",
     "clear": "spr_block_ice_clear",
     "icon": "ico_block_ice"
-  }
+  },
+  "animations": {
+    "frost_shimmer": "anim_block_ice_frost_shimmer",
+    "glow": "anim_block_ice_glow",
+    "crack_clear": "anim_block_ice_crack_clear",
+    "freeze_effect": "anim_block_ice_freeze_effect"
+  },
+  "glowAnimationKey": "anim_block_ice_glow",
+  "clearAnimationKey": "anim_block_ice_crack_clear",
+  "animationKey": "anim_block_ice_freeze_effect"
 }

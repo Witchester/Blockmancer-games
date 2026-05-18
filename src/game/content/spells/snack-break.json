@@ -22,5 +22,9 @@
   "tags": [
     "utility"
   ],
-  "enabled": true
+  "enabled": true,
+  "vfxKey": "anim_spell_snack_break",
+  "animations": {
+    "cast": "anim_spell_snack_break"
+  }
 }

@@ -22,5 +22,9 @@
   "tags": [
     "utility"
   ],
-  "enabled": true
+  "enabled": true,
+  "vfxKey": "anim_spell_star_spark",
+  "animations": {
+    "cast": "anim_spell_star_spark"
+  }
 }

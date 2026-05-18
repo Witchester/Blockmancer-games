@@ -8,5 +8,9 @@
   },
   "rarity": "common",
   "iconKey": "item_bubble_gum",
-  "enabled": true
+  "enabled": true,
+  "animations": {
+    "use_vfx": "anim_item_bubble_gum_use"
+  },
+  "useVfxKey": "anim_item_bubble_gum_use"
 }

@@ -37,5 +37,13 @@
   "tags": [
     "early_game"
   ],
-  "enabled": true
+  "enabled": true,
+  "iconKey": "ico_mon_joystick_jinxer",
+  "animations": {
+    "idle": "anim_mon_joystick_jinxer_idle",
+    "attack": "anim_mon_joystick_jinxer_attack",
+    "hit": "anim_mon_joystick_jinxer_hit",
+    "defeat": "anim_mon_joystick_jinxer_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
 }

@@ -1,1 +1,30 @@
-{"id":"item_spell_coupon","name":"Spell Coupon","description":"The next spell costs half mana.","effect":{"type":"spell_catalyst"},"itemCategory":"spell_catalyst","counterTags":["counter_piece_queue"],"timing":"before_spell","rarity":"uncommon","maxStack":2,"spellSynergyTags":["any"],"effectConfig":{"modifierId":"spell_coupon","costMultiplier":0.5},"iconKey":"item_spell_coupon","enabled":true}
+{
+  "id": "item_spell_coupon",
+  "name": "Spell Coupon",
+  "description": "The next spell costs half mana.",
+  "effect": {
+    "type": "spell_catalyst"
+  },
+  "itemCategory": "spell_catalyst",
+  "counterTags": [
+    "counter_piece_queue"
+  ],
+  "timing": "before_spell",
+  "rarity": "uncommon",
+  "maxStack": 2,
+  "spellSynergyTags": [
+    "any"
+  ],
+  "effectConfig": {
+    "modifierId": "spell_coupon",
+    "costMultiplier": 0.5
+  },
+  "iconKey": "item_spell_coupon",
+  "enabled": true,
+  "animations": {
+    "catalyst_ready_vfx": "anim_item_spell_coupon_catalyst_ready",
+    "catalyst_consume_vfx": "anim_item_spell_coupon_catalyst_consume"
+  },
+  "catalystReadyVfxKey": "anim_item_spell_coupon_catalyst_ready",
+  "catalystConsumeVfxKey": "anim_item_spell_coupon_catalyst_consume"
+}

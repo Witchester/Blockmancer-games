@@ -48,4 +48,7 @@ _bmad-output/
 
 # Miscellaneous
 scripts/
+!scripts/
+scripts/*
+!scripts/validate-animations.mjs
 public/

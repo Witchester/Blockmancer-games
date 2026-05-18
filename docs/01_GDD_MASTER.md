@@ -551,6 +551,7 @@ Asset rules:
 - Public assets live under `public/assets/`.
 - Content uses asset keys, not raw paths.
 - Missing assets must use placeholders.
+- Animation PNG frame sequences must use exact frame counts from `docs/ANIMATION_ASSET_REQUIREMENTS.md`.
 - Do not use unlicensed third-party art.
 
 ## 16. Audio Direction

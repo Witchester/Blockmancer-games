@@ -15,5 +15,14 @@
     "glow": "spr_block_sticky_glow",
     "clear": "spr_block_sticky_clear",
     "icon": "ico_block_sticky"
-  }
+  },
+  "animations": {
+    "goo_pulse": "anim_block_sticky_goo_pulse",
+    "glow": "anim_block_sticky_glow",
+    "stretch_clear": "anim_block_sticky_stretch_clear",
+    "sticky_warning": "anim_block_sticky_sticky_warning"
+  },
+  "glowAnimationKey": "anim_block_sticky_glow",
+  "clearAnimationKey": "anim_block_sticky_stretch_clear",
+  "animationKey": "anim_block_sticky_sticky_warning"
 }

@@ -14,6 +14,7 @@ Inventory refreshed: 2026-05-15.
 - `AssetSystem` generates missing image fallbacks for `asset_missing`, `asset_missing_icon`, `asset_missing_block`, and `asset_missing_background`.
 - `AudioSystem` synthesizes fallback tones if listed SFX files are missing.
 - Do not rename content IDs, JSON asset keys, or files from this document alone; use the mismatch notes as rename recommendations.
+- Exact animation frame counts and PNG sequence naming are defined in `docs/ANIMATION_ASSET_REQUIREMENTS.md`; frame ranges are not valid animation requirements.
 
 ## Status Values
 

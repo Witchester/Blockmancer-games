@@ -8,5 +8,9 @@
   },
   "rarity": "common",
   "iconKey": "item_lucky_ticket",
-  "enabled": true
+  "enabled": true,
+  "animations": {
+    "use_vfx": "anim_item_lucky_ticket_use"
+  },
+  "useVfxKey": "anim_item_lucky_ticket_use"
 }

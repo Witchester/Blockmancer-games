@@ -17,5 +17,13 @@
     "glow": "spr_block_cloud_junk_glow",
     "clear": "spr_block_cloud_junk_clear",
     "icon": "ico_block_cloud_junk"
-  }
+  },
+  "animations": {
+    "hover": "anim_block_cloud_junk_hover",
+    "countdown_warning": "anim_block_cloud_junk_countdown_warning",
+    "safe_drop": "anim_block_cloud_junk_safe_drop",
+    "expire_to_junk": "anim_block_cloud_junk_expire_to_junk"
+  },
+  "clearAnimationKey": "anim_block_cloud_junk_expire_to_junk",
+  "animationKey": "anim_block_cloud_junk_hover"
 }

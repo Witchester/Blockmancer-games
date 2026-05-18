@@ -39,5 +39,13 @@
     "line_damage_focused",
     "mobile_friendly"
   ],
-  "enabled": true
+  "enabled": true,
+  "iconKey": "ico_hero_milo_blockmancer",
+  "animations": {
+    "idle": "anim_hero_milo_blockmancer_idle",
+    "cast_spell": "anim_hero_milo_blockmancer_cast_spell",
+    "hit": "anim_hero_milo_blockmancer_hit",
+    "victory": "anim_hero_milo_blockmancer_victory",
+    "defeat_tired": "anim_hero_milo_blockmancer_defeat_tired"
+  }
 }

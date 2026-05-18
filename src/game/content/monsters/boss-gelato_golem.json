@@ -40,5 +40,15 @@
   "tags": [
     "boss_phase"
   ],
-  "enabled": true
+  "enabled": true,
+  "iconKey": "ico_mon_boss_gelato_golem",
+  "animations": {
+    "idle": "anim_boss_gelato_golem_idle",
+    "attack": "anim_boss_gelato_golem_attack",
+    "hit": "anim_boss_gelato_golem_hit",
+    "phase_change": "anim_boss_gelato_golem_phase_change",
+    "special_attack": "anim_boss_gelato_golem_special_attack",
+    "defeat": "anim_boss_gelato_golem_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
 }

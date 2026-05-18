@@ -8,5 +8,9 @@
   },
   "rarity": "common",
   "iconKey": "item_hold_coupon",
-  "enabled": true
+  "enabled": true,
+  "animations": {
+    "use_vfx": "anim_item_hold_coupon_use"
+  },
+  "useVfxKey": "anim_item_hold_coupon_use"
 }

@@ -40,5 +40,15 @@
   "tags": [
     "boss_phase"
   ],
-  "enabled": true
+  "enabled": true,
+  "iconKey": "ico_mon_boss_prototype_no_7",
+  "animations": {
+    "idle": "anim_boss_prototype_no_7_idle",
+    "attack": "anim_boss_prototype_no_7_attack",
+    "hit": "anim_boss_prototype_no_7_hit",
+    "phase_change": "anim_boss_prototype_no_7_phase_change",
+    "special_attack": "anim_boss_prototype_no_7_special_attack",
+    "defeat": "anim_boss_prototype_no_7_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
 }

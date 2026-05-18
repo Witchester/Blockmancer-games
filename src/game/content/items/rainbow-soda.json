@@ -9,5 +9,9 @@
   },
   "rarity": "common",
   "iconKey": "item_rainbow_soda",
-  "enabled": true
+  "enabled": true,
+  "animations": {
+    "use_vfx": "anim_item_rainbow_soda_use"
+  },
+  "useVfxKey": "anim_item_rainbow_soda_use"
 }

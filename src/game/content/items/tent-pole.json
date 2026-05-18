@@ -1,1 +1,25 @@
-{"id":"item_tent_pole","name":"Tent Pole","description":"Prop up low-ceiling pressure for this battle.","effect":{"type":"cancel_low_ceiling"},"itemCategory":"hazard_counter","counterTags":["counter_low_ceiling","counter_board_size"],"timing":"after_hazard","rarity":"rare","maxStack":1,"effectConfig":{},"iconKey":"item_tent_pole","enabled":true}
+{
+  "id": "item_tent_pole",
+  "name": "Tent Pole",
+  "description": "Prop up low-ceiling pressure for this battle.",
+  "effect": {
+    "type": "cancel_low_ceiling"
+  },
+  "itemCategory": "hazard_counter",
+  "counterTags": [
+    "counter_low_ceiling",
+    "counter_board_size"
+  ],
+  "timing": "after_hazard",
+  "rarity": "rare",
+  "maxStack": 1,
+  "effectConfig": {},
+  "iconKey": "item_tent_pole",
+  "enabled": true,
+  "animations": {
+    "use_vfx": "anim_item_tent_pole_use",
+    "counter_success_vfx": "anim_item_tent_pole_counter_success"
+  },
+  "useVfxKey": "anim_item_tent_pole_use",
+  "counterSuccessVfxKey": "anim_item_tent_pole_counter_success"
+}

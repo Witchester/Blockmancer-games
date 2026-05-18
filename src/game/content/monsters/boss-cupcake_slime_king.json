@@ -40,5 +40,15 @@
   "tags": [
     "boss_phase"
   ],
-  "enabled": true
+  "enabled": true,
+  "iconKey": "ico_mon_boss_cupcake_slime_king",
+  "animations": {
+    "idle": "anim_boss_cupcake_slime_king_idle",
+    "attack": "anim_boss_cupcake_slime_king_attack",
+    "hit": "anim_boss_cupcake_slime_king_hit",
+    "phase_change": "anim_boss_cupcake_slime_king_phase_change",
+    "special_attack": "anim_boss_cupcake_slime_king_special_attack",
+    "defeat": "anim_boss_cupcake_slime_king_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
 }

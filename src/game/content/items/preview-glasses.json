@@ -1,1 +1,26 @@
-{"id":"item_preview_glasses","name":"Preview Glasses","description":"Reveal Next and Hold through glittery preview tricks.","effect":{"type":"reveal_preview"},"itemCategory":"hazard_counter","counterTags":["counter_preview"],"timing":"after_hazard","rarity":"common","maxStack":3,"effectConfig":{"pieces":5},"iconKey":"item_preview_glasses","enabled":true}
+{
+  "id": "item_preview_glasses",
+  "name": "Preview Glasses",
+  "description": "Reveal Next and Hold through glittery preview tricks.",
+  "effect": {
+    "type": "reveal_preview"
+  },
+  "itemCategory": "hazard_counter",
+  "counterTags": [
+    "counter_preview"
+  ],
+  "timing": "after_hazard",
+  "rarity": "common",
+  "maxStack": 3,
+  "effectConfig": {
+    "pieces": 5
+  },
+  "iconKey": "item_preview_glasses",
+  "enabled": true,
+  "animations": {
+    "use_vfx": "anim_item_preview_glasses_use",
+    "counter_success_vfx": "anim_item_preview_glasses_counter_success"
+  },
+  "useVfxKey": "anim_item_preview_glasses_use",
+  "counterSuccessVfxKey": "anim_item_preview_glasses_counter_success"
+}

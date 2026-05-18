@@ -48,5 +48,15 @@
     "speed_scaler",
     "junk_spawner"
   ],
-  "enabled": true
+  "enabled": true,
+  "iconKey": "ico_mon_boss_falling_king",
+  "animations": {
+    "idle": "anim_boss_falling_king_idle",
+    "attack": "anim_boss_falling_king_attack",
+    "hit": "anim_boss_falling_king_hit",
+    "phase_change": "anim_boss_falling_king_phase_change",
+    "special_attack": "anim_boss_falling_king_special_attack",
+    "defeat": "anim_boss_falling_king_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
 }

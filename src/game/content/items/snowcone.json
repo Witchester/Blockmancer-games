@@ -8,5 +8,9 @@
   },
   "rarity": "common",
   "iconKey": "item_snowcone",
-  "enabled": true
+  "enabled": true,
+  "animations": {
+    "use_vfx": "anim_item_snowcone_use"
+  },
+  "useVfxKey": "anim_item_snowcone_use"
 }

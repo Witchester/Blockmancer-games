@@ -37,5 +37,13 @@
   "tags": [
     "early_game"
   ],
-  "enabled": true
+  "enabled": true,
+  "iconKey": "ico_mon_frosting_fox",
+  "animations": {
+    "idle": "anim_mon_frosting_fox_idle",
+    "attack": "anim_mon_frosting_fox_attack",
+    "hit": "anim_mon_frosting_fox_hit",
+    "defeat": "anim_mon_frosting_fox_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
 }

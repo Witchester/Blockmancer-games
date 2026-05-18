@@ -25,5 +25,9 @@
     "high_cost",
     "board_control"
   ],
-  "enabled": true
+  "enabled": true,
+  "vfxKey": "anim_spell_clean_cut",
+  "animations": {
+    "cast": "anim_spell_clean_cut"
+  }
 }

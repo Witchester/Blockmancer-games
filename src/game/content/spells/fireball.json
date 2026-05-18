@@ -24,5 +24,9 @@
     "single_target",
     "low_cost"
   ],
-  "enabled": true
+  "enabled": true,
+  "vfxKey": "anim_spell_fireball",
+  "animations": {
+    "cast": "anim_spell_fireball"
+  }
 }

@@ -1,1 +1,29 @@
-{"id":"item_frosting_salt","name":"Frosting Salt","description":"Your next frost spell tidies icy blocks.","effect":{"type":"spell_catalyst"},"itemCategory":"spell_catalyst","counterTags":["counter_freeze"],"timing":"before_spell","rarity":"uncommon","maxStack":2,"spellSynergyTags":["frost"],"effectConfig":{"modifierId":"frosting_salt"},"iconKey":"item_frosting_salt","enabled":true}
+{
+  "id": "item_frosting_salt",
+  "name": "Frosting Salt",
+  "description": "Your next frost spell tidies icy blocks.",
+  "effect": {
+    "type": "spell_catalyst"
+  },
+  "itemCategory": "spell_catalyst",
+  "counterTags": [
+    "counter_freeze"
+  ],
+  "timing": "before_spell",
+  "rarity": "uncommon",
+  "maxStack": 2,
+  "spellSynergyTags": [
+    "frost"
+  ],
+  "effectConfig": {
+    "modifierId": "frosting_salt"
+  },
+  "iconKey": "item_frosting_salt",
+  "enabled": true,
+  "animations": {
+    "catalyst_ready_vfx": "anim_item_frosting_salt_catalyst_ready",
+    "catalyst_consume_vfx": "anim_item_frosting_salt_catalyst_consume"
+  },
+  "catalystReadyVfxKey": "anim_item_frosting_salt_catalyst_ready",
+  "catalystConsumeVfxKey": "anim_item_frosting_salt_catalyst_consume"
+}

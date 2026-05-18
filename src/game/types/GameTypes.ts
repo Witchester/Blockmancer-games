@@ -243,6 +243,10 @@ export interface ReactiveItemContent {
   spellSynergyTags?: string[];
   effectConfig?: Record<string, unknown>;
   iconKey?: string;
+  vfxKey?: string;
+  useVfxKey?: string;
+  counterSuccessVfxKey?: string;
+  animations?: Record<string, string>;
   enabled?: boolean;
 }
 
@@ -336,6 +340,13 @@ export interface CascadeAnimationFrame {
   grid: BoardCell[][];
   clearedLines: number;
   droppedRows: number;
+  clearedCells?: ClearedBoardCell[];
+}
+
+export interface ClearedBoardCell {
+  row: number;
+  col: number;
+  cell: BoardCell;
 }
 
 export interface BoardTickResult {

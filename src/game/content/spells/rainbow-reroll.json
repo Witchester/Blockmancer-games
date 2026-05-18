@@ -22,5 +22,9 @@
   "tags": [
     "utility"
   ],
-  "enabled": true
+  "enabled": true,
+  "vfxKey": "anim_spell_rainbow_reroll",
+  "animations": {
+    "cast": "anim_spell_rainbow_reroll"
+  }
 }

@@ -17,11 +17,15 @@
     "baseLineDamage": 4,
     "baseFallSpeed": 0.95,
     "spellCostModifier": 1,
-    "manaGainModifier": 1.0
+    "manaGainModifier": 1
   },
   "startingLoadout": {
     "weaponId": "wpn_snowcone_staff",
-    "spellIds": ["spl_frost_lock", "spl_snowcone_burst", "spl_clean_cut"],
+    "spellIds": [
+      "spl_frost_lock",
+      "spl_snowcone_burst",
+      "spl_clean_cut"
+    ],
     "relicIds": [],
     "upgradeIds": []
   },
@@ -41,6 +45,18 @@
     "isUnlockedByDefault": false,
     "condition": "clear_3_rooms_without_damage"
   },
-  "tags": ["frost", "control", "unlockable"],
-  "enabled": true
+  "tags": [
+    "frost",
+    "control",
+    "unlockable"
+  ],
+  "enabled": true,
+  "iconKey": "ico_hero_nixie_frostbinder",
+  "animations": {
+    "idle": "anim_hero_nixie_frostbinder_idle",
+    "cast_spell": "anim_hero_nixie_frostbinder_cast_spell",
+    "hit": "anim_hero_nixie_frostbinder_hit",
+    "victory": "anim_hero_nixie_frostbinder_victory",
+    "defeat_tired": "anim_hero_nixie_frostbinder_defeat_tired"
+  }
 }

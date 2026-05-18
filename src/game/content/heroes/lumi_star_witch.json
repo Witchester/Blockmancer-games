@@ -15,13 +15,17 @@
     "maxMana": 110,
     "startingGold": 50,
     "baseLineDamage": 4,
-    "baseFallSpeed": 1.0,
+    "baseFallSpeed": 1,
     "spellCostModifier": 1,
     "manaGainModifier": 1.2
   },
   "startingLoadout": {
     "weaponId": "wpn_star_scepter",
-    "spellIds": ["spl_star_spark", "spl_cascade_cheer", "spl_rainbow_reroll"],
+    "spellIds": [
+      "spl_star_spark",
+      "spl_cascade_cheer",
+      "spl_rainbow_reroll"
+    ],
     "relicIds": [],
     "upgradeIds": []
   },
@@ -41,6 +45,19 @@
     "isUnlockedByDefault": false,
     "condition": "trigger_10_cascade_combos"
   },
-  "tags": ["star", "mana", "cascade", "unlockable"],
-  "enabled": true
+  "tags": [
+    "star",
+    "mana",
+    "cascade",
+    "unlockable"
+  ],
+  "enabled": true,
+  "iconKey": "ico_hero_lumi_star_witch",
+  "animations": {
+    "idle": "anim_hero_lumi_star_witch_idle",
+    "cast_spell": "anim_hero_lumi_star_witch_cast_spell",
+    "hit": "anim_hero_lumi_star_witch_hit",
+    "victory": "anim_hero_lumi_star_witch_victory",
+    "defeat_tired": "anim_hero_lumi_star_witch_defeat_tired"
+  }
 }

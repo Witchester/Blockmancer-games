@@ -1,1 +1,25 @@
-{"id":"item_safety_net","name":"Safety Net","description":"Catch one overflow by clearing the top row once.","effect":{"type":"arm_safety_net"},"itemCategory":"emergency","counterTags":["counter_board_size","counter_low_ceiling"],"timing":"before_piece_lock","rarity":"rare","maxStack":1,"effectConfig":{},"iconKey":"item_safety_net","enabled":true}
+{
+  "id": "item_safety_net",
+  "name": "Safety Net",
+  "description": "Catch one overflow by clearing the top row once.",
+  "effect": {
+    "type": "arm_safety_net"
+  },
+  "itemCategory": "emergency",
+  "counterTags": [
+    "counter_board_size",
+    "counter_low_ceiling"
+  ],
+  "timing": "before_piece_lock",
+  "rarity": "rare",
+  "maxStack": 1,
+  "effectConfig": {},
+  "iconKey": "item_safety_net",
+  "enabled": true,
+  "animations": {
+    "use_vfx": "anim_item_safety_net_use",
+    "counter_success_vfx": "anim_item_safety_net_counter_success"
+  },
+  "useVfxKey": "anim_item_safety_net_use",
+  "counterSuccessVfxKey": "anim_item_safety_net_counter_success"
+}

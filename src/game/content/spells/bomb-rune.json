@@ -25,5 +25,9 @@
     "aoe",
     "board_control"
   ],
-  "enabled": true
+  "enabled": true,
+  "vfxKey": "anim_spell_bomb_rune",
+  "animations": {
+    "cast": "anim_spell_bomb_rune"
+  }
 }

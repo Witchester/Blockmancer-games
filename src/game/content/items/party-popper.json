@@ -8,5 +8,9 @@
   },
   "rarity": "common",
   "iconKey": "item_party_popper",
-  "enabled": true
+  "enabled": true,
+  "animations": {
+    "use_vfx": "anim_item_party_popper_use"
+  },
+  "useVfxKey": "anim_item_party_popper_use"
 }

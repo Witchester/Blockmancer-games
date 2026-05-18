@@ -15,5 +15,14 @@
     "glow": "spr_block_jelly_glow",
     "clear": "spr_block_jelly_clear",
     "icon": "ico_block_jelly"
-  }
+  },
+  "animations": {
+    "idle_wobble": "anim_block_jelly_idle_wobble",
+    "glow": "anim_block_jelly_glow",
+    "squish_clear": "anim_block_jelly_squish_clear",
+    "cascade_bounce": "anim_block_jelly_cascade_bounce"
+  },
+  "glowAnimationKey": "anim_block_jelly_glow",
+  "clearAnimationKey": "anim_block_jelly_squish_clear",
+  "animationKey": "anim_block_jelly_cascade_bounce"
 }

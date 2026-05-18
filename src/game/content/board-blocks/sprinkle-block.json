@@ -20,5 +20,13 @@
     "glow": "spr_block_sprinkle_glow",
     "clear": "spr_block_sprinkle_clear",
     "icon": "ico_block_sprinkle"
-  }
+  },
+  "animations": {
+    "idle": "anim_block_sprinkle_idle",
+    "glow": "anim_block_sprinkle_glow",
+    "clear": "anim_block_sprinkle_clear"
+  },
+  "glowAnimationKey": "anim_block_sprinkle_glow",
+  "clearAnimationKey": "anim_block_sprinkle_clear",
+  "animationKey": "anim_block_sprinkle_idle"
 }

@@ -2,7 +2,20 @@ import type { PlayerState, TetrominoType } from '../types/GameTypes';
 
 export const BOARD_COLS = 10;
 export const BOARD_ROWS = 20;
-export const CELL_SIZE = 24;
+export const BLOCK_ANIM = {
+  BOARD_BLOCK_SIZE: 24,
+  BOARD_ICON_SIZE: 48,
+
+  GLOW_FRAME_COUNT: 3,
+  GLOW_FRAME_MS: 50,
+  GLOW_TOTAL_MS: 150,
+
+  CLEAR_FRAME_COUNT: 5,
+  CLEAR_FRAME_MS: 40,
+  CLEAR_TOTAL_MS: 200
+} as const;
+
+export const CELL_SIZE = BLOCK_ANIM.BOARD_BLOCK_SIZE;
 export const BOARD_OFFSET_X = 36;
 export const BOARD_OFFSET_Y = 118;
 export const MAX_EVENT_LOG = 8;

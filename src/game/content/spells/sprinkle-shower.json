@@ -22,5 +22,9 @@
   "tags": [
     "utility"
   ],
-  "enabled": true
+  "enabled": true,
+  "vfxKey": "anim_spell_sprinkle_shower",
+  "animations": {
+    "cast": "anim_spell_sprinkle_shower"
+  }
 }

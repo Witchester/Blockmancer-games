@@ -20,5 +20,14 @@
     "glow": "spr_block_star_glow",
     "clear": "spr_block_star_clear",
     "icon": "ico_block_star"
-  }
+  },
+  "animations": {
+    "idle_sparkle": "anim_block_star_idle_sparkle",
+    "glow": "anim_block_star_glow",
+    "clear_burst": "anim_block_star_clear_burst",
+    "cascade_boost": "anim_block_star_cascade_boost"
+  },
+  "glowAnimationKey": "anim_block_star_glow",
+  "clearAnimationKey": "anim_block_star_clear_burst",
+  "animationKey": "anim_block_star_cascade_boost"
 }

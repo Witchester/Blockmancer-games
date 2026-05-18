@@ -43,5 +43,13 @@
     "junk_spawner",
     "board_disruptor"
   ],
-  "enabled": true
+  "enabled": true,
+  "iconKey": "ico_mon_dungeon_goblin",
+  "animations": {
+    "idle": "anim_mon_dungeon_goblin_idle",
+    "attack": "anim_mon_dungeon_goblin_attack",
+    "hit": "anim_mon_dungeon_goblin_hit",
+    "defeat": "anim_mon_dungeon_goblin_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
 }

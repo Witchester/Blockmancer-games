@@ -15,5 +15,10 @@
     "glow": "spr_block_crumb_junk_glow",
     "clear": "spr_block_crumb_junk_clear",
     "icon": "ico_block_crumb_junk"
-  }
+  },
+  "animations": {
+    "damaged": "anim_block_crumb_junk_damaged",
+    "break": "anim_block_crumb_junk_break"
+  },
+  "clearAnimationKey": "anim_block_crumb_junk_break"
 }

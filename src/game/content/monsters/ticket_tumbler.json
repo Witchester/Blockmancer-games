@@ -37,5 +37,13 @@
   "tags": [
     "early_game"
   ],
-  "enabled": true
+  "enabled": true,
+  "iconKey": "ico_mon_ticket_tumbler",
+  "animations": {
+    "idle": "anim_mon_ticket_tumbler_idle",
+    "attack": "anim_mon_ticket_tumbler_attack",
+    "hit": "anim_mon_ticket_tumbler_hit",
+    "defeat": "anim_mon_ticket_tumbler_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
 }

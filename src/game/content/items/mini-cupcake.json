@@ -9,5 +9,9 @@
   },
   "rarity": "common",
   "iconKey": "item_mini_cupcake",
-  "enabled": true
+  "enabled": true,
+  "animations": {
+    "use_vfx": "anim_item_mini_cupcake_use"
+  },
+  "useVfxKey": "anim_item_mini_cupcake_use"
 }

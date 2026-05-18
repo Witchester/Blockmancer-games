@@ -1,1 +1,31 @@
-{"id":"item_cascade_confetti","name":"Cascade Confetti","description":"Your next spell charges Fever for a bigger cascade plan.","effect":{"type":"spell_catalyst"},"itemCategory":"spell_catalyst","counterTags":["counter_incoming_junk","counter_pattern"],"timing":"before_spell","rarity":"uncommon","maxStack":2,"spellSynergyTags":["cascade"],"effectConfig":{"modifierId":"cascade_confetti","feverMultiplier":2},"iconKey":"item_cascade_confetti","enabled":true}
+{
+  "id": "item_cascade_confetti",
+  "name": "Cascade Confetti",
+  "description": "Your next spell charges Fever for a bigger cascade plan.",
+  "effect": {
+    "type": "spell_catalyst"
+  },
+  "itemCategory": "spell_catalyst",
+  "counterTags": [
+    "counter_incoming_junk",
+    "counter_pattern"
+  ],
+  "timing": "before_spell",
+  "rarity": "uncommon",
+  "maxStack": 2,
+  "spellSynergyTags": [
+    "cascade"
+  ],
+  "effectConfig": {
+    "modifierId": "cascade_confetti",
+    "feverMultiplier": 2
+  },
+  "iconKey": "item_cascade_confetti",
+  "enabled": true,
+  "animations": {
+    "catalyst_ready_vfx": "anim_item_cascade_confetti_catalyst_ready",
+    "catalyst_consume_vfx": "anim_item_cascade_confetti_catalyst_consume"
+  },
+  "catalystReadyVfxKey": "anim_item_cascade_confetti_catalyst_ready",
+  "catalystConsumeVfxKey": "anim_item_cascade_confetti_catalyst_consume"
+}

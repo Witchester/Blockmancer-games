@@ -15,13 +15,17 @@
     "maxMana": 120,
     "startingGold": 60,
     "baseLineDamage": 4,
-    "baseFallSpeed": 1.0,
+    "baseFallSpeed": 1,
     "spellCostModifier": 1,
-    "manaGainModifier": 1.0
+    "manaGainModifier": 1
   },
   "startingLoadout": {
     "weaponId": "wpn_goblin_multitool",
-    "spellIds": ["spl_goblin_gadget", "spl_bomb_rune", "spl_fireball"],
+    "spellIds": [
+      "spl_goblin_gadget",
+      "spl_bomb_rune",
+      "spl_fireball"
+    ],
     "relicIds": [],
     "upgradeIds": []
   },
@@ -41,6 +45,18 @@
     "isUnlockedByDefault": false,
     "condition": "defeat_stage_2_boss"
   },
-  "tags": ["gadget", "bomb", "unlockable"],
-  "enabled": true
+  "tags": [
+    "gadget",
+    "bomb",
+    "unlockable"
+  ],
+  "enabled": true,
+  "iconKey": "ico_hero_zuzu_goblin_engineer",
+  "animations": {
+    "idle": "anim_hero_zuzu_goblin_engineer_idle",
+    "cast_spell": "anim_hero_zuzu_goblin_engineer_cast_spell",
+    "hit": "anim_hero_zuzu_goblin_engineer_hit",
+    "victory": "anim_hero_zuzu_goblin_engineer_victory",
+    "defeat_tired": "anim_hero_zuzu_goblin_engineer_defeat_tired"
+  }
 }

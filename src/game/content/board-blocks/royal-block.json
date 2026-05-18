@@ -20,5 +20,13 @@
     "glow": "spr_block_royal_glow",
     "clear": "spr_block_royal_clear",
     "icon": "ico_block_royal"
-  }
+  },
+  "animations": {
+    "royal_pulse": "anim_block_royal_royal_pulse",
+    "warning_glow": "anim_block_royal_warning_glow",
+    "pattern_lock": "anim_block_royal_pattern_lock",
+    "break": "anim_block_royal_break"
+  },
+  "clearAnimationKey": "anim_block_royal_break",
+  "animationKey": "anim_block_royal_pattern_lock"
 }

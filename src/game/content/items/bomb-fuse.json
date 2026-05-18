@@ -1,1 +1,31 @@
-{"id":"item_bomb_fuse","name":"Bomb Fuse","description":"Your next Bomb Rune blasts a wider festival pop.","effect":{"type":"spell_catalyst"},"itemCategory":"spell_catalyst","counterTags":["counter_junk","counter_pattern"],"timing":"before_spell","rarity":"uncommon","maxStack":2,"spellSynergyTags":["bomb"],"effectConfig":{"modifierId":"bomb_fuse","bombRadiusBonus":1},"iconKey":"item_bomb_fuse","enabled":true}
+{
+  "id": "item_bomb_fuse",
+  "name": "Bomb Fuse",
+  "description": "Your next Bomb Rune blasts a wider festival pop.",
+  "effect": {
+    "type": "spell_catalyst"
+  },
+  "itemCategory": "spell_catalyst",
+  "counterTags": [
+    "counter_junk",
+    "counter_pattern"
+  ],
+  "timing": "before_spell",
+  "rarity": "uncommon",
+  "maxStack": 2,
+  "spellSynergyTags": [
+    "bomb"
+  ],
+  "effectConfig": {
+    "modifierId": "bomb_fuse",
+    "bombRadiusBonus": 1
+  },
+  "iconKey": "item_bomb_fuse",
+  "enabled": true,
+  "animations": {
+    "catalyst_ready_vfx": "anim_item_bomb_fuse_catalyst_ready",
+    "catalyst_consume_vfx": "anim_item_bomb_fuse_catalyst_consume"
+  },
+  "catalystReadyVfxKey": "anim_item_bomb_fuse_catalyst_ready",
+  "catalystConsumeVfxKey": "anim_item_bomb_fuse_catalyst_consume"
+}

@@ -20,5 +20,13 @@
     "glow": "spr_block_cupcake_glow",
     "clear": "spr_block_cupcake_clear",
     "icon": "ico_block_cupcake"
-  }
+  },
+  "animations": {
+    "idle": "anim_block_cupcake_idle",
+    "glow": "anim_block_cupcake_glow",
+    "clear": "anim_block_cupcake_clear"
+  },
+  "glowAnimationKey": "anim_block_cupcake_glow",
+  "clearAnimationKey": "anim_block_cupcake_clear",
+  "animationKey": "anim_block_cupcake_idle"
 }

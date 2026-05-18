@@ -20,5 +20,13 @@
     "glow": "spr_block_toolbox_glow",
     "clear": "spr_block_toolbox_clear",
     "icon": "ico_block_toolbox"
-  }
+  },
+  "animations": {
+    "idle": "anim_block_toolbox_idle",
+    "glow": "anim_block_toolbox_glow",
+    "clear": "anim_block_toolbox_clear"
+  },
+  "glowAnimationKey": "anim_block_toolbox_glow",
+  "clearAnimationKey": "anim_block_toolbox_clear",
+  "animationKey": "anim_block_toolbox_idle"
 }
