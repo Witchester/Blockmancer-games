@@ -25,6 +25,7 @@ type MonsterEntry = {
 
 export class DebugScene extends Phaser.Scene {
   private statusText?: Phaser.GameObjects.Text;
+  private selectionOverlay?: Phaser.GameObjects.Container;
   private itemIndex = 0;
   private relicIndex = 0;
   private upgradeIndex = 0;
@@ -83,7 +84,7 @@ export class DebugScene extends Phaser.Scene {
     const rows: Array<[string, () => void, string, () => void]> = [
       ['Give 100 Gold', () => this.giveGold(), 'Give Item', () => this.giveItem()],
       ['Give Relic', () => this.giveReward('relic'), 'Give Upgrade', () => this.giveReward('upgrade')],
-      ['Spawn Monster', () => this.spawnMonster('fight'), 'Trigger Boss', () => this.triggerBoss()],
+      ['Spawn Monster', () => this.openMonsterCategoryPicker(), 'Trigger Boss', () => this.triggerBoss()],
       ['Force Reward', () => this.forceReward(), 'Force Cascade Test', () => this.forceCascadeTest()],
       ['Queue Junk', () => this.queueDebugHazard('incoming_junk'), 'Floaty Block', () => this.queueDebugHazard('floating_block')],
       ['Freeze Warning', () => this.queueDebugHazard('freeze'), 'Low Ceiling', () => this.queueDebugHazard('low_ceiling')],
@@ -179,6 +180,60 @@ export class DebugScene extends Phaser.Scene {
 
   private triggerBoss(): void {
     this.spawnMonster('boss');
+  }
+
+  private openMonsterCategoryPicker(): void {
+    const categories: Array<{ id: RoomType; label: string }> = [
+      { id: 'fight', label: 'Monster' },
+      { id: 'elite', label: 'Elite' },
+      { id: 'boss', label: 'Boss' }
+    ];
+
+    this.showSelectionOverlay(
+      'Select Monster Category',
+      categories.map((category) => ({
+        id: category.id,
+        label: category.label
+      })),
+      (categoryId) => this.openMonsterListPicker(categoryId as RoomType)
+    );
+  }
+
+  private openMonsterListPicker(roomType: RoomType): void {
+    const monsters = this.listMonstersByRoomType(roomType).sort((a, b) => a.name.localeCompare(b.name));
+    if (monsters.length === 0) {
+      this.clearSelectionOverlay();
+      this.updateStatus(`No enabled ${roomType} monster content found.`);
+      return;
+    }
+
+    const titleMap: Record<'fight' | 'elite' | 'boss', string> = {
+      fight: 'Select Monster',
+      elite: 'Select Elite',
+      boss: 'Select Boss'
+    };
+    const title = roomType === 'elite' || roomType === 'boss' ? titleMap[roomType] : titleMap.fight;
+
+    this.showSelectionOverlay(
+      title,
+      monsters.map((monster) => ({ id: monster.id, label: monster.name })),
+      (monsterId) => this.spawnMonsterById(roomType, monsterId),
+      () => this.openMonsterCategoryPicker()
+    );
+  }
+
+  private spawnMonsterById(roomType: RoomType, monsterId: string): void {
+    this.clearSelectionOverlay();
+    const state = this.ensureRun();
+    const selectedMonster = contentRegistry.getOptionalById<MonsterEntry>('monster', monsterId);
+    state.currentRoomType = roomType;
+    state.currentRoomProgress = 'entered';
+    state.activeEnemy = this.spawnById(monsterId, roomType);
+    state.lastBattleWasBoss = roomType === 'boss';
+    state.runStatus = 'battle';
+    this.pushLog(`${state.activeEnemy?.name ?? selectedMonster?.name ?? monsterId} spawned by QA debug.`);
+    this.gameState.saveRun();
+    this.scene.start('BattleScene');
   }
 
   private forceReward(): void {
@@ -374,19 +429,110 @@ export class DebugScene extends Phaser.Scene {
   }
 
   private nextMonster(roomType: RoomType): MonsterEntry | null {
-    const monsters = contentRegistry.listEnabled<MonsterEntry>('monster').filter((monster) => {
-      const isBoss = monster.role === 'boss' || monster.rarity === 'boss';
-      const isElite = monster.role === 'elite' || monster.rarity === 'elite';
-      if (roomType === 'boss') return isBoss;
-      if (roomType === 'elite') return isElite;
-      return !isBoss && !isElite;
-    });
+    const monsters = this.listMonstersByRoomType(roomType);
     if (monsters.length === 0) {
       return null;
     }
     const monster = monsters[this.monsterIndex % monsters.length];
     this.monsterIndex += 1;
     return monster;
+  }
+
+  private listMonstersByRoomType(roomType: RoomType): MonsterEntry[] {
+    return contentRegistry.listEnabled<MonsterEntry>('monster').filter((monster) => {
+      const isBoss = monster.role === 'boss' || monster.rarity === 'boss';
+      const isElite = monster.role === 'elite' || monster.rarity === 'elite';
+      if (roomType === 'boss') return isBoss;
+      if (roomType === 'elite') return isElite;
+      return !isBoss && !isElite;
+    });
+  }
+
+  private showSelectionOverlay(
+    title: string,
+    entries: Array<{ id: string; label: string }>,
+    onSelect: (id: string) => void,
+    onBack?: () => void
+  ): void {
+    this.clearSelectionOverlay();
+
+    const overlay = this.add.container(0, 0);
+    const width = this.scale.width;
+    const height = this.scale.height;
+
+    const blocker = this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.55).setInteractive();
+    const panel = this.add.rectangle(width / 2, height / 2, width - 120, height - 200, COLORS.panel, 0.98).setStrokeStyle(2, COLORS.gold, 0.55);
+    const titleText = this.add.text(width / 2, 120, title, {
+      color: '#ffca6b',
+      fontFamily: FONT_FAMILY,
+      fontSize: '30px',
+      fontStyle: 'bold'
+    }).setOrigin(0.5);
+
+    const staticObjects: Phaser.GameObjects.GameObject[] = [blocker, panel, titleText];
+    const dynamicObjects: Phaser.GameObjects.GameObject[] = [];
+    overlay.add(staticObjects);
+
+    const buttonWidth = width - 240;
+    const buttonHeight = 58;
+    const gap = 12;
+    const maxVisible = 10;
+    let page = 0;
+    const totalPages = Math.max(1, Math.ceil(entries.length / maxVisible));
+
+    const renderPage = (): void => {
+      dynamicObjects.splice(0).forEach((object) => object.destroy());
+
+      const pageStart = page * maxVisible;
+      const pageEntries = entries.slice(pageStart, pageStart + maxVisible);
+      const startY = 200;
+      pageEntries.forEach((entry, index) => {
+        const y = startY + index * (buttonHeight + gap);
+        const button = new Button(this, width / 2, y, buttonWidth, buttonHeight, entry.label, () => onSelect(entry.id), { fontSize: '20px' });
+        dynamicObjects.push(button);
+        overlay.add(button);
+      });
+
+      const backLabel = onBack ? 'Back' : 'Close';
+      const backButton = new Button(this, width / 2 - 170, height - 110, 220, 56, backLabel, () => {
+        if (onBack) {
+          onBack();
+          return;
+        }
+        this.clearSelectionOverlay();
+      });
+      dynamicObjects.push(backButton);
+      overlay.add(backButton);
+
+      if (totalPages > 1) {
+        const pageText = this.add.text(width / 2, height - 110, `${page + 1}/${totalPages}`, {
+          color: '#f6f7ff',
+          fontFamily: FONT_FAMILY,
+          fontSize: '20px'
+        }).setOrigin(0.5);
+        dynamicObjects.push(pageText);
+        overlay.add(pageText);
+
+        const prevButton = new Button(this, width / 2 + 70, height - 110, 120, 56, 'Prev', () => {
+          page = (page - 1 + totalPages) % totalPages;
+          renderPage();
+        });
+        const nextButton = new Button(this, width / 2 + 210, height - 110, 120, 56, 'Next', () => {
+          page = (page + 1) % totalPages;
+          renderPage();
+        });
+        dynamicObjects.push(prevButton, nextButton);
+        overlay.add([prevButton, nextButton]);
+      }
+    };
+
+    renderPage();
+    this.selectionOverlay = overlay;
+  }
+
+  private clearSelectionOverlay(): void {
+    this.selectionOverlay?.destroy(true);
+    this.selectionOverlay = undefined;
   }
 
   private spawnById(monsterId: string, roomType: RoomType): EnemyInstance | null {
