@@ -8,6 +8,7 @@ import {
   hasAnimationDefinition,
   type AnimationCategory
 } from '../data/animations';
+import { getAssetDisplayRule, type AssetDisplayCategory, type AssetDisplayRule } from '../data/asset-display-rules';
 import { BLOCK_ANIM } from '../utils/constants';
 import { contentRegistry } from './ContentRegistry';
 
@@ -51,6 +52,9 @@ export type RouteStoryAssetType =
   | 'ending'
   | 'routeScene';
 
+const POSE_SHEET_FRAME_WIDTH = 627;
+const POSE_SHEET_FRAME_HEIGHT = 627;
+
 export class AssetSystem {
   private readonly fallbackKey = 'asset_missing';
   private readonly iconFallbackKey = 'asset_missing_icon';
@@ -90,8 +94,40 @@ export class AssetSystem {
         scene.load.audio(entry.key, entry.path);
         continue;
       }
-      scene.load.image(entry.key, entry.path);
+      if (this.isPoseSheetKey(entry.key)) {
+        this.preloadSpriteSheetAsset(scene, entry.key, entry.path, 'monsterPoseSheet', POSE_SHEET_FRAME_WIDTH, POSE_SHEET_FRAME_HEIGHT);
+        continue;
+      }
+      this.preloadSingleImageAsset(scene, entry.key, entry.path, this.categoryForAssetKind(entry.kind));
     }
+  }
+
+  resolveAssetKey(
+    scene: Phaser.Scene,
+    assetKey: string | null | undefined,
+    category: AssetDisplayCategory,
+    kind: AssetKind | 'block' = 'sprite'
+  ): string {
+    const resolved = this.getTextureKey(scene, assetKey, kind);
+    if (resolved !== this.fallbackFor(kind)) {
+      return resolved;
+    }
+    return this.useFallbackAsset(category, scene, kind);
+  }
+
+  preloadSingleImageAsset(scene: Phaser.Scene, assetKey: string, path: string, _category: AssetDisplayCategory): void {
+    scene.load.image(assetKey, path);
+  }
+
+  preloadSpriteSheetAsset(
+    scene: Phaser.Scene,
+    assetKey: string,
+    path: string,
+    _category: AssetDisplayCategory,
+    frameWidth: number,
+    frameHeight: number
+  ): void {
+    scene.load.spritesheet(assetKey, path, { frameWidth, frameHeight });
   }
 
   preloadAnimationFrames(scene: Phaser.Scene): void {
@@ -504,7 +540,325 @@ export class AssetSystem {
     key: string | null | undefined,
     kind: AssetKind | 'block' = 'sprite'
   ): Phaser.GameObjects.Image {
-    return scene.add.image(x, y, this.getTextureKey(scene, key, kind));
+    const image = scene.add.image(x, y, this.getTextureKey(scene, key, kind));
+    this.applyPixelArtTextureSettings(image);
+    return image;
+  }
+
+  getHeroDisplayKey(scene: Phaser.Scene, heroId: string | null | undefined): string {
+    return this.getLoadedHeroPoseSheetKey(scene, heroId) ?? this.getHeroTexture(scene, heroId, 'idle');
+  }
+
+  getHeroPoseFrame(
+    pose: 'idle' | 'cast' | 'attack' | 'hit' | 'victory' | 'defeat' | 'special' | 'menu',
+    extendedAvailable = false
+  ): number {
+    if (!extendedAvailable) {
+      if (pose === 'idle') return 0;
+      if (pose === 'cast') return 1;
+      if (pose === 'attack') return 2;
+      if (pose === 'hit') return 3;
+      return 0;
+    }
+    if (pose === 'victory') return 0;
+    if (pose === 'defeat') return 1;
+    if (pose === 'special') return 2;
+    if (pose === 'menu') return 3;
+    return 0;
+  }
+
+  createHeroPoseSprite(
+    scene: Phaser.Scene,
+    heroId: string | null | undefined,
+    pose: 'idle' | 'cast' | 'attack' | 'hit' | 'victory' | 'defeat' | 'special' | 'menu',
+    x: number,
+    y: number,
+    options?: { extended?: boolean; alpha?: number; depth?: number }
+  ): Phaser.GameObjects.Sprite {
+    const useExtended = Boolean(options?.extended && this.getLoadedHeroExtendedPoseSheetKey(scene, heroId));
+    const sheetKey = useExtended
+      ? this.getLoadedHeroExtendedPoseSheetKey(scene, heroId)
+      : this.getLoadedHeroPoseSheetKey(scene, heroId);
+    const category = useExtended ? 'heroExtendedPoseSheet' : 'heroPoseSheet';
+    const fallbackState: HeroVisualState = pose === 'cast'
+      ? 'cast'
+      : pose === 'attack'
+        ? 'attack'
+        : pose === 'hit'
+          ? 'hit'
+          : pose === 'victory'
+            ? 'victory'
+            : pose === 'defeat'
+              ? 'defeat'
+              : 'idle';
+    const sprite = this.createSpriteByAssetKey(
+      scene,
+      sheetKey ?? this.getHeroTexture(scene, heroId, fallbackState),
+      category,
+      x,
+      y,
+      { kind: 'sprite', originX: 0.5, originY: 1, alpha: options?.alpha, depth: options?.depth }
+    );
+    if (sheetKey) {
+      sprite.setFrame(this.getHeroPoseFrame(pose, useExtended));
+    }
+    return sprite;
+  }
+
+  setHeroPose(
+    scene: Phaser.Scene,
+    sprite: Phaser.GameObjects.Sprite | Phaser.GameObjects.Image,
+    heroId: string | null | undefined,
+    pose: 'idle' | 'cast' | 'attack' | 'hit' | 'victory' | 'defeat' | 'special' | 'menu'
+  ): void {
+    const extendedKey = this.getLoadedHeroExtendedPoseSheetKey(scene, heroId);
+    const baseKey = this.getLoadedHeroPoseSheetKey(scene, heroId);
+    const useExtended = Boolean(extendedKey && ['victory', 'defeat', 'special', 'menu'].includes(pose));
+    const sheetKey = useExtended ? extendedKey : baseKey;
+    if (sheetKey) {
+      if (sprite.texture.key !== sheetKey) {
+        sprite.setTexture(sheetKey);
+      }
+      sprite.setFrame(this.getHeroPoseFrame(pose, useExtended));
+      return;
+    }
+    const fallbackState: HeroVisualState = pose === 'cast'
+      ? 'cast'
+      : pose === 'attack'
+        ? 'attack'
+        : pose === 'hit'
+          ? 'hit'
+          : pose === 'victory'
+            ? 'victory'
+            : pose === 'defeat'
+              ? 'defeat'
+              : 'idle';
+    sprite.setTexture(this.getHeroTexture(scene, heroId, fallbackState));
+  }
+
+  getMonsterPoseFrame(pose: 'idle' | 'attack' | 'hit' | 'defeat'): number {
+    const frameByPose: Record<'idle' | 'attack' | 'hit' | 'defeat', number> = {
+      idle: 0,
+      attack: 1,
+      hit: 2,
+      defeat: 3
+    };
+    return frameByPose[pose];
+  }
+
+  getBossPoseFrame(
+    scene: Phaser.Scene,
+    bossId: string | null | undefined,
+    pose: 'idle' | 'attack' | 'hit' | 'phase_change' | 'special_attack' | 'defeat'
+  ): number {
+    if (pose === 'idle') {
+      return 0;
+    }
+    if (pose === 'attack') {
+      return 1;
+    }
+    if (pose === 'defeat') {
+      return 3;
+    }
+    const hasExtended = this.hasBossExtendedPoseSheet(scene, bossId);
+    if (!hasExtended) {
+      return 2;
+    }
+    if (pose === 'hit') {
+      return 0;
+    }
+    if (pose === 'special_attack') {
+      return 1;
+    }
+    return 2;
+  }
+
+  createMonsterPoseSprite(
+    scene: Phaser.Scene,
+    monsterId: string | null | undefined,
+    pose: 'idle' | 'attack' | 'hit' | 'defeat',
+    x: number,
+    y: number,
+    options?: { elite?: boolean; alpha?: number; depth?: number }
+  ): Phaser.GameObjects.Sprite {
+    const sheetKey = this.getLoadedMonsterPoseSheetKey(scene, monsterId);
+    const category = options?.elite ? 'eliteMonsterPoseSheet' : 'monsterPoseSheet';
+    const sprite = this.createSpriteByAssetKey(
+      scene,
+      sheetKey ?? this.getMonsterTexture(scene, monsterId, pose),
+      category,
+      x,
+      y,
+      { kind: 'sprite', originX: 0.5, originY: 1, alpha: options?.alpha, depth: options?.depth }
+    );
+    if (sheetKey) {
+      sprite.setFrame(this.getMonsterPoseFrame(pose));
+    }
+    return sprite;
+  }
+
+  createBossPoseSprite(
+    scene: Phaser.Scene,
+    bossId: string | null | undefined,
+    pose: 'idle' | 'attack' | 'hit' | 'phase_change' | 'special_attack' | 'defeat',
+    x: number,
+    y: number,
+    options?: { intro?: boolean; alpha?: number; depth?: number }
+  ): Phaser.GameObjects.Sprite {
+    const sheetKey = this.getLoadedBossPoseSheetKey(scene, bossId);
+    const category = options?.intro ? 'bossIntroPoseSheet' : 'bossPoseSheet';
+    const sprite = this.createSpriteByAssetKey(
+      scene,
+      sheetKey ?? this.getBossTexture(scene, bossId, pose === 'special_attack' ? 'special' : pose === 'phase_change' ? 'phase_2' : pose),
+      category,
+      x,
+      y,
+      { kind: 'sprite', originX: 0.5, originY: 1, alpha: options?.alpha, depth: options?.depth }
+    );
+    if (sheetKey) {
+      const frameTexture = pose === 'hit' || pose === 'special_attack' || pose === 'phase_change'
+        ? this.getLoadedBossExtendedPoseSheetKey(scene, bossId) ?? sheetKey
+        : sheetKey;
+      if (frameTexture !== sprite.texture.key) {
+        sprite.setTexture(frameTexture);
+      }
+      sprite.setFrame(this.getBossPoseFrame(scene, bossId, pose));
+    }
+    return sprite;
+  }
+
+  setMonsterPose(
+    scene: Phaser.Scene,
+    sprite: Phaser.GameObjects.Sprite | Phaser.GameObjects.Image,
+    monsterId: string | null | undefined,
+    pose: 'idle' | 'attack' | 'hit' | 'defeat'
+  ): void {
+    const sheetKey = this.getLoadedMonsterPoseSheetKey(scene, monsterId);
+    if (sheetKey) {
+      if (sprite.texture.key !== sheetKey) {
+        sprite.setTexture(sheetKey);
+      }
+      sprite.setFrame(this.getMonsterPoseFrame(pose));
+      return;
+    }
+    sprite.setTexture(this.getMonsterTexture(scene, monsterId, pose));
+  }
+
+  setBossPose(
+    scene: Phaser.Scene,
+    sprite: Phaser.GameObjects.Sprite | Phaser.GameObjects.Image,
+    bossId: string | null | undefined,
+    pose: 'idle' | 'attack' | 'hit' | 'phase_change' | 'special_attack' | 'defeat'
+  ): void {
+    const sheetKey = this.getLoadedBossPoseSheetKey(scene, bossId);
+    if (sheetKey) {
+      const useExtended = pose === 'hit' || pose === 'special_attack' || pose === 'phase_change';
+      const textureKey = useExtended
+        ? this.getLoadedBossExtendedPoseSheetKey(scene, bossId) ?? sheetKey
+        : sheetKey;
+      if (sprite.texture.key !== textureKey) {
+        sprite.setTexture(textureKey);
+      }
+      sprite.setFrame(this.getBossPoseFrame(scene, bossId, pose));
+      return;
+    }
+    const fallbackState: MonsterVisualState =
+      pose === 'phase_change' ? 'phase_2' : pose === 'special_attack' ? 'special' : pose;
+    sprite.setTexture(this.getBossTexture(scene, bossId, fallbackState));
+  }
+
+  getAssetDisplayRule(category: AssetDisplayCategory): AssetDisplayRule {
+    return getAssetDisplayRule(category);
+  }
+
+  applyPixelArtTextureSettings(gameObject: Phaser.GameObjects.Image | Phaser.GameObjects.Sprite): void {
+    gameObject.setPipeline('MultiPipeline');
+    gameObject.texture.setFilter(Phaser.Textures.FilterMode.NEAREST);
+  }
+
+  fitSpriteToBox(
+    sprite: Phaser.GameObjects.Image | Phaser.GameObjects.Sprite,
+    maxWidth: number,
+    maxHeight: number
+  ): void {
+    const sourceWidth = sprite.width || maxWidth;
+    const sourceHeight = sprite.height || maxHeight;
+    const scale = Math.min(maxWidth / sourceWidth, maxHeight / sourceHeight);
+    sprite.setDisplaySize(Math.max(1, Math.round(sourceWidth * scale)), Math.max(1, Math.round(sourceHeight * scale)));
+  }
+
+  setSpriteDisplaySizeByCategory(
+    sprite: Phaser.GameObjects.Image | Phaser.GameObjects.Sprite,
+    category: AssetDisplayCategory
+  ): void {
+    const rule = this.getAssetDisplayRule(category);
+    if (rule.renderWidth && rule.renderHeight) {
+      sprite.setDisplaySize(rule.renderWidth, rule.renderHeight);
+      this.applyPixelArtTextureSettings(sprite);
+      return;
+    }
+    if (rule.maxRenderWidth && rule.maxRenderHeight) {
+      this.fitSpriteToBox(sprite, rule.maxRenderWidth, rule.maxRenderHeight);
+    }
+    this.applyPixelArtTextureSettings(sprite);
+  }
+
+  createImageByAssetKey(
+    scene: Phaser.Scene,
+    assetKey: string | null | undefined,
+    category: AssetDisplayCategory,
+    x: number,
+    y: number,
+    options?: { kind?: AssetKind | 'block'; alpha?: number; depth?: number; originX?: number; originY?: number }
+  ): Phaser.GameObjects.Image {
+    const image = this.addImage(scene, x, y, this.resolveAssetKey(scene, assetKey, category, options?.kind ?? 'sprite'), options?.kind ?? 'sprite');
+    this.setSpriteDisplaySizeByCategory(image, category);
+    if (typeof options?.alpha === 'number') {
+      image.setAlpha(options.alpha);
+    }
+    if (typeof options?.depth === 'number') {
+      image.setDepth(options.depth);
+    }
+    if (typeof options?.originX === 'number' || typeof options?.originY === 'number') {
+      image.setOrigin(options.originX ?? 0.5, options.originY ?? 0.5);
+    }
+    return image;
+  }
+
+  createSpriteByAssetKey(
+    scene: Phaser.Scene,
+    assetKey: string | null | undefined,
+    category: AssetDisplayCategory,
+    x: number,
+    y: number,
+    options?: { kind?: AssetKind | 'block'; alpha?: number; depth?: number; originX?: number; originY?: number }
+  ): Phaser.GameObjects.Sprite {
+    const sprite = scene.add.sprite(x, y, this.resolveAssetKey(scene, assetKey, category, options?.kind ?? 'sprite'));
+    this.setSpriteDisplaySizeByCategory(sprite, category);
+    if (typeof options?.alpha === 'number') {
+      sprite.setAlpha(options.alpha);
+    }
+    if (typeof options?.depth === 'number') {
+      sprite.setDepth(options.depth);
+    }
+    if (typeof options?.originX === 'number' || typeof options?.originY === 'number') {
+      sprite.setOrigin(options.originX ?? 0.5, options.originY ?? 0.5);
+    }
+    return sprite;
+  }
+
+  createPoseSheetSprite(
+    scene: Phaser.Scene,
+    assetKey: string | null | undefined,
+    category: AssetDisplayCategory,
+    poseFrame: number,
+    x: number,
+    y: number,
+    options?: { kind?: AssetKind | 'block'; alpha?: number; depth?: number; originX?: number; originY?: number }
+  ): Phaser.GameObjects.Sprite {
+    const sprite = this.createSpriteByAssetKey(scene, assetKey, category, x, y, options);
+    sprite.setFrame(poseFrame);
+    return sprite;
   }
 
   resolveAssetPath(key: string, category?: string): string | null {
@@ -574,6 +928,20 @@ export class AssetSystem {
     this.generateFallback(scene, this.iconFallbackKey, 32, 32, 0x303750, 0x65d6a5);
     this.generateFallback(scene, this.blockFallbackKey, 32, 32, 0x38416a, 0xffca6b);
     this.generateFallback(scene, this.backgroundFallbackKey, 256, 144, 0x171b2d, 0x38416a);
+    this.generateFallback(scene, 'missing_hero', 96, 96, 0x27406f, 0xffca6b);
+    this.generateFallback(scene, 'missing_monster', 96, 96, 0x4a356a, 0xff6673);
+    this.generateFallback(scene, 'missing_boss', 144, 144, 0x4b2436, 0xff6673);
+    this.generateFallback(scene, 'missing_portrait', 128, 128, 0x25443b, 0x9adfff);
+    this.generateFallback(scene, 'missing_item_icon', 48, 48, 0x303750, 0x65d6a5);
+    this.generateFallback(scene, 'missing_spell_icon', 48, 48, 0x303750, 0x65d6a5);
+    this.generateFallback(scene, 'missing_relic_icon', 48, 48, 0x303750, 0x65d6a5);
+    this.generateFallback(scene, 'missing_upgrade_icon', 48, 48, 0x303750, 0x65d6a5);
+    this.generateFallback(scene, 'missing_weapon_icon', 48, 48, 0x303750, 0x65d6a5);
+    this.generateFallback(scene, 'missing_status_icon', 32, 32, 0x303750, 0x65d6a5);
+    this.generateFallback(scene, 'missing_hazard_icon', 48, 48, 0x303750, 0xffca6b);
+    this.generateFallback(scene, 'missing_vfx', 96, 96, 0x2e2e48, 0xffca6b);
+    this.generateFallback(scene, 'missing_ui', 64, 64, 0x2e3148, 0x9adfff);
+    this.generateFallback(scene, 'missing_map_icon', 48, 48, 0x2e3148, 0x9adfff);
   }
 
   private isGeneratedFallback(key: string): boolean {
@@ -612,6 +980,189 @@ export class AssetSystem {
   private boardBlockStem(blockId: string | null | undefined, block: AssetRefContent | null): string {
     const key = this.getAssetRef(block, 'base') ?? block?.spriteKey ?? this.normalizeBlockId(blockId) ?? 'block_red';
     return this.normalizeBlockId(key).replace(/__(?:base|glow|clear)__f\d{2}$/, '');
+  }
+
+  private isPoseSheetKey(key: string): boolean {
+    return key.endsWith('__pose_sheet_2x2') || key.endsWith('__extended_sheet_2x2');
+  }
+
+  private toMonsterActorId(monsterId: string | null | undefined): string | null {
+    if (!monsterId) {
+      return null;
+    }
+    return monsterId.startsWith('mon_boss_') ? monsterId.replace(/^mon_/, '') : monsterId;
+  }
+
+  private toBossActorId(bossId: string | null | undefined): string | null {
+    if (!bossId) {
+      return null;
+    }
+    if (bossId.startsWith('boss_')) {
+      return bossId;
+    }
+    if (bossId.startsWith('mon_boss_')) {
+      return bossId.replace(/^mon_/, '');
+    }
+    if (bossId.startsWith('mon_')) {
+      return bossId.replace(/^mon_/, '');
+    }
+    return `boss_${bossId}`;
+  }
+
+  private getLoadedHeroPoseSheetKey(scene: Phaser.Scene, heroId: string | null | undefined): string | null {
+    if (!heroId) {
+      return null;
+    }
+    const hero = contentRegistry.getHero(heroId) as AssetRefContent | null;
+    const explicit = this.getAssetRef(hero, 'poseSheet') ?? this.getAssetRef(hero, 'poseSheetKey');
+    const preferred = `${heroId}__pose_sheet_2x2`;
+    return this.getFirstLoadedTextureKey(scene, [explicit, preferred]);
+  }
+
+  private getLoadedHeroExtendedPoseSheetKey(scene: Phaser.Scene, heroId: string | null | undefined): string | null {
+    if (!heroId) {
+      return null;
+    }
+    const hero = contentRegistry.getHero(heroId) as AssetRefContent | null;
+    const explicit = this.getAssetRef(hero, 'extendedPoseSheet') ?? this.getAssetRef(hero, 'extendedPoseSheetKey');
+    const preferred = `${heroId}__extended_sheet_2x2`;
+    return this.getFirstLoadedTextureKey(scene, [explicit, preferred]);
+  }
+
+  private getLoadedMonsterPoseSheetKey(scene: Phaser.Scene, monsterId: string | null | undefined): string | null {
+    const actorId = this.toMonsterActorId(monsterId);
+    if (!actorId) {
+      return null;
+    }
+    const monster = contentRegistry.getMonster(monsterId ?? '') as AssetRefContent | null;
+    const explicit = this.getAssetRef(monster, 'poseSheet') ?? this.getAssetRef(monster, 'poseSheetKey');
+    const preferred = `${actorId}__pose_sheet_2x2`;
+    return this.getFirstLoadedTextureKey(scene, [explicit, preferred]);
+  }
+
+  private getLoadedBossPoseSheetKey(scene: Phaser.Scene, bossId: string | null | undefined): string | null {
+    const actorId = this.toBossActorId(bossId);
+    if (!actorId) {
+      return null;
+    }
+    const monsterId = actorId.startsWith('boss_') ? `mon_${actorId}` : actorId;
+    const monster = contentRegistry.getMonster(monsterId) as AssetRefContent | null;
+    const explicit = this.getAssetRef(monster, 'poseSheet') ?? this.getAssetRef(monster, 'poseSheetKey');
+    const preferred = `${actorId}__pose_sheet_2x2`;
+    return this.getFirstLoadedTextureKey(scene, [explicit, preferred]);
+  }
+
+  private getLoadedBossExtendedPoseSheetKey(scene: Phaser.Scene, bossId: string | null | undefined): string | null {
+    const actorId = this.toBossActorId(bossId);
+    if (!actorId) {
+      return null;
+    }
+    const monsterId = actorId.startsWith('boss_') ? `mon_${actorId}` : actorId;
+    const monster = contentRegistry.getMonster(monsterId) as AssetRefContent | null;
+    const explicit = this.getAssetRef(monster, 'extendedPoseSheet') ?? this.getAssetRef(monster, 'extendedPoseSheetKey');
+    const preferred = `${actorId}__extended_sheet_2x2`;
+    return this.getFirstLoadedTextureKey(scene, [explicit, preferred]);
+  }
+
+  private hasBossExtendedPoseSheet(scene: Phaser.Scene, bossId: string | null | undefined): boolean {
+    return this.getLoadedBossExtendedPoseSheetKey(scene, bossId) !== null;
+  }
+
+  private getFirstLoadedTextureKey(scene: Phaser.Scene, keys: Array<string | null | undefined>): string | null {
+    for (const key of keys) {
+      if (key && scene.textures.exists(key)) {
+        return key;
+      }
+    }
+    return null;
+  }
+
+  private categoryForAssetKind(kind: AssetKind): AssetDisplayCategory {
+    if (kind === 'icon') {
+      return 'uiIcon';
+    }
+    if (kind === 'background') {
+      return 'stageBackground';
+    }
+    if (kind === 'ui') {
+      return 'uiAnimation';
+    }
+    return 'heroSprite';
+  }
+
+  private useFallbackAsset(
+    category: AssetDisplayCategory,
+    scene: Phaser.Scene,
+    kind: AssetKind | 'block'
+  ): string {
+    const categoryFallback: Partial<Record<AssetDisplayCategory, string>> = {
+      heroPoseSheet: 'missing_hero',
+      heroExtendedPoseSheet: 'missing_hero',
+      heroSprite: 'missing_hero',
+      monsterPoseSheet: 'missing_monster',
+      eliteMonsterPoseSheet: 'missing_monster',
+      monsterSprite: 'missing_monster',
+      bossPoseSheet: 'missing_boss',
+      bossIntroPoseSheet: 'missing_boss',
+      bossSprite: 'missing_boss',
+      portrait: 'missing_portrait',
+      itemIcon: 'missing_item_icon',
+      spellIcon: 'missing_spell_icon',
+      relicIcon: 'missing_relic_icon',
+      upgradeIcon: 'missing_upgrade_icon',
+      weaponIcon: 'missing_weapon_icon',
+      statusIcon: 'missing_status_icon',
+      oopsieIcon: 'missing_status_icon',
+      hazardIcon: 'missing_hazard_icon',
+      mapIcon: 'missing_map_icon',
+      roomIcon: 'missing_map_icon',
+      routeIcon: 'missing_map_icon',
+      routeBadgeIcon: 'missing_map_icon',
+      rewardThumbnail: 'missing_ui',
+      shopThumbnail: 'missing_ui',
+      vfx: 'missing_vfx',
+      vfxBoardCell: 'missing_vfx',
+      vfxCombatSmall: 'missing_vfx',
+      vfxCombatLarge: 'missing_vfx',
+      uiIcon: 'missing_ui',
+      uiAnimation: 'missing_ui',
+      stageBackground: this.backgroundFallbackKey
+    };
+    const fallback = categoryFallback[category];
+    if (fallback && scene.textures.exists(fallback)) {
+      return fallback;
+    }
+    return this.fallbackFor(kind);
+  }
+
+  getDisplayCategoryForContentType(contentType: string, context: 'compact' | 'card' | 'portrait' = 'compact'): AssetDisplayCategory {
+    const compactMap: Record<string, AssetDisplayCategory> = {
+      item: 'itemIcon',
+      spell: 'spellIcon',
+      relic: 'relicIcon',
+      upgrade: 'upgradeIcon',
+      weapon: 'weaponIcon',
+      status: 'statusIcon',
+      statusEffect: 'statusIcon',
+      oopsie: 'oopsieIcon',
+      hazard: 'hazardIcon',
+      map: 'mapIcon',
+      mapNode: 'mapIcon',
+      room: 'roomIcon',
+      route: 'routeIcon',
+      routeBadge: 'routeBadgeIcon',
+      reward: 'rewardThumbnail',
+      shop: 'shopThumbnail',
+      portrait: 'portrait'
+    };
+    const base = compactMap[contentType] ?? 'uiIcon';
+    if (context === 'card' && (base === 'itemIcon' || base === 'spellIcon' || base === 'relicIcon' || base === 'upgradeIcon' || base === 'weaponIcon')) {
+      return 'rewardThumbnail';
+    }
+    if (context === 'portrait') {
+      return 'portrait';
+    }
+    return base;
   }
 
   private inferBoardBlockFrameKeys(stem: string, state: 'glow' | 'clear'): string[] {

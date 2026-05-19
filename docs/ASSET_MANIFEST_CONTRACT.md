@@ -1,6 +1,7 @@
 # Asset Manifest Contract
 
 Runtime assets must be addressed by key through `AssetSystem` and loaded from `/assets/...`.
+Runtime display size is category-based (`src/game/data/asset-display-rules.ts`), not inferred from source image size.
 
 ## Board Blocks
 
@@ -9,14 +10,31 @@ Runtime assets must be addressed by key through `AssetSystem` and loaded from `/
 - Clear frames: `/assets/sprites/board-blocks/{blockId}/clear/{blockId}__clear__f00.png...`
 - Special/idle frames: `/assets/sprites/board-blocks/{blockId}/special/{blockId}__{animation}__f00.png`
 - Icon: `/assets/icons/board-blocks/ico_{blockId}.png`
+- Board block source: `24x24`, board render: `24x24` (no upscaling in gameplay grid).
+- Board block icon source: `48x48`, icon render constrained to `32-48` depending UI.
 
 ## Characters
 
 - Heroes: `/assets/sprites/heroes/{heroId}/{state}/{heroId}__{state}__f00.png`
 - Monsters: `/assets/sprites/monsters/{monsterId}/{state}/{monsterId}__{state}__f00.png`
 - Bosses: `/assets/sprites/bosses/{bossId}/{state}/{bossId}__{state}__f00.png`
+- Preferred monster pose sheet: `/assets/sprites/monsters/{monsterId}/sheet/{monsterId}__pose_sheet_2x2.png`
+- Preferred boss pose sheet: `/assets/sprites/bosses/{bossId}/sheet/{bossId}__pose_sheet_2x2.png`
+- Optional boss extended sheet: `/assets/sprites/bosses/{bossId}/sheet/{bossId}__extended_sheet_2x2.png`
 - Hero portraits: `/assets/portraits/heroes/{heroId}__portrait_icon.png`
 - NPC/Boss portraits: `/assets/portraits/npcs/{id}__portrait_icon.png`
+- All non-board-block source art may use `627x627` single-frame PNG.
+- Character pose sheets use `1254x1254` (`2x2`) with `627x627` frame cells.
+- Portrait runtime source target: `627x627`; render is constrained by category rules.
+
+### Monster/Boss 2x2 Pose Sheet Format
+
+- Transparent PNG, total size `1254x1254`.
+- Grid: `2x2`, each frame `627x627`.
+- Monster frame mapping: `0 idle`, `1 attack`, `2 hit`, `3 defeat`.
+- Boss frame mapping: `0 idle`, `1 attack`, `2 phase_change/special_attack`, `3 defeat`.
+- Boss extended sheet mapping: `0 hit`, `1 special_attack`, `2 phase_change`, `3 enraged/alt_defeat`.
+- Exact-frame animation folders remain fallback-compatible.
 
 ## Icons
 
@@ -28,6 +46,7 @@ Runtime assets must be addressed by key through `AssetSystem` and loaded from `/
 - Status: `/assets/icons/status/ico_{statusId}.png`
 - Map nodes: `/assets/icons/map/ico_{nodeId}.png`
 - Routes: `/assets/icons/routes/ico_{routeId}.png`
+- Non-board-block icons target `627x627` source art and render through category caps.
 
 ## Effects / UI / Story / Stages
 
@@ -38,6 +57,8 @@ Runtime assets must be addressed by key through `AssetSystem` and loaded from `/
 - Stage background: `/assets/stages/{stageId}.png` or `/assets/stages/{stageId}/background.png`
 - Ending cards: `/assets/story/endings/{endingId}.png`
 - Route scene backgrounds: `/assets/stage-backgrounds/route-scenes/{routeSceneId}.png`
+- Spell/combat/item/hazard/UI animation frame sources target `627x627`; render size is constrained per category.
+- Fullscreen backgrounds remain background assets and use cover/contain scaling; do not force them to `192x192`.
 
 ## Audio
 

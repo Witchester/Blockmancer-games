@@ -5,7 +5,6 @@ import type { MapNodeDefinition, RoomType } from '../types/GameTypes';
 import { Button } from '../ui/Button';
 import { COLORS, FONT_FAMILY, MAX_EVENT_LOG } from '../utils/constants';
 import { getPortraitLayout } from '../utils/layout';
-import { MAP_NODE_ICON_SIZE, setIconDisplaySize } from '../data/renderSizes';
 
 export class MapScene extends Phaser.Scene {
   private infoText?: Phaser.GameObjects.Text;
@@ -36,12 +35,13 @@ export class MapScene extends Phaser.Scene {
     const { width, height, centerX, contentWidth, margin } = layout;
 
     this.cameras.main.setBackgroundColor(COLORS.background);
-    const background = this.gameState.assetSystem.addImage(
+    const background = this.gameState.assetSystem.createImageByAssetKey(
       this,
+      this.gameState.stageSystem.getStageBackgroundKey(this.gameState.runState.stage),
+      'stageBackground',
       centerX,
       height / 2,
-      this.gameState.stageSystem.getStageBackgroundKey(this.gameState.runState.stage),
-      'background'
+      { kind: 'background' }
     );
     background.setDisplaySize(width, height).setAlpha(0.16);
     this.add.rectangle(centerX, height / 2, width, height, COLORS.background, 0.72);
@@ -202,7 +202,7 @@ export class MapScene extends Phaser.Scene {
       const circle = this.add.circle(positionX, positionY, 32, fill, 1).setStrokeStyle(3, stroke, 0.8);
       const iconKey = (contentRegistry.getMapNode(`node_${node.roomType}`) as { iconKey?: string } | null)?.iconKey;
       const nodeTexture = this.gameState.assetSystem.getMapNodeTexture(this, node.roomType, nodeState, iconKey);
-      const icon = setIconDisplaySize(this.add.image(positionX, positionY, nodeTexture), MAP_NODE_ICON_SIZE);
+      const icon = this.gameState.assetSystem.createImageByAssetKey(this, nodeTexture, 'mapIcon', positionX, positionY, { kind: 'icon' });
       const label = this.add.text(positionX, positionY - 2, node.icon, {
         color: '#0b0d16',
         fontFamily: FONT_FAMILY,

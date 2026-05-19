@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { getAssetDisplayRule, type AssetDisplayCategory } from './asset-display-rules';
 
 export const BOARD_CELL_SIZE = 24;
 export const BOARD_BLOCK_SOURCE_SIZE = 24;
@@ -33,20 +34,35 @@ export const COMBAT_HIT_VFX_BOX_SIZE = ICON_SIZE;
 export const BOSS_VFX_BOX_SIZE = BOSS_BATTLE_BOX_SIZE;
 
 type DisplaySizedGameObject = Phaser.GameObjects.Image | Phaser.GameObjects.Sprite;
+type DisplaySizedOrRectGameObject = Phaser.GameObjects.Rectangle | DisplaySizedGameObject;
+
+function sizeByCategory<T extends DisplaySizedOrRectGameObject>(gameObject: T, category: AssetDisplayCategory): T {
+  const rule = getAssetDisplayRule(category);
+  const width = rule.renderWidth ?? rule.maxRenderWidth;
+  const height = rule.renderHeight ?? rule.maxRenderHeight;
+  if (width && height) {
+    gameObject.setDisplaySize(width, height);
+  }
+  return gameObject;
+}
 
 export function setBoardBlockDisplaySize<T extends DisplaySizedGameObject>(sprite: T): T {
-  return setSquareDisplaySize(sprite, BOARD_CELL_SIZE);
+  return sizeByCategory(sprite, 'boardBlock');
 }
 
 export function setBoardPreviewBlockDisplaySize<T extends Phaser.GameObjects.Rectangle | DisplaySizedGameObject>(gameObject: T): T {
-  return setSquareDisplaySize(gameObject, BOARD_PREVIEW_CELL_SIZE);
+  return sizeByCategory(gameObject, 'boardPreviewBlock');
 }
 
 export function setBoardVfxDisplaySize<T extends DisplaySizedGameObject>(sprite: T): T {
-  return setSquareDisplaySize(sprite, BOARD_VFX_CELL_SIZE);
+  return sizeByCategory(sprite, 'boardCellVfx');
 }
 
 export function setIconDisplaySize<T extends DisplaySizedGameObject>(sprite: T, size = ICON_SIZE): T {
+  if (size === ICON_SIZE) {
+    const rule = getAssetDisplayRule('uiIcon');
+    return setSquareDisplaySize(sprite, Math.min(size, rule.maxRenderWidth ?? size));
+  }
   return setSquareDisplaySize(sprite, size);
 }
 

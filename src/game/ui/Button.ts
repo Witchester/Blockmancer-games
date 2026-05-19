@@ -1,10 +1,12 @@
 import Phaser from 'phaser';
 import { BlockmancerGame } from '../BlockmancerGame';
 import { COLORS, FONT_FAMILY } from '../utils/constants';
-import { UI_BUTTON_HEIGHT, setIconDisplaySize } from '../data/renderSizes';
+import { UI_BUTTON_HEIGHT } from '../data/renderSizes';
+import type { AssetDisplayCategory } from '../data/asset-display-rules';
 
 type ButtonOptions = {
   iconKey?: string | null;
+  iconCategory?: AssetDisplayCategory;
   fontSize?: string;
 };
 
@@ -36,7 +38,9 @@ export class Button extends Phaser.GameObjects.Container {
       const compactIcon = width < 90;
       this.icon = (scene.game as BlockmancerGame).assetSystem
         .addImage(scene, compactIcon ? 0 : -width / 2 + 28, compactIcon ? -9 : 0, options.iconKey, 'icon');
-      setIconDisplaySize(this.icon, Math.min(compactIcon ? 20 : 28, renderHeight - 16));
+      (scene.game as BlockmancerGame).assetSystem.setSpriteDisplaySizeByCategory(this.icon, options.iconCategory ?? 'uiIcon');
+      const size = Math.min(compactIcon ? 20 : 28, renderHeight - 16);
+      this.icon.setDisplaySize(size, size);
     }
 
     const compactIcon = Boolean(this.icon && width < 90);

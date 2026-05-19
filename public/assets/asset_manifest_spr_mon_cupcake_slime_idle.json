@@ -1,0 +1,43 @@
+{
+  "asset_id": "spr_mon_cupcake_slime_idle",
+  "runtime_id": "mon_cupcake_slime",
+  "category": "monster",
+  "animation_name": "idle",
+  "target_folder": "sprites/monsters/mon_cupcake_slime/idle/",
+  "style_lock": "cute kawaii cupcake slime with strong dimensional depth, glossy jelly body, piped frosting, cherry, sprinkles, cupcake wrapper, clean dark outline",
+  "frame_size": [
+    627,
+    627
+  ],
+  "source_sheet": {
+    "path": "_source/monsters/mon_cupcake_slime/mon_cupcake_slime__idle_sheet_2x2_1254x1254.png",
+    "size": [
+      1254,
+      1254
+    ],
+    "layout": "2 columns x 2 rows",
+    "cell_size": [
+      627,
+      627
+    ],
+    "mapping": {
+      "top_left": "idle_f00",
+      "top_right": "idle_f01",
+      "bottom_left": "idle_f02",
+      "bottom_right": "idle_f03"
+    }
+  },
+  "runtime_display": {
+    "regular_max_px": 96,
+    "elite_or_large_max_px": 112,
+    "origin": "bottom-center",
+    "preserve_aspect_ratio": true,
+    "scale_filter": "nearest-neighbor"
+  },
+  "frames": [
+    "mon_cupcake_slime__idle__f00.png",
+    "mon_cupcake_slime__idle__f01.png",
+    "mon_cupcake_slime__idle__f02.png",
+    "mon_cupcake_slime__idle__f03.png"
+  ]
+}

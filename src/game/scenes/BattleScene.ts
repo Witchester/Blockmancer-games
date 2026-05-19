@@ -19,15 +19,12 @@ import { getPortraitLayout, isCompactLayout } from '../utils/layout';
 import {
   BOARD_CELL_SIZE,
   BOARD_PREVIEW_CELL_SIZE,
-  BOSS_BATTLE_BOX_SIZE,
   COMBAT_HIT_VFX_BOX_SIZE,
   HERO_BATTLE_BOX_SIZE,
   ITEM_VFX_BOX_SIZE,
   MOBILE_CONTROL_BUTTON_SIZE,
-  MONSTER_BATTLE_BOX_SIZE,
   SPELL_VFX_BOX_SIZE,
   UI_BUTTON_HEIGHT,
-  fitSpriteToBox,
   setBoardBlockDisplaySize,
   setBoardPreviewBlockDisplaySize,
   setBoardVfxDisplaySize
@@ -173,8 +170,8 @@ export class BattleScene extends Phaser.Scene {
   private holdPreviewSymbols: Phaser.GameObjects.Text[] = [];
   private previewSprites: Phaser.GameObjects.Sprite[] = [];
   private holdPreviewSprites: Phaser.GameObjects.Sprite[] = [];
-  private heroPortrait?: Phaser.GameObjects.Image;
-  private enemySprite?: Phaser.GameObjects.Image;
+  private heroPortrait?: Phaser.GameObjects.Sprite;
+  private enemySprite?: Phaser.GameObjects.Sprite;
   private enemyNameText?: Phaser.GameObjects.Text;
   private enemyStatsText?: Phaser.GameObjects.Text;
   private enemyIntentText?: Phaser.GameObjects.Text;
@@ -404,26 +401,27 @@ export class BattleScene extends Phaser.Scene {
       fillColor: COLORS.danger
     });
 
-    this.heroPortrait = this.sharedGame.assetSystem.addImage(
+    this.heroPortrait = this.sharedGame.assetSystem.createHeroPoseSprite(
       this,
+      this.sharedGame.runState.hero.id,
+      'idle',
       this.screenWidth - 170,
-      160,
-      null,
-      'sprite'
-    ).setAlpha(0.95);
-    this.heroPortrait.setTexture(
-      this.sharedGame.assetSystem.getHeroTexture(this, this.sharedGame.runState.hero.id, 'idle')
+      222,
+      { alpha: 0.95 }
     );
-    fitSpriteToBox(this.heroPortrait, HERO_BATTLE_BOX_SIZE, HERO_BATTLE_BOX_SIZE);
+    this.sharedGame.assetSystem.fitSpriteToBox(this.heroPortrait, HERO_BATTLE_BOX_SIZE, HERO_BATTLE_BOX_SIZE);
 
-    this.enemySprite = this.sharedGame.assetSystem.addImage(
-      this,
-      this.screenWidth - 78,
-      160,
-      null,
-      'sprite'
-    ).setAlpha(0.95);
-    fitSpriteToBox(this.enemySprite, MONSTER_BATTLE_BOX_SIZE, MONSTER_BATTLE_BOX_SIZE);
+    const enemyBaselineY = 222;
+    this.enemySprite = this.sharedGame.runState.activeEnemy?.roomType === 'boss'
+      ? this.sharedGame.assetSystem.createBossPoseSprite(this, this.sharedGame.runState.activeEnemy.id, 'idle', this.screenWidth - 78, enemyBaselineY, { alpha: 0.95 })
+      : this.sharedGame.assetSystem.createMonsterPoseSprite(
+          this,
+          this.sharedGame.runState.activeEnemy?.id ?? null,
+          'idle',
+          this.screenWidth - 78,
+          enemyBaselineY,
+          { elite: this.sharedGame.runState.activeEnemy?.roomType === 'elite', alpha: 0.95 }
+        );
 
     const sideCenterX = Math.max(48, Math.round(this.boardOffsetX / 2));
     const sidePanelWidth = this.screenWidth <= 520 ? 82 : 124;
@@ -516,7 +514,7 @@ export class BattleScene extends Phaser.Scene {
     const layers = [far, mid, near].filter((key, index, all) => all.indexOf(key) === index);
 
     layers.forEach((key, index) => {
-      this.add.image(this.screenWidth / 2, this.screenHeight / 2, key)
+      this.sharedGame.assetSystem.createImageByAssetKey(this, key, 'stageBackground', this.screenWidth / 2, this.screenHeight / 2, { kind: 'background' })
         .setDisplaySize(this.screenWidth, this.screenHeight)
         .setAlpha(layers.length > 1 ? [0.1, 0.14, 0.09][index] ?? 0.1 : 0.18);
     });
@@ -1201,7 +1199,7 @@ export class BattleScene extends Phaser.Scene {
     state.runStats.enemyAttacks += 1;
     this.sharedGame.battleObjectiveSystem.recordEnemyAttack(state);
     this.combat.addLog(`${enemy.name} uses ${enemy.intent}.`);
-    this.enemySprite?.setTexture(this.sharedGame.assetSystem.getMonsterTexture(this, enemy.id, 'attack'));
+    this.setEnemyPose('attack');
     this.fitEnemyBattleSprite(enemy);
 
     switch (behavior) {
@@ -1340,6 +1338,7 @@ export class BattleScene extends Phaser.Scene {
       return;
     }
 
+    this.setEnemyPoseTemporary('idle', 220);
     this.syncBoardState();
     this.renderAll();
   }
@@ -1390,7 +1389,7 @@ export class BattleScene extends Phaser.Scene {
       .setStrokeStyle(6, color, hpDamage > 0 ? 0.9 : 0.6);
     if (this.heroPortrait) {
       const originalX = this.heroPortrait.x;
-      this.heroPortrait.setTexture(this.sharedGame.assetSystem.getHeroTexture(this, this.sharedGame.runState.hero.id, 'hit'));
+      this.sharedGame.assetSystem.setHeroPose(this, this.heroPortrait, this.sharedGame.runState.hero.id, 'hit');
       this.heroPortrait.setTint(color);
       this.tweens.add({
         targets: this.heroPortrait,
@@ -1400,7 +1399,9 @@ export class BattleScene extends Phaser.Scene {
         repeat: 2,
         onComplete: () => {
           this.heroPortrait?.setX(originalX);
-          this.heroPortrait?.setTexture(this.sharedGame.assetSystem.getHeroTexture(this, this.sharedGame.runState.hero.id, 'idle'));
+          if (this.heroPortrait) {
+            this.sharedGame.assetSystem.setHeroPose(this, this.heroPortrait, this.sharedGame.runState.hero.id, 'idle');
+          }
           this.heroPortrait?.clearTint();
         }
       });
@@ -1424,7 +1425,7 @@ export class BattleScene extends Phaser.Scene {
     const originalX = this.enemySprite.x;
     const originalScaleX = this.enemySprite.scaleX;
     const originalScaleY = this.enemySprite.scaleY;
-    this.enemySprite.setTexture(this.sharedGame.assetSystem.getMonsterTexture(this, this.sharedGame.runState.activeEnemy?.id, 'hit'));
+    this.setEnemyPose('hit');
     if (this.sharedGame.runState.activeEnemy) {
       this.fitEnemyBattleSprite(this.sharedGame.runState.activeEnemy);
     }
@@ -1440,7 +1441,7 @@ export class BattleScene extends Phaser.Scene {
       onComplete: () => {
         this.enemySprite?.setX(originalX);
         this.enemySprite?.setScale(originalScaleX, originalScaleY);
-        this.enemySprite?.setTexture(this.sharedGame.assetSystem.getMonsterTexture(this, this.sharedGame.runState.activeEnemy?.id, 'idle'));
+        this.setEnemyPose('idle');
         if (this.enemySprite && this.sharedGame.runState.activeEnemy) {
           this.fitEnemyBattleSprite(this.sharedGame.runState.activeEnemy);
         }
@@ -1838,7 +1839,9 @@ export class BattleScene extends Phaser.Scene {
     state.runStats.spellsCast += 1;
     this.sharedGame.battleObjectiveSystem.recordSpellCast(state);
     this.sharedGame.audioSystem.play('spell_cast', this);
-    this.heroPortrait?.setTexture(this.sharedGame.assetSystem.getHeroTexture(this, state.hero.id, 'cast'));
+    if (this.heroPortrait) {
+      this.sharedGame.assetSystem.setHeroPose(this, this.heroPortrait, state.hero.id, 'cast');
+    }
     this.fitHeroBattleSprite();
     this.playVfx(this.getSpellVfxKey(spellId), this.heroPortrait?.x ?? 96, this.heroPortrait?.y ?? 92, SPELL_VFX_BOX_SIZE, 126);
     const damageDealt = Math.max(0, enemyHpBefore - (state.activeEnemy?.currentHp ?? enemyHpBefore));
@@ -1883,8 +1886,9 @@ export class BattleScene extends Phaser.Scene {
       this.combat.addLog(phaseMechanicMessage);
     }
     this.showFloatingText('Phase 2', this.screenWidth / 2, 184, '#ffca6b', 34);
-    this.enemySprite?.setTexture(this.sharedGame.assetSystem.getMonsterTexture(this, enemy.id, 'phase_2'));
+    this.setEnemyPose('phase_2');
     this.fitEnemyBattleSprite(enemy);
+    this.setEnemyPoseTemporary('idle', 360);
     if (!this.sharedGame.getSettings().reducedFlashing) {
       this.cameras.main.flash(180, 255, 202, 107, false);
     }
@@ -1898,12 +1902,14 @@ export class BattleScene extends Phaser.Scene {
 
     const enemyName = state.activeEnemy.name;
     const enemyId = state.activeEnemy.id;
-    this.enemySprite?.setTexture(this.sharedGame.assetSystem.getMonsterTexture(this, enemyId, 'defeat'));
+    this.setEnemyPose('defeat');
     if (state.activeEnemy) {
       this.fitEnemyBattleSprite(state.activeEnemy);
     }
     this.playVfx('anim_vfx_enemy_defeat_poof', this.enemySprite?.x ?? this.screenWidth - 78, this.enemySprite?.y ?? 92, COMBAT_HIT_VFX_BOX_SIZE, 126);
-    this.heroPortrait?.setTexture(this.sharedGame.assetSystem.getHeroTexture(this, state.hero.id, 'victory'));
+    if (this.heroPortrait) {
+      this.sharedGame.assetSystem.setHeroPose(this, this.heroPortrait, state.hero.id, 'victory');
+    }
     this.fitHeroBattleSprite();
     state.enemiesDefeated += 1;
     state.runStats.roomsCleared += 1;
@@ -2205,7 +2211,8 @@ export class BattleScene extends Phaser.Scene {
 
     const frames = this.sharedGame.assetSystem.getLoadedAnimationFrameKeys(this, definition.id);
     const textureKey = frames[0] ?? this.sharedGame.assetSystem.getTextureKey(this, definition.fallbackKey, 'sprite');
-    const sprite = this.add.sprite(x, y, textureKey)
+    const category = size <= BOARD_CELL_SIZE ? 'boardCellVfx' : 'vfx';
+    const sprite = this.sharedGame.assetSystem.createSpriteByAssetKey(this, textureKey, category, x, y, { kind: 'sprite' })
       .setDisplaySize(size, size)
       .setDepth(depth)
       .setAlpha(frames.length > 0 ? 1 : 0.42);
@@ -2357,9 +2364,8 @@ export class BattleScene extends Phaser.Scene {
     }
 
     const state = enemy.roomType === 'boss' && enemy.phase >= 2 ? 'phase_2' : 'idle';
-    this.enemySprite
-      ?.setTexture(this.sharedGame.assetSystem.getMonsterTexture(this, enemy.id, state))
-      .setVisible(true);
+    this.setEnemyPose(state);
+    this.enemySprite?.setVisible(true);
     this.fitEnemyBattleSprite(enemy);
 
     this.enemyNameText?.setText(enemy.name);
@@ -2375,15 +2381,61 @@ export class BattleScene extends Phaser.Scene {
 
   private fitHeroBattleSprite(): void {
     if (this.heroPortrait) {
-      fitSpriteToBox(this.heroPortrait, HERO_BATTLE_BOX_SIZE, HERO_BATTLE_BOX_SIZE);
+      this.sharedGame.assetSystem.setSpriteDisplaySizeByCategory(this.heroPortrait, 'heroPoseSheet');
+      this.sharedGame.assetSystem.fitSpriteToBox(this.heroPortrait, HERO_BATTLE_BOX_SIZE, HERO_BATTLE_BOX_SIZE);
+      this.heroPortrait.setOrigin(0.5, 1);
     }
   }
 
   private fitEnemyBattleSprite(enemy: EnemyInstance): void {
     if (this.enemySprite) {
-      const boxSize = enemy.roomType === 'boss' ? BOSS_BATTLE_BOX_SIZE : MONSTER_BATTLE_BOX_SIZE;
-      fitSpriteToBox(this.enemySprite, boxSize, boxSize);
+      if (enemy.roomType === 'boss') {
+        this.sharedGame.assetSystem.setSpriteDisplaySizeByCategory(this.enemySprite, 'bossPoseSheet');
+      } else if (enemy.roomType === 'elite') {
+        this.sharedGame.assetSystem.setSpriteDisplaySizeByCategory(this.enemySprite, 'eliteMonsterPoseSheet');
+      } else {
+        this.sharedGame.assetSystem.setSpriteDisplaySizeByCategory(this.enemySprite, 'monsterPoseSheet');
+      }
+      this.enemySprite.setOrigin(0.5, 1);
     }
+  }
+
+  private setEnemyPose(state: 'idle' | 'attack' | 'hit' | 'defeat' | 'phase_2' | 'special'): void {
+    const enemy = this.sharedGame.runState.activeEnemy;
+    if (!enemy || !this.enemySprite) {
+      return;
+    }
+    if (enemy.roomType === 'boss') {
+      const pose = state === 'phase_2'
+        ? 'phase_change'
+        : state === 'special'
+          ? 'special_attack'
+          : state;
+      this.sharedGame.assetSystem.setBossPose(this, this.enemySprite, enemy.id, pose);
+      return;
+    }
+    const pose = state === 'special' || state === 'phase_2' ? 'attack' : state;
+    this.sharedGame.assetSystem.setMonsterPose(this, this.enemySprite, enemy.id, pose);
+  }
+
+  private setEnemyPoseTemporary(state: 'idle' | 'attack' | 'hit' | 'defeat' | 'phase_2' | 'special', durationMs: number): void {
+    const enemyId = this.sharedGame.runState.activeEnemy?.id;
+    if (!enemyId) {
+      return;
+    }
+    this.setEnemyPose(state);
+    this.time.delayedCall(durationMs, () => {
+      if (this.sharedGame.runState.activeEnemy?.id !== enemyId) {
+        return;
+      }
+      if (this.sharedGame.runState.activeEnemy.currentHp <= 0) {
+        return;
+      }
+      this.setEnemyPose('idle');
+      if (this.sharedGame.runState.activeEnemy) {
+        this.fitEnemyBattleSprite(this.sharedGame.runState.activeEnemy);
+      }
+    });
   }
 
   private getBehaviorLabel(behavior: string): string {

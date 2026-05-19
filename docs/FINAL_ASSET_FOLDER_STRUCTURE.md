@@ -13,7 +13,9 @@ public/assets/
   sprites/board-blocks/{block_id}/special/
   sprites/heroes/{hero_id}/{state}/
   sprites/monsters/{monster_id}/{state}/
+  sprites/monsters/{monster_id}/sheet/
   sprites/bosses/{boss_id}/{state}/
+  sprites/bosses/{boss_id}/sheet/
   effects/{vfx_id}/
   icons/{category}/
   heroes/
@@ -34,6 +36,10 @@ public/assets/
 
 - Static runtime sprites use the current runtime key when one exists, for example `block_red.png`, `hero_milo_blockmancer.png`, and `item_mana_lemonade.png`.
 - Exact PNG frame sequences use `asset_id__animation_name__f00.png`, `f01`, `f02`, and so on. Frame ranges are not allowed.
+- Preferred monster/boss pose sheet files use:
+  - `{monster_id}__pose_sheet_2x2.png`
+  - `{boss_id}__pose_sheet_2x2.png`
+  - optional `{boss_id}__extended_sheet_2x2.png`
 - Board block frame folders are:
   - `sprites/board-blocks/{block_id}/base/{block_id}__base__f00.png`
   - `sprites/board-blocks/{block_id}/glow/{block_id}__glow__f00.png` through exact count
@@ -47,7 +53,11 @@ public/assets/
 - Gameplay board blocks render at `24x24` px.
 - Board block source art targets `24x24` px.
 - Board block UI icons render at `48x48` px.
-- Larger source images must be display-sized down by board rendering helpers.
+- Board block icon source targets `48x48` px and can render at `32-48` depending UI context.
+- Non-board-block runtime visual assets target `627x627` source art (heroes, portraits, icons, VFX, UI animation frames).
+- Preferred monster/boss runtime pose sheets target `1254x1254` source with `627x627` frame cells (`2x2`).
+- Runtime render size must be constrained by asset category rules, not by source PNG size.
+- Fullscreen/large backgrounds remain background assets and use cover/contain behavior.
 - Use nearest-neighbor / pixelated rendering for board blocks.
 
 ## Runtime Key Rules

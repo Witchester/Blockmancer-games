@@ -1,7 +1,8 @@
 import Phaser from 'phaser';
 import { BlockmancerGame } from '../BlockmancerGame';
 import { COLORS, FONT_FAMILY } from '../utils/constants';
-import { HERO_SELECT_SPRITE_BOX_SIZE, UI_CARD_ICON_SIZE, fitSpriteToBox, setIconDisplaySize } from '../data/renderSizes';
+import { HERO_SELECT_SPRITE_BOX_SIZE, UI_CARD_ICON_SIZE } from '../data/renderSizes';
+import type { AssetDisplayCategory } from '../data/asset-display-rules';
 
 type TextAlign = 'left' | 'center' | 'right';
 
@@ -21,6 +22,7 @@ export type CardOptions = {
   fillAlpha?: number;
   padding?: number;
   imageKey?: string | null;
+  imageCategory?: AssetDisplayCategory;
   imageKind?: 'sprite' | 'icon' | 'background' | 'ui';
   imageSize?: number;
 };
@@ -60,10 +62,17 @@ export class Card extends Phaser.GameObjects.Container {
       const size = options.imageSize ?? (options.imageKind === 'icon' ? UI_CARD_ICON_SIZE : HERO_SELECT_SPRITE_BOX_SIZE);
       this.image = (scene.game as BlockmancerGame).assetSystem
         .addImage(scene, 0, 0, options.imageKey, options.imageKind ?? 'sprite');
+      const assetSystem = (scene.game as BlockmancerGame).assetSystem;
       if ((options.imageKind ?? 'sprite') === 'icon') {
-        setIconDisplaySize(this.image, size);
+        assetSystem.setSpriteDisplaySizeByCategory(this.image, options.imageCategory ?? 'uiIcon');
+        this.image.setDisplaySize(size, size);
       } else {
-        fitSpriteToBox(this.image, size, size);
+        if (options.imageCategory) {
+          assetSystem.setSpriteDisplaySizeByCategory(this.image, options.imageCategory);
+          assetSystem.fitSpriteToBox(this.image, size, size);
+        } else {
+          assetSystem.fitSpriteToBox(this.image, size, size);
+        }
       }
       this.add(this.image);
     }

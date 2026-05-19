@@ -302,6 +302,8 @@ export function createContentImageAssets(): AssetManifestEntry[] {
 
   for (const hero of contentRegistry.list<ContentAssetEntry>('hero')) {
     addAsset(assets, hero.id, 'heroes', 'sprite');
+    addAssetPath(assets, `${hero.id}__pose_sheet_2x2`, `/assets/sprites/heroes/${hero.id}/sheet/${hero.id}__pose_sheet_2x2.png`, 'sprite');
+    addAssetPath(assets, `${hero.id}__extended_sheet_2x2`, `/assets/sprites/heroes/${hero.id}/sheet/${hero.id}__extended_sheet_2x2.png`, 'sprite');
     for (const state of ['idle', 'cast_spell', 'attack', 'hit', 'victory', 'defeat_tired', 'portrait', 'silhouette_locked']) {
       addAssetPath(assets, `${hero.id}__${state}__f00`, `/assets/sprites/heroes/${hero.id}/${state}/${hero.id}__${state}__f00.png`, 'sprite');
       addAsset(assets, `spr_${hero.id}_${state}`, 'sprites/heroes', 'sprite');
@@ -317,6 +319,10 @@ export function createContentImageAssets(): AssetManifestEntry[] {
       ? ['idle', 'attack', 'hit', 'phase_change', 'special_attack', 'defeat', 'intro_portrait']
       : ['idle', 'attack', 'hit', 'defeat'];
     addAsset(assets, actorId, isBoss ? 'bosses' : 'monsters', 'sprite');
+    addAssetPath(assets, `${actorId}__pose_sheet_2x2`, `/assets/${folder}/${actorId}/sheet/${actorId}__pose_sheet_2x2.png`, 'sprite');
+    if (isBoss) {
+      addAssetPath(assets, `${actorId}__extended_sheet_2x2`, `/assets/${folder}/${actorId}/sheet/${actorId}__extended_sheet_2x2.png`, 'sprite');
+    }
     for (const state of states) {
       addAssetPath(assets, `${actorId}__${state}__f00`, `/assets/${folder}/${actorId}/${state}/${actorId}__${state}__f00.png`, 'sprite');
       addAsset(assets, `spr_${monster.id}_${state}`, folder, 'sprite');

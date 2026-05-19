@@ -19,6 +19,15 @@ Do not mark the animation asset pipeline as release-complete until final PNG fra
 This is the exact-frame animation standard for game-ready PNG frame sequences. Do not create GIF files. Every entry below has an exact frame count; frame ranges are not allowed.
 
 Runtime keys are defined in `src/game/data/animation-standards.json` and expanded by `src/game/data/animations.ts`.
+Render size is controlled at runtime by asset category display rules in `src/game/data/asset-display-rules.ts`.
+
+## Source Size Contract
+
+- Board gameplay blocks keep `24x24` source and render `24x24`.
+- Board block icons keep `48x48` source; UI render remains capped for readability.
+- Non-board-block animation sources (hero/monster/boss, VFX, hazard UI, UI animation) target `627x627` source frames.
+- Character pose sheets target `1254x1254` (`2x2`, `627x627` cell size).
+- Source size and render size are intentionally decoupled; do not infer runtime display size from PNG dimensions.
 
 ## Naming Rules
 
@@ -55,6 +64,7 @@ public/assets/sprites/monsters/{monster_id}/idle/
 public/assets/sprites/monsters/{monster_id}/attack/
 public/assets/sprites/monsters/{monster_id}/hit/
 public/assets/sprites/monsters/{monster_id}/defeat/
+public/assets/sprites/monsters/{monster_id}/sheet/{monster_id}__pose_sheet_2x2.png
 
 public/assets/sprites/bosses/{boss_id}/idle/
 public/assets/sprites/bosses/{boss_id}/attack/
@@ -62,6 +72,8 @@ public/assets/sprites/bosses/{boss_id}/hit/
 public/assets/sprites/bosses/{boss_id}/phase_change/
 public/assets/sprites/bosses/{boss_id}/special_attack/
 public/assets/sprites/bosses/{boss_id}/defeat/
+public/assets/sprites/bosses/{boss_id}/sheet/{boss_id}__pose_sheet_2x2.png
+public/assets/sprites/bosses/{boss_id}/sheet/{boss_id}__extended_sheet_2x2.png
 
 public/assets/effects/{vfx_id}/
 public/assets/icons/items/
@@ -70,6 +82,18 @@ public/assets/icons/relics/
 public/assets/icons/upgrades/
 public/assets/ui/animations/
 ```
+
+## Monster/Boss 2x2 Pose Sheet Format
+
+- Preferred runtime format for monster and boss poses.
+- Sheet size: `1254x1254` transparent PNG.
+- Frame size: `627x627`, `2 columns x 2 rows`.
+- Frame order:
+  - top-left: idle
+  - top-right: attack
+  - bottom-left: hit or phase/special
+  - bottom-right: defeat
+- Exact-frame folders remain supported as fallback.
 
 ## Board Block Animation Standard
 

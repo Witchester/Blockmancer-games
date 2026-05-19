@@ -206,6 +206,65 @@ async function warnMissingPngs(definitions) {
   }
 }
 
+async function readPngDimensions(filePath) {
+  const bytes = await readFile(filePath);
+  if (bytes.length < 24) {
+    throw new Error('PNG too small');
+  }
+  const signature = bytes.subarray(0, 8);
+  const expected = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
+  if (!signature.equals(expected)) {
+    throw new Error('Invalid PNG signature');
+  }
+  const width = bytes.readUInt32BE(16);
+  const height = bytes.readUInt32BE(20);
+  return { width, height };
+}
+
+async function validateCharacterPoseSheets() {
+  const monsterIds = await readContentIds('monsters');
+  let badDimensions = 0;
+  let missingPreferred = 0;
+
+  for (const monsterId of monsterIds) {
+    const isBoss = monsterId.startsWith('mon_boss_');
+    const actorId = isBoss ? monsterId.replace(/^mon_/, '') : monsterId;
+    const folder = isBoss ? 'bosses' : 'monsters';
+    const preferredSheet = path.join(publicRoot, `assets/sprites/${folder}/${actorId}/sheet/${actorId}__pose_sheet_2x2.png`);
+    const fallbackIdle = path.join(publicRoot, `assets/sprites/${folder}/${actorId}/idle/${actorId}__idle__f00.png`);
+
+    let hasSheet = false;
+    try {
+      await stat(preferredSheet);
+      hasSheet = true;
+      const { width, height } = await readPngDimensions(preferredSheet);
+      if (width !== 1254 || height !== 1254) {
+        badDimensions += 1;
+        console.warn(`Character sheet warning: ${path.relative(projectRoot, preferredSheet)} expected 1254x1254 but got ${width}x${height}.`);
+      }
+    } catch {
+      missingPreferred += 1;
+    }
+
+    if (hasSheet) {
+      continue;
+    }
+
+    try {
+      await stat(fallbackIdle);
+    } catch {
+      console.warn(`Character sheet warning: missing both preferred sheet and fallback idle for ${actorId}.`);
+    }
+  }
+
+  if (missingPreferred > 0) {
+    console.warn(`Character sheet warning: ${missingPreferred} monster/boss entries are missing preferred 2x2 sheets (fallbacks allowed).`);
+  }
+  if (badDimensions > 0) {
+    console.warn(`Character sheet warning: ${badDimensions} preferred sheet(s) have unexpected dimensions.`);
+  }
+}
+
 async function main() {
   const errors = [];
   const standards = JSON.parse(await readFile(standardsPath, 'utf8'));
@@ -220,6 +279,7 @@ async function main() {
   await validateDocs(errors);
   await validateContentAnimationRefs(definitions, errors);
   await warnMissingPngs(definitions);
+  await validateCharacterPoseSheets();
 
   if (errors.length > 0) {
     console.error(`Found ${errors.length} animation validation error(s):`);
