@@ -202,17 +202,20 @@ export class AssetSystem {
   }
 
   getBoardBlockBaseKey(blockId: string | null | undefined): string {
-    const block = blockId ? contentRegistry.getBoardBlock(blockId) as AssetRefContent | null : null;
+    const normalizedId = this.normalizeBlockId(blockId);
+    const block = normalizedId ? contentRegistry.getBoardBlock(normalizedId) as AssetRefContent | null : null;
     return this.getAssetRef(block, 'base') ?? `${this.boardBlockStem(blockId, block)}__base__f00`;
   }
 
   getBoardBlockGlowKey(blockId: string | null | undefined): string {
-    const block = blockId ? contentRegistry.getBoardBlock(blockId) as AssetRefContent | null : null;
+    const normalizedId = this.normalizeBlockId(blockId);
+    const block = normalizedId ? contentRegistry.getBoardBlock(normalizedId) as AssetRefContent | null : null;
     return this.getAssetRef(block, 'glow') ?? `${this.boardBlockStem(blockId, block)}__glow__f00`;
   }
 
   getBoardBlockClearKey(blockId: string | null | undefined): string {
-    const block = blockId ? contentRegistry.getBoardBlock(blockId) as AssetRefContent | null : null;
+    const normalizedId = this.normalizeBlockId(blockId);
+    const block = normalizedId ? contentRegistry.getBoardBlock(normalizedId) as AssetRefContent | null : null;
     return this.getAssetRef(block, 'clear') ?? `${this.boardBlockStem(blockId, block)}__clear__f00`;
   }
 
@@ -296,7 +299,8 @@ export class AssetSystem {
   }
 
   getBoardBlockIconKey(blockId: string | null | undefined): string {
-    const block = blockId ? contentRegistry.getBoardBlock(blockId) as AssetRefContent | null : null;
+    const normalizedId = this.normalizeBlockId(blockId);
+    const block = normalizedId ? contentRegistry.getBoardBlock(normalizedId) as AssetRefContent | null : null;
     return this.getAssetRef(block, 'icon') ?? block?.iconKey ?? `ico_${this.boardBlockStem(blockId, block)}`;
   }
 
@@ -305,8 +309,9 @@ export class AssetSystem {
     blockId: string | null | undefined,
     state: BoardBlockVisualState = 'base'
   ): string {
-    const block = blockId ? contentRegistry.getBoardBlock(blockId) as AssetRefContent | null : null;
-    const stem = this.boardBlockStem(blockId, block);
+    const normalizedId = this.normalizeBlockId(blockId);
+    const block = normalizedId ? contentRegistry.getBoardBlock(normalizedId) as AssetRefContent | null : null;
+    const stem = this.boardBlockStem(normalizedId, block);
     const stateKey = state === 'base'
       ? this.getBoardBlockBaseKey(blockId)
       : state === 'icon'
@@ -319,10 +324,10 @@ export class AssetSystem {
       ...this.withLegacyTextureKeys(stateKey),
       ...(state !== 'base' && state !== 'icon' ? this.withLegacyTextureKeys(baseKey) : []),
       ...this.withLegacyTextureKeys(stem),
-      blockId,
-      state === 'icon' ? this.legacyBoardBlockIconKey(blockId) : undefined,
+      normalizedId,
+      state === 'icon' ? this.legacyBoardBlockIconKey(normalizedId) : undefined,
       block?.spriteKey,
-      this.legacyBoardBlockSpriteKey(blockId)
+      this.legacyBoardBlockSpriteKey(normalizedId)
     ], state === 'icon' ? 'icon' : 'block');
   }
 
@@ -508,7 +513,7 @@ export class AssetSystem {
       return direct.path;
     }
     if (category) {
-      return `assets/${category}/${key}.png`;
+      return `/assets/${category}/${key}.png`;
     }
     return null;
   }
@@ -518,23 +523,50 @@ export class AssetSystem {
     variant: 'base' | 'glow' | 'clear' | 'glowFrame' | 'clearFrame' | 'specialFrame' | 'icon' = 'base'
   ): string {
     if (variant === 'icon') {
-      return `assets/icons/board-blocks/${key}.png`;
+      return `/assets/icons/board-blocks/${key}.png`;
     }
 
     const blockId = this.normalizeFinalBoardBlockId(key.replace(/__(?:base|glow|clear|[a-z0-9_]+)__f\d{2}$/, '').replace(/_(?:glow|clear)(?:_frame_\d{2})?$/, ''));
     if (variant === 'base') {
-      return `assets/sprites/board-blocks/${blockId}/base/${blockId}__base__f00.png`;
+      return `/assets/sprites/board-blocks/${blockId}/base/${blockId}__base__f00.png`;
     }
     if (variant === 'glowFrame') {
-      return `assets/sprites/board-blocks/${blockId}/glow/${key}.png`;
+      return `/assets/sprites/board-blocks/${blockId}/glow/${key}.png`;
     }
     if (variant === 'clearFrame') {
-      return `assets/sprites/board-blocks/${blockId}/clear/${key}.png`;
+      return `/assets/sprites/board-blocks/${blockId}/clear/${key}.png`;
     }
     if (variant === 'specialFrame') {
-      return `assets/sprites/board-blocks/${blockId}/special/${key}.png`;
+      return `/assets/sprites/board-blocks/${blockId}/special/${key}.png`;
     }
-    return `assets/sprites/board-blocks/${blockId}/${variant}/${key}.png`;
+    return `/assets/sprites/board-blocks/${blockId}/${variant}/${key}.png`;
+  }
+
+  normalizeBlockId(rawId: string | null | undefined): string {
+    if (!rawId) {
+      return 'block_red';
+    }
+    const aliases: Record<string, string> = {
+      red: 'block_red',
+      blue: 'block_blue',
+      green: 'block_green',
+      yellow: 'block_yellow',
+      sprinkle: 'block_sprinkle',
+      block_red_rune: 'block_red',
+      block_blue_rune: 'block_blue',
+      block_green_rune: 'block_green',
+      block_yellow_rune: 'block_yellow',
+      spr_block_red: 'block_red',
+      spr_block_blue: 'block_blue',
+      spr_block_green: 'block_green',
+      spr_block_yellow: 'block_yellow',
+      spr_block_sprinkle: 'block_sprinkle',
+      spr_block_red_rune: 'block_red',
+      spr_block_blue_rune: 'block_blue',
+      spr_block_green_rune: 'block_green',
+      spr_block_yellow_rune: 'block_yellow'
+    };
+    return aliases[rawId] ?? rawId.replace(/^spr_/, '');
   }
 
   ensureFallbackTextures(scene: Phaser.Scene): void {
@@ -578,18 +610,8 @@ export class AssetSystem {
   }
 
   private boardBlockStem(blockId: string | null | undefined, block: AssetRefContent | null): string {
-    const key = this.getAssetRef(block, 'base') ?? block?.spriteKey ?? blockId ?? 'block_red';
-    const aliases: Record<string, string> = {
-      block_red_rune: 'block_red',
-      block_blue_rune: 'block_blue',
-      block_green_rune: 'block_green',
-      block_yellow_rune: 'block_yellow',
-      spr_block_red_rune: 'block_red',
-      spr_block_blue_rune: 'block_blue',
-      spr_block_green_rune: 'block_green',
-      spr_block_yellow_rune: 'block_yellow'
-    };
-    return aliases[key] ?? key.replace(/^spr_/, '').replace(/__(?:base|glow|clear)__f\d{2}$/, '');
+    const key = this.getAssetRef(block, 'base') ?? block?.spriteKey ?? this.normalizeBlockId(blockId) ?? 'block_red';
+    return this.normalizeBlockId(key).replace(/__(?:base|glow|clear)__f\d{2}$/, '');
   }
 
   private inferBoardBlockFrameKeys(stem: string, state: 'glow' | 'clear'): string[] {
@@ -682,17 +704,7 @@ export class AssetSystem {
   }
 
   private normalizeFinalBoardBlockId(key: string): string {
-    const aliases: Record<string, string> = {
-      block_red_rune: 'block_red',
-      block_blue_rune: 'block_blue',
-      block_green_rune: 'block_green',
-      block_yellow_rune: 'block_yellow',
-      spr_block_red_rune: 'block_red',
-      spr_block_blue_rune: 'block_blue',
-      spr_block_green_rune: 'block_green',
-      spr_block_yellow_rune: 'block_yellow'
-    };
-    return aliases[key] ?? key.replace(/^spr_/, '');
+    return this.normalizeBlockId(key);
   }
 
   private legacyBoardBlockSpriteKey(key: string | null | undefined): string | undefined {

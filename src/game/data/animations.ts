@@ -96,9 +96,9 @@ function animationId(category: AnimationCategory, assetId: string, animationName
 function boardBlockFolder(assetId: string, animationName: string): string {
   const blockId = assetId.replace(/^spr_/, '');
   if (animationName === 'glow' || animationName === 'clear') {
-    return `assets/sprites/board-blocks/${blockId}/${animationName}`;
+    return `/assets/sprites/board-blocks/${blockId}/${animationName}`;
   }
-  return `assets/sprites/board-blocks/${blockId}/special`;
+  return `/assets/sprites/board-blocks/${blockId}/special`;
 }
 
 function folderFor(category: AnimationCategory, assetId: string, animationName: string): string {
@@ -106,22 +106,22 @@ function folderFor(category: AnimationCategory, assetId: string, animationName: 
     case 'boardBlock':
       return boardBlockFolder(assetId, animationName);
     case 'spell':
-      return `assets/effects/${assetId}`;
+      return `/assets/effects/${assetId}`;
     case 'item':
-      return `assets/effects/items/${assetId}/${animationName}`;
+      return `/assets/effects/items/${assetId}/${animationName}`;
     case 'hero':
-      return `assets/sprites/heroes/${assetId}/${animationName}`;
+      return `/assets/sprites/heroes/${assetId}/${animationName}`;
     case 'monster':
-      return `assets/sprites/monsters/${assetId}/${animationName}`;
+      return `/assets/sprites/monsters/${assetId}/${animationName}`;
     case 'boss':
-      return `assets/sprites/bosses/${assetId}/${animationName}`;
+      return `/assets/sprites/bosses/${assetId}/${animationName}`;
     case 'hazardUi':
-      return `assets/ui/animations/hazards/${assetId}`;
+      return `/assets/ui/animations/hazards/${assetId}`;
     case 'ui':
-      return `assets/ui/animations/${assetId}`;
+      return `/assets/ui/animations/${assetId}`;
     case 'vfx':
     default:
-      return `assets/effects/${assetId}`;
+      return `/assets/effects/${assetId}`;
   }
 }
 

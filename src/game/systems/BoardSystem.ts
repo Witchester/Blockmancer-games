@@ -24,6 +24,19 @@ const SPECIAL_BLOCK_IDS = [
   'block_royal'
 ];
 
+export function getTetrominoBlockId(type: TetrominoType): string {
+  const blockIds: Record<TetrominoType, string> = {
+    I: 'block_blue',
+    O: 'block_yellow',
+    T: 'block_red',
+    S: 'block_green',
+    Z: 'block_red',
+    J: 'block_blue',
+    L: 'block_yellow'
+  };
+  return blockIds[type];
+}
+
 export function getBoardCellColor(cell: BoardCell): number {
   return typeof cell === 'number' ? cell : cell.color;
 }
@@ -88,7 +101,7 @@ export class BoardSystem {
       return;
     }
 
-    this.grid = this.cloneGrid(board.grid);
+    this.grid = this.cloneGrid(board.grid).map((row) => row.map((cell) => this.normalizeLegacyCell(cell)));
     this.currentPiece = board.currentPiece
       ? {
           ...board.currentPiece,
@@ -105,16 +118,67 @@ export class BoardSystem {
   }
 
   private createBoardBlockCell(blockId: string): BoardBlockCell {
-    const block = contentRegistry.getBoardBlock(blockId);
+    const normalizedBlockId = this.normalizeBlockId(blockId);
+    const block = contentRegistry.getBoardBlock(normalizedBlockId);
     const defaultColor = 0x888888;
     const color = typeof block?.color === 'string' ? parseInt(block.color.replace('#', ''), 16) : defaultColor;
 
     return {
       color,
-      blockId: (typeof block?.id === 'string' ? block.id : blockId),
+      blockId: (typeof block?.id === 'string' ? block.id : normalizedBlockId),
       blockType: (block?.blockType as BoardBlockCell['blockType']) ?? 'special',
       clearEffects: Array.isArray(block?.clearEffects) ? block.clearEffects.map((effect) => ({ ...effect })) : [],
     };
+  }
+
+  private normalizeLegacyCell(cell: BoardCell): BoardCell {
+    if (typeof cell === 'number') {
+      if (cell === 0) {
+        return 0;
+      }
+      return this.createBoardBlockCell(this.colorToBlockId(cell));
+    }
+    return this.createBoardBlockCell(this.normalizeBlockId(cell.blockId));
+  }
+
+  private colorToBlockId(color: number): string {
+    if (color === TETROMINO_COLORS.I || color === TETROMINO_COLORS.J) {
+      return 'block_blue';
+    }
+    if (color === TETROMINO_COLORS.O || color === TETROMINO_COLORS.L) {
+      return 'block_yellow';
+    }
+    if (color === TETROMINO_COLORS.S) {
+      return 'block_green';
+    }
+    if (color === TETROMINO_COLORS.T || color === TETROMINO_COLORS.Z) {
+      return 'block_red';
+    }
+    return 'block_red';
+  }
+
+  private normalizeBlockId(rawId: string): string {
+    const aliases: Record<string, string> = {
+      red: 'block_red',
+      blue: 'block_blue',
+      green: 'block_green',
+      yellow: 'block_yellow',
+      sprinkle: 'block_sprinkle',
+      spr_block_red: 'block_red',
+      spr_block_blue: 'block_blue',
+      spr_block_green: 'block_green',
+      spr_block_yellow: 'block_yellow',
+      spr_block_sprinkle: 'block_sprinkle',
+      block_red_rune: 'block_red',
+      block_blue_rune: 'block_blue',
+      block_green_rune: 'block_green',
+      block_yellow_rune: 'block_yellow',
+      spr_block_red_rune: 'block_red',
+      spr_block_blue_rune: 'block_blue',
+      spr_block_green_rune: 'block_green',
+      spr_block_yellow_rune: 'block_yellow'
+    };
+    return aliases[rawId] ?? rawId;
   }
 
   createBlockCell(blockId: string): BoardBlockCell {
@@ -290,7 +354,7 @@ export class BoardSystem {
           : SPECIAL_BLOCK_IDS;
         this.grid[y][x] = Math.random() < specialChance
           ? this.createBoardBlockCell(choice(specialPool))
-          : this.currentPiece.color;
+          : this.createBoardBlockCell(getTetrominoBlockId(this.currentPiece.type));
       }
     }
 

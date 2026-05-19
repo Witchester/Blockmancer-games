@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { BlockmancerGame } from '../BlockmancerGame';
 import { getAnimationDefinition } from '../data/animations';
 import { SPELLS } from '../data/spells';
-import { BoardSystem, getBoardCellColor } from '../systems/BoardSystem';
+import { BoardSystem, getBoardCellColor, getTetrominoBlockId } from '../systems/BoardSystem';
 import { CombatSystem } from '../systems/CombatSystem';
 import { FeverSystem } from '../systems/FeverSystem';
 import { InputSystem } from '../systems/InputSystem';
@@ -171,6 +171,8 @@ export class BattleScene extends Phaser.Scene {
   private renderedSymbols: string[][] = [];
   private previewSymbols: Phaser.GameObjects.Text[] = [];
   private holdPreviewSymbols: Phaser.GameObjects.Text[] = [];
+  private previewSprites: Phaser.GameObjects.Sprite[] = [];
+  private holdPreviewSprites: Phaser.GameObjects.Sprite[] = [];
   private heroPortrait?: Phaser.GameObjects.Image;
   private enemySprite?: Phaser.GameObjects.Image;
   private enemyNameText?: Phaser.GameObjects.Text;
@@ -256,6 +258,8 @@ export class BattleScene extends Phaser.Scene {
     this.renderedSymbols = [];
     this.previewSymbols = [];
     this.holdPreviewSymbols = [];
+    this.previewSprites = [];
+    this.holdPreviewSprites = [];
     this.spellButtons = [];
     this.previewTiles = [];
     this.holdPreviewTiles = [];
@@ -442,6 +446,7 @@ export class BattleScene extends Phaser.Scene {
       sideCenterX,
       this.boardOffsetY + 34,
       this.holdPreviewTiles,
+      this.holdPreviewSprites,
       this.holdPreviewSymbols,
       this.screenWidth <= 520
     );
@@ -608,6 +613,11 @@ export class BattleScene extends Phaser.Scene {
         .setOrigin(0, 0);
       setBoardPreviewBlockDisplaySize(tile);
       this.previewTiles.push(tile);
+      const sprite = this.add
+        .sprite(tile.x + tileSize / 2, tile.y + tileSize / 2, this.sharedGame.assetSystem.getTextureKey(this, null, 'block'))
+        .setVisible(false);
+      setBoardPreviewBlockDisplaySize(sprite);
+      this.previewSprites.push(sprite);
       this.previewSymbols.push(this.add.text(tile.x + tileSize / 2, tile.y + tileSize / 2 + 1, '', {
         color: '#f6f7ff',
         fontFamily: FONT_FAMILY,
@@ -631,6 +641,7 @@ export class BattleScene extends Phaser.Scene {
     centerX: number,
     centerY: number,
     tiles: Phaser.GameObjects.Rectangle[],
+    sprites: Phaser.GameObjects.Sprite[],
     symbols: Phaser.GameObjects.Text[],
     compact: boolean
   ): void {
@@ -647,6 +658,11 @@ export class BattleScene extends Phaser.Scene {
         .setVisible(false);
       setBoardPreviewBlockDisplaySize(tile);
       tiles.push(tile);
+      const sprite = this.add
+        .sprite(tile.x + tileSize / 2, tile.y + tileSize / 2, this.sharedGame.assetSystem.getTextureKey(this, null, 'block'))
+        .setVisible(false);
+      setBoardPreviewBlockDisplaySize(sprite);
+      sprites.push(sprite);
       symbols.push(this.add.text(tile.x + tileSize / 2, tile.y + tileSize / 2 + 1, '', {
         color: '#f6f7ff',
         fontFamily: FONT_FAMILY,
@@ -2016,7 +2032,7 @@ export class BattleScene extends Phaser.Scene {
           const targetRow = current.y + rowIndex;
           const targetCol = current.x + colIndex;
           if (targetRow >= 0 && targetRow < this.boardRows && targetCol >= 0 && targetCol < this.boardColumns) {
-            this.displayBoard[targetRow][targetCol] = current.color;
+            this.displayBoard[targetRow][targetCol] = this.board.createBlockCell(getTetrominoBlockId(current.type));
             this.displayAlpha[targetRow][targetCol] = 1;
           }
         }
@@ -2431,7 +2447,18 @@ export class BattleScene extends Phaser.Scene {
       const col = index % 4;
       const row = Math.floor(index / 4);
       const value = hidden ? 0 : matrix[row]?.[col] ?? 0;
-      tile.setFillStyle(value ? TETROMINO_COLORS[nextType] : COLORS.boardEmpty, 1);
+      tile.setFillStyle(COLORS.boardEmpty, 1);
+      const sprite = this.previewSprites[index];
+      if (sprite) {
+        if (value) {
+          sprite
+            .setTexture(this.sharedGame.assetSystem.getBoardBlockTexture(this, getTetrominoBlockId(nextType), 'base'))
+            .setVisible(true);
+          setBoardPreviewBlockDisplaySize(sprite);
+        } else {
+          sprite.setVisible(false);
+        }
+      }
       this.previewSymbols[index]?.setText(value && settings.colorblindSymbols ? nextType : '');
       this.previewSymbols[index]?.setVisible(Boolean(value && settings.colorblindSymbols));
     });
@@ -2446,6 +2473,7 @@ export class BattleScene extends Phaser.Scene {
 
   private renderTetrominoPreview(
     tiles: Phaser.GameObjects.Rectangle[],
+    sprites: Phaser.GameObjects.Sprite[],
     symbols: Phaser.GameObjects.Text[],
     type: TetrominoType | null,
     hidden: boolean
@@ -2457,8 +2485,19 @@ export class BattleScene extends Phaser.Scene {
       const row = Math.floor(index / 4);
       const value = !hidden && type ? matrix[row]?.[col] ?? 0 : 0;
       tile
-        .setFillStyle(value && type ? TETROMINO_COLORS[type] : COLORS.boardEmpty, 1)
+        .setFillStyle(COLORS.boardEmpty, 1)
         .setVisible(Boolean(type && !hidden));
+      const sprite = sprites[index];
+      if (sprite) {
+        if (value && type) {
+          sprite
+            .setTexture(this.sharedGame.assetSystem.getBoardBlockTexture(this, getTetrominoBlockId(type), 'base'))
+            .setVisible(true);
+          setBoardPreviewBlockDisplaySize(sprite);
+        } else {
+          sprite.setVisible(false);
+        }
+      }
       symbols[index]?.setText(value && settings.colorblindSymbols && type ? type : '');
       symbols[index]?.setVisible(Boolean(value && settings.colorblindSymbols && type && !hidden));
     });
@@ -2484,7 +2523,13 @@ export class BattleScene extends Phaser.Scene {
           : 'Hold\nEmpty'
     );
     this.holdText?.setVisible(holdHidden || !this.board.holdPieceType);
-    this.renderTetrominoPreview(this.holdPreviewTiles, this.holdPreviewSymbols, this.board.holdPieceType, holdHidden);
+    this.renderTetrominoPreview(
+      this.holdPreviewTiles,
+      this.holdPreviewSprites,
+      this.holdPreviewSymbols,
+      this.board.holdPieceType,
+      holdHidden
+    );
     
     const inventorySummary = state.inventory.slice(0, 1).map(stack => `${this.sharedGame.itemSystem.getItem(stack.itemId)?.name} x${stack.count}`).join(', ');
     const bagText = state.inventory.length ? inventorySummary : 'Bag Empty';

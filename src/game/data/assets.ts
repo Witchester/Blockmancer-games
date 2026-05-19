@@ -64,27 +64,27 @@ const CONTENT_ASSET_SOURCES: ContentAssetSource[] = [
 ];
 
 export const CORE_IMAGE_ASSETS: AssetManifestEntry[] = [
-  { key: 'asset_missing', path: 'assets/ui/fallback-missing.png', kind: 'sprite' },
-  { key: 'asset_missing_icon', path: 'assets/ui/fallback-icon.png', kind: 'icon' },
-  { key: 'asset_missing_block', path: 'assets/board-blocks/fallback-block.png', kind: 'sprite' },
-  { key: 'asset_missing_background', path: 'assets/stages/fallback-background.png', kind: 'background' },
-  { key: 'ui_button_default', path: 'assets/ui/button-default.png', kind: 'ui' },
-  { key: 'ui_card_default', path: 'assets/ui/card-default.png', kind: 'ui' }
+  { key: 'asset_missing', path: '/assets/ui/fallback-missing.png', kind: 'sprite' },
+  { key: 'asset_missing_icon', path: '/assets/ui/fallback-icon.png', kind: 'icon' },
+  { key: 'asset_missing_block', path: '/assets/board-blocks/fallback-block.png', kind: 'sprite' },
+  { key: 'asset_missing_background', path: '/assets/stages/fallback-background.png', kind: 'background' },
+  { key: 'ui_button_default', path: '/assets/ui/button-default.png', kind: 'ui' },
+  { key: 'ui_card_default', path: '/assets/ui/card-default.png', kind: 'ui' }
 ];
 
 export const AUDIO_ASSETS: AssetManifestEntry[] = [
-  { key: 'sfx_line_clear', path: 'assets/audio/line-clear.ogg', kind: 'audio' },
-  { key: 'sfx_cascade', path: 'assets/audio/cascade.ogg', kind: 'audio' },
-  { key: 'sfx_spell_cast', path: 'assets/audio/spell-cast.ogg', kind: 'audio' },
-  { key: 'sfx_enemy_hit', path: 'assets/audio/enemy-hit.ogg', kind: 'audio' },
-  { key: 'sfx_player_hit', path: 'assets/audio/player-hit.ogg', kind: 'audio' },
-  { key: 'sfx_reward_pick', path: 'assets/audio/reward-pick.ogg', kind: 'audio' },
-  { key: 'sfx_button_tap', path: 'assets/audio/button-tap.ogg', kind: 'audio' },
-  { key: 'sfx_boss_intro', path: 'assets/audio/boss-intro.ogg', kind: 'audio' },
-  { key: 'sfx_victory', path: 'assets/audio/victory.ogg', kind: 'audio' },
-  { key: 'sfx_defeat', path: 'assets/audio/defeat.ogg', kind: 'audio' },
-  { key: 'sfx_shop_purchase', path: 'assets/audio/shop-purchase.ogg', kind: 'audio' },
-  { key: 'sfx_item_use', path: 'assets/audio/item-use.ogg', kind: 'audio' }
+  { key: 'sfx_line_clear', path: '/assets/audio/line-clear.ogg', kind: 'audio' },
+  { key: 'sfx_cascade', path: '/assets/audio/cascade.ogg', kind: 'audio' },
+  { key: 'sfx_spell_cast', path: '/assets/audio/spell-cast.ogg', kind: 'audio' },
+  { key: 'sfx_enemy_hit', path: '/assets/audio/enemy-hit.ogg', kind: 'audio' },
+  { key: 'sfx_player_hit', path: '/assets/audio/player-hit.ogg', kind: 'audio' },
+  { key: 'sfx_reward_pick', path: '/assets/audio/reward-pick.ogg', kind: 'audio' },
+  { key: 'sfx_button_tap', path: '/assets/audio/button-tap.ogg', kind: 'audio' },
+  { key: 'sfx_boss_intro', path: '/assets/audio/boss-intro.ogg', kind: 'audio' },
+  { key: 'sfx_victory', path: '/assets/audio/victory.ogg', kind: 'audio' },
+  { key: 'sfx_defeat', path: '/assets/audio/defeat.ogg', kind: 'audio' },
+  { key: 'sfx_shop_purchase', path: '/assets/audio/shop-purchase.ogg', kind: 'audio' },
+  { key: 'sfx_item_use', path: '/assets/audio/item-use.ogg', kind: 'audio' }
 ];
 
 function getAssetValue(entry: Record<string, unknown>, field: AssetField): string | null {
@@ -93,7 +93,7 @@ function getAssetValue(entry: Record<string, unknown>, field: AssetField): strin
 }
 
 function assetPath(folder: string, key: string): string {
-  return `assets/${folder}/${key}.png`;
+  return `/assets/${folder}/${key}.png`;
 }
 
 function normalizeFinalBoardBlockId(key: string): string {
@@ -175,28 +175,28 @@ function boardBlockIdFromFrameKey(key: string): string {
 
 function boardBlockAssetPath(key: string, variant: 'base' | 'glow' | 'clear' | 'glowFrame' | 'clearFrame' | 'specialFrame' | 'icon', legacy = false): string {
   if (variant === 'icon') {
-    return `assets/icons/board-blocks/${key}.png`;
+    return `/assets/icons/board-blocks/${key}.png`;
   }
 
   if (legacy) {
-    return `assets/sprites/board-blocks/${key}.png`;
+    return `/assets/sprites/board-blocks/${key}.png`;
   }
 
   const blockId = boardBlockIdFromFrameKey(key);
   if (variant === 'base') {
-    return `assets/sprites/board-blocks/${blockId}/base/${blockId}__base__f00.png`;
+    return `/assets/sprites/board-blocks/${blockId}/base/${blockId}__base__f00.png`;
   }
   if (variant === 'glowFrame') {
-    return `assets/sprites/board-blocks/${blockId}/glow/${key}.png`;
+    return `/assets/sprites/board-blocks/${blockId}/glow/${key}.png`;
   }
   if (variant === 'clearFrame') {
-    return `assets/sprites/board-blocks/${blockId}/clear/${key}.png`;
+    return `/assets/sprites/board-blocks/${blockId}/clear/${key}.png`;
   }
   if (variant === 'specialFrame') {
-    return `assets/sprites/board-blocks/${blockId}/special/${key}.png`;
+    return `/assets/sprites/board-blocks/${blockId}/special/${key}.png`;
   }
   const animationName = variant === 'glow' ? 'glow' : 'clear';
-  return `assets/sprites/board-blocks/${blockId}/${animationName}/${key}.png`;
+  return `/assets/sprites/board-blocks/${blockId}/${animationName}/${key}.png`;
 }
 
 function stageSlug(stage: ContentAssetEntry): string {
@@ -273,11 +273,6 @@ export function createContentImageAssets(): AssetManifestEntry[] {
 
   for (const block of contentRegistry.list<ContentAssetEntry>('boardBlock')) {
     const stem = boardBlockStem(block);
-    addAssetPath(assets, block.id, `assets/board-blocks/${block.id}.png`, 'sprite');
-    if (typeof block.spriteKey === 'string' && block.spriteKey !== block.id) {
-      addAssetPath(assets, block.spriteKey, `assets/board-blocks/${block.spriteKey}.png`, 'sprite');
-    }
-
     const base = typeof block.assetRefs?.base === 'string' ? block.assetRefs.base : `${stem}__base__f00`;
     const glow = typeof block.assetRefs?.glow === 'string' ? block.assetRefs.glow : `${stem}__glow__f00`;
     const clear = typeof block.assetRefs?.clear === 'string' ? block.assetRefs.clear : `${stem}__clear__f00`;
@@ -308,7 +303,7 @@ export function createContentImageAssets(): AssetManifestEntry[] {
   for (const hero of contentRegistry.list<ContentAssetEntry>('hero')) {
     addAsset(assets, hero.id, 'heroes', 'sprite');
     for (const state of ['idle', 'cast_spell', 'attack', 'hit', 'victory', 'defeat_tired', 'portrait', 'silhouette_locked']) {
-      addAssetPath(assets, `${hero.id}__${state}__f00`, `assets/sprites/heroes/${hero.id}/${state}/${hero.id}__${state}__f00.png`, 'sprite');
+      addAssetPath(assets, `${hero.id}__${state}__f00`, `/assets/sprites/heroes/${hero.id}/${state}/${hero.id}__${state}__f00.png`, 'sprite');
       addAsset(assets, `spr_${hero.id}_${state}`, 'sprites/heroes', 'sprite');
     }
     addAsset(assets, `ico_${hero.id}`, 'icons/heroes', 'icon');
@@ -323,7 +318,7 @@ export function createContentImageAssets(): AssetManifestEntry[] {
       : ['idle', 'attack', 'hit', 'defeat'];
     addAsset(assets, actorId, isBoss ? 'bosses' : 'monsters', 'sprite');
     for (const state of states) {
-      addAssetPath(assets, `${actorId}__${state}__f00`, `assets/${folder}/${actorId}/${state}/${actorId}__${state}__f00.png`, 'sprite');
+      addAssetPath(assets, `${actorId}__${state}__f00`, `/assets/${folder}/${actorId}/${state}/${actorId}__${state}__f00.png`, 'sprite');
       addAsset(assets, `spr_${monster.id}_${state}`, folder, 'sprite');
     }
     addAsset(assets, `ico_${actorId}`, monster.id.startsWith('mon_boss_') ? 'icons/bosses' : 'icons/monsters', 'icon');
@@ -393,8 +388,8 @@ export function createContentImageAssets(): AssetManifestEntry[] {
       addAsset(assets, `prt_route_${npc.id}_${expression}`, 'portraits/npcs', 'sprite');
     }
   }
-  addAssetPath(assets, 'vfx_route_reward_sparkle__play__f00', 'assets/effects/vfx_route_reward_sparkle/vfx_route_reward_sparkle__play__f00.png', 'sprite');
-  addAssetPath(assets, 'vfx_route_risky_oopsie__play__f00', 'assets/effects/vfx_route_risky_oopsie/vfx_route_risky_oopsie__play__f00.png', 'sprite');
+  addAssetPath(assets, 'vfx_route_reward_sparkle__play__f00', '/assets/effects/vfx_route_reward_sparkle/vfx_route_reward_sparkle__play__f00.png', 'sprite');
+  addAssetPath(assets, 'vfx_route_risky_oopsie__play__f00', '/assets/effects/vfx_route_risky_oopsie/vfx_route_risky_oopsie__play__f00.png', 'sprite');
 
   addAnimationFrameAssets(assets);
 

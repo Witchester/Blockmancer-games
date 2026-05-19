@@ -93,6 +93,7 @@ export class BlockmancerGame extends Phaser.Game {
       width: 720,
       height: 1280,
       backgroundColor: '#090b13',
+      antialias: false,
       pixelArt: true,
       roundPixels: true,
       scale: {

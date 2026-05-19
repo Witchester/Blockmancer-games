@@ -52,8 +52,3 @@ scripts/
 scripts/*
 !scripts/ensure-final-asset-folders.mjs
 !scripts/validate-animations.mjs
-public/*
-!public/assets/
-public/assets/**
-!public/assets/**/
-!public/assets/**/.gitkeep
