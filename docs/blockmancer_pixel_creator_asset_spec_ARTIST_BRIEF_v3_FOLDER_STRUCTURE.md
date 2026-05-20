@@ -1,8 +1,9 @@
-# Blockmancer Dungeon - Pixel Creator Asset Brief v2
+# Blockmancer Dungeon - Pixel Creator Asset Brief v3 — Canonical Folder Structure Updated
 
-Generated: 2026-05-20 07:42.
+Generated: 2026-05-20 07:42.  
+Updated: 2026-05-20 — added canonical asset folder structure and file placement rules.
 
-This version replaces short checklist descriptions with explicit artist-facing briefs. Each row tells the artist what the asset should communicate, how the state should read, what style cues to follow, and what technical size/frame contract applies.
+This version replaces short checklist descriptions with explicit artist-facing briefs. Each row tells the artist what the asset should communicate, how the state should read, what style cues to follow, what technical size/frame contract applies, and now also how assets should be placed into the canonical folder structure.
 
 ## Universal Art Direction
 
@@ -15,6 +16,276 @@ This version replaces short checklist descriptions with explicit artist-facing b
 - Board blocks: gameplay sprites stay 24x24; board icons are 48x48; do not scale board frames to 627x627.
 - Non-board single-frame assets: 627x627 transparent PNG unless a full background/store asset says otherwise.
 - Hero/monster/boss 2x2 sheets: 1254x1254 total, 627x627 per cell, consistent center/anchor.
+
+## Canonical Asset Folder Structure and File Placement
+
+**Folder placement is now part of the artist delivery contract.**  
+Use this section as the source of truth for where each exported PNG/OGG/font file should go. If a detailed row below still shows an older short path such as `backgrounds/`, treat that old value as a legacy hint only. The canonical folders in this section win.
+
+### Placement Rules
+
+- Use stable lowercase `snake_case` runtime keys.
+- Final game content should reference assets by key: `assetKey`, `spriteKey`, `iconKey`, `portraitKey`, `backgroundKey`, or `assetRefs`.
+- Do not ask designers to create new primary `spr_` / `ico_` checklist-only names when a current runtime key already exists.
+- Do not hardcode raw paths inside content or scenes.
+- Old flat folders such as `public/assets/backgrounds/` are compatibility fallback only.
+- New asset packs should mirror the folder structure below exactly under `public/assets/`.
+- Exact frame sequences must use `asset_id__animation_name__f00.png`, `f01`, `f02`, and so on. Frame ranges are not allowed.
+- Missing assets must fall back to placeholders at runtime and must not crash gameplay.
+
+### Runtime Root
+
+```text
+public/assets/
+  board-blocks/
+  sprites/
+    board-blocks/
+    heroes/
+    monsters/
+    bosses/
+  effects/
+  icons/
+    board-blocks/
+    battle-objectives/
+    boss-rules/
+    currencies/
+    collectibles/
+    chaos-rules/
+    items/
+    oopsies/
+    relics/
+    room-events/
+    random-gameplay-events/
+    status-effects/
+    upgrades/
+    weapons/
+    spells/
+    map-nodes/
+    hub-buildings/
+    route-story/
+  stages/
+    {stage_id}/
+      battle/
+      boss-arena/
+      map/
+      route-scenes/
+      props/
+  ui/
+    panels/
+    buttons/
+    hud/
+    meters/
+    mobile-controls/
+    story-routes/
+    animations/
+    placeholders/
+  portraits/
+    heroes/
+    npcs/
+    bosses/
+  story/
+    endings/
+    route-cards/
+    dialogue-panels/
+  audio/
+    sfx/
+    music/
+    ui/
+  fonts/
+  placeholders/
+```
+
+---
+
+### 1. Board Blocks
+
+| File type | Naming | Folder |
+|---|---|---|
+| Board block base | `{block_id}.png` | `public/assets/board-blocks/` |
+| Board block icon | `ico_{block_id}.png` | `public/assets/board-blocks/` |
+| Board block base frame | `{block_id}__base__f00.png` | `public/assets/sprites/board-blocks/{block_id}/base/` |
+| Board block glow frames | `{block_id}__glow__f00.png`, `f01`, `f02` | `public/assets/sprites/board-blocks/{block_id}/glow/` |
+| Board block clear frames | `{block_id}__clear__f00.png` through exact required count | `public/assets/sprites/board-blocks/{block_id}/clear/` |
+| Board block special frames | `{block_id}__{animation_name}__f00.png` through exact required count | `public/assets/sprites/board-blocks/{block_id}/special/` |
+
+**Size contract:** gameplay board blocks are `24x24`; board icons are `48x48`.
+
+---
+
+### 2. Heroes
+
+| File type | Naming | Folder |
+|---|---|---|
+| Hero idle frames | `{hero_id}__idle__f00.png...` | `public/assets/sprites/heroes/{hero_id}/idle/` |
+| Hero cast frames | `{hero_id}__cast_spell__f00.png...` | `public/assets/sprites/heroes/{hero_id}/cast_spell/` |
+| Hero attack frames | `{hero_id}__attack__f00.png...` | `public/assets/sprites/heroes/{hero_id}/attack/` |
+| Hero hit frames | `{hero_id}__hit__f00.png...` | `public/assets/sprites/heroes/{hero_id}/hit/` |
+| Hero victory frames | `{hero_id}__victory__f00.png...` | `public/assets/sprites/heroes/{hero_id}/victory/` |
+| Hero defeat frames | `{hero_id}__defeat_tired__f00.png...` | `public/assets/sprites/heroes/{hero_id}/defeat_tired/` |
+| Hero portrait icon | `{hero_id}__portrait_icon__f00.png` or static equivalent | `public/assets/sprites/heroes/{hero_id}/portrait_icon/` |
+| Hero pose sheet | `{hero_id}__pose_sheet_2x2.png` | `public/assets/sprites/heroes/{hero_id}/sheet/` |
+
+**Size contract:** non-board hero frames are `627x627`; 2x2 pose sheets are `1254x1254` with `627x627` cells.
+
+---
+
+### 3. Monsters
+
+| File type | Naming | Folder |
+|---|---|---|
+| Monster idle frames | `{monster_id}__idle__f00.png...` | `public/assets/sprites/monsters/{monster_id}/idle/` |
+| Monster attack frames | `{monster_id}__attack__f00.png...` | `public/assets/sprites/monsters/{monster_id}/attack/` |
+| Monster hit frames | `{monster_id}__hit__f00.png...` | `public/assets/sprites/monsters/{monster_id}/hit/` |
+| Monster defeat frames | `{monster_id}__defeat__f00.png...` | `public/assets/sprites/monsters/{monster_id}/defeat/` |
+| Monster icon | `ico_{monster_id}.png` or equivalent | `public/assets/sprites/monsters/{monster_id}/icon/` |
+| Monster pose sheet | `{monster_id}__pose_sheet_2x2.png` | `public/assets/sprites/monsters/{monster_id}/sheet/` |
+
+**Size contract:** non-board monster frames are `627x627`; pose sheets are `1254x1254` with `627x627` cells.
+
+---
+
+### 4. Bosses
+
+| File type | Naming | Folder |
+|---|---|---|
+| Boss idle frames | `{boss_id}__idle__f00.png...` | `public/assets/sprites/bosses/{boss_id}/idle/` |
+| Boss attack frames | `{boss_id}__attack__f00.png...` | `public/assets/sprites/bosses/{boss_id}/attack/` |
+| Boss hit frames | `{boss_id}__hit__f00.png...` | `public/assets/sprites/bosses/{boss_id}/hit/` |
+| Boss phase change frames | `{boss_id}__phase_change__f00.png...` | `public/assets/sprites/bosses/{boss_id}/phase_change/` |
+| Boss special attack frames | `{boss_id}__special_attack__f00.png...` | `public/assets/sprites/bosses/{boss_id}/special_attack/` |
+| Boss defeat frames | `{boss_id}__defeat__f00.png...` | `public/assets/sprites/bosses/{boss_id}/defeat/` |
+| Boss portrait icon | `{boss_id}__portrait_icon__f00.png` | `public/assets/sprites/bosses/{boss_id}/portrait_icon/` |
+| Boss pose sheet | `{boss_id}__pose_sheet_2x2.png` | `public/assets/sprites/bosses/{boss_id}/sheet/` |
+| Boss extended sheet | `{boss_id}__extended_sheet_2x2.png` | `public/assets/sprites/bosses/{boss_id}/sheet/` |
+
+**Size contract:** boss frames are `627x627`; pose sheets are `1254x1254` with `627x627` cells.
+
+---
+
+### 5. Effects / VFX
+
+| File type | Naming | Folder |
+|---|---|---|
+| VFX frames | `{vfx_id}__{animation_name}__f00.png...` | `public/assets/effects/{vfx_id}/` |
+
+**Size contract:** VFX frames are `627x627`, centered, transparent PNG, consistent anchor point.
+
+---
+
+### 6. Icons by Category
+
+| Category | Folder |
+|---|---|
+| Board block icons | `public/assets/icons/board-blocks/` |
+| Battle objective icons | `public/assets/icons/battle-objectives/` |
+| Boss rule icons | `public/assets/icons/boss-rules/` |
+| Currency icons | `public/assets/icons/currencies/` |
+| Collectible icons | `public/assets/icons/collectibles/` |
+| Chaos rule icons | `public/assets/icons/chaos-rules/` |
+| Item icons | `public/assets/icons/items/` |
+| Oopsie / silly drawback icons | `public/assets/icons/oopsies/` |
+| Relic icons | `public/assets/icons/relics/` |
+| Room event icons | `public/assets/icons/room-events/` |
+| Random gameplay event icons | `public/assets/icons/random-gameplay-events/` |
+| Status effect icons | `public/assets/icons/status-effects/` |
+| Upgrade icons | `public/assets/icons/upgrades/` |
+| Weapon icons | `public/assets/icons/weapons/` |
+| Spell icons | `public/assets/icons/spells/` |
+| Map node icons | `public/assets/icons/map-nodes/` |
+| Hub building icons | `public/assets/icons/hub-buildings/` |
+| Route story icons | `public/assets/icons/route-story/` |
+
+**Size contract:** icon source assets use `627x627` unless a board icon explicitly requires `48x48`; runtime should render icons at the appropriate UI size.
+
+---
+
+### 7. Stage Backgrounds and Boss Arenas
+
+| File type | Naming | Folder |
+|---|---|---|
+| Stage battle far layer | `bg_stage_{stage_slug}_battle_far.png` | `public/assets/stages/{stage_id}/battle/` |
+| Stage battle mid layer | `bg_stage_{stage_slug}_battle_mid.png` | `public/assets/stages/{stage_id}/battle/` |
+| Stage battle near layer | `bg_stage_{stage_slug}_battle_near.png` | `public/assets/stages/{stage_id}/battle/` |
+| Boss arena | `bg_boss_{boss_slug}_arena.png` | `public/assets/stages/{stage_id}/boss-arena/` |
+| Stage map background | `bg_map_{stage_slug}.png` | `public/assets/stages/{stage_id}/map/` |
+| Route scene background | `bg_route_{hero_slug}_{stage_slug}.png` | `public/assets/stages/{stage_id}/route-scenes/` |
+| Stage props | free naming by runtime key | `public/assets/stages/{stage_id}/props/` |
+
+**Size contract:** stage and boss backgrounds use portrait background source sizes such as `720x1280` or `1080x1920`; use `cover/contain` behavior at runtime. Do not force backgrounds into `627x627` icon rules.
+
+#### Required Stage Folder Examples
+
+| Stage | Stage folder | Battle layer keys | Boss arena key |
+|---|---|---|---|
+| Stage 1 — Sprinkle Sewers | `public/assets/stages/stage_sprinkle_sewers/` | `bg_stage_sprinkle_sewers_battle_far`, `bg_stage_sprinkle_sewers_battle_mid`, `bg_stage_sprinkle_sewers_battle_near` | `bg_boss_cupcake_slime_king_arena` |
+| Stage 2 — Goblin Workshop | `public/assets/stages/stage_goblin_workshop/` | `bg_stage_goblin_workshop_battle_far`, `bg_stage_goblin_workshop_battle_mid`, `bg_stage_goblin_workshop_battle_near` | `bg_boss_prototype_no_7_arena` |
+| Stage 3 — Frosty Pantry | `public/assets/stages/stage_frosty_pantry/` | `bg_stage_frosty_pantry_battle_far`, `bg_stage_frosty_pantry_battle_mid`, `bg_stage_frosty_pantry_battle_near` | `bg_boss_gelato_golem_arena` |
+| Stage 4 — Pillow Castle | `public/assets/stages/stage_pillow_castle/` | `bg_stage_pillow_castle_battle_far`, `bg_stage_pillow_castle_battle_mid`, `bg_stage_pillow_castle_battle_near` | `bg_boss_sir_snore_a_lot_arena` |
+| Stage 5 — Starfall Arcade | `public/assets/stages/stage_starfall_arcade/` | `bg_stage_starfall_arcade_battle_far`, `bg_stage_starfall_arcade_battle_mid`, `bg_stage_starfall_arcade_battle_near` | `bg_boss_high_score_hydra_arena` |
+| Stage 6 — Bloxley’s Block Palace | `public/assets/stages/stage_bloxley_block_palace/` | `bg_stage_bloxley_block_palace_battle_far`, `bg_stage_bloxley_block_palace_battle_mid`, `bg_stage_bloxley_block_palace_battle_near` | `bg_boss_king_bloxley_arena` |
+
+---
+
+### 8. UI Assets
+
+| File type | Folder |
+|---|---|
+| Panels | `public/assets/ui/panels/` |
+| Buttons | `public/assets/ui/buttons/` |
+| HUD elements | `public/assets/ui/hud/` |
+| Meters | `public/assets/ui/meters/` |
+| Mobile controls | `public/assets/ui/mobile-controls/` |
+| Story route UI | `public/assets/ui/story-routes/` |
+| UI animations | `public/assets/ui/animations/` |
+| UI placeholders | `public/assets/ui/placeholders/` |
+
+Common UI keys include:
+`ui_panel_default`, `ui_panel_battle`, `ui_panel_board`, `ui_panel_controls`, `ui_event_log_strip`, `ui_hold_panel`, `ui_next_queue_panel`, `ui_stat_card`, and `ui_inventory_compact`.
+
+---
+
+### 9. Portraits, Story Art, Audio, Fonts, and Placeholders
+
+| File type | Folder |
+|---|---|
+| Hero portraits | `public/assets/portraits/heroes/` |
+| NPC portraits | `public/assets/portraits/npcs/` |
+| Boss portraits | `public/assets/portraits/bosses/` |
+| Story endings | `public/assets/story/endings/` |
+| Route cards | `public/assets/story/route-cards/` |
+| Dialogue panels | `public/assets/story/dialogue-panels/` |
+| Audio SFX | `public/assets/audio/sfx/` |
+| Audio music | `public/assets/audio/music/` |
+| Audio UI | `public/assets/audio/ui/` |
+| Fonts | `public/assets/fonts/` |
+| Generic placeholders | `public/assets/placeholders/` |
+
+---
+
+### Legacy Compatibility Note
+
+- `public/assets/backgrounds/` and old flat paths are fallback-only compatibility folders.
+- New assets should not be placed there unless intentionally supporting old builds.
+- Old rows in this brief that still say `Path: backgrounds/` should be interpreted as: “use the asset key shown in the row, but place the final file in the canonical folder above.”
+- For any mismatch between a row-level path and this folder section, this folder section wins.
+
+---
+
+### Artist Delivery Checklist
+
+Before sending an asset pack, verify:
+
+- File names match the exact runtime key and animation-state naming.
+- Files are placed in the canonical folder, not a legacy fallback folder.
+- Board gameplay blocks are `24x24`.
+- Board icons are `48x48`.
+- Non-board single-frame assets are `627x627` unless they are full portrait backgrounds.
+- Character and boss pose sheets are `1254x1254` with `627x627` cells.
+- Full backgrounds are portrait-friendly and keep safe empty areas behind UI.
+- PNGs have transparent backgrounds unless the asset is a full background.
+- No text labels, watermark, blur, or soft anti-aliasing.
+- Frame sequences are exact and do not use frame ranges.
+
 
 ## Source Summary
 
@@ -60,6 +331,8 @@ This version replaces short checklist descriptions with explicit artist-facing b
 | VFX Assets - Board, Combat, and Status | 29 |
 
 ## Detailed Artist Briefs
+
+> **Path note:** If the row-level `Path:` value conflicts with the canonical folder structure above, use the canonical folder structure. Row-level paths are retained for asset-key context and legacy compatibility.
 
 ## Background Assets - Boss Arenas
 
