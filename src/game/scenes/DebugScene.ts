@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { BlockmancerGame } from '../BlockmancerGame';
 import { createDefaultBoardState } from '../data/constants';
 import { ANIMATION_DEFINITIONS, getAnimationFrameKeys, type AnimationCategory, type AnimationSequenceDefinition } from '../data/animations';
+import type { AssetDisplayCategory } from '../data/asset-display-rules';
 import { contentRegistry } from '../systems/ContentRegistry';
 import type { ActiveHazardKind, ActiveHazardState, BoardCell, EnemyInstance, RewardDefinition, RoomType } from '../types/GameTypes';
 import { Button } from '../ui/Button';
@@ -403,7 +404,10 @@ export class DebugScene extends Phaser.Scene {
       const missingKeys = expectedKeys.filter((key) => !loadedSet.has(key));
 
       previewSprite = this.add.sprite(width / 2, height / 2 - 64, this.gameState.assetSystem.fallbackFor('sprite'));
-      this.gameState.assetSystem.fitSpriteToBox(previewSprite, Math.min(420, width - 180), 260);
+      this.gameState.assetSystem.setSpriteDisplaySizeByCategory(
+        previewSprite,
+        this.getAnimationPreviewDisplayCategory(definition)
+      );
 
       if (availableKeys.length > 0) {
         previewSprite.setTexture(availableKeys[0]);
@@ -471,6 +475,27 @@ export class DebugScene extends Phaser.Scene {
 
     renderCurrent();
     this.selectionOverlay = overlay;
+  }
+
+  private getAnimationPreviewDisplayCategory(definition: AnimationSequenceDefinition): AssetDisplayCategory {
+    switch (definition.category) {
+      case 'monster':
+        return 'monsterSprite';
+      case 'boss':
+        return 'bossSprite';
+      case 'hero':
+        return 'heroSprite';
+      case 'boardBlock':
+        return 'boardBlock';
+      case 'hazardUi':
+      case 'ui':
+        return 'uiAnimation';
+      case 'vfx':
+      case 'spell':
+      case 'item':
+      default:
+        return 'vfx';
+    }
   }
 
   private getAnimationAuditEntries(filter: AnimationAuditFilter, scope: AnimationStageScope = '__all'): AnimationAuditEntry[] {
