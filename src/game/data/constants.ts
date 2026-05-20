@@ -58,6 +58,7 @@ export function createDefaultBoardState(): BoardState {
     rows: BOARD_ROWS,
     activePieceType: null,
     nextPieceType: null,
+    nextQueue: [],
     holdPieceType: null,
     topOut: false,
     grid: Array.from({ length: BOARD_ROWS }, () => Array.from({ length: BOARD_COLS }, () => 0)),

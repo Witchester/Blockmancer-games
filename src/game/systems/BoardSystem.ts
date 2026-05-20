@@ -47,6 +47,7 @@ export class BoardSystem {
   grid: BoardCell[][];
   currentPiece: PieceState | null;
   nextPieceType: TetrominoType;
+  private nextQueue: TetrominoType[] = [];
   holdPieceType: TetrominoType | null = null;
   holdUsedThisPiece = false;
   private readonly completedLineBuffer: number[] = [];
@@ -60,6 +61,8 @@ export class BoardSystem {
     this.grid = this.createEmptyGrid();
     this.currentPiece = null;
     this.nextPieceType = this.rollPieceType();
+    this.nextQueue = [this.nextPieceType];
+    this.refillNextQueue(5);
     this.restoreFromState();
   }
 
@@ -67,6 +70,8 @@ export class BoardSystem {
     this.grid = this.createEmptyGrid();
     this.currentPiece = null;
     this.nextPieceType = this.rollPieceType();
+    this.nextQueue = [this.nextPieceType];
+    this.refillNextQueue(5);
     this.holdPieceType = null;
     this.holdUsedThisPiece = false;
     this.spawnPiece();
@@ -111,11 +116,20 @@ export class BoardSystem {
         }
       : null;
     this.nextPieceType = board.nextPieceType ?? this.rollPieceType();
+    this.nextQueue = Array.isArray(board.nextQueue)
+      ? board.nextQueue.filter((entry): entry is TetrominoType => PIECE_TYPES.includes(entry as TetrominoType))
+      : [];
+    if (this.nextQueue.length === 0) {
+      this.nextQueue = [this.nextPieceType];
+    }
+    this.refillNextQueue(5);
+    this.nextPieceType = this.nextQueue[0];
     this.holdPieceType = board.holdPieceType ?? null;
     this.holdUsedThisPiece = board.holdUsedThisPiece;
 
     if (!this.currentPiece && !this.spawnPiece()) {
       this.currentPiece = this.makePiece(this.nextPieceType);
+      this.refillNextQueue(5);
     }
   }
 
@@ -225,13 +239,21 @@ export class BoardSystem {
     return choice(this.state ? this.oopsieSystem.getPiecePool(this.state, PIECE_TYPES) : PIECE_TYPES);
   }
 
+  private refillNextQueue(minLength: number): void {
+    while (this.nextQueue.length < minLength) {
+      this.nextQueue.push(this.rollPieceType());
+    }
+    this.nextPieceType = this.nextQueue[0] ?? this.rollPieceType();
+  }
+
   private rotateMatrix(matrix: number[][]): number[][] {
     return matrix[0].map((_, columnIndex) => matrix.map((row) => row[columnIndex]).reverse());
   }
 
   spawnPiece(): boolean {
-    const piece = this.makePiece(this.nextPieceType);
-    this.nextPieceType = this.rollPieceType();
+    const pieceType = this.nextQueue.shift() ?? this.nextPieceType;
+    const piece = this.makePiece(pieceType);
+    this.refillNextQueue(5);
     this.holdUsedThisPiece = false;
 
     if (this.collides(piece.matrix, piece.x, piece.y)) {
@@ -584,24 +606,36 @@ export class BoardSystem {
 
   setNextPieceType(type: TetrominoType): void {
     this.nextPieceType = type;
+    if (this.nextQueue.length === 0) {
+      this.nextQueue.push(type);
+    } else {
+      this.nextQueue[0] = type;
+    }
+    this.refillNextQueue(5);
   }
 
   rerollActiveAndNext(): void {
     this.currentPiece = this.makePiece(this.rollPieceType());
-    this.nextPieceType = this.rollPieceType();
+    this.nextQueue = [this.rollPieceType()];
+    this.refillNextQueue(5);
+    this.nextPieceType = this.nextQueue[0];
     this.holdUsedThisPiece = false;
   }
 
   swapNextAndHold(): boolean {
     if (!this.holdPieceType) {
-      this.holdPieceType = this.nextPieceType;
-      this.nextPieceType = this.rollPieceType();
+      this.holdPieceType = this.nextQueue[0] ?? this.nextPieceType;
+      if (this.nextQueue.length > 0) {
+        this.nextQueue.shift();
+      }
+      this.refillNextQueue(5);
       return true;
     }
 
-    const previousNext = this.nextPieceType;
-    this.nextPieceType = this.holdPieceType;
+    const previousNext = this.nextQueue[0] ?? this.nextPieceType;
+    this.nextQueue[0] = this.holdPieceType;
     this.holdPieceType = previousNext;
+    this.refillNextQueue(5);
     return true;
   }
 
@@ -783,7 +817,18 @@ export class BoardSystem {
   }
 
   getGhostPreviewTypes(): TetrominoType[] {
-    return [this.nextPieceType, this.rollPieceType()];
+    return this.getNextQueueTypes(2);
+  }
+
+  getNextQueueTypes(count = 4): TetrominoType[] {
+    const safeCount = Math.max(1, count);
+    this.refillNextQueue(Math.max(5, safeCount));
+    return this.nextQueue.slice(0, safeCount);
+  }
+
+  getNextQueueSnapshot(): TetrominoType[] {
+    this.refillNextQueue(5);
+    return [...this.nextQueue];
   }
 
   getGhostPiece(): PieceState | null {

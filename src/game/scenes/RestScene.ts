@@ -19,9 +19,10 @@ export class RestScene extends Phaser.Scene {
     state.runStatus = 'map';
     state.currentRoomProgress = 'entered';
     this.cameras.main.setBackgroundColor(COLORS.background);
+    this.addNodeBackdrop();
 
     new Card(this, layout.centerX, layout.centerY, layout.contentWidth, 640, {
-      title: 'Rest Site',
+      title: 'Rest Scene · Rest Site',
       body: [
         'A quiet festival nook steadies your hands and restores your breath.',
         '',
@@ -71,5 +72,20 @@ export class RestScene extends Phaser.Scene {
     const state = (this.game as BlockmancerGame).runState;
     state.eventLog.unshift(message);
     state.eventLog = state.eventLog.slice(0, MAX_EVENT_LOG);
+  }
+
+  private addNodeBackdrop(): void {
+    const game = this.game as BlockmancerGame;
+    const layers = [
+      game.assetSystem.getStageBackground(this, game.runState.stage, 'battleFar'),
+      game.assetSystem.getStageBackground(this, game.runState.stage, 'battleMid'),
+      game.assetSystem.getStageBackground(this, game.runState.stage, 'battleNear')
+    ];
+    const unique = layers.filter((key, index, all) => all.indexOf(key) === index);
+    unique.forEach((key, index) => {
+      game.assetSystem.createImageByAssetKey(this, key, 'stageBackground', this.scale.width / 2, this.scale.height / 2, { kind: 'background' })
+        .setDisplaySize(this.scale.width, this.scale.height)
+        .setAlpha([0.12, 0.15, 0.1][index] ?? 0.12);
+    });
   }
 }

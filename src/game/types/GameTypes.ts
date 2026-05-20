@@ -138,6 +138,7 @@ export interface BoardState {
   rows: number;
   activePieceType: TetrominoType | null;
   nextPieceType: TetrominoType | null;
+  nextQueue: TetrominoType[];
   holdPieceType: TetrominoType | null;
   topOut: boolean;
   grid: BoardCell[][];

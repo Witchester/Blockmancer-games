@@ -1,13 +1,13 @@
 import Phaser from 'phaser';
 import { BlockmancerGame } from '../BlockmancerGame';
-import type { RewardId } from '../types/GameTypes';
+import type { RewardDefinition, RewardId } from '../types/GameTypes';
 import { contentRegistry } from '../systems/ContentRegistry';
 import { Button } from '../ui/Button';
 import { COLORS, FONT_FAMILY, MAX_EVENT_LOG, MAX_FALL_SPEED, POST_BATTLE_FALL_SPEED_STEP } from '../utils/constants';
-import { getPortraitLayout, isCompactLayout } from '../utils/layout';
+import { getPortraitLayout } from '../utils/layout';
 
 export class RewardScene extends Phaser.Scene {
-  private rewardIndex = 0;
+  private selectedRewardIndex = 0;
 
   constructor() {
     super('RewardScene');
@@ -23,123 +23,111 @@ export class RewardScene extends Phaser.Scene {
     }
 
     this.cameras.main.setBackgroundColor(COLORS.background);
-    this.createCompactLayout();
+    this.renderScene();
   }
 
-  private createCompactLayout(): void {
+  private renderScene(): void {
+    const game = this.game as BlockmancerGame;
+    const rewards = game.runState.pendingRewards;
+    this.selectedRewardIndex = Math.max(0, Math.min(this.selectedRewardIndex, rewards.length - 1));
+    const selectedReward = rewards[this.selectedRewardIndex];
     const layout = getPortraitLayout(this);
+
+    this.children.removeAll(true);
+
     this.add.rectangle(layout.centerX, layout.centerY, layout.contentWidth, layout.height - 96, COLORS.panel, 0.95).setStrokeStyle(2, COLORS.gold, 0.35);
-    this.add.text(layout.centerX, 112, 'Choose Your Reward', {
+    this.add.text(layout.centerX, 94, 'Event / Reward Scene', {
       color: '#f6f7ff',
       fontFamily: FONT_FAMILY,
-      fontSize: '36px',
+      fontSize: '32px',
       fontStyle: 'bold'
     }).setOrigin(0.5);
 
-    this.add.text(layout.centerX, 160, 'Pick one prize, or reroll if you saved a ticket.', {
+    this.add.text(layout.centerX, 128, 'Choose one item or upgrade card.', {
       color: '#d8deff',
       fontFamily: FONT_FAMILY,
-      fontSize: '18px',
-      align: 'center',
-      wordWrap: { width: layout.contentWidth - 72 }
+      fontSize: '17px',
+      align: 'center'
     }).setOrigin(0.5);
 
-    this.renderCompactRewardCard();
-  }
+    const gridStartX = layout.centerX - (layout.contentWidth / 2) + 78;
+    const gridStartY = 192;
+    const cardW = 132;
+    const cardH = 86;
+    const gapX = 18;
+    const gapY = 14;
+    const columns = 3;
+    const rows = 4;
+    const slots = columns * rows;
 
-  private renderCompactRewardCard(): void {
-    const game = this.game as BlockmancerGame;
-    const reward = game.runState.pendingRewards[this.rewardIndex];
-    const layout = getPortraitLayout(this);
-    this.children.removeAll(true);
-    this.createCompactLayoutFrame();
+    for (let index = 0; index < slots; index += 1) {
+      const col = index % columns;
+      const row = Math.floor(index / columns);
+      const x = gridStartX + col * (cardW + gapX);
+      const y = gridStartY + row * (cardH + gapY);
+      const reward = rewards[index];
+      const selected = index === this.selectedRewardIndex;
 
-    this.add.text(layout.centerX, 236, `Reward ${this.rewardIndex + 1} / ${game.runState.pendingRewards.length}`, {
-      color: '#98a0c7',
-      fontFamily: FONT_FAMILY,
-      fontSize: '20px'
-    }).setOrigin(0.5);
+      const card = this.add.rectangle(x, y, cardW, cardH, COLORS.panelAlt, reward ? 0.98 : 0.6)
+        .setOrigin(0, 0)
+        .setStrokeStyle(2, selected ? COLORS.gold : COLORS.accentSoft, selected ? 0.9 : 0.4);
 
-    this.add.text(layout.centerX, 268, `Rerolls: ${game.runState.rewardRerolls}`, {
-      color: game.runState.rewardRerolls > 0 ? '#65d6a5' : '#98a0c7',
-      fontFamily: FONT_FAMILY,
-      fontSize: '20px',
-      fontStyle: 'bold'
-    }).setOrigin(0.5);
+      if (reward) {
+        card.setInteractive({ useHandCursor: true }).on('pointerdown', () => {
+          this.selectedRewardIndex = index;
+          this.renderScene();
+        });
 
-    this.add.rectangle(layout.centerX, 500, layout.contentWidth - 72, 430, COLORS.panelAlt, 0.98).setStrokeStyle(3, COLORS.accent, 0.45);
-    this.gameAsBlockmancer.assetSystem.createImageByAssetKey(
-      this,
-      this.getRewardIconKey(reward),
-      this.getRewardDisplayCategory(reward),
-      layout.centerX,
-      330,
-      { kind: 'icon' }
-    );
-    this.add.text(layout.centerX, 398, reward.name, {
+        this.gameAsBlockmancer.assetSystem.createImageByAssetKey(
+          this,
+          this.getRewardIconKey(reward),
+          this.getRewardDisplayCategory(reward),
+          x + 22,
+          y + cardH / 2,
+          { kind: 'icon' }
+        ).setDisplaySize(28, 28);
+
+        this.add.text(x + 44, y + 18, reward.name, {
+          color: selected ? '#ffca6b' : '#f6f7ff',
+          fontFamily: FONT_FAMILY,
+          fontSize: '14px',
+          fontStyle: selected ? 'bold' : 'normal',
+          wordWrap: { width: cardW - 50 }
+        });
+
+        this.add.text(x + 44, y + 50, reward.type, {
+          color: '#98a0c7',
+          fontFamily: FONT_FAMILY,
+          fontSize: '12px'
+        });
+      }
+    }
+
+    this.add.rectangle(layout.centerX + 120, 676, 300, 152, COLORS.panelAlt, 0.98).setStrokeStyle(2, COLORS.accent, 0.45);
+    this.add.text(layout.centerX - 20, 624, selectedReward.name, {
       color: '#ffca6b',
       fontFamily: FONT_FAMILY,
-      fontSize: '34px',
-      fontStyle: 'bold',
-      align: 'center',
-      wordWrap: { width: layout.contentWidth - 112 }
-    }).setOrigin(0.5);
-    this.add.rectangle(layout.centerX, 456, 190, 36, COLORS.panel, 0.95).setStrokeStyle(2, COLORS.gold, 0.45);
-    this.add.text(layout.centerX, 456, `${reward.type}${reward.rarity ? ` - ${reward.rarity}` : ''}`, {
-      color: '#f6f7ff',
-      fontFamily: FONT_FAMILY,
-      fontSize: '21px',
+      fontSize: '22px',
       fontStyle: 'bold'
-    }).setOrigin(0.5);
-    this.add.text(layout.centerX, 560, reward.description, {
+    });
+    this.add.text(layout.centerX - 20, 656, selectedReward.description, {
       color: '#d8deff',
       fontFamily: FONT_FAMILY,
-      fontSize: '24px',
-      align: 'center',
-      wordWrap: { width: layout.contentWidth - 120 },
-      lineSpacing: 10
-    }).setOrigin(0.5);
+      fontSize: '16px',
+      wordWrap: { width: 268 }
+    });
 
-    new Button(this, layout.centerX - 150, 785, 180, 58, 'Previous', () => {
-      this.rewardIndex = (this.rewardIndex + game.runState.pendingRewards.length - 1) % game.runState.pendingRewards.length;
-      this.renderCompactRewardCard();
-    }).setDisabled(game.runState.pendingRewards.length <= 1);
-
-    new Button(this, layout.centerX + 150, 785, 180, 58, 'Next', () => {
-      this.rewardIndex = (this.rewardIndex + 1) % game.runState.pendingRewards.length;
-      this.renderCompactRewardCard();
-    }).setDisabled(game.runState.pendingRewards.length <= 1);
-
-    new Button(this, layout.centerX, 720, 220, 56, 'Reroll', () => {
+    new Button(this, layout.centerX + 32, 758, 164, 52, `Reroll (${game.runState.rewardRerolls})`, () => {
       const message = game.rewardSystem.rerollRewards(game.runState);
       game.runState.eventLog.unshift(message);
       game.runState.eventLog = game.runState.eventLog.slice(0, MAX_EVENT_LOG);
-      this.rewardIndex = 0;
-      this.renderCompactRewardCard();
+      this.selectedRewardIndex = 0;
+      this.renderScene();
     }).setDisabled(game.runState.rewardRerolls <= 0);
 
-    new Button(this, layout.centerX, 874, 280, 62, 'Take Reward', () => {
-      this.claimReward(reward.id);
+    new Button(this, layout.centerX + 206, 758, 164, 52, 'Choose', () => {
+      this.claimReward(selectedReward.id);
     });
-  }
-
-  private createCompactLayoutFrame(): void {
-    const layout = getPortraitLayout(this);
-    this.add.rectangle(layout.centerX, layout.centerY, layout.contentWidth, layout.height - 96, COLORS.panel, 0.95).setStrokeStyle(2, COLORS.gold, 0.35);
-    this.add.text(layout.centerX, 112, 'Choose Your Reward', {
-      color: '#f6f7ff',
-      fontFamily: FONT_FAMILY,
-      fontSize: '36px',
-      fontStyle: 'bold'
-    }).setOrigin(0.5);
-
-    this.add.text(layout.centerX, 160, 'Pick one prize, or reroll if you saved a ticket.', {
-      color: '#d8deff',
-      fontFamily: FONT_FAMILY,
-      fontSize: '18px',
-      align: 'center',
-      wordWrap: { width: layout.contentWidth - 72 }
-    }).setOrigin(0.5);
   }
 
   private claimReward(rewardId: RewardId): void {
@@ -152,7 +140,7 @@ export class RewardScene extends Phaser.Scene {
     state.activeEnemy = null;
     state.combo = 0;
     const advancingStage = state.pendingStageAdvance;
-    
+
     if (state.pendingStageAdvance) {
       const result = game.mapSystem.advanceAfterBoss(state, game.stageSystem);
       if (result === 'final-victory') {
@@ -187,7 +175,7 @@ export class RewardScene extends Phaser.Scene {
     } else {
       game.mapSystem.completeNode(state, state.currentNodeId);
     }
-    
+
     state.fallSpeed = Math.min(MAX_FALL_SPEED, state.fallSpeed + POST_BATTLE_FALL_SPEED_STEP);
     state.currentRoomProgress = advancingStage ? 'idle' : 'cleared';
     state.runStatus = 'map';
@@ -200,15 +188,11 @@ export class RewardScene extends Phaser.Scene {
     this.scene.start('MapScene');
   }
 
-  private isCompactLayout(): boolean {
-    return isCompactLayout(this);
-  }
-
   private get gameAsBlockmancer(): BlockmancerGame {
     return this.game as BlockmancerGame;
   }
 
-  private getRewardIconKey(reward: { id: string; contentType?: string; type: string }): string {
+  private getRewardIconKey(reward: RewardDefinition): string {
     if (reward.contentType === 'item') {
       const entry = contentRegistry.getItem(reward.id) as { iconKey?: string } | null;
       return this.gameAsBlockmancer.assetSystem.getIcon(this, 'item', reward.id, entry?.iconKey);
@@ -233,10 +217,11 @@ export class RewardScene extends Phaser.Scene {
     );
   }
 
-  private getRewardDisplayCategory(reward: { contentType?: string; type: string }): import('../data/asset-display-rules').AssetDisplayCategory {
+  private getRewardDisplayCategory(reward: RewardDefinition): import('../data/asset-display-rules').AssetDisplayCategory {
     if (reward.type === 'Gold') {
       return 'itemIcon';
     }
     return this.gameAsBlockmancer.assetSystem.getDisplayCategoryForContentType(reward.contentType ?? reward.type.toLowerCase(), 'card');
   }
 }
+
