@@ -219,8 +219,11 @@ export class BattleScene extends Phaser.Scene {
   private logWidth = 0;
   private logHeight = 0;
   private dropTimer = 0;
+  private lockContactMs = 0;
+  private lockResetCount = 0;
   private handlePause = () => this.combat.addLog('Pause menu is not open during this battle build.');
-  private readonly cascadeSettlePauseMs = 260;
+  private readonly cascadeSettlePauseMs = 120;
+  private readonly maxLockResetsPerPiece = 6;
 
   constructor() {
     super('BattleScene');
@@ -805,6 +808,7 @@ export class BattleScene extends Phaser.Scene {
       this.combat.addLog('Slippery Buttons wiggles the move the other way.');
     }
     if (this.board.move(resolvedDirection, 0)) {
+      this.tryResetLockDelay();
       this.syncBoardState();
       this.sharedGame.saveRun();
       this.renderBoard();
@@ -817,6 +821,7 @@ export class BattleScene extends Phaser.Scene {
     }
 
     if (this.board.rotate()) {
+      this.tryResetLockDelay();
       this.syncBoardState();
       this.sharedGame.saveRun();
       this.renderBoard();
@@ -884,9 +889,21 @@ export class BattleScene extends Phaser.Scene {
     );
     const dropInterval = Math.max(120, BASE_DROP_MS / effectiveFallSpeed);
 
-    if (this.dropTimer >= dropInterval) {
-      this.dropTimer = 0;
-      this.resolveTick(this.board.tick());
+    if (this.isActivePieceTouchingGround()) {
+      this.dropTimer = Math.min(this.dropTimer, dropInterval);
+      this.lockContactMs += delta;
+      if (this.lockContactMs >= this.getLockDelayMs(effectiveFallSpeed)) {
+        this.lockContactMs = 0;
+        this.lockResetCount = 0;
+        this.resolveTick(this.board.tick());
+      }
+    } else {
+      this.lockContactMs = 0;
+      this.lockResetCount = 0;
+      while (this.dropTimer >= dropInterval && !this.cascadeResolving) {
+        this.dropTimer -= dropInterval;
+        this.resolveTick(this.board.tick());
+      }
     }
 
     this.inputSystem?.update(delta);
@@ -932,6 +949,8 @@ export class BattleScene extends Phaser.Scene {
     }
 
     if (result.locked) {
+      this.lockContactMs = 0;
+      this.lockResetCount = 0;
       const cascade = result.cascadeResult ?? {
         totalLinesCleared: result.clearedLines,
         cascadeCount: result.clearedLines > 0 ? 1 : 0,
@@ -2038,7 +2057,8 @@ export class BattleScene extends Phaser.Scene {
           const targetRow = current.y + rowIndex;
           const targetCol = current.x + colIndex;
           if (targetRow >= 0 && targetRow < this.boardRows && targetCol >= 0 && targetCol < this.boardColumns) {
-            this.displayBoard[targetRow][targetCol] = this.board.createBlockCell(getTetrominoBlockId(current.type));
+            const blockId = current.blockIdsMatrix?.[rowIndex]?.[colIndex] ?? getTetrominoBlockId(current.type);
+            this.displayBoard[targetRow][targetCol] = this.board.createBlockCell(blockId);
             this.displayAlpha[targetRow][targetCol] = 1;
           }
         }
@@ -2384,6 +2404,35 @@ export class BattleScene extends Phaser.Scene {
       this.sharedGame.assetSystem.setSpriteDisplaySizeByCategory(this.heroPortrait, 'heroPoseSheet');
       this.sharedGame.assetSystem.fitSpriteToBox(this.heroPortrait, HERO_BATTLE_BOX_SIZE, HERO_BATTLE_BOX_SIZE);
       this.heroPortrait.setOrigin(0.5, 1);
+    }
+  }
+
+  private isActivePieceTouchingGround(): boolean {
+    const current = this.board.currentPiece;
+    if (!current) {
+      return false;
+    }
+    return this.board.collides(current.matrix, current.x, current.y + 1);
+  }
+
+  private getLockDelayMs(effectiveFallSpeed: number): number {
+    const minDelayMs = 160;
+    const maxDelayMs = 380;
+    const normalized = Math.max(1, Math.min(effectiveFallSpeed, MAX_FALL_SPEED));
+    const ratio = (normalized - 1) / Math.max(1, MAX_FALL_SPEED - 1);
+    return Math.round(maxDelayMs - ((maxDelayMs - minDelayMs) * ratio));
+  }
+
+  private tryResetLockDelay(): void {
+    if (!this.isActivePieceTouchingGround()) {
+      this.lockContactMs = 0;
+      this.lockResetCount = 0;
+      return;
+    }
+
+    if (this.lockResetCount < this.maxLockResetsPerPiece) {
+      this.lockContactMs = 0;
+      this.lockResetCount += 1;
     }
   }
 

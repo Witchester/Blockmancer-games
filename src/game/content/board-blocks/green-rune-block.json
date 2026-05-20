@@ -1,39 +1,41 @@
 {
-  "id": "block_green",
-  "name": "Green Rune Block",
-  "blockType": "normal",
-  "rarity": "common",
-  "description": "A basic green rune block.",
-  "spriteKey": "block_green",
-  "color": "#00ff00",
-  "clearEffects": [],
-  "tags": [
-    "basic",
-    "rune"
-  ],
-  "enabled": true,
-  "assetRefs": {
-    "base": "block_green",
-    "glow": "block_green_glow",
-    "clear": "block_green_clear",
-    "icon": "ico_block_green",
-    "glowFrames": [
-      "block_green__glow__f00",
-      "block_green__glow__f01",
-      "block_green__glow__f02"
-    ],
-    "clearFrames": [
-      "block_green__clear__f00",
-      "block_green__clear__f01",
-      "block_green__clear__f02",
-      "block_green__clear__f03",
-      "block_green__clear__f04"
-    ]
-  },
-  "animations": {
-    "glow": "anim_block_green_glow",
-    "clear": "anim_block_green_clear"
-  },
-  "glowAnimationKey": "anim_block_green_glow",
-  "clearAnimationKey": "anim_block_green_clear"
+    "id":  "block_green",
+    "name":  "Green Rune Block",
+    "blockType":  "normal",
+    "rarity":  "common",
+    "description":  "A basic green rune block.",
+    "spriteKey":  "block_green",
+    "color":  "#00ff00",
+    "clearEffects":  [
+
+                     ],
+    "tags":  [
+                 "basic",
+                 "rune"
+             ],
+    "enabled":  true,
+    "assetRefs":  {
+                      "base":  "block_green__base__f00",
+                      "glow":  "block_green__glow__f00",
+                      "clear":  "block_green__clear__f00",
+                      "icon":  "ico_block_green",
+                      "glowFrames":  [
+                                         "block_green__glow__f00",
+                                         "block_green__glow__f01",
+                                         "block_green__glow__f02"
+                                     ],
+                      "clearFrames":  [
+                                          "block_green__clear__f00",
+                                          "block_green__clear__f01",
+                                          "block_green__clear__f02",
+                                          "block_green__clear__f03",
+                                          "block_green__clear__f04"
+                                      ]
+                  },
+    "animations":  {
+                       "glow":  "anim_block_green_glow",
+                       "clear":  "anim_block_green_clear"
+                   },
+    "glowAnimationKey":  "anim_block_green_glow",
+    "clearAnimationKey":  "anim_block_green_clear"
 }

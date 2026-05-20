@@ -1,51 +1,51 @@
 {
-  "id": "block_star",
-  "name": "Star Block",
-  "blockType": "special",
-  "rarity": "rare",
-  "spriteKey": "block_star",
-  "color": "#ffd166",
-  "clearEffects": [
-    {
-      "type": "boost_cascade",
-      "value": 1
-    }
-  ],
-  "tags": [
-    "special"
-  ],
-  "enabled": true,
-  "assetRefs": {
-    "base": "block_star",
-    "glow": "block_star_glow",
-    "clear": "block_star_clear",
-    "icon": "ico_block_star",
-    "glowFrames": [
-      "block_star__glow__f00",
-      "block_star__glow__f01",
-      "block_star__glow__f02"
-    ],
-    "clearFrames": [
-      "block_star__clear_burst__f00",
-      "block_star__clear_burst__f01",
-      "block_star__clear_burst__f02",
-      "block_star__clear_burst__f03",
-      "block_star__clear_burst__f04"
-    ],
-    "specialFrames": [
-      "block_star__idle_sparkle__f00",
-      "block_star__idle_sparkle__f01",
-      "block_star__idle_sparkle__f02",
-      "block_star__idle_sparkle__f03"
-    ]
-  },
-  "animations": {
-    "idle_sparkle": "anim_block_star_idle_sparkle",
-    "glow": "anim_block_star_glow",
-    "clear_burst": "anim_block_star_clear_burst",
-    "cascade_boost": "anim_block_star_cascade_boost"
-  },
-  "glowAnimationKey": "anim_block_star_glow",
-  "clearAnimationKey": "anim_block_star_clear_burst",
-  "animationKey": "anim_block_star_cascade_boost"
+    "id":  "block_star",
+    "name":  "Star Block",
+    "blockType":  "special",
+    "rarity":  "rare",
+    "spriteKey":  "block_star",
+    "color":  "#ffd166",
+    "clearEffects":  [
+                         {
+                             "type":  "boost_cascade",
+                             "value":  1
+                         }
+                     ],
+    "tags":  [
+                 "special"
+             ],
+    "enabled":  true,
+    "assetRefs":  {
+                      "base":  "block_star__base__f00",
+                      "glow":  "block_star__glow__f00",
+                      "clear":  "block_star__clear_burst__f00",
+                      "icon":  "ico_block_star",
+                      "glowFrames":  [
+                                         "block_star__glow__f00",
+                                         "block_star__glow__f01",
+                                         "block_star__glow__f02"
+                                     ],
+                      "clearFrames":  [
+                                          "block_star__clear_burst__f00",
+                                          "block_star__clear_burst__f01",
+                                          "block_star__clear_burst__f02",
+                                          "block_star__clear_burst__f03",
+                                          "block_star__clear_burst__f04"
+                                      ],
+                      "specialFrames":  [
+                                            "block_star__idle_sparkle__f00",
+                                            "block_star__idle_sparkle__f01",
+                                            "block_star__idle_sparkle__f02",
+                                            "block_star__idle_sparkle__f03"
+                                        ]
+                  },
+    "animations":  {
+                       "idle_sparkle":  "anim_block_star_idle_sparkle",
+                       "glow":  "anim_block_star_glow",
+                       "clear_burst":  "anim_block_star_clear_burst",
+                       "cascade_boost":  "anim_block_star_cascade_boost"
+                   },
+    "glowAnimationKey":  "anim_block_star_glow",
+    "clearAnimationKey":  "anim_block_star_clear_burst",
+    "animationKey":  "anim_block_star_cascade_boost"
 }

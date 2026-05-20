@@ -52,6 +52,7 @@ export class BoardSystem {
   private readonly completedLineBuffer: number[] = [];
   private readonly filledCellBuffer: Array<[number, number]> = [];
   private readonly oopsieSystem = new OopsieSystem();
+  private readonly junkBlockIds = new Set(['block_crumb_junk', 'block_cloud_junk', 'block_cracked_junk', 'block_royal', 'block_sticky']);
 
   constructor(private readonly state?: RunState) {
     this.columns = state?.board.columns ?? BOARD_COLS;
@@ -105,7 +106,8 @@ export class BoardSystem {
     this.currentPiece = board.currentPiece
       ? {
           ...board.currentPiece,
-          matrix: this.cloneMatrix(board.currentPiece.matrix)
+          matrix: this.cloneMatrix(board.currentPiece.matrix),
+          blockIdsMatrix: board.currentPiece.blockIdsMatrix?.map((row) => row.map((cell) => cell))
         }
       : null;
     this.nextPieceType = board.nextPieceType ?? this.rollPieceType();
@@ -191,13 +193,32 @@ export class BoardSystem {
 
   private makePiece(type: TetrominoType): PieceState {
     const matrix = this.cloneMatrix(TETROMINO_SHAPES[type]);
+    const blockIdsMatrix = this.rollPieceBlockIds(type, matrix);
     return {
       type,
       matrix,
+      blockIdsMatrix,
       color: TETROMINO_COLORS[type],
       x: Math.floor((this.columns - matrix[0].length) / 2),
       y: 0
     };
+  }
+
+  private rollPieceBlockIds(type: TetrominoType, matrix: number[][]): (string | null)[][] {
+    const specialChance = this.state?.hero.passiveId === 'passive_bombs_are_features' ? 0.14 : 0.08;
+    const specialPool = this.state?.hero.passiveId === 'passive_bombs_are_features'
+      ? [...SPECIAL_BLOCK_IDS, 'block_bomb', 'block_bomb', 'block_crumb_junk']
+      : SPECIAL_BLOCK_IDS;
+    const normalBlockId = getTetrominoBlockId(type);
+
+    return matrix.map((row) =>
+      row.map((cell) => {
+        if (!cell) {
+          return null;
+        }
+        return Math.random() < specialChance ? choice(specialPool) : normalBlockId;
+      })
+    );
   }
 
   private rollPieceType(): TetrominoType {
@@ -348,13 +369,8 @@ export class BoardSystem {
           continue;
         }
 
-        const specialChance = this.state?.hero.passiveId === 'passive_bombs_are_features' ? 0.14 : 0.08;
-        const specialPool = this.state?.hero.passiveId === 'passive_bombs_are_features'
-          ? [...SPECIAL_BLOCK_IDS, 'block_bomb', 'block_bomb', 'block_crumb_junk']
-          : SPECIAL_BLOCK_IDS;
-        this.grid[y][x] = Math.random() < specialChance
-          ? this.createBoardBlockCell(choice(specialPool))
-          : this.createBoardBlockCell(getTetrominoBlockId(this.currentPiece.type));
+        const blockId = this.currentPiece.blockIdsMatrix?.[rowIndex]?.[columnIndex] ?? getTetrominoBlockId(this.currentPiece.type);
+        this.grid[y][x] = this.createBoardBlockCell(blockId);
       }
     }
 
@@ -416,6 +432,10 @@ export class BoardSystem {
       for (let rowIndex = this.rows - 1; rowIndex >= 0; rowIndex -= 1) {
         const value = this.grid[rowIndex][columnIndex];
         if (value !== 0) {
+          if (this.isJunkBlockCell(value)) {
+            targetRow = rowIndex - 1;
+            continue;
+          }
           if (rowIndex !== targetRow) {
             const droppedRows = targetRow - rowIndex;
             this.grid[targetRow][columnIndex] = this.cloneCell(value);
@@ -518,6 +538,13 @@ export class BoardSystem {
 
   addJunkToColumn(column: number, blockId = 'block_crumb_junk'): boolean {
     const safeColumn = Math.max(0, Math.min(this.columns - 1, column));
+    const topUnsafeRows = Math.max(2, Math.floor(this.rows * 0.22));
+    for (let row = this.rows - 1; row >= topUnsafeRows; row -= 1) {
+      if (this.grid[row][safeColumn] === 0) {
+        this.grid[row][safeColumn] = this.createBoardBlockCell(blockId);
+        return true;
+      }
+    }
     for (let row = this.rows - 1; row >= 0; row -= 1) {
       if (this.grid[row][safeColumn] === 0) {
         this.grid[row][safeColumn] = this.createBoardBlockCell(blockId);
@@ -827,6 +854,10 @@ export class BoardSystem {
     }
 
     return added;
+  }
+
+  private isJunkBlockCell(cell: BoardCell): boolean {
+    return typeof cell !== 'number' && this.junkBlockIds.has(cell.blockId);
   }
 
 }

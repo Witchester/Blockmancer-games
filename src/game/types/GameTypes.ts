@@ -444,6 +444,7 @@ export interface StatusEffectState {
 export interface PieceState {
   type: TetrominoType;
   matrix: number[][];
+  blockIdsMatrix?: (string | null)[][];
   color: number;
   x: number;
   y: number;

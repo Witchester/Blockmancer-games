@@ -1,59 +1,59 @@
 {
-  "id": "block_bomb",
-  "name": "Bomb Block",
-  "blockType": "special",
-  "rarity": "rare",
-  "description": "Explodes and damages enemies in an area when cleared.",
-  "spriteKey": "block_bomb",
-  "color": "#ff6b00",
-  "clearEffects": [
-    {
-      "type": "clear_board_area",
-      "value": 1
-    },
-    {
-      "type": "damage_enemy",
-      "value": 10
-    }
-  ],
-  "tags": [
-    "bomb",
-    "damage",
-    "rare"
-  ],
-  "enabled": true,
-  "assetRefs": {
-    "base": "block_bomb",
-    "glow": "block_bomb_glow",
-    "clear": "block_bomb_clear",
-    "icon": "ico_block_bomb",
-    "glowFrames": [
-      "block_bomb__glow__f00",
-      "block_bomb__glow__f01",
-      "block_bomb__glow__f02"
-    ],
-    "clearFrames": [
-      "block_bomb__explode__f00",
-      "block_bomb__explode__f01",
-      "block_bomb__explode__f02",
-      "block_bomb__explode__f03",
-      "block_bomb__explode__f04",
-      "block_bomb__explode__f05"
-    ],
-    "specialFrames": [
-      "block_bomb__idle__f00",
-      "block_bomb__idle__f01",
-      "block_bomb__idle__f02",
-      "block_bomb__idle__f03"
-    ]
-  },
-  "animations": {
-    "idle": "anim_block_bomb_idle",
-    "fuse": "anim_block_bomb_fuse",
-    "glow": "anim_block_bomb_glow",
-    "explode": "anim_block_bomb_explode"
-  },
-  "glowAnimationKey": "anim_block_bomb_glow",
-  "clearAnimationKey": "anim_block_bomb_explode",
-  "animationKey": "anim_block_bomb_fuse"
+    "id":  "block_bomb",
+    "name":  "Bomb Block",
+    "blockType":  "special",
+    "rarity":  "rare",
+    "description":  "Explodes and damages enemies in an area when cleared.",
+    "spriteKey":  "block_bomb",
+    "color":  "#ff6b00",
+    "clearEffects":  [
+                         {
+                             "type":  "clear_board_area",
+                             "value":  1
+                         },
+                         {
+                             "type":  "damage_enemy",
+                             "value":  10
+                         }
+                     ],
+    "tags":  [
+                 "bomb",
+                 "damage",
+                 "rare"
+             ],
+    "enabled":  true,
+    "assetRefs":  {
+                      "base":  "block_bomb__base__f00",
+                      "glow":  "block_bomb__glow__f00",
+                      "clear":  "block_bomb__explode__f00",
+                      "icon":  "ico_block_bomb",
+                      "glowFrames":  [
+                                         "block_bomb__glow__f00",
+                                         "block_bomb__glow__f01",
+                                         "block_bomb__glow__f02"
+                                     ],
+                      "clearFrames":  [
+                                          "block_bomb__explode__f00",
+                                          "block_bomb__explode__f01",
+                                          "block_bomb__explode__f02",
+                                          "block_bomb__explode__f03",
+                                          "block_bomb__explode__f04",
+                                          "block_bomb__explode__f05"
+                                      ],
+                      "specialFrames":  [
+                                            "block_bomb__idle__f00",
+                                            "block_bomb__idle__f01",
+                                            "block_bomb__idle__f02",
+                                            "block_bomb__idle__f03"
+                                        ]
+                  },
+    "animations":  {
+                       "idle":  "anim_block_bomb_idle",
+                       "fuse":  "anim_block_bomb_fuse",
+                       "glow":  "anim_block_bomb_glow",
+                       "explode":  "anim_block_bomb_explode"
+                   },
+    "glowAnimationKey":  "anim_block_bomb_glow",
+    "clearAnimationKey":  "anim_block_bomb_explode",
+    "animationKey":  "anim_block_bomb_fuse"
 }

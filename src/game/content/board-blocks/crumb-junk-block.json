@@ -1,36 +1,38 @@
 {
-  "id": "block_crumb_junk",
-  "name": "Crumb Junk Block",
-  "blockType": "hazard",
-  "rarity": "common",
-  "spriteKey": "block_crumb_junk",
-  "color": "#ffd166",
-  "clearEffects": [],
-  "tags": [
-    "special"
-  ],
-  "enabled": true,
-  "assetRefs": {
-    "base": "block_crumb_junk",
-    "glow": "block_crumb_junk_glow",
-    "clear": "block_crumb_junk_clear",
-    "icon": "ico_block_crumb_junk",
-    "clearFrames": [
-      "block_crumb_junk__break__f00",
-      "block_crumb_junk__break__f01",
-      "block_crumb_junk__break__f02",
-      "block_crumb_junk__break__f03",
-      "block_crumb_junk__break__f04"
-    ],
-    "specialFrames": [
-      "block_crumb_junk__damaged__f00",
-      "block_crumb_junk__damaged__f01",
-      "block_crumb_junk__damaged__f02"
-    ]
-  },
-  "animations": {
-    "damaged": "anim_block_crumb_junk_damaged",
-    "break": "anim_block_crumb_junk_break"
-  },
-  "clearAnimationKey": "anim_block_crumb_junk_break"
+    "id":  "block_crumb_junk",
+    "name":  "Crumb Junk Block",
+    "blockType":  "hazard",
+    "rarity":  "common",
+    "spriteKey":  "block_crumb_junk",
+    "color":  "#ffd166",
+    "clearEffects":  [
+
+                     ],
+    "tags":  [
+                 "special"
+             ],
+    "enabled":  true,
+    "assetRefs":  {
+                      "base":  "block_crumb_junk__base__f00",
+                      "glow":  "block_crumb_junk__glow__f00",
+                      "clear":  "block_crumb_junk__break__f00",
+                      "icon":  "ico_block_crumb_junk",
+                      "clearFrames":  [
+                                          "block_crumb_junk__break__f00",
+                                          "block_crumb_junk__break__f01",
+                                          "block_crumb_junk__break__f02",
+                                          "block_crumb_junk__break__f03",
+                                          "block_crumb_junk__break__f04"
+                                      ],
+                      "specialFrames":  [
+                                            "block_crumb_junk__damaged__f00",
+                                            "block_crumb_junk__damaged__f01",
+                                            "block_crumb_junk__damaged__f02"
+                                        ]
+                  },
+    "animations":  {
+                       "damaged":  "anim_block_crumb_junk_damaged",
+                       "break":  "anim_block_crumb_junk_break"
+                   },
+    "clearAnimationKey":  "anim_block_crumb_junk_break"
 }

@@ -1,46 +1,48 @@
 {
-  "id": "block_jelly",
-  "name": "Jelly Block",
-  "blockType": "special",
-  "rarity": "common",
-  "spriteKey": "block_jelly",
-  "color": "#ffd166",
-  "clearEffects": [],
-  "tags": [
-    "special"
-  ],
-  "enabled": true,
-  "assetRefs": {
-    "base": "block_jelly",
-    "glow": "block_jelly_glow",
-    "clear": "block_jelly_clear",
-    "icon": "ico_block_jelly",
-    "glowFrames": [
-      "block_jelly__glow__f00",
-      "block_jelly__glow__f01",
-      "block_jelly__glow__f02"
-    ],
-    "clearFrames": [
-      "block_jelly__squish_clear__f00",
-      "block_jelly__squish_clear__f01",
-      "block_jelly__squish_clear__f02",
-      "block_jelly__squish_clear__f03",
-      "block_jelly__squish_clear__f04"
-    ],
-    "specialFrames": [
-      "block_jelly__idle_wobble__f00",
-      "block_jelly__idle_wobble__f01",
-      "block_jelly__idle_wobble__f02",
-      "block_jelly__idle_wobble__f03"
-    ]
-  },
-  "animations": {
-    "idle_wobble": "anim_block_jelly_idle_wobble",
-    "glow": "anim_block_jelly_glow",
-    "squish_clear": "anim_block_jelly_squish_clear",
-    "cascade_bounce": "anim_block_jelly_cascade_bounce"
-  },
-  "glowAnimationKey": "anim_block_jelly_glow",
-  "clearAnimationKey": "anim_block_jelly_squish_clear",
-  "animationKey": "anim_block_jelly_cascade_bounce"
+    "id":  "block_jelly",
+    "name":  "Jelly Block",
+    "blockType":  "special",
+    "rarity":  "common",
+    "spriteKey":  "block_jelly",
+    "color":  "#ffd166",
+    "clearEffects":  [
+
+                     ],
+    "tags":  [
+                 "special"
+             ],
+    "enabled":  true,
+    "assetRefs":  {
+                      "base":  "block_jelly__base__f00",
+                      "glow":  "block_jelly__glow__f00",
+                      "clear":  "block_jelly__squish_clear__f00",
+                      "icon":  "ico_block_jelly",
+                      "glowFrames":  [
+                                         "block_jelly__glow__f00",
+                                         "block_jelly__glow__f01",
+                                         "block_jelly__glow__f02"
+                                     ],
+                      "clearFrames":  [
+                                          "block_jelly__squish_clear__f00",
+                                          "block_jelly__squish_clear__f01",
+                                          "block_jelly__squish_clear__f02",
+                                          "block_jelly__squish_clear__f03",
+                                          "block_jelly__squish_clear__f04"
+                                      ],
+                      "specialFrames":  [
+                                            "block_jelly__idle_wobble__f00",
+                                            "block_jelly__idle_wobble__f01",
+                                            "block_jelly__idle_wobble__f02",
+                                            "block_jelly__idle_wobble__f03"
+                                        ]
+                  },
+    "animations":  {
+                       "idle_wobble":  "anim_block_jelly_idle_wobble",
+                       "glow":  "anim_block_jelly_glow",
+                       "squish_clear":  "anim_block_jelly_squish_clear",
+                       "cascade_bounce":  "anim_block_jelly_cascade_bounce"
+                   },
+    "glowAnimationKey":  "anim_block_jelly_glow",
+    "clearAnimationKey":  "anim_block_jelly_squish_clear",
+    "animationKey":  "anim_block_jelly_cascade_bounce"
 }

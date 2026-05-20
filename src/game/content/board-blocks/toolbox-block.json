@@ -1,50 +1,50 @@
 {
-  "id": "block_toolbox",
-  "name": "Toolbox Block",
-  "blockType": "special",
-  "rarity": "uncommon",
-  "spriteKey": "block_toolbox",
-  "color": "#ffd166",
-  "clearEffects": [
-    {
-      "type": "item_charge",
-      "value": 1
-    }
-  ],
-  "tags": [
-    "special"
-  ],
-  "enabled": true,
-  "assetRefs": {
-    "base": "block_toolbox",
-    "glow": "block_toolbox_glow",
-    "clear": "block_toolbox_clear",
-    "icon": "ico_block_toolbox",
-    "glowFrames": [
-      "block_toolbox__glow__f00",
-      "block_toolbox__glow__f01",
-      "block_toolbox__glow__f02"
-    ],
-    "clearFrames": [
-      "block_toolbox__clear__f00",
-      "block_toolbox__clear__f01",
-      "block_toolbox__clear__f02",
-      "block_toolbox__clear__f03",
-      "block_toolbox__clear__f04"
-    ],
-    "specialFrames": [
-      "block_toolbox__idle__f00",
-      "block_toolbox__idle__f01",
-      "block_toolbox__idle__f02",
-      "block_toolbox__idle__f03"
-    ]
-  },
-  "animations": {
-    "idle": "anim_block_toolbox_idle",
-    "glow": "anim_block_toolbox_glow",
-    "clear": "anim_block_toolbox_clear"
-  },
-  "glowAnimationKey": "anim_block_toolbox_glow",
-  "clearAnimationKey": "anim_block_toolbox_clear",
-  "animationKey": "anim_block_toolbox_idle"
+    "id":  "block_toolbox",
+    "name":  "Toolbox Block",
+    "blockType":  "special",
+    "rarity":  "uncommon",
+    "spriteKey":  "block_toolbox",
+    "color":  "#ffd166",
+    "clearEffects":  [
+                         {
+                             "type":  "item_charge",
+                             "value":  1
+                         }
+                     ],
+    "tags":  [
+                 "special"
+             ],
+    "enabled":  true,
+    "assetRefs":  {
+                      "base":  "block_toolbox__base__f00",
+                      "glow":  "block_toolbox__glow__f00",
+                      "clear":  "block_toolbox__clear__f00",
+                      "icon":  "ico_block_toolbox",
+                      "glowFrames":  [
+                                         "block_toolbox__glow__f00",
+                                         "block_toolbox__glow__f01",
+                                         "block_toolbox__glow__f02"
+                                     ],
+                      "clearFrames":  [
+                                          "block_toolbox__clear__f00",
+                                          "block_toolbox__clear__f01",
+                                          "block_toolbox__clear__f02",
+                                          "block_toolbox__clear__f03",
+                                          "block_toolbox__clear__f04"
+                                      ],
+                      "specialFrames":  [
+                                            "block_toolbox__idle__f00",
+                                            "block_toolbox__idle__f01",
+                                            "block_toolbox__idle__f02",
+                                            "block_toolbox__idle__f03"
+                                        ]
+                  },
+    "animations":  {
+                       "idle":  "anim_block_toolbox_idle",
+                       "glow":  "anim_block_toolbox_glow",
+                       "clear":  "anim_block_toolbox_clear"
+                   },
+    "glowAnimationKey":  "anim_block_toolbox_glow",
+    "clearAnimationKey":  "anim_block_toolbox_clear",
+    "animationKey":  "anim_block_toolbox_idle"
 }

@@ -1,50 +1,50 @@
 {
-  "id": "block_sprinkle",
-  "name": "Sprinkle Block",
-  "blockType": "special",
-  "rarity": "uncommon",
-  "spriteKey": "block_sprinkle",
-  "color": "#ffd166",
-  "clearEffects": [
-    {
-      "type": "gain_mana",
-      "value": 5
-    }
-  ],
-  "tags": [
-    "special"
-  ],
-  "enabled": true,
-  "assetRefs": {
-    "base": "block_sprinkle",
-    "glow": "block_sprinkle_glow",
-    "clear": "block_sprinkle_clear",
-    "icon": "ico_block_sprinkle",
-    "glowFrames": [
-      "block_sprinkle__glow__f00",
-      "block_sprinkle__glow__f01",
-      "block_sprinkle__glow__f02"
-    ],
-    "clearFrames": [
-      "block_sprinkle__clear__f00",
-      "block_sprinkle__clear__f01",
-      "block_sprinkle__clear__f02",
-      "block_sprinkle__clear__f03",
-      "block_sprinkle__clear__f04"
-    ],
-    "specialFrames": [
-      "block_sprinkle__idle__f00",
-      "block_sprinkle__idle__f01",
-      "block_sprinkle__idle__f02",
-      "block_sprinkle__idle__f03"
-    ]
-  },
-  "animations": {
-    "idle": "anim_block_sprinkle_idle",
-    "glow": "anim_block_sprinkle_glow",
-    "clear": "anim_block_sprinkle_clear"
-  },
-  "glowAnimationKey": "anim_block_sprinkle_glow",
-  "clearAnimationKey": "anim_block_sprinkle_clear",
-  "animationKey": "anim_block_sprinkle_idle"
+    "id":  "block_sprinkle",
+    "name":  "Sprinkle Block",
+    "blockType":  "special",
+    "rarity":  "uncommon",
+    "spriteKey":  "block_sprinkle",
+    "color":  "#ffd166",
+    "clearEffects":  [
+                         {
+                             "type":  "gain_mana",
+                             "value":  5
+                         }
+                     ],
+    "tags":  [
+                 "special"
+             ],
+    "enabled":  true,
+    "assetRefs":  {
+                      "base":  "block_sprinkle__base__f00",
+                      "glow":  "block_sprinkle__glow__f00",
+                      "clear":  "block_sprinkle__clear__f00",
+                      "icon":  "ico_block_sprinkle",
+                      "glowFrames":  [
+                                         "block_sprinkle__glow__f00",
+                                         "block_sprinkle__glow__f01",
+                                         "block_sprinkle__glow__f02"
+                                     ],
+                      "clearFrames":  [
+                                          "block_sprinkle__clear__f00",
+                                          "block_sprinkle__clear__f01",
+                                          "block_sprinkle__clear__f02",
+                                          "block_sprinkle__clear__f03",
+                                          "block_sprinkle__clear__f04"
+                                      ],
+                      "specialFrames":  [
+                                            "block_sprinkle__idle__f00",
+                                            "block_sprinkle__idle__f01",
+                                            "block_sprinkle__idle__f02",
+                                            "block_sprinkle__idle__f03"
+                                        ]
+                  },
+    "animations":  {
+                       "idle":  "anim_block_sprinkle_idle",
+                       "glow":  "anim_block_sprinkle_glow",
+                       "clear":  "anim_block_sprinkle_clear"
+                   },
+    "glowAnimationKey":  "anim_block_sprinkle_glow",
+    "clearAnimationKey":  "anim_block_sprinkle_clear",
+    "animationKey":  "anim_block_sprinkle_idle"
 }

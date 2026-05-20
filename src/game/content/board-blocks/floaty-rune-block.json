@@ -1,42 +1,44 @@
 {
-  "id": "block_floaty_rune",
-  "name": "Floaty Rune",
-  "blockType": "hazard",
-  "rarity": "uncommon",
-  "spriteKey": "block_floaty_rune",
-  "color": "#c682ff",
-  "clearEffects": [],
-  "tags": [
-    "special",
-    "floating",
-    "counter_float"
-  ],
-  "enabled": true,
-  "assetRefs": {
-    "base": "block_floaty_rune",
-    "glow": "block_floaty_rune_glow",
-    "clear": "block_floaty_rune_clear",
-    "icon": "ico_block_floaty_rune",
-    "clearFrames": [
-      "block_floaty_rune__expire_to_junk__f00",
-      "block_floaty_rune__expire_to_junk__f01",
-      "block_floaty_rune__expire_to_junk__f02",
-      "block_floaty_rune__expire_to_junk__f03",
-      "block_floaty_rune__expire_to_junk__f04"
-    ],
-    "specialFrames": [
-      "block_floaty_rune__hover__f00",
-      "block_floaty_rune__hover__f01",
-      "block_floaty_rune__hover__f02",
-      "block_floaty_rune__hover__f03"
-    ]
-  },
-  "animations": {
-    "hover": "anim_block_floaty_rune_hover",
-    "countdown_warning": "anim_block_floaty_rune_countdown_warning",
-    "safe_drop": "anim_block_floaty_rune_safe_drop",
-    "expire_to_junk": "anim_block_floaty_rune_expire_to_junk"
-  },
-  "clearAnimationKey": "anim_block_floaty_rune_expire_to_junk",
-  "animationKey": "anim_block_floaty_rune_hover"
+    "id":  "block_floaty_rune",
+    "name":  "Floaty Rune",
+    "blockType":  "hazard",
+    "rarity":  "uncommon",
+    "spriteKey":  "block_floaty_rune",
+    "color":  "#c682ff",
+    "clearEffects":  [
+
+                     ],
+    "tags":  [
+                 "special",
+                 "floating",
+                 "counter_float"
+             ],
+    "enabled":  true,
+    "assetRefs":  {
+                      "base":  "block_floaty_rune__base__f00",
+                      "glow":  "block_floaty_rune__glow__f00",
+                      "clear":  "block_floaty_rune__expire_to_junk__f00",
+                      "icon":  "ico_block_floaty_rune",
+                      "clearFrames":  [
+                                          "block_floaty_rune__expire_to_junk__f00",
+                                          "block_floaty_rune__expire_to_junk__f01",
+                                          "block_floaty_rune__expire_to_junk__f02",
+                                          "block_floaty_rune__expire_to_junk__f03",
+                                          "block_floaty_rune__expire_to_junk__f04"
+                                      ],
+                      "specialFrames":  [
+                                            "block_floaty_rune__hover__f00",
+                                            "block_floaty_rune__hover__f01",
+                                            "block_floaty_rune__hover__f02",
+                                            "block_floaty_rune__hover__f03"
+                                        ]
+                  },
+    "animations":  {
+                       "hover":  "anim_block_floaty_rune_hover",
+                       "countdown_warning":  "anim_block_floaty_rune_countdown_warning",
+                       "safe_drop":  "anim_block_floaty_rune_safe_drop",
+                       "expire_to_junk":  "anim_block_floaty_rune_expire_to_junk"
+                   },
+    "clearAnimationKey":  "anim_block_floaty_rune_expire_to_junk",
+    "animationKey":  "anim_block_floaty_rune_hover"
 }

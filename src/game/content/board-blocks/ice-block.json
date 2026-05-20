@@ -1,53 +1,53 @@
 {
-  "id": "block_ice",
-  "name": "Ice Block",
-  "blockType": "special",
-  "rarity": "uncommon",
-  "description": "A frozen block with a chance to freeze enemies when cleared.",
-  "spriteKey": "block_ice",
-  "color": "#87ceeb",
-  "clearEffects": [
-    {
-      "type": "chance_freeze_enemy",
-      "value": 0.15
-    }
-  ],
-  "tags": [
-    "frost",
-    "special"
-  ],
-  "enabled": true,
-  "assetRefs": {
-    "base": "block_ice",
-    "glow": "block_ice_glow",
-    "clear": "block_ice_clear",
-    "icon": "ico_block_ice",
-    "glowFrames": [
-      "block_ice__glow__f00",
-      "block_ice__glow__f01",
-      "block_ice__glow__f02"
-    ],
-    "clearFrames": [
-      "block_ice__crack_clear__f00",
-      "block_ice__crack_clear__f01",
-      "block_ice__crack_clear__f02",
-      "block_ice__crack_clear__f03",
-      "block_ice__crack_clear__f04"
-    ],
-    "specialFrames": [
-      "block_ice__frost_shimmer__f00",
-      "block_ice__frost_shimmer__f01",
-      "block_ice__frost_shimmer__f02",
-      "block_ice__frost_shimmer__f03"
-    ]
-  },
-  "animations": {
-    "frost_shimmer": "anim_block_ice_frost_shimmer",
-    "glow": "anim_block_ice_glow",
-    "crack_clear": "anim_block_ice_crack_clear",
-    "freeze_effect": "anim_block_ice_freeze_effect"
-  },
-  "glowAnimationKey": "anim_block_ice_glow",
-  "clearAnimationKey": "anim_block_ice_crack_clear",
-  "animationKey": "anim_block_ice_freeze_effect"
+    "id":  "block_ice",
+    "name":  "Ice Block",
+    "blockType":  "special",
+    "rarity":  "uncommon",
+    "description":  "A frozen block with a chance to freeze enemies when cleared.",
+    "spriteKey":  "block_ice",
+    "color":  "#87ceeb",
+    "clearEffects":  [
+                         {
+                             "type":  "chance_freeze_enemy",
+                             "value":  0.15
+                         }
+                     ],
+    "tags":  [
+                 "frost",
+                 "special"
+             ],
+    "enabled":  true,
+    "assetRefs":  {
+                      "base":  "block_ice__base__f00",
+                      "glow":  "block_ice__glow__f00",
+                      "clear":  "block_ice__crack_clear__f00",
+                      "icon":  "ico_block_ice",
+                      "glowFrames":  [
+                                         "block_ice__glow__f00",
+                                         "block_ice__glow__f01",
+                                         "block_ice__glow__f02"
+                                     ],
+                      "clearFrames":  [
+                                          "block_ice__crack_clear__f00",
+                                          "block_ice__crack_clear__f01",
+                                          "block_ice__crack_clear__f02",
+                                          "block_ice__crack_clear__f03",
+                                          "block_ice__crack_clear__f04"
+                                      ],
+                      "specialFrames":  [
+                                            "block_ice__frost_shimmer__f00",
+                                            "block_ice__frost_shimmer__f01",
+                                            "block_ice__frost_shimmer__f02",
+                                            "block_ice__frost_shimmer__f03"
+                                        ]
+                  },
+    "animations":  {
+                       "frost_shimmer":  "anim_block_ice_frost_shimmer",
+                       "glow":  "anim_block_ice_glow",
+                       "crack_clear":  "anim_block_ice_crack_clear",
+                       "freeze_effect":  "anim_block_ice_freeze_effect"
+                   },
+    "glowAnimationKey":  "anim_block_ice_glow",
+    "clearAnimationKey":  "anim_block_ice_crack_clear",
+    "animationKey":  "anim_block_ice_freeze_effect"
 }
