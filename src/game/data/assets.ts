@@ -365,14 +365,17 @@ export function createContentImageAssets(): AssetManifestEntry[] {
   for (const stage of contentRegistry.list<ContentAssetEntry>('stage')) {
     const slug = stageSlug(stage);
     const boss = bossSlug(stage);
-    addAsset(assets, `bg_${slug}`, 'stages', 'background');
-    addAsset(assets, `bg_stage_${slug}_battle`, 'stages', 'background');
-    addAsset(assets, `bg_stage_${slug}_battle_far`, 'stages', 'background');
-    addAsset(assets, `bg_stage_${slug}_battle_mid`, 'stages', 'background');
-    addAsset(assets, `bg_stage_${slug}_battle_near`, 'stages', 'background');
+    addAssetPath(assets, `bg_${slug}`, `/assets/stages/${stage.id}/battle/bg_stage_${slug}_battle_mid.png`, 'background');
+    addAssetPath(assets, `bg_stage_${slug}_battle`, `/assets/stages/${stage.id}/battle/bg_stage_${slug}_battle_mid.png`, 'background');
+    addAssetPath(assets, `bg_stage_${slug}_battle_far`, `/assets/stages/${stage.id}/battle/bg_stage_${slug}_battle_far.png`, 'background');
+    addAssetPath(assets, `bg_stage_${slug}_battle_mid`, `/assets/stages/${stage.id}/battle/bg_stage_${slug}_battle_mid.png`, 'background');
+    addAssetPath(assets, `bg_stage_${slug}_battle_near`, `/assets/stages/${stage.id}/battle/bg_stage_${slug}_battle_near.png`, 'background');
+    addAssetPath(assets, `bg_stage_${slug}_puzzle_far`, `/assets/stages/${stage.id}/puzzle/bg_stage_${slug}_puzzle_far.png`, 'background');
+    addAssetPath(assets, `bg_stage_${slug}_puzzle_mid`, `/assets/stages/${stage.id}/puzzle/bg_stage_${slug}_puzzle_mid.png`, 'background');
+    addAssetPath(assets, `bg_stage_${slug}_puzzle_near`, `/assets/stages/${stage.id}/puzzle/bg_stage_${slug}_puzzle_near.png`, 'background');
     addAssetPath(assets, `bg_map_${slug}`, `/assets/stages/${stage.id}/map/bg_map_${slug}.png`, 'background');
     if (boss) {
-      addAsset(assets, `bg_boss_${boss}_arena`, 'stages', 'background');
+      addAssetPath(assets, `bg_boss_${boss}_arena`, `/assets/stages/${stage.id}/boss-arena/bg_boss_${boss}_arena.png`, 'background');
     }
   }
 

@@ -166,7 +166,7 @@ export class MapScene extends Phaser.Scene {
     const centerY = layout.screen.height / 2;
     const background = this.gameState.assetSystem.createImageByAssetKey(
       this,
-      this.gameState.stageSystem.getStageBackgroundKey(this.gameState.runState.stage),
+      this.gameState.assetSystem.getStageBackground(this, this.gameState.runState.stage, 'map'),
       'stageBackground',
       centerX,
       centerY,

@@ -712,9 +712,9 @@ export class BattleScene extends Phaser.Scene {
     }).setOrigin(0.5, 0);
 
     const middleCenterY = layout.middleBoardRect.y + layout.middleBoardRect.height / 2;
-    this.add.rectangle(this.screenWidth / 2, middleCenterY, layout.middleBoardRect.width, layout.middleBoardRect.height, COLORS.panel, 0.95).setStrokeStyle(2, COLORS.accentSoft, 0.25);
-    this.add.rectangle(layout.leftRailRect.x + layout.leftRailRect.width / 2, middleCenterY, layout.leftRailRect.width, layout.leftRailRect.height, COLORS.panelAlt, 0.96).setStrokeStyle(2, COLORS.accentSoft, 0.4);
-    this.add.rectangle(layout.rightRailRect.x + layout.rightRailRect.width / 2, middleCenterY, layout.rightRailRect.width, layout.rightRailRect.height, COLORS.panelAlt, 0.96).setStrokeStyle(2, COLORS.accentSoft, 0.4);
+    this.add.rectangle(this.screenWidth / 2, middleCenterY, layout.middleBoardRect.width, layout.middleBoardRect.height, COLORS.panel, 0.72).setStrokeStyle(2, COLORS.accentSoft, 0.25);
+    this.add.rectangle(layout.leftRailRect.x + layout.leftRailRect.width / 2, middleCenterY, layout.leftRailRect.width, layout.leftRailRect.height, COLORS.panelAlt, 0.9).setStrokeStyle(2, COLORS.accentSoft, 0.4);
+    this.add.rectangle(layout.rightRailRect.x + layout.rightRailRect.width / 2, middleCenterY, layout.rightRailRect.width, layout.rightRailRect.height, COLORS.panelAlt, 0.9).setStrokeStyle(2, COLORS.accentSoft, 0.4);
 
     const controlsCenterY = layout.bottomControlsRect.y + layout.bottomControlsRect.height / 2;
     this.add.rectangle(this.screenWidth / 2, controlsCenterY, layout.bottomControlsRect.width, layout.bottomControlsRect.height, COLORS.panel, 0.92).setStrokeStyle(2, COLORS.accent, 0.22);
@@ -817,6 +817,10 @@ export class BattleScene extends Phaser.Scene {
           enemyBaselineY,
           { elite: this.sharedGame.runState.activeEnemy?.roomType === 'elite', alpha: 0.95 }
         );
+    this.setEnemyPose('idle');
+    if (this.sharedGame.runState.activeEnemy) {
+      this.fitEnemyBattleSprite(this.sharedGame.runState.activeEnemy);
+    }
     this.topCombatLogText = this.add.text(layout.combatLogRect.x + 10, layout.combatLogRect.y + 8, '', {
       color: '#f6f7ff',
       fontFamily: FONT_FAMILY,
@@ -907,8 +911,11 @@ export class BattleScene extends Phaser.Scene {
     const enemy = state.activeEnemy;
     const layout = this.battleLayout;
     const combatRect = layout?.topCombatRect ?? { x: 0, y: 0, width: this.screenWidth, height: Math.floor(this.screenHeight * 0.25) };
+    const puzzleRect = layout?.middleBoardRect ?? { x: 0, y: Math.floor(this.screenHeight * 0.25), width: this.screenWidth, height: Math.floor(this.screenHeight * 0.5) };
     const centerX = combatRect.x + combatRect.width / 2;
     const centerY = combatRect.y + combatRect.height / 2;
+    const puzzleCenterX = puzzleRect.x + puzzleRect.width / 2;
+    const puzzleCenterY = puzzleRect.y + puzzleRect.height / 2;
     const isBossRoom = enemy?.roomType === 'boss' || Boolean(enemy?.id?.includes('boss'));
 
     if (isBossRoom) {
@@ -920,22 +927,36 @@ export class BattleScene extends Phaser.Scene {
         .setDisplaySize(combatRect.width, combatRect.height)
         .setAlpha(0.92)
         .setDepth(-50);
-      return;
+    } else {
+      const far = this.sharedGame.assetSystem.getStageBackground(this, state.stage, 'battleFar');
+      const mid = this.sharedGame.assetSystem.getStageBackground(this, state.stage, 'battleMid');
+      const near = this.sharedGame.assetSystem.getStageBackground(this, state.stage, 'battleNear');
+      if (import.meta.env.DEV) {
+        console.log('[BattleScene] stage battle keys:', { far, mid, near, stage: state.stage });
+      }
+      const layers = [far, mid, near].filter((key, index, all) => all.indexOf(key) === index);
+
+      layers.forEach((key, index) => {
+        this.sharedGame.assetSystem.createImageByAssetKey(this, key, 'stageBackground', centerX, centerY, { kind: 'background' })
+          .setDisplaySize(combatRect.width, combatRect.height)
+          .setAlpha(layers.length > 1 ? [0.58, 0.76, 0.9][index] ?? 0.72 : 0.86)
+          .setDepth(-50 + index);
+      });
     }
 
-    const far = this.sharedGame.assetSystem.getStageBackground(this, state.stage, 'battleFar');
-    const mid = this.sharedGame.assetSystem.getStageBackground(this, state.stage, 'battleMid');
-    const near = this.sharedGame.assetSystem.getStageBackground(this, state.stage, 'battleNear');
+    const puzzleFar = this.sharedGame.assetSystem.getStageBackground(this, state.stage, 'puzzleFar');
+    const puzzleMid = this.sharedGame.assetSystem.getStageBackground(this, state.stage, 'puzzleMid');
+    const puzzleNear = this.sharedGame.assetSystem.getStageBackground(this, state.stage, 'puzzleNear');
     if (import.meta.env.DEV) {
-      console.log('[BattleScene] stage battle keys:', { far, mid, near, stage: state.stage });
+      console.log('[BattleScene] stage puzzle keys:', { puzzleFar, puzzleMid, puzzleNear, stage: state.stage });
     }
-    const layers = [far, mid, near].filter((key, index, all) => all.indexOf(key) === index);
+    const puzzleLayers = [puzzleFar, puzzleMid, puzzleNear].filter((key, index, all) => all.indexOf(key) === index);
 
-    layers.forEach((key, index) => {
-      this.sharedGame.assetSystem.createImageByAssetKey(this, key, 'stageBackground', centerX, centerY, { kind: 'background' })
-        .setDisplaySize(combatRect.width, combatRect.height)
-        .setAlpha(layers.length > 1 ? [0.6, 0.78, 0.9][index] ?? 0.72 : 0.86)
-        .setDepth(-50 + index);
+    puzzleLayers.forEach((key, index) => {
+      this.sharedGame.assetSystem.createImageByAssetKey(this, key, 'stageBackground', puzzleCenterX, puzzleCenterY, { kind: 'background' })
+        .setDisplaySize(puzzleRect.width, puzzleRect.height)
+        .setAlpha(puzzleLayers.length > 1 ? [0.34, 0.5, 0.62][index] ?? 0.45 : 0.52)
+        .setDepth(-42 + index);
     });
   }
 
@@ -3048,10 +3069,52 @@ export class BattleScene extends Phaser.Scene {
           ? 'special_attack'
           : state;
       this.sharedGame.assetSystem.setBossPose(this, this.enemySprite, enemy.id, pose);
+      this.playEnemyAnimationIfReady(state);
       return;
     }
     const pose = state === 'special' || state === 'phase_2' ? 'attack' : state;
     this.sharedGame.assetSystem.setMonsterPose(this, this.enemySprite, enemy.id, pose);
+    this.playEnemyAnimationIfReady(state);
+  }
+
+  private playEnemyAnimationIfReady(state: 'idle' | 'attack' | 'hit' | 'defeat' | 'phase_2' | 'special'): void {
+    const enemy = this.sharedGame.runState.activeEnemy;
+    if (!enemy || !this.enemySprite) {
+      return;
+    }
+
+    const animationState = enemy.roomType === 'boss'
+      ? state === 'phase_2'
+        ? 'phase_change'
+        : state === 'special'
+          ? 'special_attack'
+          : state
+      : state === 'phase_2' || state === 'special'
+        ? 'attack'
+        : state;
+    const monster = contentRegistry.getMonster(enemy.id) as { animations?: Record<string, string | undefined> } | null;
+    const animationId = monster?.animations?.[animationState];
+    if (!animationId) {
+      return;
+    }
+    const definition = getAnimationDefinition(animationId);
+    if (!definition) {
+      return;
+    }
+    const loadedFrames = this.sharedGame.assetSystem.getLoadedAnimationFrameKeys(this, animationId);
+    if (loadedFrames.length !== definition.frameCount) {
+      if (import.meta.env.DEV) {
+        console.warn('[BattleScene] Enemy animation skipped (missing frames):', {
+          enemyId: enemy.id,
+          animationState,
+          animationId,
+          expected: definition.frameCount,
+          loaded: loadedFrames.length
+        });
+      }
+      return;
+    }
+    this.sharedGame.assetSystem.playAnimationSafe(this.enemySprite, animationId);
   }
 
   private setEnemyPoseTemporary(state: 'idle' | 'attack' | 'hit' | 'defeat' | 'phase_2' | 'special', durationMs: number): void {

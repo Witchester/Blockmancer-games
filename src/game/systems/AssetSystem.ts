@@ -38,7 +38,17 @@ export type AssetRefContent = {
 export type BoardBlockVisualState = 'base' | 'glow' | 'clear' | 'icon';
 export type HeroVisualState = 'idle' | 'cast' | 'attack' | 'hit' | 'victory' | 'defeat' | 'portrait' | 'locked' | 'icon';
 export type MonsterVisualState = 'idle' | 'attack' | 'hit' | 'defeat' | 'special' | 'phase_2' | 'intro_portrait' | 'icon';
-export type StageBackgroundState = 'battle' | 'battleFar' | 'battleMid' | 'battleNear' | 'map' | 'bossArena';
+export type StageBackgroundState =
+  | 'battle'
+  | 'battleFar'
+  | 'battleMid'
+  | 'battleNear'
+  | 'puzzle'
+  | 'puzzleFar'
+  | 'puzzleMid'
+  | 'puzzleNear'
+  | 'map'
+  | 'bossArena';
 export type MapNodeVisualState = 'available' | 'current' | 'completed' | 'locked';
 export type RouteStoryAssetType =
   | 'dialoguePanel'
@@ -412,11 +422,15 @@ export class AssetSystem {
     const bossSlug = stage?.bossId?.replace(/^mon_boss_/, '');
     const legacyTheme = stage?.backgroundKey ?? (stage?.theme ? `bg_${stage.theme}` : undefined);
     const stateKeys: Record<StageBackgroundState, Array<string | undefined>> = {
-      battle: [`bg_stage_${slug}_battle`, `bg_stage_${slug}_battle_mid`, legacyTheme],
-      battleFar: [`bg_stage_${slug}_battle_far`, `bg_stage_${slug}_battle`, legacyTheme],
-      battleMid: [`bg_stage_${slug}_battle_mid`, `bg_stage_${slug}_battle`, legacyTheme],
-      battleNear: [`bg_stage_${slug}_battle_near`, `bg_stage_${slug}_battle`, legacyTheme],
-      map: [`bg_map_${slug}`, legacyTheme],
+      battle: [`bg_stage_${slug}_battle`, `bg_stage_${slug}_battle_mid`, `bg_stage_${slug}_battle_far`, legacyTheme],
+      battleFar: [`bg_stage_${slug}_battle_far`, `bg_stage_${slug}_battle_mid`, `bg_stage_${slug}_battle`, legacyTheme],
+      battleMid: [`bg_stage_${slug}_battle_mid`, `bg_stage_${slug}_battle_far`, `bg_stage_${slug}_battle`, legacyTheme],
+      battleNear: [`bg_stage_${slug}_battle_near`, `bg_stage_${slug}_battle_mid`, `bg_stage_${slug}_battle`, legacyTheme],
+      puzzle: [`bg_stage_${slug}_puzzle_mid`, `bg_stage_${slug}_puzzle_far`, `bg_stage_${slug}_battle_mid`, legacyTheme],
+      puzzleFar: [`bg_stage_${slug}_puzzle_far`, `bg_stage_${slug}_puzzle_mid`, `bg_stage_${slug}_battle_far`, legacyTheme],
+      puzzleMid: [`bg_stage_${slug}_puzzle_mid`, `bg_stage_${slug}_puzzle_far`, `bg_stage_${slug}_battle_mid`, legacyTheme],
+      puzzleNear: [`bg_stage_${slug}_puzzle_near`, `bg_stage_${slug}_puzzle_mid`, `bg_stage_${slug}_battle_near`, legacyTheme],
+      map: [`bg_map_${slug}`, `bg_stage_${slug}_puzzle_mid`, `bg_stage_${slug}_puzzle_far`, `bg_stage_${slug}_puzzle_near`, `bg_stage_${slug}_battle_mid`, legacyTheme],
       bossArena: [`bg_boss_${bossSlug}_arena`, `bg_stage_${slug}_battle_mid`, legacyTheme]
     };
     return this.getFirstTextureKey(scene, [
@@ -436,6 +450,17 @@ export class AssetSystem {
     const frameKeys = getAnimationFrameKeys(definition.id);
     const loaded = frameKeys.filter((key) => scene.textures.exists(key));
     return loaded.length === definition.frameCount ? loaded : [];
+  }
+
+  getAvailableAnimationFrameKeys(scene: Phaser.Scene, animationId: string | null | undefined): string[] {
+    const definition = getAnimationDefinition(animationId);
+    if (!definition) {
+      if (animationId && import.meta.env.DEV) {
+        console.warn(`[animations] Unknown animation id: ${animationId}`);
+      }
+      return [];
+    }
+    return getAnimationFrameKeys(definition.id).filter((key) => scene.textures.exists(key));
   }
 
   registerGameAnimations(scene: Phaser.Scene): void {

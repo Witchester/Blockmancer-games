@@ -1,5 +1,6 @@
 # Node dependency directory
 node_modules/
+bugs/
 
 # Vite cache
 node_modules/.vite

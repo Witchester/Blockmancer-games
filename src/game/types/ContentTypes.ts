@@ -43,6 +43,7 @@ export interface ContentMetadataDescriptor {
   dataList: Record<string, unknown>;
   commonDataList?: Record<string, unknown>;
   defaults: Record<string, unknown>;
+  compatibilityAliases?: Record<string, string>;
 }
 
 export interface ContentCollection<TEntry = unknown> {

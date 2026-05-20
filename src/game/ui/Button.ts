@@ -8,6 +8,7 @@ type ButtonOptions = {
   iconKey?: string | null;
   iconCategory?: AssetDisplayCategory;
   fontSize?: string;
+  fontFamily?: string;
 };
 
 export class Button extends Phaser.GameObjects.Container {
@@ -50,7 +51,7 @@ export class Button extends Phaser.GameObjects.Container {
     this.label = scene.add
       .text(labelX, labelY, text, {
         color: '#f6f7ff',
-        fontFamily: FONT_FAMILY,
+        fontFamily: options.fontFamily ?? FONT_FAMILY,
         fontSize: options.fontSize ?? (compactIcon ? '14px' : '18px'),
         align: 'center',
         wordWrap: { width: Math.max(20, labelWidth) },

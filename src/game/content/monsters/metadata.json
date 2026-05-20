@@ -369,5 +369,22 @@
     },
     "tags": [],
     "enabled": true
+  },
+  "compatibilityAliases": {
+    "mon_cupcake_slime": "mon_dungeon_slime",
+    "mon_sugar_bat": "mon_bat",
+    "mon_crumb_goblin": "mon_dungeon_goblin",
+    "mon_popsicle_bat": "mon_bubble_bat",
+    "mon_freezer_mimic": "mon_ice_pop_mimic",
+    "mon_pillow_squire": "mon_pillow_pawn",
+    "mon_combo_gremlin": "mon_combo_crab",
+    "mon_joystick_jester": "mon_joystick_jinxer",
+    "mon_square_jester": "mon_palace_jester",
+    "boss_cupcake_slime_king": "mon_boss_cupcake_slime_king",
+    "boss_prototype_no_7": "mon_boss_prototype_no_7",
+    "boss_gelato_golem": "mon_boss_gelato_golem",
+    "boss_sir_snore_a_lot": "mon_boss_sir_snore_a_lot",
+    "boss_high_score_hydra": "mon_boss_high_score_hydra",
+    "boss_king_bloxley": "mon_boss_king_bloxley"
   }
 }

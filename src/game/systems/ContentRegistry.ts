@@ -84,6 +84,7 @@ function createCollection(config: ContentFolderConfig): RegistryCollection {
 
 export class ContentRegistry {
   private readonly collections: Record<ContentCategory, RegistryCollection>;
+  private readonly warnedMissingMonsterLookups = new Set<string>();
 
   constructor() {
     this.collections = CONTENT_FOLDERS.reduce((collections, config) => {
@@ -108,7 +109,8 @@ export class ContentRegistry {
     contentType: ContentCategory,
     id: string
   ): TEntry | null {
-    return (this.collections[contentType].entries.find((entry) => entry.id === id) as TEntry | undefined) ?? null;
+    const lookupId = this.resolveLookupId(contentType, id);
+    return (this.collections[contentType].entries.find((entry) => entry.id === lookupId) as TEntry | undefined) ?? null;
   }
 
   getById<TEntry extends RegistryEntry = RegistryEntry>(contentType: ContentCategory, id: string): TEntry | null {
@@ -228,6 +230,26 @@ export class ContentRegistry {
 
   getFriendship(id: string) {
     return this.getById('friendship', id);
+  }
+
+  private resolveLookupId(contentType: ContentCategory, id: string): string {
+    if (contentType !== 'monster') {
+      return id;
+    }
+
+    const aliasMap = this.collections.monster.metadata.compatibilityAliases ?? {};
+    const resolvedId = aliasMap[id];
+    if (resolvedId) {
+      return resolvedId;
+    }
+
+    const hasExactMatch = this.collections.monster.entries.some((entry) => entry.id === id);
+    if (!hasExactMatch && !this.warnedMissingMonsterLookups.has(id) && import.meta.env.DEV) {
+      this.warnedMissingMonsterLookups.add(id);
+      console.warn(`[ContentRegistry] Unknown monster lookup "${id}". Falling back to the monster category fallback entry.`);
+    }
+
+    return id;
   }
 }
 

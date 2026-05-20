@@ -12,7 +12,7 @@
     "validate:animations": "node scripts/validate-animations.mjs",
     "assets:folders": "node scripts/ensure-final-asset-folders.mjs",
     "assets:placeholders": "node scripts/generate-placeholder-assets.mjs",
-    "sync:assets": "node scripts/sync-assets.mjs",
+    "sync:assets": "node scripts/sync-asset-runtime-map.mjs",
     "audit:asset-variants": "node scripts/audit-asset-variants.mjs",
     "android:init": "node -e \"const fs=require('fs');const {spawnSync}=require('child_process');if(fs.existsSync('android')){console.log('Android project already exists.');process.exit(0);}const cmd=process.platform==='win32'?'npx.cmd':'npx';const result=spawnSync(cmd,['cap','add','android'],{stdio:'inherit',shell:process.platform==='win32'});process.exit(result.status??0);\"",
     "android:sync": "npm run build && npx cap sync android",

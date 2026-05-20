@@ -1,10 +1,11 @@
 import Phaser from 'phaser';
 import { BlockmancerGame } from '../BlockmancerGame';
 import { createDefaultBoardState } from '../data/constants';
+import { ANIMATION_DEFINITIONS, getAnimationFrameKeys, type AnimationCategory, type AnimationSequenceDefinition } from '../data/animations';
 import { contentRegistry } from '../systems/ContentRegistry';
 import type { ActiveHazardKind, ActiveHazardState, BoardCell, EnemyInstance, RewardDefinition, RoomType } from '../types/GameTypes';
 import { Button } from '../ui/Button';
-import { BOARD_COLS, BOARD_ROWS, COLORS, FONT_FAMILY, MAX_EVENT_LOG, TETROMINO_COLORS, TETROMINO_SHAPES } from '../utils/constants';
+import { BOARD_COLS, BOARD_ROWS, COLORS, MAX_EVENT_LOG, TETROMINO_COLORS, TETROMINO_SHAPES } from '../utils/constants';
 
 type MonsterEntry = {
   id: string;
@@ -22,6 +23,25 @@ type MonsterEntry = {
   };
   behaviors: string[];
 };
+
+type StageEntry = {
+  id: string;
+  name: string;
+  monsterPool?: string[];
+  bossId?: string;
+};
+
+type AnimationAuditFilter = 'all' | 'missing' | AnimationCategory;
+type AnimationStageScope = '__all' | '__shared' | '__legacy' | string;
+type MonsterStageScope = string | null | '__legacy';
+
+type AnimationAuditEntry = {
+  definition: AnimationSequenceDefinition;
+  loadedFrameCount: number;
+  isComplete: boolean;
+};
+
+const DEBUG_FONT_FAMILY = '"Segoe UI", Arial, sans-serif';
 
 export class DebugScene extends Phaser.Scene {
   private statusText?: Phaser.GameObjects.Text;
@@ -42,28 +62,30 @@ export class DebugScene extends Phaser.Scene {
     }
 
     const width = this.scale.width;
+    const height = this.scale.height;
     const centerX = width / 2;
+    const centerY = height / 2;
     this.cameras.main.setBackgroundColor(COLORS.background);
-    this.add.rectangle(centerX, 640, width - 48, 1120, COLORS.panel, 0.96).setStrokeStyle(2, COLORS.gold, 0.45);
-    this.add.text(centerX, 70, 'QA Debug Tools', {
+    this.add.rectangle(centerX, centerY, width - 48, height - 48, COLORS.panel, 0.96).setStrokeStyle(2, COLORS.gold, 0.45);
+    this.add.text(centerX, 52, 'QA Debug Tools', {
       color: '#ffca6b',
-      fontFamily: FONT_FAMILY,
+      fontFamily: DEBUG_FONT_FAMILY,
       fontSize: '38px',
       fontStyle: 'bold'
     }).setOrigin(0.5);
 
-    this.add.text(centerX, 118, 'Dev-only tools for run setup, rewards, saves, and combat smoke tests.', {
+    this.add.text(centerX, 94, 'Dev-only tools for run setup, rewards, saves, and combat smoke tests.', {
       color: '#d8deff',
-      fontFamily: FONT_FAMILY,
-      fontSize: '19px',
+      fontFamily: DEBUG_FONT_FAMILY,
+      fontSize: '20px',
       align: 'center',
       wordWrap: { width: width - 96 }
     }).setOrigin(0.5);
 
-    this.statusText = this.add.text(64, 174, '', {
+    this.statusText = this.add.text(64, 132, '', {
       color: '#f6f7ff',
-      fontFamily: FONT_FAMILY,
-      fontSize: '19px',
+      fontFamily: DEBUG_FONT_FAMILY,
+      fontSize: '20px',
       lineSpacing: 5,
       wordWrap: { width: width - 128 }
     });
@@ -77,10 +99,14 @@ export class DebugScene extends Phaser.Scene {
   }
 
   private createButtonGrid(): void {
-    const buttonWidth = 292;
-    const buttonHeight = 56;
-    const leftX = this.scale.width / 2 - 160;
-    const rightX = this.scale.width / 2 + 160;
+    const width = this.scale.width;
+    const height = this.scale.height;
+    const centerX = width / 2;
+    const sidePadding = Math.max(26, Math.floor(width * 0.07));
+    const columnGap = Math.max(16, Math.floor(width * 0.03));
+    const twoColButtonWidth = Math.floor((width - sidePadding * 2 - columnGap) / 2);
+    const leftX = sidePadding + twoColButtonWidth / 2;
+    const rightX = leftX + twoColButtonWidth + columnGap;
     const rows: Array<[string, () => void, string, () => void]> = [
       ['Give 100 Gold', () => this.giveGold(), 'Give Item', () => this.giveItem()],
       ['Give Relic', () => this.giveReward('relic'), 'Give Upgrade', () => this.giveReward('upgrade')],
@@ -96,29 +122,61 @@ export class DebugScene extends Phaser.Scene {
       ['Clear Run Save', () => this.clearRunSave(), 'New Debug Run', () => this.newDebugRun()]
     ];
 
+    const animationButtonHeight = 56;
+    const animationButtonY = Math.ceil(this.statusText?.getBounds().bottom ?? 260) + 36;
+    new Button(this, centerX, animationButtonY, width - sidePadding * 2, animationButtonHeight, 'Animation QA (Category + Stage)', () => this.openAnimationCategoryPicker(), { fontSize: '22px', fontFamily: DEBUG_FONT_FAMILY });
+
+    const footerButtonHeight = 56;
+    const footerY = height - 24 - Math.floor(footerButtonHeight / 2);
+    const stageButtonHeight = 52;
+    const stageButtonY = footerY - Math.floor(footerButtonHeight / 2) - 18 - Math.floor(stageButtonHeight / 2);
+    const stageTitleY = stageButtonY - Math.floor(stageButtonHeight / 2) - 16;
+
+    const rowsTop = animationButtonY + Math.floor(animationButtonHeight / 2) + 16;
+    const rowsBottom = stageTitleY - 16;
+    const minGap = 7;
+    const maxButtonHeight = 56;
+    const minButtonHeight = 38;
+    let rowButtonHeight = maxButtonHeight;
+    let rowGap = 12;
+    const rowCount = rows.length;
+    const requiredAtMax = rowCount * maxButtonHeight + (rowCount - 1) * minGap;
+    const availableRowsHeight = rowsBottom - rowsTop;
+    if (availableRowsHeight < requiredAtMax) {
+      rowButtonHeight = Math.max(minButtonHeight, Math.floor((availableRowsHeight - (rowCount - 1) * minGap) / rowCount));
+      rowGap = minGap;
+    } else {
+      rowGap = Math.min(14, Math.floor((availableRowsHeight - rowCount * rowButtonHeight) / Math.max(1, rowCount - 1)));
+    }
+
     rows.forEach((row, index) => {
-      const y = 360 + index * 74;
-      new Button(this, leftX, y, buttonWidth, buttonHeight, row[0], row[1], { fontSize: '20px' });
-      new Button(this, rightX, y, buttonWidth, buttonHeight, row[2], row[3], { fontSize: '20px' });
+      const y = rowsTop + Math.floor(rowButtonHeight / 2) + index * (rowButtonHeight + rowGap);
+      new Button(this, leftX, y, twoColButtonWidth, rowButtonHeight, row[0], row[1], { fontSize: rowButtonHeight <= 44 ? '18px' : '22px', fontFamily: DEBUG_FONT_FAMILY });
+      new Button(this, rightX, y, twoColButtonWidth, rowButtonHeight, row[2], row[3], { fontSize: rowButtonHeight <= 44 ? '18px' : '22px', fontFamily: DEBUG_FONT_FAMILY });
     });
 
-    const stageY = 970;
-    this.add.text(this.scale.width / 2, stageY - 58, 'Jump To Stage', {
+    this.add.text(centerX, stageTitleY, 'Jump To Stage', {
       color: '#ffca6b',
-      fontFamily: FONT_FAMILY,
-      fontSize: '24px',
+      fontFamily: DEBUG_FONT_FAMILY,
+      fontSize: '28px',
       fontStyle: 'bold'
     }).setOrigin(0.5);
 
-    for (let stage = 1; stage <= this.gameState.stageSystem.getStageCount(); stage += 1) {
-      const x = 86 + (stage - 1) * 108;
-      new Button(this, x, stageY, 84, 54, `${stage}`, () => this.jumpToStage(stage), { fontSize: '24px' });
+    const stageCount = this.gameState.stageSystem.getStageCount();
+    const stageGap = Math.max(8, Math.floor(width * 0.016));
+    const stageButtonWidth = Math.max(44, Math.min(84, Math.floor((width - sidePadding * 2 - stageGap * (stageCount - 1)) / stageCount)));
+    const stageTotalWidth = stageCount * stageButtonWidth + (stageCount - 1) * stageGap;
+    const stageStartX = centerX - stageTotalWidth / 2 + stageButtonWidth / 2;
+    for (let stage = 1; stage <= stageCount; stage += 1) {
+      const x = stageStartX + (stage - 1) * (stageButtonWidth + stageGap);
+      new Button(this, x, stageButtonY, stageButtonWidth, stageButtonHeight, `${stage}`, () => this.jumpToStage(stage), { fontSize: '26px', fontFamily: DEBUG_FONT_FAMILY });
     }
 
-    new Button(this, this.scale.width / 2 - 150, 1140, 260, 58, 'Back To Menu', () => {
+    const footerButtonWidth = Math.floor((width - sidePadding * 2 - columnGap) / 2);
+    new Button(this, leftX, footerY, footerButtonWidth, footerButtonHeight, 'Back To Menu', () => {
       this.scene.start('MainMenuScene');
     });
-    new Button(this, this.scale.width / 2 + 150, 1140, 260, 58, 'Open Map', () => {
+    new Button(this, rightX, footerY, footerButtonWidth, footerButtonHeight, 'Open Map', () => {
       this.gameState.runState.runStatus = 'map';
       this.gameState.saveRun();
       this.scene.start('MapScene');
@@ -195,15 +253,263 @@ export class DebugScene extends Phaser.Scene {
         id: category.id,
         label: category.label
       })),
-      (categoryId) => this.openMonsterListPicker(categoryId as RoomType)
+      (categoryId) => this.openMonsterStagePicker(categoryId as RoomType)
     );
   }
 
-  private openMonsterListPicker(roomType: RoomType): void {
-    const monsters = this.listMonstersByRoomType(roomType).sort((a, b) => a.name.localeCompare(b.name));
+  private openMonsterStagePicker(roomType: RoomType): void {
+    const stages = this.getStageEntries();
+    const allAssignedCount = this.listMonstersByRoomType(roomType, null).length;
+    const legacyCount = this.listMonstersByRoomType(roomType, '__legacy').length;
+    const entries: Array<{ id: string; label: string }> = [{ id: '__all', label: `All Stage-Assigned (${allAssignedCount})` }];
+    for (const stage of stages) {
+      const count = this.listMonstersByRoomType(roomType, stage.id).length;
+      entries.push({
+        id: stage.id,
+        label: `Stage ${this.getStageNumber(stage.id)} · ${stage.name} (${count})`
+      });
+    }
+
+    if (legacyCount > 0) {
+      entries.push({ id: '__legacy', label: `Legacy / Unassigned (${legacyCount})` });
+    }
+
+    this.showSelectionOverlay(
+      'Select Stage',
+      entries,
+      (stageId) => this.openMonsterListPicker(roomType, stageId === '__all' ? null : stageId === '__legacy' ? '__legacy' : stageId),
+      () => this.openMonsterCategoryPicker()
+    );
+  }
+
+  private openAnimationCategoryPicker(): void {
+    const allEntries = this.getAnimationAuditEntries('all');
+    const total = allEntries.length;
+    const missing = allEntries.filter((entry) => !entry.isComplete).length;
+    const categories = [...new Set(ANIMATION_DEFINITIONS.map((definition) => definition.category))].sort();
+
+    const options: Array<{ id: string; label: string }> = [
+      { id: '__all', label: `All (${total})` },
+      { id: '__missing', label: `Missing Frames (${missing})` },
+      ...categories.map((category) => {
+        const categoryEntries = this.getAnimationAuditEntries(category);
+        const categoryMissing = categoryEntries.filter((entry) => !entry.isComplete).length;
+        return { id: `cat:${category}`, label: `${category} (${categoryEntries.length}) · missing ${categoryMissing}` };
+      })
+    ];
+
+    this.showSelectionOverlay('Animation QA Categories', options, (selectedId) => {
+      if (selectedId === '__all') {
+        this.openAnimationStagePicker('all');
+        return;
+      }
+      if (selectedId === '__missing') {
+        this.openAnimationStagePicker('missing');
+        return;
+      }
+      if (selectedId.startsWith('cat:')) {
+        this.openAnimationStagePicker(selectedId.replace(/^cat:/, '') as AnimationCategory);
+      }
+    });
+  }
+
+  private openAnimationStagePicker(filter: AnimationAuditFilter): void {
+    const scopes = this.getAnimationStageScopes(filter);
+    if (scopes.length === 1 && scopes[0].id === '__all') {
+      this.openAnimationListPicker(filter, '__all');
+      return;
+    }
+
+    this.showSelectionOverlay(
+      'Animation QA Scope',
+      scopes.map((scope) => ({ id: scope.id, label: `${scope.label} (${scope.count})` })),
+      (scopeId) => this.openAnimationListPicker(filter, scopeId as AnimationStageScope),
+      () => this.openAnimationCategoryPicker()
+    );
+  }
+
+  private openAnimationListPicker(filter: AnimationAuditFilter, scope: AnimationStageScope): void {
+    const entries = this.getAnimationAuditEntries(filter, scope);
+    if (entries.length === 0) {
+      this.clearSelectionOverlay();
+      this.updateStatus('No animation entries found for this filter.');
+      return;
+    }
+
+    const title = filter === 'all'
+      ? 'Animation QA: All'
+      : filter === 'missing'
+        ? 'Animation QA: Missing Frames'
+        : `Animation QA: ${filter}`;
+
+    this.showSelectionOverlay(
+      `${title} · ${this.getAnimationScopeLabel(scope)}`,
+      entries.map((entry) => {
+        const definition = entry.definition;
+        const status = entry.isComplete ? 'OK' : `MISS ${entry.loadedFrameCount}/${definition.frameCount}`;
+        return {
+          id: definition.id,
+          label: `[${definition.category}] ${definition.assetId} · ${definition.animationName} · ${status}`
+        };
+      }),
+      (animationId) => this.openAnimationPreview(filter, scope, animationId),
+      () => this.openAnimationStagePicker(filter)
+    );
+  }
+
+  private openAnimationPreview(filter: AnimationAuditFilter, scope: AnimationStageScope, animationId: string): void {
+    const entries = this.getAnimationAuditEntries(filter, scope);
+    if (entries.length === 0) {
+      this.openAnimationStagePicker(filter);
+      return;
+    }
+
+    let index = Math.max(0, entries.findIndex((entry) => entry.definition.id === animationId));
+    if (index < 0) {
+      index = 0;
+    }
+
+    this.clearSelectionOverlay();
+
+    const overlay = this.add.container(0, 0);
+    const width = this.scale.width;
+    const height = this.scale.height;
+
+    const blocker = this.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0.64).setInteractive();
+    const panel = this.add.rectangle(width / 2, height / 2, width - 90, height - 140, COLORS.panel, 0.98).setStrokeStyle(2, COLORS.gold, 0.55);
+    const title = this.add.text(width / 2, 94, 'Animation QA Preview', {
+      color: '#ffca6b',
+      fontFamily: DEBUG_FONT_FAMILY,
+      fontSize: '34px',
+      fontStyle: 'bold'
+    }).setOrigin(0.5);
+    overlay.add([blocker, panel, title]);
+
+    let previewSprite: Phaser.GameObjects.Sprite | undefined;
+    let idText: Phaser.GameObjects.Text | undefined;
+    let infoText: Phaser.GameObjects.Text | undefined;
+
+    const renderCurrent = (): void => {
+      previewSprite?.destroy();
+      idText?.destroy();
+      infoText?.destroy();
+
+      const entry = entries[index];
+      const definition = entry.definition;
+      const availableKeys = this.gameState.assetSystem.getAvailableAnimationFrameKeys(this, definition.id);
+      const loadedKeys = this.gameState.assetSystem.getLoadedAnimationFrameKeys(this, definition.id);
+      const expectedKeys = getAnimationFrameKeys(definition.id);
+      const loadedSet = new Set(availableKeys);
+      const missingKeys = expectedKeys.filter((key) => !loadedSet.has(key));
+
+      previewSprite = this.add.sprite(width / 2, height / 2 - 64, this.gameState.assetSystem.fallbackFor('sprite'));
+      this.gameState.assetSystem.fitSpriteToBox(previewSprite, Math.min(420, width - 180), 260);
+
+      if (availableKeys.length > 0) {
+        previewSprite.setTexture(availableKeys[0]);
+      }
+      if (entry.isComplete) {
+        this.gameState.assetSystem.playAnimationSafe(previewSprite, definition.id);
+      }
+
+      const status = entry.isComplete ? 'PASS' : 'FAIL';
+      const statusColor = entry.isComplete ? '#65d6a5' : '#ff6673';
+      idText = this.add.text(width / 2, 142, `${index + 1}/${entries.length} · ${definition.id}`, {
+        color: '#f6f7ff',
+        fontFamily: DEBUG_FONT_FAMILY,
+        fontSize: '22px',
+        align: 'center',
+        wordWrap: { width: width - 140 }
+      }).setOrigin(0.5, 0);
+
+      const missingPreview = missingKeys.length > 0
+        ? missingKeys.slice(0, 4).join(', ') + (missingKeys.length > 4 ? ` (+${missingKeys.length - 4})` : '')
+        : 'none';
+
+      infoText = this.add.text(width / 2, height - 312, [
+        `Status: ${status}`,
+        `Category: ${definition.category}`,
+        `Asset: ${definition.assetId}`,
+        `Animation: ${definition.animationName}`,
+        `Frames available: ${availableKeys.length}/${definition.frameCount}`,
+        `Frames animation-ready: ${loadedKeys.length}/${definition.frameCount}`,
+        `Missing keys: ${missingPreview}`
+      ].join('\n'), {
+        color: '#d8deff',
+        fontFamily: DEBUG_FONT_FAMILY,
+        fontSize: '22px',
+        align: 'center',
+        lineSpacing: 5,
+        wordWrap: { width: width - 170 }
+      }).setOrigin(0.5, 0);
+      infoText.setTint(Phaser.Display.Color.HexStringToColor(statusColor).color);
+
+      if (previewSprite) {
+        overlay.add(previewSprite);
+      }
+      if (idText) {
+        overlay.add(idText);
+      }
+      if (infoText) {
+        overlay.add(infoText);
+      }
+    };
+
+    const prevButton = new Button(this, width / 2 - 210, height - 96, 160, 56, 'Prev', () => {
+      index = (index - 1 + entries.length) % entries.length;
+      renderCurrent();
+    }, { fontFamily: DEBUG_FONT_FAMILY });
+    const nextButton = new Button(this, width / 2 - 20, height - 96, 160, 56, 'Next', () => {
+      index = (index + 1) % entries.length;
+      renderCurrent();
+    }, { fontFamily: DEBUG_FONT_FAMILY });
+    const backButton = new Button(this, width / 2 + 170, height - 96, 220, 56, 'Back To List', () => {
+      this.openAnimationListPicker(filter, scope);
+    }, { fontFamily: DEBUG_FONT_FAMILY });
+
+    overlay.add([prevButton, nextButton, backButton]);
+
+    renderCurrent();
+    this.selectionOverlay = overlay;
+  }
+
+  private getAnimationAuditEntries(filter: AnimationAuditFilter, scope: AnimationStageScope = '__all'): AnimationAuditEntry[] {
+    const all = ANIMATION_DEFINITIONS.map((definition) => {
+      const loadedFrameCount = this.gameState.assetSystem.getAvailableAnimationFrameKeys(this, definition.id).length;
+      return {
+        definition,
+        loadedFrameCount,
+        isComplete: loadedFrameCount === definition.frameCount
+      };
+    });
+
+    const filtered = filter === 'all'
+      ? all
+      : filter === 'missing'
+        ? all.filter((entry) => !entry.isComplete)
+        : all.filter((entry) => entry.definition.category === filter);
+
+    const scoped = scope === '__all'
+      ? filtered
+      : filtered.filter((entry) => this.getAnimationEntryScopes(entry.definition).has(scope));
+
+    return scoped.sort((left, right) => {
+      if (left.isComplete !== right.isComplete) {
+        return left.isComplete ? 1 : -1;
+      }
+      const categoryOrder = left.definition.category.localeCompare(right.definition.category);
+      if (categoryOrder !== 0) {
+        return categoryOrder;
+      }
+      return left.definition.id.localeCompare(right.definition.id);
+    });
+  }
+
+  private openMonsterListPicker(roomType: RoomType, stageId: MonsterStageScope): void {
+    const monsters = this.listMonstersByRoomType(roomType, stageId).sort((a, b) => a.name.localeCompare(b.name));
     if (monsters.length === 0) {
       this.clearSelectionOverlay();
-      this.updateStatus(`No enabled ${roomType} monster content found.`);
+      this.updateStatus(`No enabled ${roomType} monster content found${stageId ? ` for ${this.getMonsterScopeLabel(stageId)}` : ''}.`);
       return;
     }
 
@@ -212,13 +518,16 @@ export class DebugScene extends Phaser.Scene {
       elite: 'Select Elite',
       boss: 'Select Boss'
     };
-    const title = roomType === 'elite' || roomType === 'boss' ? titleMap[roomType] : titleMap.fight;
+    const baseTitle = roomType === 'elite' || roomType === 'boss' ? titleMap[roomType] : titleMap.fight;
+    const titleLabel = stageId ? `${baseTitle} · ${this.getMonsterScopeLabel(stageId)}` : `${baseTitle} · All Stage-Assigned`;
+    const title = stageId ? `${baseTitle} · ${this.getStageLabel(stageId)}` : `${baseTitle} · All Stages`;
 
+    void title;
     this.showSelectionOverlay(
-      title,
+      titleLabel,
       monsters.map((monster) => ({ id: monster.id, label: monster.name })),
       (monsterId) => this.spawnMonsterById(roomType, monsterId),
-      () => this.openMonsterCategoryPicker()
+      () => this.openMonsterStagePicker(roomType)
     );
   }
 
@@ -429,7 +738,8 @@ export class DebugScene extends Phaser.Scene {
   }
 
   private nextMonster(roomType: RoomType): MonsterEntry | null {
-    const monsters = this.listMonstersByRoomType(roomType);
+    const stageId = this.getCurrentStageId();
+    const monsters = this.listMonstersByRoomType(roomType, stageId);
     if (monsters.length === 0) {
       return null;
     }
@@ -438,14 +748,183 @@ export class DebugScene extends Phaser.Scene {
     return monster;
   }
 
-  private listMonstersByRoomType(roomType: RoomType): MonsterEntry[] {
+  private listMonstersByRoomType(roomType: RoomType, stageId: MonsterStageScope = null): MonsterEntry[] {
+    const stageMonsterIds = stageId === null
+      ? this.getAssignedMonsterIdsForRoomType(roomType)
+      : stageId === '__legacy'
+        ? this.getLegacyMonsterIdsForRoomType(roomType)
+        : this.getMonsterIdsForStage(roomType, stageId);
     return contentRegistry.listEnabled<MonsterEntry>('monster').filter((monster) => {
       const isBoss = monster.role === 'boss' || monster.rarity === 'boss';
       const isElite = monster.role === 'elite' || monster.rarity === 'elite';
-      if (roomType === 'boss') return isBoss;
-      if (roomType === 'elite') return isElite;
-      return !isBoss && !isElite;
+      const matchesRoomType = roomType === 'boss'
+        ? isBoss
+        : roomType === 'elite'
+          ? isElite
+          : !isBoss && !isElite;
+      if (!matchesRoomType) {
+        return false;
+      }
+      return stageMonsterIds.has(monster.id);
     });
+  }
+
+  private getStageEntries(): StageEntry[] {
+    return this.gameState.stageSystem.listStages() as StageEntry[];
+  }
+
+  private getCurrentStageId(): string | null {
+    return this.gameState.stageSystem.getStageByIndex(this.gameState.runState.stage)?.id ?? null;
+  }
+
+  private getMonsterIdsForStage(roomType: RoomType, stageId: string): Set<string> {
+    const stage = this.getStageEntries().find((entry) => entry.id === stageId);
+    if (!stage) {
+      return new Set<string>();
+    }
+    if (roomType === 'boss') {
+      return new Set(stage.bossId ? [stage.bossId] : []);
+    }
+    const pool = new Set(stage.monsterPool ?? []);
+    const eliteIds = new Set(contentRegistry.listEnabled<MonsterEntry>('monster')
+      .filter((monster) => monster.role === 'elite' || monster.rarity === 'elite')
+      .map((monster) => monster.id));
+    const bossIds = new Set(contentRegistry.listEnabled<MonsterEntry>('monster')
+      .filter((monster) => monster.role === 'boss' || monster.rarity === 'boss')
+      .map((monster) => monster.id));
+    if (roomType === 'elite') {
+      return new Set([...pool].filter((id) => eliteIds.has(id)));
+    }
+    return new Set([...pool].filter((id) => !eliteIds.has(id) && !bossIds.has(id)));
+  }
+
+  private getAssignedMonsterIdsForRoomType(roomType: RoomType): Set<string> {
+    const ids = new Set<string>();
+    for (const stage of this.getStageEntries()) {
+      for (const id of this.getMonsterIdsForStage(roomType, stage.id)) {
+        ids.add(id);
+      }
+    }
+    return ids;
+  }
+
+  private getLegacyMonsterIdsForRoomType(roomType: RoomType): Set<string> {
+    const assigned = this.getAssignedMonsterIdsForRoomType(roomType);
+    const legacyIds = contentRegistry.listEnabled<MonsterEntry>('monster')
+      .filter((monster) => {
+        const isBoss = monster.role === 'boss' || monster.rarity === 'boss';
+        const isElite = monster.role === 'elite' || monster.rarity === 'elite';
+        return roomType === 'boss'
+          ? isBoss
+          : roomType === 'elite'
+            ? isElite
+            : !isBoss && !isElite;
+      })
+      .map((monster) => monster.id)
+      .filter((id) => !assigned.has(id));
+    return new Set(legacyIds);
+  }
+
+  private getStageNumber(stageId: string): number {
+    const index = this.getStageEntries().findIndex((entry) => entry.id === stageId);
+    return index >= 0 ? index + 1 : 0;
+  }
+
+  private getStageLabel(stageId: string): string {
+    const stage = this.getStageEntries().find((entry) => entry.id === stageId);
+    if (!stage) {
+      return stageId;
+    }
+    const stageNumber = this.getStageNumber(stageId);
+    return stageNumber > 0 ? `Stage ${stageNumber} (${stage.name})` : stage.name;
+  }
+
+  private getMonsterScopeLabel(stageId: MonsterStageScope): string {
+    if (stageId === '__legacy') {
+      return 'Legacy / Unassigned';
+    }
+    if (stageId === null) {
+      return 'All Stage-Assigned';
+    }
+    return this.getStageLabel(stageId);
+  }
+
+  private getAnimationStageScopes(filter: AnimationAuditFilter): Array<{ id: AnimationStageScope; label: string; count: number }> {
+    const entries = this.getAnimationAuditEntries(filter, '__all');
+    const scopeCounts = new Map<AnimationStageScope, number>();
+    scopeCounts.set('__all', entries.length);
+    for (const entry of entries) {
+      for (const scope of this.getAnimationEntryScopes(entry.definition)) {
+        scopeCounts.set(scope, (scopeCounts.get(scope) ?? 0) + 1);
+      }
+    }
+
+    const scopes: Array<{ id: AnimationStageScope; label: string; count: number }> = [
+      { id: '__all', label: 'All Assets', count: scopeCounts.get('__all') ?? 0 }
+    ];
+    for (const stage of this.getStageEntries()) {
+      const count = scopeCounts.get(stage.id) ?? 0;
+      if (count > 0) {
+        scopes.push({ id: stage.id, label: this.getStageLabel(stage.id), count });
+      }
+    }
+    if ((scopeCounts.get('__shared') ?? 0) > 0) {
+      scopes.push({ id: '__shared', label: 'Shared / Global', count: scopeCounts.get('__shared') ?? 0 });
+    }
+    if ((scopeCounts.get('__legacy') ?? 0) > 0) {
+      scopes.push({ id: '__legacy', label: 'Legacy / Unassigned', count: scopeCounts.get('__legacy') ?? 0 });
+    }
+    return scopes;
+  }
+
+  private getAnimationScopeLabel(scope: AnimationStageScope): string {
+    if (scope === '__all') {
+      return 'All Assets';
+    }
+    if (scope === '__shared') {
+      return 'Shared / Global';
+    }
+    if (scope === '__legacy') {
+      return 'Legacy / Unassigned';
+    }
+    return this.getStageLabel(scope);
+  }
+
+  private getAnimationEntryScopes(definition: AnimationSequenceDefinition): Set<AnimationStageScope> {
+    if (definition.category === 'monster') {
+      return this.getMonsterAnimationScopes(definition.assetId);
+    }
+    if (definition.category === 'boss') {
+      return this.getBossAnimationScopes(definition.assetId);
+    }
+    return new Set<AnimationStageScope>(['__shared']);
+  }
+
+  private getMonsterAnimationScopes(monsterId: string): Set<AnimationStageScope> {
+    const scopes = new Set<AnimationStageScope>();
+    for (const stage of this.getStageEntries()) {
+      if (stage.monsterPool?.includes(monsterId)) {
+        scopes.add(stage.id);
+      }
+    }
+    if (scopes.size === 0) {
+      scopes.add('__legacy');
+    }
+    return scopes;
+  }
+
+  private getBossAnimationScopes(assetId: string): Set<AnimationStageScope> {
+    const scopes = new Set<AnimationStageScope>();
+    const bossMonsterId = assetId.startsWith('boss_') ? `mon_${assetId}` : assetId;
+    for (const stage of this.getStageEntries()) {
+      if (stage.bossId === bossMonsterId) {
+        scopes.add(stage.id);
+      }
+    }
+    if (scopes.size === 0) {
+      scopes.add('__legacy');
+    }
+    return scopes;
   }
 
   private showSelectionOverlay(
@@ -464,8 +943,8 @@ export class DebugScene extends Phaser.Scene {
     const panel = this.add.rectangle(width / 2, height / 2, width - 120, height - 200, COLORS.panel, 0.98).setStrokeStyle(2, COLORS.gold, 0.55);
     const titleText = this.add.text(width / 2, 120, title, {
       color: '#ffca6b',
-      fontFamily: FONT_FAMILY,
-      fontSize: '30px',
+      fontFamily: DEBUG_FONT_FAMILY,
+      fontSize: '34px',
       fontStyle: 'bold'
     }).setOrigin(0.5);
 
@@ -488,7 +967,7 @@ export class DebugScene extends Phaser.Scene {
       const startY = 200;
       pageEntries.forEach((entry, index) => {
         const y = startY + index * (buttonHeight + gap);
-        const button = new Button(this, width / 2, y, buttonWidth, buttonHeight, entry.label, () => onSelect(entry.id), { fontSize: '20px' });
+        const button = new Button(this, width / 2, y, buttonWidth, buttonHeight, entry.label, () => onSelect(entry.id), { fontSize: '22px', fontFamily: DEBUG_FONT_FAMILY });
         dynamicObjects.push(button);
         overlay.add(button);
       });
@@ -500,15 +979,15 @@ export class DebugScene extends Phaser.Scene {
           return;
         }
         this.clearSelectionOverlay();
-      });
+      }, { fontFamily: DEBUG_FONT_FAMILY });
       dynamicObjects.push(backButton);
       overlay.add(backButton);
 
       if (totalPages > 1) {
         const pageText = this.add.text(width / 2, height - 110, `${page + 1}/${totalPages}`, {
           color: '#f6f7ff',
-          fontFamily: FONT_FAMILY,
-          fontSize: '20px'
+          fontFamily: DEBUG_FONT_FAMILY,
+          fontSize: '22px'
         }).setOrigin(0.5);
         dynamicObjects.push(pageText);
         overlay.add(pageText);
@@ -516,11 +995,11 @@ export class DebugScene extends Phaser.Scene {
         const prevButton = new Button(this, width / 2 + 70, height - 110, 120, 56, 'Prev', () => {
           page = (page - 1 + totalPages) % totalPages;
           renderPage();
-        });
+        }, { fontFamily: DEBUG_FONT_FAMILY });
         const nextButton = new Button(this, width / 2 + 210, height - 110, 120, 56, 'Next', () => {
           page = (page + 1) % totalPages;
           renderPage();
-        });
+        }, { fontFamily: DEBUG_FONT_FAMILY });
         dynamicObjects.push(prevButton, nextButton);
         overlay.add([prevButton, nextButton]);
       }
