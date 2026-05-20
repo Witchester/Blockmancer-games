@@ -4,9 +4,31 @@ import { BLOCK_ANIM } from '../utils/constants';
 
 export type AssetKind = 'sprite' | 'icon' | 'audio' | 'background' | 'ui';
 
+export type AssetManifestType =
+  | 'board_block'
+  | 'sprite'
+  | 'pose_sheet'
+  | 'effect'
+  | 'icon'
+  | 'stage_background'
+  | 'boss_arena'
+  | 'ui'
+  | 'portrait'
+  | 'story'
+  | 'audio'
+  | 'font'
+  | 'placeholder';
+
 export type AssetManifestEntry = {
   key: string;
+  type?: AssetManifestType;
+  primaryPath?: string;
   path: string;
+  fallbackPaths?: string[];
+  sourceSize?: string;
+  runtimeSize?: string;
+  category?: string;
+  tags?: string[];
   kind: AssetKind;
 };
 
@@ -47,29 +69,38 @@ const CONTENT_ASSET_SOURCES: ContentAssetSource[] = [
   { contentType: 'boardBlock', folder: 'board-blocks', field: 'spriteKey', kind: 'sprite' },
   { contentType: 'collectible', folder: 'collectibles', field: 'iconKey', kind: 'icon' },
   { contentType: 'currency', folder: 'currencies', field: 'iconKey', kind: 'icon' },
-  { contentType: 'hero', folder: 'heroes', field: 'portraitKey', kind: 'sprite' },
-  { contentType: 'item', folder: 'items', field: 'iconKey', kind: 'icon' },
-  { contentType: 'mapNode', folder: 'map', field: 'iconKey', kind: 'icon' },
-  { contentType: 'monster', folder: 'monsters', field: 'spriteKey', kind: 'sprite' },
-  { contentType: 'npc', folder: 'npc', field: 'spriteKey', kind: 'sprite' },
-  { contentType: 'oopsie', folder: 'oopsies', field: 'iconKey', kind: 'icon' },
-  { contentType: 'relic', folder: 'relics', field: 'iconKey', kind: 'icon' },
+  { contentType: 'hero', folder: 'portraits/heroes', field: 'portraitKey', kind: 'sprite' },
+  { contentType: 'item', folder: 'icons/items', field: 'iconKey', kind: 'icon' },
+  { contentType: 'mapNode', folder: 'icons/map-nodes', field: 'iconKey', kind: 'icon' },
+  { contentType: 'monster', folder: 'sprites/monsters', field: 'spriteKey', kind: 'sprite' },
+  { contentType: 'npc', folder: 'portraits/npcs', field: 'spriteKey', kind: 'sprite' },
+  { contentType: 'oopsie', folder: 'icons/oopsies', field: 'iconKey', kind: 'icon' },
+  { contentType: 'relic', folder: 'icons/relics', field: 'iconKey', kind: 'icon' },
   { contentType: 'roomEvent', folder: 'story', field: 'iconKey', kind: 'icon' },
   { contentType: 'roomEvent', folder: 'stages', field: 'backgroundKey', kind: 'background' },
-  { contentType: 'spell', folder: 'spells', field: 'iconKey', kind: 'icon' },
+  { contentType: 'spell', folder: 'icons/spells', field: 'iconKey', kind: 'icon' },
   { contentType: 'stage', folder: 'stages', field: 'backgroundKey', kind: 'background' },
-  { contentType: 'statusEffect', folder: 'status-effects', field: 'iconKey', kind: 'icon' },
-  { contentType: 'upgrade', folder: 'upgrades', field: 'iconKey', kind: 'icon' },
-  { contentType: 'weapon', folder: 'weapons', field: 'iconKey', kind: 'icon' }
+  { contentType: 'statusEffect', folder: 'icons/status-effects', field: 'iconKey', kind: 'icon' },
+  { contentType: 'upgrade', folder: 'icons/upgrades', field: 'iconKey', kind: 'icon' },
+  { contentType: 'weapon', folder: 'icons/weapons', field: 'iconKey', kind: 'icon' }
 ];
 
 export const CORE_IMAGE_ASSETS: AssetManifestEntry[] = [
-  { key: 'asset_missing', path: '/assets/ui/fallback-missing.png', kind: 'sprite' },
-  { key: 'asset_missing_icon', path: '/assets/ui/fallback-icon.png', kind: 'icon' },
-  { key: 'asset_missing_block', path: '/assets/board-blocks/fallback-block.png', kind: 'sprite' },
-  { key: 'asset_missing_background', path: '/assets/stages/fallback-background.png', kind: 'background' },
-  { key: 'ui_button_default', path: '/assets/ui/button-default.png', kind: 'ui' },
-  { key: 'ui_card_default', path: '/assets/ui/card-default.png', kind: 'ui' }
+  { key: 'asset_missing', type: 'placeholder', path: '/assets/ui/fallback-missing.png', primaryPath: '/assets/ui/fallback-missing.png', kind: 'sprite' },
+  { key: 'asset_missing_icon', type: 'placeholder', path: '/assets/ui/fallback-icon.png', primaryPath: '/assets/ui/fallback-icon.png', kind: 'icon' },
+  { key: 'asset_missing_block', type: 'placeholder', path: '/assets/board-blocks/fallback-block.png', primaryPath: '/assets/board-blocks/fallback-block.png', kind: 'sprite' },
+  { key: 'asset_missing_background', type: 'placeholder', path: '/assets/stages/fallback-background.png', primaryPath: '/assets/stages/fallback-background.png', kind: 'background' },
+  { key: 'ui_button_default', type: 'ui', path: '/assets/ui/buttons/ui_button_default.png', primaryPath: '/assets/ui/buttons/ui_button_default.png', fallbackPaths: ['/assets/ui/button-default.png'], kind: 'ui' },
+  { key: 'ui_card_default', type: 'ui', path: '/assets/ui/panels/ui_card_default.png', primaryPath: '/assets/ui/panels/ui_card_default.png', fallbackPaths: ['/assets/ui/card-default.png'], kind: 'ui' },
+  { key: 'ui_panel_default', type: 'ui', path: '/assets/ui/panels/ui_panel_default.png', primaryPath: '/assets/ui/panels/ui_panel_default.png', kind: 'ui' },
+  { key: 'ui_panel_battle', type: 'ui', path: '/assets/ui/panels/ui_panel_battle.png', primaryPath: '/assets/ui/panels/ui_panel_battle.png', kind: 'ui' },
+  { key: 'ui_panel_board', type: 'ui', path: '/assets/ui/panels/ui_panel_board.png', primaryPath: '/assets/ui/panels/ui_panel_board.png', kind: 'ui' },
+  { key: 'ui_panel_controls', type: 'ui', path: '/assets/ui/panels/ui_panel_controls.png', primaryPath: '/assets/ui/panels/ui_panel_controls.png', kind: 'ui' },
+  { key: 'ui_event_log_strip', type: 'ui', path: '/assets/ui/panels/ui_event_log_strip.png', primaryPath: '/assets/ui/panels/ui_event_log_strip.png', kind: 'ui' },
+  { key: 'ui_hold_panel', type: 'ui', path: '/assets/ui/panels/ui_hold_panel.png', primaryPath: '/assets/ui/panels/ui_hold_panel.png', kind: 'ui' },
+  { key: 'ui_next_queue_panel', type: 'ui', path: '/assets/ui/panels/ui_next_queue_panel.png', primaryPath: '/assets/ui/panels/ui_next_queue_panel.png', kind: 'ui' },
+  { key: 'ui_stat_card', type: 'ui', path: '/assets/ui/panels/ui_stat_card.png', primaryPath: '/assets/ui/panels/ui_stat_card.png', kind: 'ui' },
+  { key: 'ui_inventory_compact', type: 'ui', path: '/assets/ui/panels/ui_inventory_compact.png', primaryPath: '/assets/ui/panels/ui_inventory_compact.png', kind: 'ui' }
 ];
 
 export const AUDIO_ASSETS: AssetManifestEntry[] = [
@@ -301,7 +332,7 @@ export function createContentImageAssets(): AssetManifestEntry[] {
   }
 
   for (const hero of contentRegistry.list<ContentAssetEntry>('hero')) {
-    addAsset(assets, hero.id, 'heroes', 'sprite');
+    addAssetPath(assets, hero.id, `/assets/sprites/heroes/${hero.id}/idle/${hero.id}__idle__f00.png`, 'sprite');
     addAssetPath(assets, `${hero.id}__pose_sheet_2x2`, `/assets/sprites/heroes/${hero.id}/sheet/${hero.id}__pose_sheet_2x2.png`, 'sprite');
     addAssetPath(assets, `${hero.id}__extended_sheet_2x2`, `/assets/sprites/heroes/${hero.id}/sheet/${hero.id}__extended_sheet_2x2.png`, 'sprite');
     for (const state of ['idle', 'cast_spell', 'attack', 'hit', 'victory', 'defeat_tired', 'portrait', 'silhouette_locked']) {
@@ -318,7 +349,7 @@ export function createContentImageAssets(): AssetManifestEntry[] {
     const states = monster.id.startsWith('mon_boss_')
       ? ['idle', 'attack', 'hit', 'phase_change', 'special_attack', 'defeat', 'intro_portrait']
       : ['idle', 'attack', 'hit', 'defeat'];
-    addAsset(assets, actorId, isBoss ? 'bosses' : 'monsters', 'sprite');
+    addAssetPath(assets, actorId, isBoss ? `/assets/sprites/bosses/${actorId}/idle/${actorId}__idle__f00.png` : `/assets/sprites/monsters/${actorId}/idle/${actorId}__idle__f00.png`, 'sprite');
     addAssetPath(assets, `${actorId}__pose_sheet_2x2`, `/assets/${folder}/${actorId}/sheet/${actorId}__pose_sheet_2x2.png`, 'sprite');
     if (isBoss) {
       addAssetPath(assets, `${actorId}__extended_sheet_2x2`, `/assets/${folder}/${actorId}/sheet/${actorId}__extended_sheet_2x2.png`, 'sprite');
@@ -339,7 +370,7 @@ export function createContentImageAssets(): AssetManifestEntry[] {
     addAsset(assets, `bg_stage_${slug}_battle_far`, 'stages', 'background');
     addAsset(assets, `bg_stage_${slug}_battle_mid`, 'stages', 'background');
     addAsset(assets, `bg_stage_${slug}_battle_near`, 'stages', 'background');
-    addAsset(assets, `bg_map_${slug}`, 'stage-backgrounds/route-scenes', 'background');
+    addAssetPath(assets, `bg_map_${slug}`, `/assets/stages/${stage.id}/map/bg_map_${slug}.png`, 'background');
     if (boss) {
       addAsset(assets, `bg_boss_${boss}_arena`, 'stages', 'background');
     }
@@ -363,7 +394,7 @@ export function createContentImageAssets(): AssetManifestEntry[] {
     ['id', 'icons/oopsies', 'oopsie'],
     ['id', 'icons/currencies', 'currency'],
     ['id', 'icons/collectibles', 'collectible'],
-    ['id', 'icons/events', 'roomEvent']
+    ['id', 'icons/room-events', 'roomEvent']
   ];
   for (const [, folder, contentType] of iconSources) {
     for (const entry of contentRegistry.list<ContentAssetEntry>(contentType)) {
@@ -380,7 +411,7 @@ export function createContentImageAssets(): AssetManifestEntry[] {
   for (const hero of contentRegistry.list<ContentAssetEntry>('hero')) {
     for (const stage of contentRegistry.list<ContentAssetEntry>('stage')) {
       addAsset(assets, `ico_route_trigger_${hero.id}_${stage.id}`, 'icons/story-routes', 'icon');
-      addAsset(assets, `bg_route_${hero.id}_${stage.id}`, 'stage-backgrounds/route-scenes', 'background');
+      addAssetPath(assets, `bg_route_${hero.id}_${stage.id}`, `/assets/stages/${stage.id}/route-scenes/bg_route_${hero.id}_${stage.id}.png`, 'background');
     }
     for (const expression of ['neutral', 'happy', 'worried', 'determined']) {
       addAsset(assets, `prt_route_${hero.id}_${expression}`, 'portraits/heroes', 'sprite');
@@ -411,3 +442,188 @@ export const ASSET_MANIFEST: AssetManifestEntry[] = [
   ...IMAGE_ASSETS,
   ...AUDIO_ASSETS
 ];
+
+const STAGE_CANONICAL_IDS = [
+  'stage_sprinkle_sewers',
+  'stage_goblin_workshop',
+  'stage_frosty_pantry',
+  'stage_pillow_castle',
+  'stage_starfall_arcade',
+  'stage_bloxley_block_palace'
+] as const;
+
+const STAGE_ID_ALIAS: Record<string, string> = {
+  stage_sprinkle_sewers: 'stage_sprinkle_sewers',
+  sprinkle_sewers: 'stage_sprinkle_sewers',
+  '1': 'stage_sprinkle_sewers',
+  stage_goblin_workshop: 'stage_goblin_workshop',
+  goblin_workshop: 'stage_goblin_workshop',
+  '2': 'stage_goblin_workshop',
+  stage_frosty_pantry: 'stage_frosty_pantry',
+  frosty_pantry: 'stage_frosty_pantry',
+  '3': 'stage_frosty_pantry',
+  stage_pillow_castle: 'stage_pillow_castle',
+  pillow_castle: 'stage_pillow_castle',
+  '4': 'stage_pillow_castle',
+  stage_starfall_arcade: 'stage_starfall_arcade',
+  starfall_arcade: 'stage_starfall_arcade',
+  '5': 'stage_starfall_arcade',
+  stage_bloxley_block_palace: 'stage_bloxley_block_palace',
+  bloxley_block_palace: 'stage_bloxley_block_palace',
+  '6': 'stage_bloxley_block_palace'
+};
+
+const BOSS_ID_ALIAS: Record<string, string> = {
+  boss_cupcake_slime_king: 'boss_cupcake_slime_king',
+  mon_boss_cupcake_slime_king: 'boss_cupcake_slime_king',
+  boss_prototype_no_7: 'boss_prototype_no_7',
+  mon_boss_prototype_no_7: 'boss_prototype_no_7',
+  boss_gelato_golem: 'boss_gelato_golem',
+  mon_boss_gelato_golem: 'boss_gelato_golem',
+  boss_sir_snore_a_lot: 'boss_sir_snore_a_lot',
+  mon_boss_sir_snore_a_lot: 'boss_sir_snore_a_lot',
+  boss_high_score_hydra: 'boss_high_score_hydra',
+  mon_boss_high_score_hydra: 'boss_high_score_hydra',
+  boss_king_bloxley: 'boss_king_bloxley',
+  mon_boss_king_bloxley: 'boss_king_bloxley'
+};
+
+const BOSS_ARENA_KEYS: Record<string, string> = {
+  boss_cupcake_slime_king: 'bg_boss_cupcake_slime_king_arena',
+  boss_prototype_no_7: 'bg_boss_prototype_no_7_arena',
+  boss_gelato_golem: 'bg_boss_gelato_golem_arena',
+  boss_sir_snore_a_lot: 'bg_boss_sir_snore_a_lot_arena',
+  boss_high_score_hydra: 'bg_boss_high_score_hydra_arena',
+  boss_king_bloxley: 'bg_boss_king_bloxley_arena'
+};
+
+const PLACEHOLDER_BY_TYPE: Record<AssetManifestType, string> = {
+  board_block: 'asset_missing_block',
+  sprite: 'asset_missing',
+  pose_sheet: 'asset_missing',
+  effect: 'missing_vfx',
+  icon: 'asset_missing_icon',
+  stage_background: 'asset_missing_background',
+  boss_arena: 'asset_missing_background',
+  ui: 'missing_ui',
+  portrait: 'missing_portrait',
+  story: 'asset_missing_background',
+  audio: 'sfx_button_tap',
+  font: 'font_pixel_body',
+  placeholder: 'asset_missing'
+};
+
+const ASSET_MANIFEST_MAP = new Map(ASSET_MANIFEST.map((entry) => [entry.key, entry]));
+
+export function normalizeStageId(stageId: string | number | null | undefined): string | null {
+  if (stageId === null || stageId === undefined) {
+    return null;
+  }
+  const normalized = String(stageId).trim().toLowerCase();
+  return STAGE_ID_ALIAS[normalized] ?? null;
+}
+
+export function normalizeBossId(bossId: string | null | undefined): string | null {
+  if (!bossId) {
+    return null;
+  }
+  const normalized = bossId.trim().toLowerCase();
+  return BOSS_ID_ALIAS[normalized] ?? (normalized.startsWith('boss_') ? normalized : null);
+}
+
+export function getAssetEntry(key: string | null | undefined): AssetManifestEntry | null {
+  if (!key) {
+    return null;
+  }
+  return ASSET_MANIFEST_MAP.get(key) ?? null;
+}
+
+export function getAssetPath(key: string | null | undefined): string | null {
+  const entry = getAssetEntry(key);
+  return entry?.primaryPath ?? entry?.path ?? null;
+}
+
+export function getAssetFallbacks(key: string | null | undefined): string[] {
+  const entry = getAssetEntry(key);
+  return entry?.fallbackPaths ?? [];
+}
+
+export function getPlaceholderForType(type: AssetManifestType): string {
+  return PLACEHOLDER_BY_TYPE[type] ?? 'asset_missing';
+}
+
+export function getStageBattleBackgroundKeys(stageId: string | number | null | undefined): string[] {
+  const canonicalId = normalizeStageId(stageId);
+  if (!canonicalId) {
+    return [];
+  }
+  const slug = canonicalId.replace(/^stage_/, '');
+  return [
+    `bg_stage_${slug}_battle_far`,
+    `bg_stage_${slug}_battle_mid`,
+    `bg_stage_${slug}_battle_near`,
+    `bg_stage_${slug}_battle`
+  ];
+}
+
+export function getBossArenaBackgroundKey(bossId: string | null | undefined, stageId?: string | number | null): string | null {
+  const normalizedBoss = normalizeBossId(bossId);
+  if (normalizedBoss && BOSS_ARENA_KEYS[normalizedBoss]) {
+    return BOSS_ARENA_KEYS[normalizedBoss];
+  }
+  const stageKeys = getStageBattleBackgroundKeys(stageId ?? null);
+  return stageKeys[1] ?? stageKeys[0] ?? null;
+}
+
+export function getBoardBlockFramePaths(blockId: string, animationName: string): string[] {
+  const stem = normalizeFinalBoardBlockId(blockId);
+  const count = animationName === 'clear' ? BLOCK_ANIM.CLEAR_FRAME_COUNT : BLOCK_ANIM.GLOW_FRAME_COUNT;
+  return Array.from({ length: count }, (_, index) => {
+    const frame = `${stem}__${animationName}__f${String(index).padStart(2, '0')}`;
+    return `/assets/sprites/board-blocks/${stem}/${animationName}/${frame}.png`;
+  });
+}
+
+export function getHeroAnimationFramePaths(heroId: string, state: string): string[] {
+  return [`/assets/sprites/heroes/${heroId}/${state}/${heroId}__${state}__f00.png`];
+}
+
+export function getMonsterPoseSheetPath(monsterId: string): string {
+  const actorId = monsterId.replace(/^mon_boss_/, 'boss_');
+  if (actorId.startsWith('boss_')) {
+    return `/assets/sprites/bosses/${actorId}/sheet/${actorId}__pose_sheet_2x2.png`;
+  }
+  return `/assets/sprites/monsters/${monsterId}/sheet/${monsterId}__pose_sheet_2x2.png`;
+}
+
+export function getBossPoseSheetPath(bossId: string): string {
+  const actorId = normalizeBossId(bossId) ?? bossId;
+  return `/assets/sprites/bosses/${actorId}/sheet/${actorId}__pose_sheet_2x2.png`;
+}
+
+export function getIconPath(category: string, key: string): string {
+  return `/assets/icons/${category}/${key}.png`;
+}
+
+export function getBoardFrameAssetKey(): string {
+  return 'ui_panel_board';
+}
+
+export function getUiPanelAssetKey(panelId: string): string {
+  const panelMap: Record<string, string> = {
+    default: 'ui_panel_default',
+    battle: 'ui_panel_battle',
+    board: 'ui_panel_board',
+    controls: 'ui_panel_controls',
+    event_log: 'ui_event_log_strip',
+    hold: 'ui_hold_panel',
+    next_queue: 'ui_next_queue_panel',
+    stat_card: 'ui_stat_card',
+    inventory_compact: 'ui_inventory_compact'
+  };
+  return panelMap[panelId] ?? 'ui_panel_default';
+}
+
+export function getSupportedStageIds(): readonly string[] {
+  return STAGE_CANONICAL_IDS;
+}

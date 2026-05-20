@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { ASSET_MANIFEST, type AssetKind, type AssetManifestEntry } from '../data/assets';
+import { ASSET_MANIFEST, getAssetEntry, getAssetFallbacks, getAssetPath, getBoardFrameAssetKey, getBossArenaBackgroundKey, getPlaceholderForType, getStageBattleBackgroundKeys, getUiPanelAssetKey, normalizeBossId, normalizeStageId, type AssetKind, type AssetManifestEntry } from '../data/assets';
 import {
   ANIMATION_DEFINITIONS,
   getAnimationDefinition,
@@ -1305,3 +1305,6 @@ export class AssetSystem {
     return contentRegistry.getStage(stageId) as AssetRefContent | null;
   }
 }
+
+
+

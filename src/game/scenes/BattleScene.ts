@@ -903,9 +903,21 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private addStageBackgroundLayers(): void {
-    const far = this.sharedGame.assetSystem.getStageBackground(this, this.sharedGame.runState.stage, 'battleFar');
-    const mid = this.sharedGame.assetSystem.getStageBackground(this, this.sharedGame.runState.stage, 'battleMid');
-    const near = this.sharedGame.assetSystem.getStageBackground(this, this.sharedGame.runState.stage, 'battleNear');
+    const state = this.sharedGame.runState;
+    const enemy = state.activeEnemy;
+    const isBossRoom = enemy?.roomType === 'boss' || Boolean(enemy?.id?.includes('boss'));
+
+    if (isBossRoom) {
+      const bossArena = this.sharedGame.assetSystem.getStageBackground(this, state.stage, 'bossArena');
+      this.sharedGame.assetSystem.createImageByAssetKey(this, bossArena, 'stageBackground', this.screenWidth / 2, this.screenHeight / 2, { kind: 'background' })
+        .setDisplaySize(this.screenWidth, this.screenHeight)
+        .setAlpha(0.2);
+      return;
+    }
+
+    const far = this.sharedGame.assetSystem.getStageBackground(this, state.stage, 'battleFar');
+    const mid = this.sharedGame.assetSystem.getStageBackground(this, state.stage, 'battleMid');
+    const near = this.sharedGame.assetSystem.getStageBackground(this, state.stage, 'battleNear');
     const layers = [far, mid, near].filter((key, index, all) => all.indexOf(key) === index);
 
     layers.forEach((key, index) => {
@@ -3502,3 +3514,4 @@ export class BattleScene extends Phaser.Scene {
     };
   }
 }
+

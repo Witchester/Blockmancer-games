@@ -1,0 +1,516 @@
+# ASSET Folder Structure Standardization Audit
+
+Generated: 2026-05-20T09:00:29.103Z
+
+## Missing primary files
+- `bg_event_arcade` -> `/assets/stages/bg_event_arcade.png`
+- `bg_event_festival` -> `/assets/stages/bg_event_festival.png`
+- `bg_event_fountain` -> `/assets/stages/bg_event_fountain.png`
+- `bg_event_manual` -> `/assets/stages/bg_event_manual.png`
+- `bg_event_well` -> `/assets/stages/bg_event_well.png`
+- `bg_event_workshop` -> `/assets/stages/bg_event_workshop.png`
+- `block_blue` -> `/assets/board-blocks/block_blue.png`
+- `block_blue__base__f00` -> `/assets/sprites/board-blocks/block_blue/base/block_blue__base__f00.png`
+- `block_blue__clear__f00` -> `/assets/sprites/board-blocks/block_blue/clear/block_blue__clear__f00.png`
+- `block_blue__clear__f01` -> `/assets/sprites/board-blocks/block_blue/clear/block_blue__clear__f01.png`
+- `block_blue__clear__f02` -> `/assets/sprites/board-blocks/block_blue/clear/block_blue__clear__f02.png`
+- `block_blue__clear__f03` -> `/assets/sprites/board-blocks/block_blue/clear/block_blue__clear__f03.png`
+- `block_blue__clear__f04` -> `/assets/sprites/board-blocks/block_blue/clear/block_blue__clear__f04.png`
+- `block_blue__glow__f00` -> `/assets/sprites/board-blocks/block_blue/glow/block_blue__glow__f00.png`
+- `block_blue__glow__f01` -> `/assets/sprites/board-blocks/block_blue/glow/block_blue__glow__f01.png`
+- `block_blue__glow__f02` -> `/assets/sprites/board-blocks/block_blue/glow/block_blue__glow__f02.png`
+- `block_bomb` -> `/assets/board-blocks/block_bomb.png`
+- `block_bomb__base__f00` -> `/assets/sprites/board-blocks/block_bomb/base/block_bomb__base__f00.png`
+- `block_bomb__explode__f00` -> `/assets/sprites/board-blocks/block_bomb/explode/block_bomb__explode__f00.png`
+- `block_bomb__explode__f01` -> `/assets/sprites/board-blocks/block_bomb/explode/block_bomb__explode__f01.png`
+- `block_bomb__explode__f02` -> `/assets/sprites/board-blocks/block_bomb/explode/block_bomb__explode__f02.png`
+- `block_bomb__explode__f03` -> `/assets/sprites/board-blocks/block_bomb/explode/block_bomb__explode__f03.png`
+- `block_bomb__explode__f04` -> `/assets/sprites/board-blocks/block_bomb/explode/block_bomb__explode__f04.png`
+- `block_bomb__explode__f05` -> `/assets/sprites/board-blocks/block_bomb/explode/block_bomb__explode__f05.png`
+- `block_bomb__glow__f00` -> `/assets/sprites/board-blocks/block_bomb/glow/block_bomb__glow__f00.png`
+- `block_bomb__glow__f01` -> `/assets/sprites/board-blocks/block_bomb/glow/block_bomb__glow__f01.png`
+- `block_bomb__glow__f02` -> `/assets/sprites/board-blocks/block_bomb/glow/block_bomb__glow__f02.png`
+- `block_bomb__idle__f00` -> `/assets/sprites/board-blocks/block_bomb/idle/block_bomb__idle__f00.png`
+- `block_bomb__idle__f01` -> `/assets/sprites/board-blocks/block_bomb/idle/block_bomb__idle__f01.png`
+- `block_bomb__idle__f02` -> `/assets/sprites/board-blocks/block_bomb/idle/block_bomb__idle__f02.png`
+- `block_bomb__idle__f03` -> `/assets/sprites/board-blocks/block_bomb/idle/block_bomb__idle__f03.png`
+- `block_cloud_junk` -> `/assets/board-blocks/block_cloud_junk.png`
+- `block_cloud_junk__base__f00` -> `/assets/sprites/board-blocks/block_cloud_junk/base/block_cloud_junk__base__f00.png`
+- `block_cloud_junk__expire_to_junk__f00` -> `/assets/sprites/board-blocks/block_cloud_junk/expire_to_junk/block_cloud_junk__expire_to_junk__f00.png`
+- `block_cloud_junk__expire_to_junk__f01` -> `/assets/sprites/board-blocks/block_cloud_junk/expire_to_junk/block_cloud_junk__expire_to_junk__f01.png`
+- `block_cloud_junk__expire_to_junk__f02` -> `/assets/sprites/board-blocks/block_cloud_junk/expire_to_junk/block_cloud_junk__expire_to_junk__f02.png`
+- `block_cloud_junk__expire_to_junk__f03` -> `/assets/sprites/board-blocks/block_cloud_junk/expire_to_junk/block_cloud_junk__expire_to_junk__f03.png`
+- `block_cloud_junk__expire_to_junk__f04` -> `/assets/sprites/board-blocks/block_cloud_junk/expire_to_junk/block_cloud_junk__expire_to_junk__f04.png`
+- `block_cloud_junk__glow__f00` -> `/assets/sprites/board-blocks/block_cloud_junk/glow/block_cloud_junk__glow__f00.png`
+- `block_cloud_junk__hover__f00` -> `/assets/sprites/board-blocks/block_cloud_junk/hover/block_cloud_junk__hover__f00.png`
+- `block_cloud_junk__hover__f01` -> `/assets/sprites/board-blocks/block_cloud_junk/hover/block_cloud_junk__hover__f01.png`
+- `block_cloud_junk__hover__f02` -> `/assets/sprites/board-blocks/block_cloud_junk/hover/block_cloud_junk__hover__f02.png`
+- `block_cloud_junk__hover__f03` -> `/assets/sprites/board-blocks/block_cloud_junk/hover/block_cloud_junk__hover__f03.png`
+- `block_confetti` -> `/assets/board-blocks/block_confetti.png`
+- `block_confetti__base__f00` -> `/assets/sprites/board-blocks/block_confetti/base/block_confetti__base__f00.png`
+- `block_confetti__clear__f00` -> `/assets/sprites/board-blocks/block_confetti/clear/block_confetti__clear__f00.png`
+- `block_confetti__clear__f01` -> `/assets/sprites/board-blocks/block_confetti/clear/block_confetti__clear__f01.png`
+- `block_confetti__clear__f02` -> `/assets/sprites/board-blocks/block_confetti/clear/block_confetti__clear__f02.png`
+- `block_confetti__clear__f03` -> `/assets/sprites/board-blocks/block_confetti/clear/block_confetti__clear__f03.png`
+- `block_confetti__clear__f04` -> `/assets/sprites/board-blocks/block_confetti/clear/block_confetti__clear__f04.png`
+- `block_confetti__glow__f00` -> `/assets/sprites/board-blocks/block_confetti/glow/block_confetti__glow__f00.png`
+- `block_confetti__glow__f01` -> `/assets/sprites/board-blocks/block_confetti/glow/block_confetti__glow__f01.png`
+- `block_confetti__glow__f02` -> `/assets/sprites/board-blocks/block_confetti/glow/block_confetti__glow__f02.png`
+- `block_confetti__idle__f00` -> `/assets/sprites/board-blocks/block_confetti/idle/block_confetti__idle__f00.png`
+- `block_confetti__idle__f01` -> `/assets/sprites/board-blocks/block_confetti/idle/block_confetti__idle__f01.png`
+- `block_confetti__idle__f02` -> `/assets/sprites/board-blocks/block_confetti/idle/block_confetti__idle__f02.png`
+- `block_confetti__idle__f03` -> `/assets/sprites/board-blocks/block_confetti/idle/block_confetti__idle__f03.png`
+- `block_crumb_junk` -> `/assets/board-blocks/block_crumb_junk.png`
+- `block_crumb_junk__base__f00` -> `/assets/sprites/board-blocks/block_crumb_junk/base/block_crumb_junk__base__f00.png`
+- `block_crumb_junk__break__f00` -> `/assets/sprites/board-blocks/block_crumb_junk/break/block_crumb_junk__break__f00.png`
+- `block_crumb_junk__break__f01` -> `/assets/sprites/board-blocks/block_crumb_junk/break/block_crumb_junk__break__f01.png`
+- `block_crumb_junk__break__f02` -> `/assets/sprites/board-blocks/block_crumb_junk/break/block_crumb_junk__break__f02.png`
+- `block_crumb_junk__break__f03` -> `/assets/sprites/board-blocks/block_crumb_junk/break/block_crumb_junk__break__f03.png`
+- `block_crumb_junk__break__f04` -> `/assets/sprites/board-blocks/block_crumb_junk/break/block_crumb_junk__break__f04.png`
+- `block_crumb_junk__damaged__f00` -> `/assets/sprites/board-blocks/block_crumb_junk/damaged/block_crumb_junk__damaged__f00.png`
+- `block_crumb_junk__damaged__f01` -> `/assets/sprites/board-blocks/block_crumb_junk/damaged/block_crumb_junk__damaged__f01.png`
+- `block_crumb_junk__damaged__f02` -> `/assets/sprites/board-blocks/block_crumb_junk/damaged/block_crumb_junk__damaged__f02.png`
+- `block_crumb_junk__glow__f00` -> `/assets/sprites/board-blocks/block_crumb_junk/glow/block_crumb_junk__glow__f00.png`
+- `block_cupcake` -> `/assets/board-blocks/block_cupcake.png`
+- `block_cupcake__base__f00` -> `/assets/sprites/board-blocks/block_cupcake/base/block_cupcake__base__f00.png`
+- `block_cupcake__clear__f00` -> `/assets/sprites/board-blocks/block_cupcake/clear/block_cupcake__clear__f00.png`
+- `block_cupcake__clear__f01` -> `/assets/sprites/board-blocks/block_cupcake/clear/block_cupcake__clear__f01.png`
+- `block_cupcake__clear__f02` -> `/assets/sprites/board-blocks/block_cupcake/clear/block_cupcake__clear__f02.png`
+- `block_cupcake__clear__f03` -> `/assets/sprites/board-blocks/block_cupcake/clear/block_cupcake__clear__f03.png`
+- `block_cupcake__clear__f04` -> `/assets/sprites/board-blocks/block_cupcake/clear/block_cupcake__clear__f04.png`
+- `block_cupcake__glow__f00` -> `/assets/sprites/board-blocks/block_cupcake/glow/block_cupcake__glow__f00.png`
+- `block_cupcake__glow__f01` -> `/assets/sprites/board-blocks/block_cupcake/glow/block_cupcake__glow__f01.png`
+- `block_cupcake__glow__f02` -> `/assets/sprites/board-blocks/block_cupcake/glow/block_cupcake__glow__f02.png`
+- `block_cupcake__idle__f00` -> `/assets/sprites/board-blocks/block_cupcake/idle/block_cupcake__idle__f00.png`
+- `block_cupcake__idle__f01` -> `/assets/sprites/board-blocks/block_cupcake/idle/block_cupcake__idle__f01.png`
+- `block_cupcake__idle__f02` -> `/assets/sprites/board-blocks/block_cupcake/idle/block_cupcake__idle__f02.png`
+- `block_cupcake__idle__f03` -> `/assets/sprites/board-blocks/block_cupcake/idle/block_cupcake__idle__f03.png`
+- `block_floaty_rune` -> `/assets/board-blocks/block_floaty_rune.png`
+- `block_floaty_rune__base__f00` -> `/assets/sprites/board-blocks/block_floaty_rune/base/block_floaty_rune__base__f00.png`
+- `block_floaty_rune__expire_to_junk__f00` -> `/assets/sprites/board-blocks/block_floaty_rune/expire_to_junk/block_floaty_rune__expire_to_junk__f00.png`
+- `block_floaty_rune__expire_to_junk__f01` -> `/assets/sprites/board-blocks/block_floaty_rune/expire_to_junk/block_floaty_rune__expire_to_junk__f01.png`
+- `block_floaty_rune__expire_to_junk__f02` -> `/assets/sprites/board-blocks/block_floaty_rune/expire_to_junk/block_floaty_rune__expire_to_junk__f02.png`
+- `block_floaty_rune__expire_to_junk__f03` -> `/assets/sprites/board-blocks/block_floaty_rune/expire_to_junk/block_floaty_rune__expire_to_junk__f03.png`
+- `block_floaty_rune__expire_to_junk__f04` -> `/assets/sprites/board-blocks/block_floaty_rune/expire_to_junk/block_floaty_rune__expire_to_junk__f04.png`
+- `block_floaty_rune__glow__f00` -> `/assets/sprites/board-blocks/block_floaty_rune/glow/block_floaty_rune__glow__f00.png`
+- `block_floaty_rune__hover__f00` -> `/assets/sprites/board-blocks/block_floaty_rune/hover/block_floaty_rune__hover__f00.png`
+- `block_floaty_rune__hover__f01` -> `/assets/sprites/board-blocks/block_floaty_rune/hover/block_floaty_rune__hover__f01.png`
+- `block_floaty_rune__hover__f02` -> `/assets/sprites/board-blocks/block_floaty_rune/hover/block_floaty_rune__hover__f02.png`
+- `block_floaty_rune__hover__f03` -> `/assets/sprites/board-blocks/block_floaty_rune/hover/block_floaty_rune__hover__f03.png`
+- `block_green` -> `/assets/board-blocks/block_green.png`
+- `block_green__base__f00` -> `/assets/sprites/board-blocks/block_green/base/block_green__base__f00.png`
+- `block_green__clear__f00` -> `/assets/sprites/board-blocks/block_green/clear/block_green__clear__f00.png`
+- `block_green__clear__f01` -> `/assets/sprites/board-blocks/block_green/clear/block_green__clear__f01.png`
+- `block_green__clear__f02` -> `/assets/sprites/board-blocks/block_green/clear/block_green__clear__f02.png`
+- `block_green__clear__f03` -> `/assets/sprites/board-blocks/block_green/clear/block_green__clear__f03.png`
+- `block_green__clear__f04` -> `/assets/sprites/board-blocks/block_green/clear/block_green__clear__f04.png`
+- `block_green__glow__f00` -> `/assets/sprites/board-blocks/block_green/glow/block_green__glow__f00.png`
+- `block_green__glow__f01` -> `/assets/sprites/board-blocks/block_green/glow/block_green__glow__f01.png`
+- `block_green__glow__f02` -> `/assets/sprites/board-blocks/block_green/glow/block_green__glow__f02.png`
+- `block_ice` -> `/assets/board-blocks/block_ice.png`
+- `block_ice__base__f00` -> `/assets/sprites/board-blocks/block_ice/base/block_ice__base__f00.png`
+- `block_ice__crack_clear__f00` -> `/assets/sprites/board-blocks/block_ice/crack_clear/block_ice__crack_clear__f00.png`
+- `block_ice__crack_clear__f01` -> `/assets/sprites/board-blocks/block_ice/crack_clear/block_ice__crack_clear__f01.png`
+- `block_ice__crack_clear__f02` -> `/assets/sprites/board-blocks/block_ice/crack_clear/block_ice__crack_clear__f02.png`
+- `block_ice__crack_clear__f03` -> `/assets/sprites/board-blocks/block_ice/crack_clear/block_ice__crack_clear__f03.png`
+- `block_ice__crack_clear__f04` -> `/assets/sprites/board-blocks/block_ice/crack_clear/block_ice__crack_clear__f04.png`
+- `block_ice__frost_shimmer__f00` -> `/assets/sprites/board-blocks/block_ice/frost_shimmer/block_ice__frost_shimmer__f00.png`
+- `block_ice__frost_shimmer__f01` -> `/assets/sprites/board-blocks/block_ice/frost_shimmer/block_ice__frost_shimmer__f01.png`
+- `block_ice__frost_shimmer__f02` -> `/assets/sprites/board-blocks/block_ice/frost_shimmer/block_ice__frost_shimmer__f02.png`
+- `block_ice__frost_shimmer__f03` -> `/assets/sprites/board-blocks/block_ice/frost_shimmer/block_ice__frost_shimmer__f03.png`
+- `block_ice__glow__f00` -> `/assets/sprites/board-blocks/block_ice/glow/block_ice__glow__f00.png`
+- `block_ice__glow__f01` -> `/assets/sprites/board-blocks/block_ice/glow/block_ice__glow__f01.png`
+- `block_ice__glow__f02` -> `/assets/sprites/board-blocks/block_ice/glow/block_ice__glow__f02.png`
+- `block_jelly` -> `/assets/board-blocks/block_jelly.png`
+- `block_jelly__base__f00` -> `/assets/sprites/board-blocks/block_jelly/base/block_jelly__base__f00.png`
+- `block_jelly__glow__f00` -> `/assets/sprites/board-blocks/block_jelly/glow/block_jelly__glow__f00.png`
+- `block_jelly__glow__f01` -> `/assets/sprites/board-blocks/block_jelly/glow/block_jelly__glow__f01.png`
+- `block_jelly__glow__f02` -> `/assets/sprites/board-blocks/block_jelly/glow/block_jelly__glow__f02.png`
+- `block_jelly__idle_wobble__f00` -> `/assets/sprites/board-blocks/block_jelly/idle_wobble/block_jelly__idle_wobble__f00.png`
+- `block_jelly__idle_wobble__f01` -> `/assets/sprites/board-blocks/block_jelly/idle_wobble/block_jelly__idle_wobble__f01.png`
+- `block_jelly__idle_wobble__f02` -> `/assets/sprites/board-blocks/block_jelly/idle_wobble/block_jelly__idle_wobble__f02.png`
+- `block_jelly__idle_wobble__f03` -> `/assets/sprites/board-blocks/block_jelly/idle_wobble/block_jelly__idle_wobble__f03.png`
+- `block_jelly__squish_clear__f00` -> `/assets/sprites/board-blocks/block_jelly/squish_clear/block_jelly__squish_clear__f00.png`
+- `block_jelly__squish_clear__f01` -> `/assets/sprites/board-blocks/block_jelly/squish_clear/block_jelly__squish_clear__f01.png`
+- `block_jelly__squish_clear__f02` -> `/assets/sprites/board-blocks/block_jelly/squish_clear/block_jelly__squish_clear__f02.png`
+- `block_jelly__squish_clear__f03` -> `/assets/sprites/board-blocks/block_jelly/squish_clear/block_jelly__squish_clear__f03.png`
+- `block_jelly__squish_clear__f04` -> `/assets/sprites/board-blocks/block_jelly/squish_clear/block_jelly__squish_clear__f04.png`
+- `block_junk` -> `/assets/board-blocks/block_junk.png`
+- `block_magic` -> `/assets/board-blocks/block_magic.png`
+- `block_red` -> `/assets/board-blocks/block_red.png`
+- `block_red__base__f00` -> `/assets/sprites/board-blocks/block_red/base/block_red__base__f00.png`
+- `block_red__clear__f00` -> `/assets/sprites/board-blocks/block_red/clear/block_red__clear__f00.png`
+- `block_red__clear__f01` -> `/assets/sprites/board-blocks/block_red/clear/block_red__clear__f01.png`
+- `block_red__clear__f02` -> `/assets/sprites/board-blocks/block_red/clear/block_red__clear__f02.png`
+- `block_red__clear__f03` -> `/assets/sprites/board-blocks/block_red/clear/block_red__clear__f03.png`
+- `block_red__clear__f04` -> `/assets/sprites/board-blocks/block_red/clear/block_red__clear__f04.png`
+- `block_red__glow__f00` -> `/assets/sprites/board-blocks/block_red/glow/block_red__glow__f00.png`
+- `block_red__glow__f01` -> `/assets/sprites/board-blocks/block_red/glow/block_red__glow__f01.png`
+- `block_red__glow__f02` -> `/assets/sprites/board-blocks/block_red/glow/block_red__glow__f02.png`
+- `block_royal` -> `/assets/board-blocks/block_royal.png`
+- `block_royal__base__f00` -> `/assets/sprites/board-blocks/block_royal/base/block_royal__base__f00.png`
+- `block_royal__break__f00` -> `/assets/sprites/board-blocks/block_royal/break/block_royal__break__f00.png`
+- `block_royal__break__f01` -> `/assets/sprites/board-blocks/block_royal/break/block_royal__break__f01.png`
+- `block_royal__break__f02` -> `/assets/sprites/board-blocks/block_royal/break/block_royal__break__f02.png`
+- `block_royal__break__f03` -> `/assets/sprites/board-blocks/block_royal/break/block_royal__break__f03.png`
+- `block_royal__break__f04` -> `/assets/sprites/board-blocks/block_royal/break/block_royal__break__f04.png`
+- `block_royal__glow__f00` -> `/assets/sprites/board-blocks/block_royal/glow/block_royal__glow__f00.png`
+- `block_royal__royal_pulse__f00` -> `/assets/sprites/board-blocks/block_royal/royal_pulse/block_royal__royal_pulse__f00.png`
+- `block_royal__royal_pulse__f01` -> `/assets/sprites/board-blocks/block_royal/royal_pulse/block_royal__royal_pulse__f01.png`
+- `block_royal__royal_pulse__f02` -> `/assets/sprites/board-blocks/block_royal/royal_pulse/block_royal__royal_pulse__f02.png`
+- `block_royal__royal_pulse__f03` -> `/assets/sprites/board-blocks/block_royal/royal_pulse/block_royal__royal_pulse__f03.png`
+- `block_sprinkle` -> `/assets/board-blocks/block_sprinkle.png`
+- `block_sprinkle__base__f00` -> `/assets/sprites/board-blocks/block_sprinkle/base/block_sprinkle__base__f00.png`
+- `block_sprinkle__clear__f00` -> `/assets/sprites/board-blocks/block_sprinkle/clear/block_sprinkle__clear__f00.png`
+- `block_sprinkle__clear__f01` -> `/assets/sprites/board-blocks/block_sprinkle/clear/block_sprinkle__clear__f01.png`
+- `block_sprinkle__clear__f02` -> `/assets/sprites/board-blocks/block_sprinkle/clear/block_sprinkle__clear__f02.png`
+- `block_sprinkle__clear__f03` -> `/assets/sprites/board-blocks/block_sprinkle/clear/block_sprinkle__clear__f03.png`
+- `block_sprinkle__clear__f04` -> `/assets/sprites/board-blocks/block_sprinkle/clear/block_sprinkle__clear__f04.png`
+- `block_sprinkle__glow__f00` -> `/assets/sprites/board-blocks/block_sprinkle/glow/block_sprinkle__glow__f00.png`
+- `block_sprinkle__glow__f01` -> `/assets/sprites/board-blocks/block_sprinkle/glow/block_sprinkle__glow__f01.png`
+- `block_sprinkle__glow__f02` -> `/assets/sprites/board-blocks/block_sprinkle/glow/block_sprinkle__glow__f02.png`
+- `block_sprinkle__idle__f00` -> `/assets/sprites/board-blocks/block_sprinkle/idle/block_sprinkle__idle__f00.png`
+- `block_sprinkle__idle__f01` -> `/assets/sprites/board-blocks/block_sprinkle/idle/block_sprinkle__idle__f01.png`
+- `block_sprinkle__idle__f02` -> `/assets/sprites/board-blocks/block_sprinkle/idle/block_sprinkle__idle__f02.png`
+- `block_sprinkle__idle__f03` -> `/assets/sprites/board-blocks/block_sprinkle/idle/block_sprinkle__idle__f03.png`
+- `block_star` -> `/assets/board-blocks/block_star.png`
+- `block_star__base__f00` -> `/assets/sprites/board-blocks/block_star/base/block_star__base__f00.png`
+- `block_star__clear_burst__f00` -> `/assets/sprites/board-blocks/block_star/clear_burst/block_star__clear_burst__f00.png`
+- `block_star__clear_burst__f01` -> `/assets/sprites/board-blocks/block_star/clear_burst/block_star__clear_burst__f01.png`
+- `block_star__clear_burst__f02` -> `/assets/sprites/board-blocks/block_star/clear_burst/block_star__clear_burst__f02.png`
+- `block_star__clear_burst__f03` -> `/assets/sprites/board-blocks/block_star/clear_burst/block_star__clear_burst__f03.png`
+- `block_star__clear_burst__f04` -> `/assets/sprites/board-blocks/block_star/clear_burst/block_star__clear_burst__f04.png`
+- `block_star__glow__f00` -> `/assets/sprites/board-blocks/block_star/glow/block_star__glow__f00.png`
+- `block_star__glow__f01` -> `/assets/sprites/board-blocks/block_star/glow/block_star__glow__f01.png`
+- `block_star__glow__f02` -> `/assets/sprites/board-blocks/block_star/glow/block_star__glow__f02.png`
+- `block_star__idle_sparkle__f00` -> `/assets/sprites/board-blocks/block_star/idle_sparkle/block_star__idle_sparkle__f00.png`
+- `block_star__idle_sparkle__f01` -> `/assets/sprites/board-blocks/block_star/idle_sparkle/block_star__idle_sparkle__f01.png`
+- `block_star__idle_sparkle__f02` -> `/assets/sprites/board-blocks/block_star/idle_sparkle/block_star__idle_sparkle__f02.png`
+- `block_star__idle_sparkle__f03` -> `/assets/sprites/board-blocks/block_star/idle_sparkle/block_star__idle_sparkle__f03.png`
+- `block_sticky` -> `/assets/board-blocks/block_sticky.png`
+- `block_sticky__base__f00` -> `/assets/sprites/board-blocks/block_sticky/base/block_sticky__base__f00.png`
+- `block_sticky__glow__f00` -> `/assets/sprites/board-blocks/block_sticky/glow/block_sticky__glow__f00.png`
+- `block_sticky__glow__f01` -> `/assets/sprites/board-blocks/block_sticky/glow/block_sticky__glow__f01.png`
+- `block_sticky__glow__f02` -> `/assets/sprites/board-blocks/block_sticky/glow/block_sticky__glow__f02.png`
+- `block_sticky__goo_pulse__f00` -> `/assets/sprites/board-blocks/block_sticky/goo_pulse/block_sticky__goo_pulse__f00.png`
+- `block_sticky__goo_pulse__f01` -> `/assets/sprites/board-blocks/block_sticky/goo_pulse/block_sticky__goo_pulse__f01.png`
+- `block_sticky__goo_pulse__f02` -> `/assets/sprites/board-blocks/block_sticky/goo_pulse/block_sticky__goo_pulse__f02.png`
+- `block_sticky__goo_pulse__f03` -> `/assets/sprites/board-blocks/block_sticky/goo_pulse/block_sticky__goo_pulse__f03.png`
+- `block_sticky__stretch_clear__f00` -> `/assets/sprites/board-blocks/block_sticky/stretch_clear/block_sticky__stretch_clear__f00.png`
+- `block_sticky__stretch_clear__f01` -> `/assets/sprites/board-blocks/block_sticky/stretch_clear/block_sticky__stretch_clear__f01.png`
+- `block_sticky__stretch_clear__f02` -> `/assets/sprites/board-blocks/block_sticky/stretch_clear/block_sticky__stretch_clear__f02.png`
+- `block_sticky__stretch_clear__f03` -> `/assets/sprites/board-blocks/block_sticky/stretch_clear/block_sticky__stretch_clear__f03.png`
+- `block_sticky__stretch_clear__f04` -> `/assets/sprites/board-blocks/block_sticky/stretch_clear/block_sticky__stretch_clear__f04.png`
+- `block_stone` -> `/assets/board-blocks/block_stone.png`
+- `block_toolbox` -> `/assets/board-blocks/block_toolbox.png`
+
+## Files only found in legacy fallback paths
+- None
+
+## Duplicate asset keys
+- None
+
+## Orphan physical files
+- None
+
+## Content keys with no physical file in primary or fallback
+- `bg_event_arcade`
+- `bg_event_festival`
+- `bg_event_fountain`
+- `bg_event_manual`
+- `bg_event_well`
+- `bg_event_workshop`
+- `block_blue`
+- `block_blue__base__f00`
+- `block_blue__clear__f00`
+- `block_blue__clear__f01`
+- `block_blue__clear__f02`
+- `block_blue__clear__f03`
+- `block_blue__clear__f04`
+- `block_blue__glow__f00`
+- `block_blue__glow__f01`
+- `block_blue__glow__f02`
+- `block_bomb`
+- `block_bomb__base__f00`
+- `block_bomb__explode__f00`
+- `block_bomb__explode__f01`
+- `block_bomb__explode__f02`
+- `block_bomb__explode__f03`
+- `block_bomb__explode__f04`
+- `block_bomb__explode__f05`
+- `block_bomb__glow__f00`
+- `block_bomb__glow__f01`
+- `block_bomb__glow__f02`
+- `block_bomb__idle__f00`
+- `block_bomb__idle__f01`
+- `block_bomb__idle__f02`
+- `block_bomb__idle__f03`
+- `block_cloud_junk`
+- `block_cloud_junk__base__f00`
+- `block_cloud_junk__expire_to_junk__f00`
+- `block_cloud_junk__expire_to_junk__f01`
+- `block_cloud_junk__expire_to_junk__f02`
+- `block_cloud_junk__expire_to_junk__f03`
+- `block_cloud_junk__expire_to_junk__f04`
+- `block_cloud_junk__glow__f00`
+- `block_cloud_junk__hover__f00`
+- `block_cloud_junk__hover__f01`
+- `block_cloud_junk__hover__f02`
+- `block_cloud_junk__hover__f03`
+- `block_confetti`
+- `block_confetti__base__f00`
+- `block_confetti__clear__f00`
+- `block_confetti__clear__f01`
+- `block_confetti__clear__f02`
+- `block_confetti__clear__f03`
+- `block_confetti__clear__f04`
+- `block_confetti__glow__f00`
+- `block_confetti__glow__f01`
+- `block_confetti__glow__f02`
+- `block_confetti__idle__f00`
+- `block_confetti__idle__f01`
+- `block_confetti__idle__f02`
+- `block_confetti__idle__f03`
+- `block_crumb_junk`
+- `block_crumb_junk__base__f00`
+- `block_crumb_junk__break__f00`
+- `block_crumb_junk__break__f01`
+- `block_crumb_junk__break__f02`
+- `block_crumb_junk__break__f03`
+- `block_crumb_junk__break__f04`
+- `block_crumb_junk__damaged__f00`
+- `block_crumb_junk__damaged__f01`
+- `block_crumb_junk__damaged__f02`
+- `block_crumb_junk__glow__f00`
+- `block_cupcake`
+- `block_cupcake__base__f00`
+- `block_cupcake__clear__f00`
+- `block_cupcake__clear__f01`
+- `block_cupcake__clear__f02`
+- `block_cupcake__clear__f03`
+- `block_cupcake__clear__f04`
+- `block_cupcake__glow__f00`
+- `block_cupcake__glow__f01`
+- `block_cupcake__glow__f02`
+- `block_cupcake__idle__f00`
+- `block_cupcake__idle__f01`
+- `block_cupcake__idle__f02`
+- `block_cupcake__idle__f03`
+- `block_floaty_rune`
+- `block_floaty_rune__base__f00`
+- `block_floaty_rune__expire_to_junk__f00`
+- `block_floaty_rune__expire_to_junk__f01`
+- `block_floaty_rune__expire_to_junk__f02`
+- `block_floaty_rune__expire_to_junk__f03`
+- `block_floaty_rune__expire_to_junk__f04`
+- `block_floaty_rune__glow__f00`
+- `block_floaty_rune__hover__f00`
+- `block_floaty_rune__hover__f01`
+- `block_floaty_rune__hover__f02`
+- `block_floaty_rune__hover__f03`
+- `block_green`
+- `block_green__base__f00`
+- `block_green__clear__f00`
+- `block_green__clear__f01`
+- `block_green__clear__f02`
+- `block_green__clear__f03`
+- `block_green__clear__f04`
+- `block_green__glow__f00`
+- `block_green__glow__f01`
+- `block_green__glow__f02`
+- `block_ice`
+- `block_ice__base__f00`
+- `block_ice__crack_clear__f00`
+- `block_ice__crack_clear__f01`
+- `block_ice__crack_clear__f02`
+- `block_ice__crack_clear__f03`
+- `block_ice__crack_clear__f04`
+- `block_ice__frost_shimmer__f00`
+- `block_ice__frost_shimmer__f01`
+- `block_ice__frost_shimmer__f02`
+- `block_ice__frost_shimmer__f03`
+- `block_ice__glow__f00`
+- `block_ice__glow__f01`
+- `block_ice__glow__f02`
+- `block_jelly`
+- `block_jelly__base__f00`
+- `block_jelly__glow__f00`
+- `block_jelly__glow__f01`
+- `block_jelly__glow__f02`
+- `block_jelly__idle_wobble__f00`
+- `block_jelly__idle_wobble__f01`
+- `block_jelly__idle_wobble__f02`
+- `block_jelly__idle_wobble__f03`
+- `block_jelly__squish_clear__f00`
+- `block_jelly__squish_clear__f01`
+- `block_jelly__squish_clear__f02`
+- `block_jelly__squish_clear__f03`
+- `block_jelly__squish_clear__f04`
+- `block_junk`
+- `block_magic`
+- `block_red`
+- `block_red__base__f00`
+- `block_red__clear__f00`
+- `block_red__clear__f01`
+- `block_red__clear__f02`
+- `block_red__clear__f03`
+- `block_red__clear__f04`
+- `block_red__glow__f00`
+- `block_red__glow__f01`
+- `block_red__glow__f02`
+- `block_royal`
+- `block_royal__base__f00`
+- `block_royal__break__f00`
+- `block_royal__break__f01`
+- `block_royal__break__f02`
+- `block_royal__break__f03`
+- `block_royal__break__f04`
+- `block_royal__glow__f00`
+- `block_royal__royal_pulse__f00`
+- `block_royal__royal_pulse__f01`
+- `block_royal__royal_pulse__f02`
+- `block_royal__royal_pulse__f03`
+- `block_sprinkle`
+- `block_sprinkle__base__f00`
+- `block_sprinkle__clear__f00`
+- `block_sprinkle__clear__f01`
+- `block_sprinkle__clear__f02`
+- `block_sprinkle__clear__f03`
+- `block_sprinkle__clear__f04`
+- `block_sprinkle__glow__f00`
+- `block_sprinkle__glow__f01`
+- `block_sprinkle__glow__f02`
+- `block_sprinkle__idle__f00`
+- `block_sprinkle__idle__f01`
+- `block_sprinkle__idle__f02`
+- `block_sprinkle__idle__f03`
+- `block_star`
+- `block_star__base__f00`
+- `block_star__clear_burst__f00`
+- `block_star__clear_burst__f01`
+- `block_star__clear_burst__f02`
+- `block_star__clear_burst__f03`
+- `block_star__clear_burst__f04`
+- `block_star__glow__f00`
+- `block_star__glow__f01`
+- `block_star__glow__f02`
+- `block_star__idle_sparkle__f00`
+- `block_star__idle_sparkle__f01`
+- `block_star__idle_sparkle__f02`
+- `block_star__idle_sparkle__f03`
+- `block_sticky`
+- `block_sticky__base__f00`
+- `block_sticky__glow__f00`
+- `block_sticky__glow__f01`
+- `block_sticky__glow__f02`
+- `block_sticky__goo_pulse__f00`
+- `block_sticky__goo_pulse__f01`
+- `block_sticky__goo_pulse__f02`
+- `block_sticky__goo_pulse__f03`
+- `block_sticky__stretch_clear__f00`
+- `block_sticky__stretch_clear__f01`
+- `block_sticky__stretch_clear__f02`
+- `block_sticky__stretch_clear__f03`
+- `block_sticky__stretch_clear__f04`
+- `block_stone`
+- `block_toolbox`
+- `block_toolbox__base__f00`
+- `block_toolbox__clear__f00`
+- `block_toolbox__clear__f01`
+- `block_toolbox__clear__f02`
+- `block_toolbox__clear__f03`
+- `block_toolbox__clear__f04`
+- `block_toolbox__glow__f00`
+- `block_toolbox__glow__f01`
+- `block_toolbox__glow__f02`
+- `block_toolbox__idle__f00`
+- `block_toolbox__idle__f01`
+- `block_toolbox__idle__f02`
+- `block_toolbox__idle__f03`
+- `block_void`
+- `block_yellow`
+- `block_yellow__base__f00`
+- `block_yellow__clear__f00`
+- `block_yellow__clear__f01`
+- `block_yellow__clear__f02`
+- `block_yellow__clear__f03`
+- `block_yellow__clear__f04`
+- `block_yellow__glow__f00`
+- `block_yellow__glow__f01`
+- `block_yellow__glow__f02`
+- `collectible_festival_token`
+- `currency_candy_coin`
+- `evt_arcade_challenge`
+- `evt_block_o_manual_page`
+- `evt_cursed_fountain`
+- `evt_goblin_quality_test`
+- `evt_mana_well`
+- `evt_rainbow_fountain`
+- `evt_suspicious_button`
+- `hero_bloop_slime_friend`
+- `hero_bruk_snack_knight`
+- `hero_lumi_star_witch`
+- `hero_milo_blockmancer`
+- `hero_nixie_frostbinder`
+- `hero_pippa_pyromancer`
+- `hero_poplin_professor`
+- `hero_zuzu_goblin_engineer`
+- `ico_block_blue`
+- `ico_block_bomb`
+- `ico_block_cloud_junk`
+- `ico_block_confetti`
+- `ico_block_crumb_junk`
+- `ico_block_cupcake`
+- `ico_block_floaty_rune`
+- `ico_block_green`
+- `ico_block_ice`
+- `ico_block_jelly`
+- `ico_block_red`
+- `ico_block_royal`
+- `ico_block_sprinkle`
+- `ico_block_star`
+- `ico_block_sticky`
+- `ico_block_toolbox`
+- `ico_block_yellow`
+- `ico_hero_bruk_snack_knight`
+- `ico_hero_lumi_star_witch`
+- `ico_hero_milo_blockmancer`
+- `ico_hero_nixie_frostbinder`
+- `ico_hero_pippa_pyromancer`
+- `ico_hero_zuzu_goblin_engineer`
+- `ico_mon_arcade_spark`
+- `ico_mon_bat`
+- `ico_mon_blanket_bard`
+- `ico_mon_block_baron`
+- `ico_mon_bolt_beetle`
+- `ico_mon_boss_cupcake_slime_king`
+- `ico_mon_boss_falling_king`
+- `ico_mon_boss_gelato_golem`
+- `ico_mon_boss_high_score_hydra`
+- `ico_mon_boss_king_bloxley`
+- `ico_mon_boss_prototype_no_7`
+- `ico_mon_boss_sir_snore_a_lot`
+- `ico_mon_bubble_bat`
+- `ico_mon_chilly_churro`
+- `ico_mon_combo_crab`
+- `ico_mon_crown_mime`
+- `ico_mon_cupcake_imp`
+- `ico_mon_dream_drummer`
+- `ico_mon_dungeon_goblin`
+- `ico_mon_dungeon_slime`
+- `ico_mon_elite_knight`
+- `ico_mon_frosting_fox`
+- `ico_mon_gadget_goblin`
+- `ico_mon_gear_gremlin`
+- `ico_mon_gelato_blob`
+- `ico_mon_ice_pop_mimic`
+- `ico_mon_joystick_jinxer`
+- `ico_mon_palace_jester`
+- `ico_mon_pillow_pawn`
+- `ico_mon_pipe_peeker`
+- `ico_mon_quilt_knight`
+- `ico_mon_royal_page`
+- `ico_mon_score_specter`
+- `ico_mon_snore_squire`
+- `ico_mon_snowcone_sprite`
+- `ico_mon_spring_bot`

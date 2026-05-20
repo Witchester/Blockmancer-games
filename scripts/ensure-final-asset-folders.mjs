@@ -3,23 +3,39 @@ import path from 'node:path';
 
 const ROOT = process.cwd();
 const PUBLIC_ASSETS = path.join(ROOT, 'public', 'assets');
-const CONTENT_ROOT = path.join(ROOT, 'src', 'game', 'content');
-const STANDARDS_PATH = path.join(ROOT, 'src', 'game', 'data', 'animation-standards.json');
 
-function readJson(filePath) {
-  return JSON.parse(fs.readFileSync(filePath, 'utf8'));
-}
+const STAGE_IDS = [
+  'stage_sprinkle_sewers',
+  'stage_goblin_workshop',
+  'stage_frosty_pantry',
+  'stage_pillow_castle',
+  'stage_starfall_arcade',
+  'stage_bloxley_block_palace'
+];
 
-function listContentIds(folder) {
-  const dir = path.join(CONTENT_ROOT, folder);
-  if (!fs.existsSync(dir)) {
-    return [];
-  }
-  return fs.readdirSync(dir)
-    .filter((file) => file.endsWith('.json') && file !== 'metadata.json')
-    .map((file) => readJson(path.join(dir, file)).id)
-    .filter((id) => typeof id === 'string' && id.length > 0);
-}
+const ICON_CATEGORIES = [
+  'board-blocks',
+  'battle-objectives',
+  'boss-rules',
+  'currencies',
+  'collectibles',
+  'chaos-rules',
+  'items',
+  'oopsies',
+  'relics',
+  'room-events',
+  'random-gameplay-events',
+  'status-effects',
+  'upgrades',
+  'weapons',
+  'spells',
+  'map-nodes',
+  'hub-buildings',
+  'route-story',
+  'heroes',
+  'monsters',
+  'bosses'
+];
 
 function ensureDir(relativePath) {
   const dir = path.join(PUBLIC_ASSETS, relativePath);
@@ -30,87 +46,58 @@ function ensureDir(relativePath) {
   }
 }
 
-function bossAssetId(monsterId) {
-  return monsterId.replace(/^mon_/, '');
-}
-
-const standards = readJson(STANDARDS_PATH);
 const dirs = new Set([
   'board-blocks',
   'sprites',
+  'sprites/board-blocks',
+  'sprites/heroes',
+  'sprites/monsters',
+  'sprites/bosses',
   'effects',
   'icons',
-  'heroes',
-  'monsters',
-  'bosses',
   'stages',
+  'backgrounds',
+  'backgrounds/legacy',
   'ui',
-  'ui/animations',
+  'ui/panels',
+  'ui/buttons',
+  'ui/hud',
+  'ui/meters',
+  'ui/mobile-controls',
   'ui/story-routes',
-  'icons/story-routes',
+  'ui/animations',
+  'ui/placeholders',
+  'portraits',
   'portraits/heroes',
   'portraits/npcs',
+  'portraits/bosses',
+  'story',
   'story/endings',
-  'stage-backgrounds/route-scenes',
-  'audio'
+  'story/route-cards',
+  'story/dialogue-panels',
+  'audio',
+  'audio/sfx',
+  'audio/music',
+  'audio/ui',
+  'fonts',
+  'placeholders'
 ]);
 
-for (const block of Object.values(standards.boardBlocks)) {
-  const blockId = block.assetId.replace(/^spr_/, '');
-  dirs.add(`sprites/board-blocks/${blockId}/base`);
-  dirs.add(`sprites/board-blocks/${blockId}/glow`);
-  dirs.add(`sprites/board-blocks/${blockId}/clear`);
-  dirs.add(`sprites/board-blocks/${blockId}/special`);
+for (const stageId of STAGE_IDS) {
+  dirs.add(`stages/${stageId}`);
+  dirs.add(`stages/${stageId}/battle`);
+  dirs.add(`stages/${stageId}/boss-arena`);
+  dirs.add(`stages/${stageId}/map`);
+  dirs.add(`stages/${stageId}/route-scenes`);
+  dirs.add(`stages/${stageId}/props`);
 }
 
-for (const heroId of listContentIds('heroes')) {
-  for (const state of ['idle', 'cast_spell', 'attack', 'hit', 'victory', 'defeat_tired', 'portrait', 'silhouette_locked']) {
-    dirs.add(`sprites/heroes/${heroId}/${state}`);
-  }
-}
-
-for (const monsterId of listContentIds('monsters')) {
-  if (monsterId.startsWith('mon_boss_')) {
-    const actorId = bossAssetId(monsterId);
-    for (const state of ['idle', 'attack', 'hit', 'phase_change', 'special_attack', 'defeat', 'intro_portrait']) {
-      dirs.add(`sprites/bosses/${actorId}/${state}`);
-    }
-    continue;
-  }
-
-  for (const state of ['idle', 'attack', 'hit', 'defeat']) {
-    dirs.add(`sprites/monsters/${monsterId}/${state}`);
-  }
-}
-
-for (const vfxId of Object.keys(standards.coreVfx)) {
-  dirs.add(`effects/${vfxId}`);
-}
-
-for (const spellId of Object.keys(standards.spellVfx)) {
-  dirs.add(`effects/${spellId}`);
-}
-
-for (const itemId of [
-  ...standards.items.basicUseVfx,
-  ...standards.items.reactiveCounterVfx,
-  ...standards.items.spellCatalystVfx
-]) {
-  for (const state of ['use_vfx', 'counter_success_vfx', 'catalyst_ready_vfx', 'catalyst_consume_vfx']) {
-    dirs.add(`effects/items/${itemId}/${state}`);
-  }
-}
-
-for (const hazardId of Object.keys(standards.hazardUi)) {
-  dirs.add(`ui/animations/hazards/${hazardId}`);
-}
-
-for (const uiId of Object.keys(standards.ui)) {
-  dirs.add(`ui/animations/${uiId}`);
+for (const category of ICON_CATEGORIES) {
+  dirs.add(`icons/${category}`);
 }
 
 for (const relativePath of [...dirs].sort()) {
   ensureDir(relativePath);
 }
 
-console.log(`Ensured ${dirs.size} final asset folder(s).`);
+console.log(`Ensured ${dirs.size} standardized asset folder(s).`);
