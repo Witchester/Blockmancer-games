@@ -627,3 +627,4 @@ export function getUiPanelAssetKey(panelId: string): string {
 export function getSupportedStageIds(): readonly string[] {
   return STAGE_CANONICAL_IDS;
 }
+

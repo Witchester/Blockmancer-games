@@ -696,7 +696,7 @@ export class BattleScene extends Phaser.Scene {
     const topPanelHeight = layout.topCombatRect.height - 8;
     const topPanelCenterY = layout.topCombatRect.y + Math.round(layout.topCombatRect.height / 2);
 
-    this.add.rectangle(this.screenWidth / 2, topPanelCenterY, topPanelWidth, topPanelHeight, COLORS.panel, 0.95).setStrokeStyle(2, COLORS.accent, 0.25);
+    this.add.rectangle(this.screenWidth / 2, topPanelCenterY, topPanelWidth, topPanelHeight, COLORS.panel, 0.58).setStrokeStyle(2, COLORS.accent, 0.25);
     this.add.text(layout.topCombatRect.x + 18, layout.topCombatRect.y + 8, 'Side-View Battle (SVB)', {
       color: '#f6f7ff',
       fontFamily: FONT_FAMILY,
@@ -905,25 +905,37 @@ export class BattleScene extends Phaser.Scene {
   private addStageBackgroundLayers(): void {
     const state = this.sharedGame.runState;
     const enemy = state.activeEnemy;
+    const layout = this.battleLayout;
+    const combatRect = layout?.topCombatRect ?? { x: 0, y: 0, width: this.screenWidth, height: Math.floor(this.screenHeight * 0.25) };
+    const centerX = combatRect.x + combatRect.width / 2;
+    const centerY = combatRect.y + combatRect.height / 2;
     const isBossRoom = enemy?.roomType === 'boss' || Boolean(enemy?.id?.includes('boss'));
 
     if (isBossRoom) {
       const bossArena = this.sharedGame.assetSystem.getStageBackground(this, state.stage, 'bossArena');
-      this.sharedGame.assetSystem.createImageByAssetKey(this, bossArena, 'stageBackground', this.screenWidth / 2, this.screenHeight / 2, { kind: 'background' })
-        .setDisplaySize(this.screenWidth, this.screenHeight)
-        .setAlpha(0.2);
+      if (import.meta.env.DEV) {
+        console.log('[BattleScene] bossArena key:', bossArena);
+      }
+      this.sharedGame.assetSystem.createImageByAssetKey(this, bossArena, 'stageBackground', centerX, centerY, { kind: 'background' })
+        .setDisplaySize(combatRect.width, combatRect.height)
+        .setAlpha(0.92)
+        .setDepth(-50);
       return;
     }
 
     const far = this.sharedGame.assetSystem.getStageBackground(this, state.stage, 'battleFar');
     const mid = this.sharedGame.assetSystem.getStageBackground(this, state.stage, 'battleMid');
     const near = this.sharedGame.assetSystem.getStageBackground(this, state.stage, 'battleNear');
+    if (import.meta.env.DEV) {
+      console.log('[BattleScene] stage battle keys:', { far, mid, near, stage: state.stage });
+    }
     const layers = [far, mid, near].filter((key, index, all) => all.indexOf(key) === index);
 
     layers.forEach((key, index) => {
-      this.sharedGame.assetSystem.createImageByAssetKey(this, key, 'stageBackground', this.screenWidth / 2, this.screenHeight / 2, { kind: 'background' })
-        .setDisplaySize(this.screenWidth, this.screenHeight)
-        .setAlpha(layers.length > 1 ? [0.1, 0.14, 0.09][index] ?? 0.1 : 0.18);
+      this.sharedGame.assetSystem.createImageByAssetKey(this, key, 'stageBackground', centerX, centerY, { kind: 'background' })
+        .setDisplaySize(combatRect.width, combatRect.height)
+        .setAlpha(layers.length > 1 ? [0.6, 0.78, 0.9][index] ?? 0.72 : 0.86)
+        .setDepth(-50 + index);
     });
   }
 
@@ -3514,4 +3526,6 @@ export class BattleScene extends Phaser.Scene {
     };
   }
 }
+
+
 
