@@ -1,0 +1,42 @@
+{
+  "generated_at": "2026-05-20",
+  "pack_name": "Blockmancer Source of Truth Pack",
+  "policy": "Use this pack as the active documentation set. Older uploaded files are treated as source inputs or historical references unless explicitly listed as canonical inside an SOT file.",
+  "canonical_docs": [
+    "00_BLOCKMANCER_SOURCE_OF_TRUTH_INDEX.md",
+    "01_BLOCKMANCER_GAME_DESIGN_SOURCE_OF_TRUTH.md",
+    "02_BLOCKMANCER_STORY_ROUTES_DIALOGUE_SOURCE_OF_TRUTH.md",
+    "03_BLOCKMANCER_GAMEPLAY_REACTIVE_DIFFICULTY_SOURCE_OF_TRUTH.md",
+    "04_BLOCKMANCER_ASSET_ANIMATION_SOURCE_OF_TRUTH.md",
+    "05_BLOCKMANCER_RELEASE_IMPLEMENTATION_SOURCE_OF_TRUTH.md"
+  ],
+  "source_inputs": {
+    "index_current": "00_INDEX_WITH_STORY_FLOW.md",
+    "index_old": "00_INDEX.md",
+    "gdd_current": "01_GDD_MASTER_WITH_STORY_FLOW.md",
+    "gdd_old": "01_GDD_MASTER.md",
+    "content_updated": "blockmancer_lighthearted_content_direction_UPDATED.md",
+    "content_old": "blockmancer_lighthearted_content_direction.md",
+    "story_updated": "blockmancer_lighthearted_story_UPDATED.md",
+    "story_full_routes": "blockmancer_lighthearted_story_FULL_CHARACTER_ROUTES.md",
+    "story_old": "blockmancer_lighthearted_story.md",
+    "dialogue": "blockmancer_full_dialogue_storyboard_POLISHED.md",
+    "reactive_current": "02_REACTIVE_DIFFICULTY_IMPLEMENTATION_PLAN_WITH_STORY_FLOW.md",
+    "reactive_old": "02_REACTIVE_DIFFICULTY_IMPLEMENTATION_PLAN.md",
+    "reactive_runtime": "REACTIVE_DIFFICULTY_RUNTIME_AUDIT.md",
+    "reactive_smoke": "REACTIVE_DIFFICULTY_SMOKE_TEST_MATRIX.md",
+    "board_anim": "BOARD_BLOCK_FRAME_ANIMATION_INTEGRATION_WITH_STORY_FLOW.md",
+    "folder": "FINAL_ASSET_FOLDER_STRUCTURE.md",
+    "animation": "ANIMATION_ASSET_REQUIREMENTS.md",
+    "variant_audit": "ASSET_VARIANT_AUDIT.md",
+    "variant_integration": "ASSET_VARIANT_INTEGRATION_REPORT.md",
+    "placeholder": "PLACEHOLDER_ASSET_GENERATION_REPORT.md",
+    "asset_pack_fit": "blockmancer_32bit_pixelized_asset_pack_fit.md",
+    "code_audit_story": "RELEASE_1_CODE_AUDIT_REPORT_WITH_STORY_FLOW.md",
+    "code_audit_old": "RELEASE_1_CODE_AUDIT_REPORT.md",
+    "route_audit": "ROUTE_STORY_IMPLEMENTATION_AUDIT.md",
+    "changelog": "UPDATED_FILES_CHANGELOG.md",
+    "plan": "blockmancer_vibe_code_release_1_plan.md",
+    "prompts": "blockmancer_release_1_agent_phase_prompts.md"
+  }
+}

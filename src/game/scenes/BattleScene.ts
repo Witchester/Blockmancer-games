@@ -10,8 +10,6 @@ import { OopsieSystem } from '../systems/OopsieSystem';
 import { SpellSystem } from '../systems/SpellSystem';
 import { contentRegistry } from '../systems/ContentRegistry';
 import type { ActiveHazardKind, ActiveHazardState, BoardCell, BoardTickResult, CascadeAnimationFrame, CascadeResult, CounterTag, EnemyInstance, RunState, SpellId, TetrominoType } from '../types/GameTypes';
-import { EventLog } from '../ui/EventLog';
-import { Hud } from '../ui/Hud';
 import { MobileControls } from '../ui/MobileControls';
 import { ProgressBar } from '../ui/ProgressBar';
 import { Button } from '../ui/Button';
@@ -225,8 +223,6 @@ export class BattleScene extends Phaser.Scene {
   private fever!: FeverSystem;
   private spells!: SpellSystem;
   private oopsies!: OopsieSystem;
-  private hud!: Hud;
-  private log!: EventLog;
   private boardCells: Phaser.GameObjects.Rectangle[][] = [];
   private boardSprites: Phaser.GameObjects.Sprite[][] = [];
   private boardSymbols: Phaser.GameObjects.Text[][] = [];
@@ -248,6 +244,7 @@ export class BattleScene extends Phaser.Scene {
   private enemyStatsText?: Phaser.GameObjects.Text;
   private enemyIntentText?: Phaser.GameObjects.Text;
   private enemyCountdownText?: Phaser.GameObjects.Text;
+  private playerNameText?: Phaser.GameObjects.Text;
   private playerStatsText?: Phaser.GameObjects.Text;
   private playerOopsieText?: Phaser.GameObjects.Text;
   private topCombatLogText?: Phaser.GameObjects.Text;
@@ -396,15 +393,6 @@ export class BattleScene extends Phaser.Scene {
     this.createRenderBuffers();
     this.buildBoard();
     this.createPreviewPanel();
-    this.hud = new Hud(this, {
-      compact: true,
-      showMeta: false,
-      x: this.screenWidth / 2,
-      y: 76,
-      width: this.screenWidth - 64,
-      height: 76
-    });
-    this.log = new EventLog(this, this.logX, this.logY, this.logWidth, this.logHeight);
     this.createMobileControls();
     this.createInventoryOverlay();
     this.createInputSystem();
@@ -719,9 +707,9 @@ export class BattleScene extends Phaser.Scene {
     this.add.text(layout.topCombatRect.x + layout.topCombatRect.width - 16, layout.topCombatRect.y + 8, `Stage ${this.sharedGame.runState.stage} · ${this.sharedGame.runState.currentRoomType}`, {
       color: '#ffca6b',
       fontFamily: FONT_FAMILY,
-      fontSize: '14px',
+      fontSize: '15px',
       fontStyle: 'bold'
-    }).setOrigin(1, 0);
+    }).setOrigin(0.5, 0);
 
     const middleCenterY = layout.middleBoardRect.y + layout.middleBoardRect.height / 2;
     this.add.rectangle(this.screenWidth / 2, middleCenterY, layout.middleBoardRect.width, layout.middleBoardRect.height, COLORS.panel, 0.95).setStrokeStyle(2, COLORS.accentSoft, 0.25);
@@ -735,69 +723,76 @@ export class BattleScene extends Phaser.Scene {
 
     const heroSpriteX = layout.heroPanel.x + Math.round(layout.heroPanel.width * 0.5);
     const enemySpriteX = layout.enemyPanel.x + Math.round(layout.enemyPanel.width * 0.5);
-    const spriteY = layout.combatArena.y + Math.round(layout.combatArena.height * 0.60);
+    const spriteY = layout.combatArena.y + Math.round(layout.combatArena.height * 0.46);
     const statsBaseY = spriteY + 10;
 
-    this.playerStatsText = this.add.text(heroSpriteX - 68, statsBaseY, '', {
+    this.playerNameText = this.add.text(heroSpriteX, spriteY + 36, this.sharedGame.runState.hero.name, {
+      color: '#ffca6b',
+      fontFamily: FONT_FAMILY,
+      fontSize: '16px',
+      fontStyle: 'bold'
+    }).setOrigin(0.5, 0);
+
+    this.playerStatsText = this.add.text(heroSpriteX - 74, statsBaseY + 16, '', {
       color: '#d8deff',
       fontFamily: FONT_FAMILY,
       fontSize: '16px',
       fontStyle: 'bold'
     });
-    this.playerOopsieText = this.add.text(heroSpriteX - 68, statsBaseY + 20, '', {
+    this.playerOopsieText = this.add.text(heroSpriteX - 74, statsBaseY + 38, '', {
       color: '#98a0c7',
       fontFamily: FONT_FAMILY,
       fontSize: '15px'
     });
-    this.playerHpBar = new ProgressBar(this, heroSpriteX - 68, statsBaseY + 44, {
+    this.playerHpBar = new ProgressBar(this, heroSpriteX - 90, statsBaseY + 62, {
       label: 'HP',
-      width: 170,
-      height: 10,
+      width: 180,
+      height: 12,
       fillColor: COLORS.danger
     });
-    this.playerMpBar = new ProgressBar(this, heroSpriteX - 68, statsBaseY + 66, {
+    this.playerMpBar = new ProgressBar(this, heroSpriteX - 90, statsBaseY + 84, {
       label: 'MP',
-      width: 170,
-      height: 10,
+      width: 180,
+      height: 12,
       fillColor: COLORS.accent
     });
-    this.playerShieldBar = new ProgressBar(this, heroSpriteX - 68, statsBaseY + 88, {
+    this.playerShieldBar = new ProgressBar(this, heroSpriteX - 90, statsBaseY + 106, {
       label: 'SH',
-      width: 170,
-      height: 10,
+      width: 180,
+      height: 12,
       fillColor: COLORS.success
     });
 
-    this.enemyNameText = this.add.text(enemySpriteX + 68, statsBaseY, '', {
+    this.enemyNameText = this.add.text(enemySpriteX, spriteY + 36, '', {
       color: '#ffca6b',
       fontFamily: FONT_FAMILY,
       fontSize: '18px',
       fontStyle: 'bold'
-    }).setOrigin(1, 0.5);
-    this.enemyStatsText = this.add.text(enemySpriteX + 68, statsBaseY + 20, '', {
+    }).setOrigin(0.5, 0);
+    this.enemyStatsText = this.add.text(enemySpriteX, statsBaseY + 34, '', {
       color: '#d8deff',
       fontFamily: FONT_FAMILY,
       fontSize: '14px',
       fontStyle: 'bold'
-    }).setOrigin(1, 0.5);
-    this.enemyIntentText = this.add.text(enemySpriteX + 68, statsBaseY + 38, '', {
+    }).setOrigin(0.5, 0);
+    this.enemyIntentText = this.add.text(enemySpriteX, statsBaseY + 54, '', {
       color: '#98a0c7',
       fontFamily: FONT_FAMILY,
-      fontSize: '13px',
-      align: 'right',
-      wordWrap: { width: 180 }
-    }).setOrigin(1, 0);
-    this.enemyCountdownText = this.add.text(enemySpriteX + 68, statsBaseY + 74, '', {
+      fontSize: layout.scaleMode === 'tiny' ? '12px' : '13px',
+      align: 'center',
+      wordWrap: { width: 210 }
+    }).setOrigin(0.5, 0);
+    this.enemyCountdownText = this.add.text(enemySpriteX, statsBaseY + 90, '', {
       color: '#ff6673',
       fontFamily: FONT_FAMILY,
       fontSize: '14px',
       fontStyle: 'bold'
-    }).setOrigin(1, 0);
-    const enemyBarWidth = 170;
-    this.enemyHpBar = new ProgressBar(this, enemySpriteX + 68 - enemyBarWidth, statsBaseY + 94, {
+    }).setOrigin(0.5, 0);
+    const enemyBarWidth = 180;
+    this.enemyHpBar = new ProgressBar(this, enemySpriteX - enemyBarWidth / 2, statsBaseY + 108, {
       label: 'Enemy HP',
       width: enemyBarWidth,
-      height: 14,
+      height: 12,
       fillColor: COLORS.danger
     });
 
@@ -822,22 +817,13 @@ export class BattleScene extends Phaser.Scene {
           enemyBaselineY,
           { elite: this.sharedGame.runState.activeEnemy?.roomType === 'elite', alpha: 0.95 }
         );
-    this.topCombatLogText = this.add.text(layout.combatLogRect.x + (layout.combatLogRect.width - 128) / 2, layout.combatLogRect.y + layout.combatLogRect.height / 2, '', {
+    this.topCombatLogText = this.add.text(layout.combatLogRect.x + 10, layout.combatLogRect.y + 8, '', {
       color: '#f6f7ff',
       fontFamily: FONT_FAMILY,
       fontSize: '13px',
       align: 'left',
-      wordWrap: { width: layout.combatLogRect.width - 156 }
-    }).setOrigin(0.5);
-    new Button(
-      this,
-      layout.combatLogRect.x + layout.combatLogRect.width - 64,
-      layout.combatLogRect.y + layout.combatLogRect.height / 2,
-      120,
-      38,
-      'Enemy Info',
-      () => this.combat.addLog(this.sharedGame.runState.activeEnemy ? `${this.sharedGame.runState.activeEnemy.name}: ${this.sharedGame.runState.activeEnemy.intent}` : 'No enemy info.')
-    );
+      wordWrap: { width: layout.combatLogRect.width - 20 }
+    }).setOrigin(0, 0);
 
     const sideCenterX = layout.leftRailRect.x + Math.round(layout.leftRailRect.width / 2);
     const sidePanelWidth = this.screenWidth <= 520 ? 82 : 124;
@@ -898,7 +884,7 @@ export class BattleScene extends Phaser.Scene {
     this.upgradesText = this.add.text(rightX, rightTop + 96, '', {
       color: '#d8deff',
       fontFamily: FONT_FAMILY,
-      fontSize: '12px',
+      fontSize: '13px',
       align: 'center',
       wordWrap: { width: layout.rightRailRect.width - 18 },
       lineSpacing: 4
@@ -1323,7 +1309,6 @@ export class BattleScene extends Phaser.Scene {
     this.activeBossIntroObjects = [];
     this.floatingTextPool.forEach((label) => label.destroy());
     this.floatingTextPool.length = 0;
-    this.hud?.destroy();
   }
 
   private applyOopsieBoardEffects(linesCleared: number): void {
@@ -1444,8 +1429,6 @@ export class BattleScene extends Phaser.Scene {
       this.renderPreview();
       this.renderUpgrades();
       this.renderMiddleOverlays();
-      this.hud.update(state);
-      this.log.update(state);
     } else {
       this.syncBoardState();
       this.renderAll();
@@ -2294,8 +2277,6 @@ export class BattleScene extends Phaser.Scene {
     this.renderUpgrades();
     this.renderMiddleOverlays();
     this.renderHazardTray();
-    this.hud.update(this.sharedGame.runState);
-    this.log.update(this.sharedGame.runState);
   }
 
   private getNextEnemyBehavior(enemy: EnemyInstance): string {
@@ -2518,8 +2499,6 @@ export class BattleScene extends Phaser.Scene {
     this.renderUpgrades();
     this.renderMiddleOverlays();
     this.renderHazardTray();
-    this.hud.update(this.sharedGame.runState);
-    this.log.update(this.sharedGame.runState);
   }
 
   private renderBoard(showActivePiece = !this.cascadeResolving): void {
@@ -2868,8 +2847,8 @@ export class BattleScene extends Phaser.Scene {
     this.fitEnemyBattleSprite(enemy);
 
     const player = this.sharedGame.runState.player;
-    this.playerStatsText?.setText(`Player   HP ${player.hp}/${player.maxHp}   SH ${player.shield}`);
-    this.playerOopsieText?.setText(`Oopsies ${player.oopsies.length}   ATK IN ${enemy.attackCounter}`);
+    this.playerStatsText?.setText(`HP ${player.hp}/${player.maxHp}   MP ${player.mana}/${player.maxMana}`);
+    this.playerOopsieText?.setText(`Shield ${player.shield}   Oopsies ${player.oopsies.length}`);
     this.playerHpBar?.setValue(player.hp, player.maxHp);
     this.playerMpBar?.setValue(player.mana, player.maxMana);
     this.playerShieldBar?.setValue(player.shield, 99);

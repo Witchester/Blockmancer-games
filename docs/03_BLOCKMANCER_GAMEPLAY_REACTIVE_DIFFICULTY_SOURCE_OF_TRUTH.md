@@ -1,6 +1,36 @@
-# Blockmancer Dungeon — Reactive Difficulty & Item Counter Implementation Plan
+# Blockmancer Dungeon — Gameplay Systems and Reactive Difficulty Source of Truth
+
+**Generated:** 2026-05-20  
+**Authority:** Canonical for reactive difficulty, hazard warning windows, counter item design, spell catalysts, route-triggered reward/risk modifiers, runtime verification notes, and smoke tests.
+
+## Consolidation Summary
+
+This file uses `02_REACTIVE_DIFFICULTY_IMPLEMENTATION_PLAN_WITH_STORY_FLOW.md` as the primary design/implementation plan because it includes route reward/risk integration. Runtime status is then merged from the runtime audit and smoke test matrix. Board-block frame animation integration is included here only where it affects gameplay feedback; asset production rules live in the Asset/Animation SOT.
+
+## Gameplay Ownership
+
+Use this file for:
+
+- Floating blocks, incoming junk, low ceiling, freeze, preview disruption, speed waves, royal patterns, bad piece delivery, and other hazards.
+- Counter tags, item timing, reactive item content, and spell catalyst behavior.
+- Route-triggered reward/risk modifiers.
+- QA smoke matrix for reactive difficulty.
+- Runtime audit of what currently exists vs. switch-limited.
+
+For exact asset paths/frame counts, use the Asset/Animation SOT.
+
+
+---
+
+## Reactive Difficulty Plan with Story-Flow Integration
+
+**Source file:** `02_REACTIVE_DIFFICULTY_IMPLEMENTATION_PLAN_WITH_STORY_FLOW.md`
+
+**Consolidation note:** Primary source for hazard/counter design and route reward/risk integration.
+
+### Blockmancer Dungeon — Reactive Difficulty & Item Counter Implementation Plan
 <!-- BLOCKMANCER_STATUS_UPDATE_2026-05-18 -->
-## Current Reactive Difficulty Status — 2026-05-18
+#### Current Reactive Difficulty Status — 2026-05-18
 
 The reactive difficulty direction remains correct, but it is **partial** at runtime.
 
@@ -19,7 +49,7 @@ The reactive difficulty direction remains correct, but it is **partial** at runt
 
 Priority next step: build a **reactive difficulty smoke test matrix** for incoming junk, floaty blocks, freeze, low ceiling, preview disruption, speed wave, royal pattern, item/spell counters, and route-triggered reward/risk modifiers.
 
-### Character route integration status
+##### Character route integration status
 
 The new route story system should interact with reactive difficulty as a controlled reward/risk layer, not as a replacement for hazard rules.
 
@@ -44,7 +74,7 @@ Do not implement everything in one pass. Use the phases below so the game remain
 
 ---
 
-## 1. Scope Summary
+#### 1. Scope Summary
 
 Add these systems and content:
 
@@ -70,9 +100,9 @@ Every major hazard must have at least one item counter and one spell/cascade/rel
 
 ---
 
-## 2. New Data Model
+#### 2. New Data Model
 
-### Counter Tags
+##### Counter Tags
 
 ```ts
 type CounterTag =
@@ -91,7 +121,7 @@ type CounterTag =
   | "counter_piece_queue";
 ```
 
-### Reactive Item Fields
+##### Reactive Item Fields
 
 ```ts
 type ItemCategory =
@@ -131,7 +161,7 @@ type ReactiveItemContent = {
 ```
 
 
-### Route Reward / Risk Modifier Fields
+##### Route Reward / Risk Modifier Fields
 
 Route choices may apply reactive difficulty modifiers. Keep them small, explicit, and testable.
 
@@ -178,7 +208,7 @@ Route reward rules:
 - Route rewards should use existing systems first: `RewardSystem`, `ItemSystem`, `CombatSystem`, `BoardSystem`, `BossSystem`, `OopsieSystem`, and hazard-counter systems.
 
 
-### Hazard Counter Window Fields
+##### Hazard Counter Window Fields
 
 ```ts
 type HazardCounterWindow = {
@@ -197,9 +227,9 @@ type HazardCounterWindow = {
 
 ---
 
-## 3. Content to Add
+#### 3. Content to Add
 
-### Board / Hazard Blocks
+##### Board / Hazard Blocks
 
 | ID | Name | Role |
 | --- | --- | --- |
@@ -208,7 +238,7 @@ type HazardCounterWindow = {
 | `block_locked_rune` | Locked Rune | Does not fall/cascade until broken. |
 | `block_cracked_junk` | Cracked Junk | Needs 2 clears or 1 bomb. |
 
-### Hazard Windows
+##### Hazard Windows
 
 | Hazard ID | Counter Tags | Window |
 | --- | --- | ---: |
@@ -221,7 +251,7 @@ type HazardCounterWindow = {
 | `hazard_bad_piece_delivery` | `counter_piece_queue` | 1-2 pieces |
 | `hazard_speed_wave` | `counter_speed` | 3-6 pieces |
 
-### Reactive Items
+##### Reactive Items
 
 Implement this minimum set first:
 
@@ -245,7 +275,7 @@ Implement this minimum set first:
 | 2 | `item_royal_eraser` | Counter royal blocks. |
 | 3 | Remaining utility, risk/reward, and spell catalyst items. |
 
-### Spell Catalyst Items
+##### Spell Catalyst Items
 
 | Item ID | Combo Spell | Effect |
 | --- | --- | --- |
@@ -260,7 +290,7 @@ Implement this minimum set first:
 ---
 
 
-### Route-Triggered Counterplay Rewards
+##### Route-Triggered Counterplay Rewards
 
 The character route story system may grant small route-specific counterplay rewards. These must be implemented as real gameplay modifiers, not flavor text only.
 
@@ -274,15 +304,15 @@ The character route story system may grant small route-specific counterplay rewa
 | Lumi | Preview/star guidance. | Cascade/star/wishkeeper bonus. | Rare star reward plus fever or preview pressure risk. |
 
 
-## 4. Implementation Phases
+#### 4. Implementation Phases
 
-## Phase R0 — Audit Current Difficulty and Item Support
+#### Phase R0 — Audit Current Difficulty and Item Support
 
-### Goal
+##### Goal
 
 Find the safest integration points before editing gameplay.
 
-### Inspect First
+##### Inspect First
 
 ```text
 src/game/types/
@@ -304,20 +334,20 @@ src/game/content/chaos-rules/
 src/game/content/difficulty-scaling/
 ```
 
-### Deliverables
+##### Deliverables
 
 - Document current item, spell, relic, and hazard integration points.
 - Identify if board cells already support block type metadata.
 - Identify if enemy attacks already have warning/intent timers.
 - Identify if inventory use can target board cells.
 
-### Acceptance Criteria
+##### Acceptance Criteria
 
 - No gameplay rewrite yet.
 - Build status known.
 - Missing systems are listed.
 
-### Commands
+##### Commands
 
 ```bash
 npm run validate:content
@@ -326,13 +356,13 @@ npm run build
 
 ---
 
-## Phase R1 — Add Counter Tags and Reactive Item Content Schema
+#### Phase R1 — Add Counter Tags and Reactive Item Content Schema
 
-### Goal
+##### Goal
 
 Add the shared language that connects hazards to counters.
 
-### Tasks
+##### Tasks
 
 1. Add `CounterTag`, `ItemCategory`, `ItemTiming`, and `ReactiveItemContent` types.
 2. Extend item content validation to allow:
@@ -345,14 +375,14 @@ Add the shared language that connects hazards to counters.
 3. Add safe defaults for older items.
 4. Add the Priority 1 reactive items.
 
-### Acceptance Criteria
+##### Acceptance Criteria
 
 - Existing items still load.
 - New item fields are optional or safely defaulted.
 - Content validation passes.
 - Inventory still displays old and new items.
 
-### Commands
+##### Commands
 
 ```bash
 npm run validate:content
@@ -361,13 +391,13 @@ npm run build
 
 ---
 
-## Phase R2 — Implement Incoming Junk Queue
+#### Phase R2 — Implement Incoming Junk Queue
 
-### Goal
+##### Goal
 
 Make enemy junk attacks readable and counterable.
 
-### Tasks
+##### Tasks
 
 1. Add `IncomingJunkQueue` state to battle/combat state.
 2. Add functions:
@@ -387,7 +417,7 @@ clearIncomingJunkQueue(reason);
    - `item_return_stamp`
    - `item_trash_lid`
 
-### Acceptance Criteria
+##### Acceptance Criteria
 
 - Enemy can queue junk with a visible countdown.
 - Cascades reduce incoming junk before it lands.
@@ -395,7 +425,7 @@ clearIncomingJunkQueue(reason);
 - Remaining junk drops safely.
 - No instant unavoidable overflow.
 
-### Manual Test
+##### Manual Test
 
 1. Fight Crumb Goblin.
 2. Confirm incoming junk warning appears.
@@ -406,13 +436,13 @@ clearIncomingJunkQueue(reason);
 
 ---
 
-## Phase R3 — Implement Floating Blocks
+#### Phase R3 — Implement Floating Blocks
 
-### Goal
+##### Goal
 
 Add the floating block pressure mechanic.
 
-### Tasks
+##### Tasks
 
 1. Add board cell state for floating blocks:
 
@@ -442,7 +472,7 @@ expireFloatingBlocks();
 4. Add one Stage 1 tutorial random event using a single floating block.
 5. Add Stage 2+ enemy/boss usage.
 
-### Acceptance Criteria
+##### Acceptance Criteria
 
 - Floating block appears with readable countdown.
 - It does not break Cascade Gravity.
@@ -453,13 +483,13 @@ expireFloatingBlocks();
 
 ---
 
-## Phase R4 — Implement Hazard Counter Windows
+#### Phase R4 — Implement Hazard Counter Windows
 
-### Goal
+##### Goal
 
 Standardize hazard warnings for freeze, preview disruption, bad piece, speed wave, low ceiling, and royal pattern.
 
-### Tasks
+##### Tasks
 
 1. Add `HazardCounterWindow` runtime state.
 2. Add hazard events:
@@ -479,7 +509,7 @@ Standardize hazard warnings for freeze, preview disruption, bad piece, speed wav
    - `item_queue_comb`
 4. Add UI counter hints.
 
-### Acceptance Criteria
+##### Acceptance Criteria
 
 - Hazards show warning text before or as they happen.
 - UI shows available item/spell counters.
@@ -488,13 +518,13 @@ Standardize hazard warnings for freeze, preview disruption, bad piece, speed wav
 
 ---
 
-## Phase R5 — Add Spell Catalyst Item Support
+#### Phase R5 — Add Spell Catalyst Item Support
 
-### Goal
+##### Goal
 
 Make items and spells interact directly.
 
-### Tasks
+##### Tasks
 
 1. Add temporary `nextSpellModifiers` to player/battle state.
 2. Add item timing support for `before_spell`.
@@ -508,7 +538,7 @@ Make items and spells interact directly.
    - Cleaning Charm + Clean Cut removes junk/sticky.
 4. Clear modifier after next spell cast.
 
-### Acceptance Criteria
+##### Acceptance Criteria
 
 - Catalyst item can be used before casting a spell.
 - Next spell consumes modifier once.
@@ -517,13 +547,13 @@ Make items and spells interact directly.
 
 ---
 
-## Phase R6 — Relic and Hero Counter Synergies
+#### Phase R6 — Relic and Hero Counter Synergies
 
-### Goal
+##### Goal
 
 Make relics and hero passives enhance counterplay style.
 
-### Tasks
+##### Tasks
 
 Add or update synergies:
 
@@ -538,7 +568,7 @@ Add or update synergies:
 | Star Cookie relic | Cascades reduce more incoming junk. |
 | Block-O Manual relic | Once per battle, highlights best counter option. |
 
-### Acceptance Criteria
+##### Acceptance Criteria
 
 - Existing passives remain readable.
 - Relics enhance counter styles without being mandatory.
@@ -546,13 +576,13 @@ Add or update synergies:
 
 ---
 
-## Phase R7 — UI/UX Warning Tray and Counter Hints
+#### Phase R7 — UI/UX Warning Tray and Counter Hints
 
-### Goal
+##### Goal
 
 Make difficulty readable on portrait mobile.
 
-### Tasks
+##### Tasks
 
 1. Add compact warning tray near battle panel or board overlay.
 2. Show:
@@ -564,7 +594,7 @@ Make difficulty readable on portrait mobile.
    - Cascade hint.
 3. Add event log lines for hazard start, counter used, and hazard resolved.
 
-### Acceptance Criteria
+##### Acceptance Criteria
 
 - Warning tray is readable on mobile.
 - Board remains central and not blocked.
@@ -573,13 +603,13 @@ Make difficulty readable on portrait mobile.
 
 ---
 
-## Phase R8 — Balance Pass
+#### Phase R8 — Balance Pass
 
-### Goal
+##### Goal
 
 Tune difficulty to be harder but fair.
 
-### Balance Rules
+##### Balance Rules
 
 - Stage 1 introduces mechanics one at a time.
 - Stage 2 uses junk queue and floating blocks lightly.
@@ -588,7 +618,7 @@ Tune difficulty to be harder but fair.
 - Stage 5 pressures cascade mastery.
 - Stage 6 combines royal pattern, floating blocks, and incoming junk carefully.
 
-### Recommended Starting Values
+##### Recommended Starting Values
 
 | Mechanic | Stage 1 | Stage 2 | Stage 3 | Stage 4 | Stage 5 | Stage 6 |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -598,7 +628,7 @@ Tune difficulty to be harder but fair.
 | Counter window | 4 pieces | 3 pieces | 2-3 pieces | 2-3 pieces | 2 pieces | 2 pieces |
 | Low ceiling | No | Elite only | Rare | Elite only | Elite/boss | Boss/elite |
 
-### Acceptance Criteria
+##### Acceptance Criteria
 
 - Average player can still clear Stage 1.
 - Stage 2 feels noticeably harder.
@@ -607,13 +637,13 @@ Tune difficulty to be harder but fair.
 
 ---
 
-## Phase R9 — QA and Debug Tools
+#### Phase R9 — QA and Debug Tools
 
-### Goal
+##### Goal
 
 Make new hazards easy to test.
 
-### Debug Tools
+##### Debug Tools
 
 Add dev-only controls to:
 
@@ -627,7 +657,7 @@ Add dev-only controls to:
 - Give spell catalyst item.
 - Force cascade test board.
 
-### Smoke Tests
+##### Smoke Tests
 
 1. Start Stage 1 and verify no unfair stacked hazards.
 2. Spawn incoming junk and reduce it with cascade.
@@ -643,13 +673,13 @@ Add dev-only controls to:
 ---
 
 
-## Phase R10 — Route Story Reward/Risk Integration
+#### Phase R10 — Route Story Reward/Risk Integration
 
-### Goal
+##### Goal
 
 Connect character route choices to reactive difficulty in a fair and testable way.
 
-### Tasks
+##### Tasks
 
 1. Read route content from `docs/story board/` and generated route JSON.
 2. Add route reward application support for:
@@ -663,7 +693,7 @@ Connect character route choices to reactive difficulty in a fair and testable wa
 6. Add route reward event-log messages.
 7. Ensure route-triggered hazards obey the same hazard warning/counter rules as normal hazards.
 
-### Acceptance Criteria
+##### Acceptance Criteria
 
 - Route rewards are functional, not text-only.
 - Each hero has at least one route reward that interacts with that hero's gameplay identity.
@@ -672,7 +702,7 @@ Connect character route choices to reactive difficulty in a fair and testable wa
 - Boss callbacks can apply a small boss modifier when configured.
 - Content validation and build pass.
 
-### Manual Test
+##### Manual Test
 
 1. Trigger Milo Stage 1 route scene and choose Practical; verify safety reward applies.
 2. Trigger Pippa Stage 1 route scene and choose True; verify sticky/junk or boss-softening modifier applies.
@@ -682,7 +712,7 @@ Connect character route choices to reactive difficulty in a fair and testable wa
 6. Trigger Lumi Stage 5 route scene and choose Risky; verify star/fever reward and preview/fever pressure risk are safe.
 
 
-## 5. Recommended File/Folder Changes
+#### 5. Recommended File/Folder Changes
 
 Exact paths may vary depending on the current repo. Prefer updating existing files rather than creating unnecessary new ones.
 
@@ -716,7 +746,7 @@ If the project already keeps content in a different structure, follow the existi
 
 ---
 
-## 6. Acceptance Criteria for the Full Feature
+#### 6. Acceptance Criteria for the Full Feature
 
 - Difficulty pressure is readable before it becomes dangerous.
 - Floating blocks work and have item/spell counters.
@@ -734,7 +764,7 @@ If the project already keeps content in a different structure, follow the existi
 
 ---
 
-## 7. Copy-Paste Implementation Prompt
+#### 7. Copy-Paste Implementation Prompt
 
 ```text
 Read AGENT.md first and follow it as the main project instruction.
@@ -823,7 +853,7 @@ Summary / Files changed / Systems changed / Content added / Commands run / Manua
 
 ---
 
-## 8. Manual Test Matrix
+#### 8. Manual Test Matrix
 
 | Test | Setup | Expected Result |
 | --- | --- | --- |
@@ -840,7 +870,7 @@ Summary / Files changed / Systems changed / Content added / Commands run / Manua
 | Safety Net overflow | Fill top row, trigger overflow with Safety Net | Top row clears once instead of defeat. |
 | Save/load active hazard | Save with incoming junk and floaty block | Load safely restores or clears with feedback. |
 
-### Route Story / Reactive Difficulty Tests
+##### Route Story / Reactive Difficulty Tests
 
 | Test | Setup | Expected Result |
 | --- | --- | --- |
@@ -849,3 +879,363 @@ Summary / Files changed / Systems changed / Content added / Commands run / Manua
 | Route Risky reward | Choose a risky route option | Stronger reward applies; optional Oopsie/hazard appears with warning and counterplay. |
 | Route reward save/load | Save after a stage/boss/run route modifier | Load restores or safely clears modifier with feedback. |
 | Boss callback modifier | Enter boss after route scene choice | Boss callback appears and configured modifier applies once. |
+
+
+---
+
+## Reactive Difficulty Runtime Audit
+
+**Source file:** `REACTIVE_DIFFICULTY_RUNTIME_AUDIT.md`
+
+**Consolidation note:** Use to understand current implementation coverage and switch-limited areas.
+
+### Reactive Difficulty Runtime Audit
+
+Updated: 2026-05-18
+
+#### Systems Already Present
+
+- `BoardSystem`: Cascade Gravity, special board block cells, junk/royal/sticky/confetti block insertion, row/cluster cleanup, queue/hold helpers, and safe top-row clearing.
+- `BattleScene`: active hazard warnings, compact warning tray, enemy behavior hooks, incoming junk queue, floating block warnings, freeze/preview/low-ceiling/bad-piece/speed/royal pressure, boss callbacks, item use, spell buttons, and save calls.
+- `ItemSystem`: reactive item switch hooks for cleanup, incoming junk, preview/freeze/speed/low ceiling, safety net, spell catalysts, and now Priority 2 counter items.
+- `SpellSystem`: runtime spells for Fireball, Frost Lock, Bomb Rune, and Void/Clean Cut, with next-spell catalyst support.
+- `RelicSystem`: switch-based relic hooks, including star/cascade support through battle code.
+- `HeroSystem` and `CombatSystem`: hero passives are applied at run start and through combat/battle hooks.
+- `RouteStorySystem`: 36 route scenes, route choice resolution, route rewards, route risks, boss callbacks, endings, and route modifier persistence hooks.
+- `DebugScene`: dev-only QA controls for battle setup, hazard forcing, reactive items, catalysts, route reward/risk, and hazard clearing.
+- `SaveSystem`: versioned run/meta saves with migration and corrupt-save fallback.
+
+#### Existing Content IDs
+
+- Hazard blocks: `block_floaty_rune`, `block_cloud_junk`, `block_crumb_junk`, `block_sticky`, `block_royal`, `block_ice`.
+- Priority reactive items: `item_snack_vacuum`, `item_festival_mop`, `item_cloud_pin`, `item_snack_shield`, `item_return_stamp`, `item_preview_glasses`, `item_hot_cocoa`, `item_speed_brake`, `item_tent_pole`, `item_safety_net`.
+- Additional counters added/verified: `item_balloon_pop`, `item_trash_lid`, `item_queue_comb`, `item_nope_stamp`, `item_alarm_cookie`, `item_royal_eraser`, `item_anchor_cookie`, `item_sky_hook`, `item_cleanup_coupon`.
+- Spell catalysts: `item_firecracker_sugar`, `item_frosting_salt`, `item_bomb_fuse`, `item_star_syrup`, `item_cascade_confetti`, `item_spell_coupon`, `item_cleaning_charm`.
+- Route content: six route-scene JSON files plus route endings under `src/game/content/story/routes/`.
+
+#### Supported Effects
+
+- Incoming junk warning tray, countdown, cascade reduction, delayed/blocked/reflected/canceled by items, safe landing.
+- Floating block warnings, visual overlay, Cloud Pin/Balloon Pop/Anchor Cookie/Sky Hook counters, safe expiry into cloud junk.
+- Hazard windows for incoming junk, floaty rune, freeze, preview, low ceiling, bad piece, sleep, speed wave, and royal pattern.
+- Spell catalysts modify the next compatible spell once; incompatible catalysts wait.
+- Hero synergies: Milo bonus mana on first cascade, Pippa fire cleanup, Nixie one hazard mitigation, Bruk overflow rescue, Zuzu stronger bombs with warned crumb risk, Lumi star cascade junk reduction.
+- Route rewards apply HP/mana/shield/gold/items/relics/upgrades/reactive modifiers, and risky route hazards enter the same warning tray.
+
+#### Switch-Limited Areas
+
+- Spell runtime is still limited to four battle spell IDs; content spells outside `SPELLS` remain data-ready rather than fully playable.
+- Relic behavior is switch-based; only existing relic IDs with hooks affect combat.
+- Low ceiling currently resolves as safe top-row pressure rather than true dynamic board-height shrink during battle.
+- Floating blocks are represented as active hazard markers over the board, not embedded persistent board cells.
+
+#### Files Changed In This Pass
+
+- `src/game/types/GameTypes.ts`
+- `src/game/data/constants.ts`
+- `src/game/data/defaultRunState.ts`
+- `src/game/systems/SaveSystem.ts`
+- `src/game/systems/BoardSystem.ts`
+- `src/game/systems/ItemSystem.ts`
+- `src/game/systems/SpellSystem.ts`
+- `src/game/systems/RouteStorySystem.ts`
+- `src/game/scenes/BattleScene.ts`
+- `src/game/scenes/DebugScene.ts`
+- `src/game/content/items/*.json`
+- `scripts/validate-content-data.mjs`
+
+#### Risky Areas
+
+- Save migration: active hazards and route modifiers are persisted, but battle-only timers are normalized defensively.
+- Board mutation: all hazard failure effects use safe insertion/cleanup helpers and avoid replacing Cascade Gravity.
+- Mobile UI: the warning tray is compact and sits above the event log, but still needs a device smoke test for crowding with inventory expanded.
+- Route risks: risky choices queue warning-window hazards where possible; if the tray is full, the risk waits/logs instead of stacking unfairly.
+
+
+---
+
+## Reactive Difficulty Smoke Test Matrix
+
+**Source file:** `REACTIVE_DIFFICULTY_SMOKE_TEST_MATRIX.md`
+
+**Consolidation note:** Use as the manual QA checklist for hazards, counters, route rewards, and save/load.
+
+### Reactive Difficulty Smoke Test Matrix
+
+Updated: 2026-05-18
+
+#### Incoming Junk
+
+1. Queue 6 junk from DebugScene.
+2. Trigger Cascade 2 using the cascade test board.
+3. Confirm the event log trims incoming junk before landing.
+4. Use Snack Shield and confirm countdown increases by 3 pieces.
+5. Use Return Stamp and confirm roughly half reflects as enemy damage.
+
+#### Floating Blocks
+
+1. Spawn Floaty Rune from DebugScene.
+2. Use Cloud Pin and confirm the floater resolves safely.
+3. Spawn Floaty Rune again.
+4. Use Balloon Pop and confirm it clears the floater and queues one warned crumb junk.
+
+#### Hazard Windows
+
+1. Trigger Freeze Warning and use Hot Cocoa.
+2. Confirm the warning clears and mana increases.
+3. Trigger Preview Glitter and use Preview Glasses.
+4. Confirm Next/Hold readability returns.
+5. Trigger Low Ceiling and use Tent Pole or Safety Net.
+6. Confirm the hazard resolves without a soft-lock.
+7. Trigger Bad Piece, Speed Wave, Sleepy Tune, and Royal Pattern from DebugScene and verify counter hints appear.
+
+#### Spell Catalysts
+
+1. Use Firecracker Sugar, then Fireball on a board with sticky/junk.
+2. Confirm cleanup occurs and the modifier is consumed.
+3. Use Cleaning Charm, then Void/Clean Cut.
+4. Confirm row clear also removes junk/sticky.
+5. Use Spell Coupon, cast any spell, and confirm reduced mana cost.
+6. Use an incompatible catalyst before the wrong spell and confirm it waits.
+
+#### Hero And Relic Synergies
+
+1. Pippa: cast Fireball and confirm sticky/junk cleanup.
+2. Nixie: trigger freeze or speed wave once and confirm Stay Chill softens it.
+3. Bruk: force top-out and confirm No Snack Left Behind clears room once.
+4. Zuzu: cast Bomb Rune and confirm stronger bomb output with warned crumb risk chance.
+5. Lumi: clear star blocks during incoming junk and confirm extra junk reduction.
+
+#### Route Story / Reactive Difficulty
+
+1. Trigger Milo Stage 1 route and choose Practical; confirm shield/safety reward.
+2. Trigger Pippa Stage 1 route and choose True; confirm heal/counter reward and true flag.
+3. Trigger Zuzu Stage 2 route and choose Risky; confirm reward plus warned junk risk.
+4. Trigger Nixie Stage 3 route and choose True; confirm freeze/speed guard modifier.
+5. Trigger Bruk Stage 6 route and choose True; confirm boss/route modifier.
+6. Trigger Lumi Stage 5 route and choose Risky; confirm reward plus preview/speed/royal warning as configured.
+
+#### Save / Load
+
+1. Save with active incoming junk and reload.
+2. Confirm it restores or normalizes safely.
+3. Save with active floating block and reload.
+4. Confirm it restores or normalizes safely.
+5. Save with active stage/boss/run route modifier and reload.
+6. Confirm route modifier persists if its duration is not battle-only.
+7. Confirm missing/corrupt reactive state initializes safely.
+
+
+---
+
+## Board Block Frame Animation Gameplay Integration
+
+**Source file:** `BOARD_BLOCK_FRAME_ANIMATION_INTEGRATION_WITH_STORY_FLOW.md`
+
+**Consolidation note:** Included because board glow/clear animations affect hazard and cascade feedback, but production asset rules remain in the Asset/Animation SOT.
+
+### Board Block Frame Animation Integration
+<!-- BLOCKMANCER_STATUS_UPDATE_2026-05-18 -->
+#### Current Follow-up — 2026-05-18
+
+Board block frame animation is implemented and should remain in place.
+
+##### Current status
+
+- PNG frame sequences are supported.
+- GIF files are not required.
+- Glow and clear animations are visual-only and do not replace Cascade Gravity.
+- Board block size is capped by the universal 24px board block constant.
+- Missing frames fall back safely.
+
+##### Story route asset note
+
+- Story-route assets such as route trigger icons, choice badges, dialogue panels, portraits, and ending cards are not board-block animations.
+- They should use the same asset manifest/fallback philosophy, but they must not alter Cascade Gravity or board clear timing.
+- If a route reward highlights a board hazard or special block, use the existing glow/clear frame hooks instead of adding route-specific board logic.
+
+##### Remaining work
+
+- Import final exact-frame PNG packages using `asset_id__animation_name__f00.png` naming.
+- Verify complete Priority 1 block animations in battle.
+- Keep legacy `_frame_01` paths only for fallback compatibility; new art should use exact-frame naming.
+<!-- END_BLOCKMANCER_STATUS_UPDATE -->
+
+#### Files Changed
+
+- `src/game/utils/constants.ts`
+- `src/game/data/assets.ts`
+- `src/game/systems/AssetSystem.ts`
+- `src/game/systems/BoardSystem.ts`
+- `src/game/types/GameTypes.ts`
+- `src/game/scenes/BattleScene.ts`
+- `src/game/content/board-blocks/metadata.json`
+- `docs/BOARD_BLOCK_FRAME_ANIMATION_INTEGRATION.md`
+
+#### How Frame Animation Works
+
+Board block animations use PNG frame sequences only. GIF files are not supported or required. The exact frame-count and naming standard now lives in `docs/ANIMATION_ASSET_REQUIREMENTS.md`.
+
+Glow animation is visual-only on the existing board sprite. When a block enters a highlighted visual state, the scene tries to play the loaded glow frame sequence. If all 3 glow frames are present, the frames loop until the highlight ends. When the highlight ends, the sprite animation stops and the block returns to its base texture.
+
+Clear animation is visual-only and follows board logic. The board cell is cleared immediately by `BoardSystem`, then `BattleScene` spawns a temporary overlay sprite at the cleared cell position. The overlay plays the clear frame sequence once, then destroys itself. Cascade Gravity continues to use the resolved board state and is not replaced.
+
+#### Folder Structure
+
+Preferred still sprite paths:
+
+```text
+public/assets/board-blocks/block_[color/type].png
+public/assets/sprites/board-blocks/block_[color/type]/glow/block_[color/type]__glow__f00.png
+public/assets/sprites/board-blocks/block_[color/type]/clear/block_[color/type]__clear__f00.png
+```
+
+Preferred exact-frame paths:
+
+```text
+public/assets/sprites/board-blocks/block_[color/type]/glow/block_[color/type]__glow__f00.png
+public/assets/sprites/board-blocks/block_[color/type]/clear/block_[color/type]__clear__f00.png
+```
+
+Icon paths:
+
+```text
+public/assets/icons/board-blocks/ico_block_[color/type].png
+```
+
+#### Backward Compatibility Paths
+
+The manifest also registers old flat sprite paths with legacy texture aliases:
+
+```text
+public/assets/sprites/board-blocks/spr_block_[color/type]_rune.png
+public/assets/sprites/board-blocks/spr_block_[color/type]_rune_glow.png
+public/assets/sprites/board-blocks/spr_block_[color/type]_rune_clear.png
+public/assets/sprites/board-blocks/spr_block_[color/type]_rune_glow_frame_01.png
+public/assets/sprites/board-blocks/spr_block_[color/type]_rune_clear_frame_01.png
+```
+
+Texture resolution uses explicit `assetRefs` first, then old fields such as `spriteKey` and `iconKey`, then inferred preferred paths, then inferred flat legacy aliases, then generated placeholders.
+
+Legacy `_frame_01` paths remain supported as fallback compatibility. New assets should use the exact `asset_id__animation_name__f00.png` sequence from `docs/ANIMATION_ASSET_REQUIREMENTS.md`.
+
+#### Fallback Rules
+
+- Base sprite missing: use the generated board block placeholder.
+- Glow frames missing or incomplete: use the glow still sprite if loaded.
+- Glow still missing: keep the base sprite.
+- Clear frames missing or incomplete: show the clear still sprite briefly if loaded.
+- Clear still missing: remove the block visually without crashing.
+- Icon missing: use icon fallback behavior, then generated icon placeholder.
+- Optional missing animation frames never block gameplay or Cascade Gravity.
+
+#### Timing Constants
+
+`BLOCK_ANIM` defines:
+
+```ts
+BOARD_BLOCK_SIZE: 24
+BOARD_ICON_SIZE: 48
+GLOW_FRAME_COUNT: 3
+GLOW_FRAME_MS: 50
+GLOW_TOTAL_MS: 150
+CLEAR_FRAME_COUNT: 5
+CLEAR_FRAME_MS: 40
+CLEAR_TOTAL_MS: 200
+```
+
+Board block sprites are rendered through the board cell size capped by the universal `24px` board block constant. Source images larger than the cell are not rendered at native size.
+
+#### Content Schema
+
+Board block content may optionally provide:
+
+```json
+{
+  "spriteKey": "block_red",
+  "iconKey": "ico_block_red",
+  "assetRefs": {
+    "base": "block_red",
+    "glow": "block_red_glow",
+    "clear": "block_red_clear",
+    "icon": "ico_block_red",
+    "glowFrames": [
+      "block_red__glow__f00",
+      "block_red__glow__f01",
+      "block_red__glow__f02"
+    ],
+    "clearFrames": [
+      "block_red__clear__f00",
+      "block_red__clear__f01",
+      "block_red__clear__f02",
+      "block_red__clear__f03",
+      "block_red__clear__f04"
+    ]
+  }
+}
+```
+
+Existing board block JSON remains valid because runtime inference fills omitted variants.
+
+
+#### Story Route Visual Integration
+
+The character route story flow adds UI and narrative assets that may appear near the board, but they are separate from board-block animation.
+
+Recommended route asset categories:
+
+```text
+public/assets/ui/story-routes/
+public/assets/icons/story-routes/
+public/assets/portraits/heroes/
+public/assets/portraits/npcs/
+public/assets/story/endings/
+public/assets/stage-backgrounds/route-scenes/
+public/assets/effects/story-routes/
+```
+
+Recommended asset key patterns:
+
+```text
+ui_route_dialogue_panel
+ui_route_choice_card_practical
+ui_route_choice_card_true
+ui_route_choice_card_risky
+ico_route_trigger_[hero]_[stage]
+ico_route_badge_practical
+ico_route_badge_true
+ico_route_badge_risky
+prt_route_[speaker]_[expression]
+story_end_[hero]_normal
+story_end_[hero]_true
+story_end_[hero]_variant
+vfx_route_reward_sparkle
+vfx_route_risky_oopsie
+```
+
+Rules:
+
+- Route dialogue panels and choice cards are UI assets, not board-block sprites.
+- Route trigger icons should be loaded through the asset manifest with fallback icons.
+- Hero portraits and NPC portraits should fall back to safe placeholder portraits.
+- Ending cards should fall back to a generic festival ending card.
+- Route reward VFX may highlight board blocks, but should call existing board highlight/glow helpers.
+- Missing route visual assets must never block dialogue, choice resolution, rewards, or endings.
+
+If a route reward clears, glows, pins, freezes, or transforms a board block, the visual sequence should use the board block's existing `glowFrames` and `clearFrames` where available. Do not create separate board logic just for the story system.
+
+
+#### How To Test
+
+1. Start a battle.
+2. Confirm normal board rendering remains stable.
+3. Add a complete 3-frame glow sequence for a block and trigger a highlighted state such as Fever or a floating hazard.
+4. Confirm glow frames loop at 50 ms per frame.
+5. End the highlighted state and confirm the block returns to base.
+6. Add a complete 5-frame clear sequence for a block and clear it in a line.
+7. Confirm the clear overlay plays once at 40 ms per frame and then disappears.
+8. Remove one optional frame and confirm the game falls back without crashing.
+9. Confirm Cascade Gravity still resolves after line clears.
+10. Open UI that uses content icons and confirm missing icons fall back safely.
+11. Trigger a route story event and confirm dialogue/choice UI assets fall back safely if missing.
+12. Choose a route reward that highlights or clears blocks and confirm it uses existing glow/clear frame hooks without changing Cascade Gravity.

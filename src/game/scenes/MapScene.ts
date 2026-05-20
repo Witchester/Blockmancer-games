@@ -27,6 +27,7 @@ type NodeVisualRef = {
   node: MapNodeDefinition;
   x: number;
   y: number;
+  radius: number;
 };
 
 export class MapScene extends Phaser.Scene {
@@ -193,7 +194,7 @@ export class MapScene extends Phaser.Scene {
       fontStyle: 'bold'
     }).setOrigin(0.5, 0);
 
-    this.add.text(layout.headerArea.x + layout.headerArea.width / 2, layout.headerArea.y + layout.headerArea.height - 4, `Stage ${state.stage}/${stageCount} · ${stage?.name ?? 'Festival Dungeon'} · Room ${currentNode?.label ?? 'Start'}`, {
+    this.add.text(layout.headerArea.x + layout.headerArea.width / 2, layout.headerArea.y + layout.headerArea.height - 4, `Stage ${state.stage}/${stageCount} ï¿½ ${stage?.name ?? 'Festival Dungeon'} ï¿½ Room ${currentNode?.label ?? 'Start'}`, {
       color: '#98a0c7',
       fontFamily: FONT_FAMILY,
       fontSize: layout.scaleMode === 'tiny' ? '13px' : '15px'
@@ -217,7 +218,7 @@ export class MapScene extends Phaser.Scene {
     const state = this.gameState.runState;
     const currentNode = this.gameState.mapSystem.getNode(state.map, state.currentNodeId);
     const goal = this.getStageGoalSummary();
-    const relicSummary = state.ownedRewards.length ? `${state.ownedRewards.length} · ${state.ownedRewards[0]}` : '0';
+    const relicSummary = state.ownedRewards.length ? `${state.ownedRewards.length} ï¿½ ${state.ownedRewards[0]}` : '0';
 
     const chips = [
       ['HP', `${state.player.hp}/${state.player.maxHp}`],
@@ -299,7 +300,8 @@ export class MapScene extends Phaser.Scene {
     const visuals: NodeVisualRef[] = state.map.map((node) => ({
       node,
       x: layout.nodeGraphArea.x + node.x * layout.nodeGraphArea.width,
-      y: layout.nodeGraphArea.y + node.y * layout.nodeGraphArea.height
+      y: layout.nodeGraphArea.y + node.y * layout.nodeGraphArea.height,
+      radius: node.roomType === 'boss' ? 30 : node.roomType === 'elite' ? 26 : 24
     }));
     const visualById = new Map(visuals.map((entry) => [entry.node.id, entry]));
 
@@ -308,8 +310,23 @@ export class MapScene extends Phaser.Scene {
       if (!from) continue;
       for (const targetId of node.connections) {
         const to = visualById.get(targetId);
-        if (!to) continue;
-        const line = this.add.line(0, 0, from.x, from.y, to.x, to.y, 0x44507a, 1).setLineWidth(4);
+        if (!to) {
+          if (import.meta.env.DEV) {
+            console.warn('[MapScene] Missing edge target', node.id, targetId);
+          }
+          continue;
+        }
+        const start = this.getNodeEdgePoint(from, to);
+        const end = this.getNodeEdgePoint(to, from);
+        if (!this.isPointInsideRect(start, layout.nodeGraphArea) || !this.isPointInsideRect(end, layout.nodeGraphArea)) {
+          continue;
+        }
+        const dx = end.x - start.x;
+        const dy = end.y - start.y;
+        if (dx * dx + dy * dy < 16) {
+          continue;
+        }
+        const line = this.add.line(0, 0, start.x, start.y, end.x, end.y, 0x44507a, 1).setLineWidth(4);
         this.mapLayer.add(line);
       }
     }
@@ -321,7 +338,7 @@ export class MapScene extends Phaser.Scene {
       const isAvailable = availableIds.has(node.id);
       const isLocked = !isCurrent && !isAvailable && !node.completed;
 
-      const radius = node.roomType === 'boss' ? 30 : node.roomType === 'elite' ? 26 : 24;
+      const radius = entry.radius;
       const fill = isCurrent ? COLORS.gold : node.completed ? COLORS.success : isLocked ? 0x303750 : COLORS.accent;
       const stroke = isSelected ? COLORS.gold : isCurrent ? 0xfff1b5 : isLocked ? 0x5d678c : 0x9ab3ff;
 
@@ -387,7 +404,7 @@ export class MapScene extends Phaser.Scene {
     const action = this.getPrimaryActionLabel(node.roomType);
     const risk = node.roomType === 'boss' ? 'High risk, stage advance on win.' : node.roomType === 'elite' ? 'Hard battle, better loot.' : 'Clear this room to advance the route.';
     this.selectedNodeText?.setText([
-      `${node.label} · ${this.getNodeTypeLabel(node.roomType, 'full')} · ${status}`,
+      `${node.label} ï¿½ ${this.getNodeTypeLabel(node.roomType, 'full')} ï¿½ ${status}`,
       `${risk}`,
       `Action: ${action}`
     ]);
@@ -473,6 +490,20 @@ export class MapScene extends Phaser.Scene {
       default:
         return 'Continue';
     }
+  }
+
+  private getNodeEdgePoint(from: NodeVisualRef, to: NodeVisualRef): { x: number; y: number } {
+    const dx = to.x - from.x;
+    const dy = to.y - from.y;
+    const len = Math.sqrt(dx * dx + dy * dy) || 1;
+    return {
+      x: from.x + (dx / len) * from.radius,
+      y: from.y + (dy / len) * from.radius
+    };
+  }
+
+  private isPointInsideRect(point: { x: number; y: number }, rect: Rect): boolean {
+    return point.x >= rect.x && point.y >= rect.y && point.x <= rect.x + rect.width && point.y <= rect.y + rect.height;
   }
 
   private log(message: string): void {
