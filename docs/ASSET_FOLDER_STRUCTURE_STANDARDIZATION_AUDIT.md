@@ -1,16 +1,16 @@
 # ASSET Folder Structure Standardization Audit
 
-Generated: 2026-05-21T04:44:49.329Z
+Generated: 2026-05-21T06:25:46.421Z
 
 ## Summary
 - Runtime/content asset-like keys scanned: 521
 - Expected unique keys and exact frames: 2130
-- Physical assets scanned: 566
-- Missing primary files: 1680
+- Physical assets scanned: 585
+- Missing primary files: 1676
 - Legacy-only files: 13
-- Fallback-safe missing production assets: 1667
+- Fallback-safe missing production assets: 1663
 - Content keys with no physical primary or legacy file: 113
-- Physical-only orphan/legacy candidates: 103
+- Physical-only orphan/legacy candidates: 118
 
 ## Missing primary files
 - `block_toolbox__glow__f01` -> `/assets/sprites/board-blocks/block_toolbox/glow/block_toolbox__glow__f01.png` (animation_manifest)
@@ -539,6 +539,21 @@ Generated: 2026-05-21T04:44:49.329Z
 - `/assets/sprites/board-blocks/block_void/clear/block_void__clear__f00.png`
 - `/assets/sprites/board-blocks/block_void/glow/block_void__glow__f00.png`
 - `/assets/sprites/bosses/boss_cupcake_slime_king_intro/idle/boss_cupcake_slime_king_intro__idle__f00.png`
+- `/assets/sprites/monsters/mon_cupcake_slime/attack/spr_mon_cupcake_slime__attack__f00.png`
+- `/assets/sprites/monsters/mon_cupcake_slime/attack/spr_mon_cupcake_slime__attack__f01.png`
+- `/assets/sprites/monsters/mon_cupcake_slime/attack/spr_mon_cupcake_slime__attack__f02.png`
+- `/assets/sprites/monsters/mon_cupcake_slime/attack/spr_mon_cupcake_slime__attack__f03.png`
+- `/assets/sprites/monsters/mon_cupcake_slime/attack/spr_mon_cupcake_slime__attack__f04.png`
+- `/assets/sprites/monsters/mon_cupcake_slime/attack/spr_mon_cupcake_slime__attack__f05.png`
+- `/assets/sprites/monsters/mon_cupcake_slime/defeat/spr_mon_cupcake_slime__defeat__f00.png`
+- `/assets/sprites/monsters/mon_cupcake_slime/defeat/spr_mon_cupcake_slime__defeat__f01.png`
+- `/assets/sprites/monsters/mon_cupcake_slime/defeat/spr_mon_cupcake_slime__defeat__f02.png`
+- `/assets/sprites/monsters/mon_cupcake_slime/defeat/spr_mon_cupcake_slime__defeat__f03.png`
+- `/assets/sprites/monsters/mon_cupcake_slime/defeat/spr_mon_cupcake_slime__defeat__f04.png`
+- `/assets/sprites/monsters/mon_cupcake_slime/defeat/spr_mon_cupcake_slime__defeat__f05.png`
+- `/assets/sprites/monsters/mon_cupcake_slime/hit/spr_mon_cupcake_slime__hit__f00.png`
+- `/assets/sprites/monsters/mon_cupcake_slime/hit/spr_mon_cupcake_slime__hit__f01.png`
+- `/assets/sprites/monsters/mon_cupcake_slime/hit/spr_mon_cupcake_slime__hit__f02.png`
 - `/assets/sprites/monsters/mon_cupcake_slime/idle/mon_cupcake_slime__idle__f00.png`
 - `/assets/sprites/monsters/mon_cupcake_slime/idle/mon_cupcake_slime__idle__f01.png`
 - `/assets/sprites/monsters/mon_cupcake_slime/idle/mon_cupcake_slime__idle__f02.png`
