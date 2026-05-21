@@ -50,6 +50,14 @@ type RouteEndingBundle = {
   endings?: RouteEndingContent[];
 };
 
+type RouteBarksBundle = {
+  barks?: Record<string, string[]>;
+};
+
+type RouteVoiceTagsBundle = {
+  voiceTags?: Record<string, string[]>;
+};
+
 const sceneModules = (import.meta as unknown as {
   glob: (pattern: string, options: { eager: boolean; import: string }) => Record<string, unknown>;
 }).glob('../content/story/routes/route-scenes.*.json', { eager: true, import: 'default' });
@@ -57,6 +65,14 @@ const sceneModules = (import.meta as unknown as {
 const endingModules = (import.meta as unknown as {
   glob: (pattern: string, options: { eager: boolean; import: string }) => Record<string, unknown>;
 }).glob('../content/story/routes/route-endings.json', { eager: true, import: 'default' });
+
+const routeBarkModules = (import.meta as unknown as {
+  glob: (pattern: string, options: { eager: boolean; import: string }) => Record<string, unknown>;
+}).glob('../content/story/routes/route-barks.json', { eager: true, import: 'default' });
+
+const routeVoiceTagModules = (import.meta as unknown as {
+  glob: (pattern: string, options: { eager: boolean; import: string }) => Record<string, unknown>;
+}).glob('../content/story/routes/route-voice-tags.json', { eager: true, import: 'default' });
 
 const HERO_IDS = [
   'hero_milo_blockmancer',
@@ -139,6 +155,8 @@ export class RouteStorySystem {
   private readonly scenes: RouteSceneContent[];
   private readonly endings: RouteEndingContent[];
   private readonly validationWarnings: string[];
+  private readonly routeBarks: Record<string, string[]>;
+  private readonly routeVoiceTags: Record<string, string[]>;
 
   constructor(
     private readonly rewardSystem?: RewardSystem,
@@ -147,6 +165,8 @@ export class RouteStorySystem {
   ) {
     this.scenes = this.loadScenes();
     this.endings = this.loadEndings();
+    this.routeBarks = this.loadRouteBarks();
+    this.routeVoiceTags = this.loadRouteVoiceTags();
     this.validationWarnings = this.validateContent();
   }
 
@@ -156,6 +176,30 @@ export class RouteStorySystem {
 
   getAllScenes(): RouteSceneContent[] {
     return [...this.scenes];
+  }
+
+  getHeroBark(heroId: string): string | null {
+    const barks = this.routeBarks[heroId];
+    if (!barks?.length) {
+      return null;
+    }
+    return barks[Math.floor(Math.random() * barks.length)] ?? null;
+  }
+
+  getHeroVoiceTags(heroId: string): string[] {
+    const tagGroupByHeroId: Record<string, string> = {
+      hero_milo_blockmancer: 'milo_soft',
+      hero_pippa_pyromancer: 'pippa_hearth',
+      hero_zuzu_goblin_engineer: 'zuzu_accountable',
+      hero_nixie_frostbinder: 'nixie_thaw',
+      hero_bruk_snack_knight: 'bruk_hospitality',
+      hero_lumi_star_witch: 'lumi_wishkeeper'
+    };
+    const tagGroup = tagGroupByHeroId[heroId];
+    if (!tagGroup) {
+      return [];
+    }
+    return this.routeVoiceTags[tagGroup] ? [...this.routeVoiceTags[tagGroup]] : [];
   }
 
   getEndingById(id: string): RouteEndingContent | null {
@@ -639,6 +683,16 @@ export class RouteStorySystem {
       const bundle = module as RouteEndingBundle;
       return Array.isArray(bundle.endings) ? bundle.endings : [];
     });
+  }
+
+  private loadRouteBarks(): Record<string, string[]> {
+    const bundle = Object.values(routeBarkModules)[0] as RouteBarksBundle | undefined;
+    return bundle?.barks ?? {};
+  }
+
+  private loadRouteVoiceTags(): Record<string, string[]> {
+    const bundle = Object.values(routeVoiceTagModules)[0] as RouteVoiceTagsBundle | undefined;
+    return bundle?.voiceTags ?? {};
   }
 
   private validateContent(): string[] {

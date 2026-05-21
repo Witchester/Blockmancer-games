@@ -15,6 +15,7 @@ This pack splits the project documentation by ownership area so future updates a
 | 3 | `03_BLOCKMANCER_GAMEPLAY_REACTIVE_DIFFICULTY_SOURCE_OF_TRUTH.md` | Reactive difficulty, hazards, counter items, route reward/risk modifiers, runtime audit, and smoke tests. |
 | 4 | `04_BLOCKMANCER_ASSET_ANIMATION_SOURCE_OF_TRUTH.md` | Asset folders, exact-frame PNG contract, board block animations, variants, placeholders, and 32-bit pixel style rules. |
 | 5 | `05_BLOCKMANCER_RELEASE_IMPLEMENTATION_SOURCE_OF_TRUTH.md` | Current implementation status, code audit, route implementation audit, release plan, and agent prompts. |
+| 6 | `06_BLOCKMANCER_CANONICAL_FOLDER_STRUCTURE_SOURCE_OF_TRUTH.md` | Final `public/assets/` folder tree, stage folder separation, raw-path policy, and fallback-only path policy. |
 
 ## Source Precedence Rules
 
@@ -23,7 +24,8 @@ This pack splits the project documentation by ownership area so future updates a
 3. For **hazards, item counters, spell catalysts, and route-triggered risks/rewards**, `03_BLOCKMANCER_GAMEPLAY_REACTIVE_DIFFICULTY_SOURCE_OF_TRUTH.md` wins.
 4. For **asset sizes, folder paths, animation frame counts, and fallback behavior**, `04_BLOCKMANCER_ASSET_ANIMATION_SOURCE_OF_TRUTH.md` wins.
 5. For **what is implemented, partial, missing, or next**, `05_BLOCKMANCER_RELEASE_IMPLEMENTATION_SOURCE_OF_TRUTH.md` wins.
-6. Older uploaded files are historical unless explicitly embedded in one of the files above.
+6. For **canonical asset folder placement and fallback-only path policy**, `06_BLOCKMANCER_CANONICAL_FOLDER_STRUCTURE_SOURCE_OF_TRUTH.md` wins.
+7. Older uploaded files are historical unless explicitly embedded in one of the files above.
 
 ## Active Product Decisions
 
@@ -36,6 +38,7 @@ This pack splits the project documentation by ownership area so future updates a
 | Route story is runtime-implemented but still needs manual smoke verification. | Release Implementation SOT |
 | Exact-frame PNG animation support exists, but final production frames are still incomplete. | Asset/Animation SOT |
 | Placeholder assets are runtime-safe but not final art. | Asset/Animation SOT |
+| Canonical asset root is `public/assets/`; stage `battle/` and `puzzle/` folders are separate; legacy paths are fallback-only. | Canonical Folder Structure SOT |
 | Next product focus is Stage 1 vertical slice stabilization, P0 tests, Priority 1 assets/VFX/audio, and manual portrait-mobile smoke tests. | Release Implementation SOT |
 
 ## Update Policy
@@ -69,5 +72,6 @@ blockmancer_sot_pack_2026_05_20/
   03_BLOCKMANCER_GAMEPLAY_REACTIVE_DIFFICULTY_SOURCE_OF_TRUTH.md
   04_BLOCKMANCER_ASSET_ANIMATION_SOURCE_OF_TRUTH.md
   05_BLOCKMANCER_RELEASE_IMPLEMENTATION_SOURCE_OF_TRUTH.md
+  06_BLOCKMANCER_CANONICAL_FOLDER_STRUCTURE_SOURCE_OF_TRUTH.md
   SOURCE_MANIFEST.json
 ```

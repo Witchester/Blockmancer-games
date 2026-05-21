@@ -44,49 +44,67 @@ export class RouteDialogueScene extends Phaser.Scene {
   private renderPreChoice(): void {
     const layout = getPortraitLayout(this);
     const compact = isCompactLayout(this);
+    const panelTop = 36;
+    const panelBottom = layout.height - 36;
+    const panelHeight = panelBottom - panelTop;
+    const titleY = panelTop + 28;
+    const locationY = titleY + 38;
+    const storyY = panelTop + panelHeight * 0.26;
+    const dialogY = panelTop + panelHeight * 0.5;
+    const buttonY = panelBottom - 44;
+    const bark = this.gameAsBlockmancer.routeStorySystem.getHeroBark(this.gameAsBlockmancer.runState.hero.id);
     this.children.removeAll(true);
     this.cameras.main.setBackgroundColor(COLORS.background);
     this.add.rectangle(layout.centerX, layout.centerY, layout.contentWidth, layout.height - 72, COLORS.panel, 0.97)
       .setStrokeStyle(3, COLORS.gold, 0.55);
-    this.add.text(layout.centerX, 82, this.routeScene.title, {
+    this.add.text(layout.centerX, titleY, this.routeScene.title, {
       color: '#ffca6b',
       fontFamily: FONT_FAMILY,
-      fontSize: compact ? '30px' : '36px',
+      fontSize: compact ? '24px' : '30px',
       fontStyle: 'bold',
       align: 'center',
       wordWrap: { width: layout.contentWidth - 64 }
     }).setOrigin(0.5);
-    this.add.text(layout.centerX, 132, this.routeScene.locationName, {
+    this.add.text(layout.centerX, locationY, this.routeScene.locationName, {
       color: '#98a0c7',
       fontFamily: FONT_FAMILY,
-      fontSize: compact ? '18px' : '20px',
+      fontSize: compact ? '15px' : '17px',
       align: 'center',
       wordWrap: { width: layout.contentWidth - 88 }
     }).setOrigin(0.5);
-    this.add.text(layout.centerX, 210, this.routeScene.storyBeat, {
+    this.add.text(layout.centerX, storyY, this.routeScene.storyBeat, {
       color: '#d8deff',
       fontFamily: FONT_FAMILY,
-      fontSize: compact ? '17px' : '19px',
+      fontSize: compact ? '15px' : '17px',
       align: 'center',
       wordWrap: { width: layout.contentWidth - 76 },
-      lineSpacing: 5
+      lineSpacing: 4
     }).setOrigin(0.5);
 
     const visibleLines = this.routeScene.preChoiceDialogue.slice(this.lineIndex, this.lineIndex + 3);
-    this.add.text(layout.centerX, 420, this.formatLines(visibleLines), {
+    this.add.text(layout.centerX, dialogY, this.formatLines(visibleLines), {
       color: '#f6f7ff',
       fontFamily: FONT_FAMILY,
-      fontSize: compact ? '24px' : '28px',
+      fontSize: compact ? '17px' : '20px',
       align: 'center',
       wordWrap: { width: layout.contentWidth - 88 },
-      lineSpacing: 10
+      lineSpacing: 6
     }).setOrigin(0.5);
+    if (bark) {
+      this.add.text(layout.centerX, buttonY - 40, `"${bark}"`, {
+        color: '#98a0c7',
+        fontFamily: FONT_FAMILY,
+        fontSize: compact ? '13px' : '14px',
+        align: 'center',
+        wordWrap: { width: layout.contentWidth - 96 }
+      }).setOrigin(0.5);
+    }
 
     const canAdvance = this.lineIndex + 3 < this.routeScene.preChoiceDialogue.length;
-    new Button(this, layout.centerX - 150, 760, 220, 56, canAdvance ? 'Skip To Choices' : 'Choices', () => {
+    new Button(this, layout.centerX - 110, buttonY, 180, 50, canAdvance ? 'Skip To Choices' : 'Choices', () => {
       this.renderChoices();
     });
-    new Button(this, layout.centerX + 150, 760, 220, 56, canAdvance ? 'Continue' : 'Choices', () => {
+    new Button(this, layout.centerX + 110, buttonY, 180, 50, canAdvance ? 'Continue' : 'Choices', () => {
       if (canAdvance) {
         this.lineIndex += 3;
         this.renderPreChoice();
@@ -99,6 +117,13 @@ export class RouteDialogueScene extends Phaser.Scene {
   private renderChoices(): void {
     const layout = getPortraitLayout(this);
     const compact = isCompactLayout(this);
+    const panelTop = 36;
+    const panelBottom = layout.height - 36;
+    const headerY = panelTop + 24;
+    const choiceAreaTop = panelTop + 82;
+    const choiceAreaBottom = panelBottom - 74;
+    const slotHeight = (choiceAreaBottom - choiceAreaTop) / 3;
+    const voiceTags = this.gameAsBlockmancer.routeStorySystem.getHeroVoiceTags(this.gameAsBlockmancer.runState.hero.id);
     this.children.removeAll(true);
     this.cameras.main.setBackgroundColor(COLORS.background);
     new Card(this, layout.centerX, layout.centerY, layout.contentWidth, layout.height - 72, {
@@ -109,15 +134,24 @@ export class RouteDialogueScene extends Phaser.Scene {
       strokeColor: COLORS.gold
     });
 
+    this.add.text(layout.centerX, headerY + 18, voiceTags.length ? `Voice tags: ${voiceTags.slice(0, 4).join(' · ')}` : '', {
+      color: '#98a0c7',
+      fontFamily: FONT_FAMILY,
+      fontSize: compact ? '12px' : '13px',
+      align: 'center',
+      wordWrap: { width: layout.contentWidth - 90 }
+    }).setOrigin(0.5);
+
     this.routeScene.choices.forEach((choice, index) => {
-      const y = 245 + index * 178;
+      const y = choiceAreaTop + slotHeight * index + slotHeight / 2;
+      const cardHeight = Math.max(136, slotHeight - 10);
       const laneLabel = choice.lane === 'true' ? 'True' : choice.lane === 'risky' ? 'Risky' : 'Practical';
-      this.add.rectangle(layout.centerX, y, layout.contentWidth - 58, 146, COLORS.panelAlt, 0.98)
+      this.add.rectangle(layout.centerX, y, layout.contentWidth - 58, cardHeight, COLORS.panelAlt, 0.98)
         .setStrokeStyle(2, this.getLaneColor(choice.lane), 0.65);
       this.add.text(layout.centerX, y - 48, `${choice.label}  [${laneLabel}]`, {
         color: '#ffca6b',
         fontFamily: FONT_FAMILY,
-        fontSize: compact ? '23px' : '27px',
+        fontSize: compact ? '18px' : '20px',
         fontStyle: 'bold',
         align: 'center',
         wordWrap: { width: layout.contentWidth - 96 }
@@ -125,15 +159,15 @@ export class RouteDialogueScene extends Phaser.Scene {
       this.add.text(layout.centerX, y + 6, `${choice.playerLine}\n${choice.gameplayResult}`, {
         color: '#f6f7ff',
         fontFamily: FONT_FAMILY,
-        fontSize: compact ? '17px' : '19px',
+        fontSize: compact ? '14px' : '15px',
         align: 'center',
         wordWrap: { width: layout.contentWidth - 112 },
-        lineSpacing: 5
+        lineSpacing: 3
       }).setOrigin(0.5);
-      new Button(this, layout.centerX, y + 98, 190, 46, 'Choose', () => this.choose(choice));
+      new Button(this, layout.centerX, y + Math.min(62, cardHeight / 2 - 12), 170, 40, 'Choose', () => this.choose(choice));
     });
 
-    new Button(this, layout.centerX, 832, 180, 50, 'Back', () => this.renderPreChoice());
+    new Button(this, layout.centerX, panelBottom - 26, 180, 44, 'Back', () => this.renderPreChoice());
   }
 
   private choose(choice: RouteChoiceContent): void {
@@ -147,6 +181,12 @@ export class RouteDialogueScene extends Phaser.Scene {
   private renderResolution(): void {
     const layout = getPortraitLayout(this);
     const compact = isCompactLayout(this);
+    const panelTop = 36;
+    const panelBottom = layout.height - 36;
+    const titleY = panelTop + 30;
+    const npcY = panelTop + (panelBottom - panelTop) * 0.38;
+    const narrationY = panelTop + (panelBottom - panelTop) * 0.58;
+    const resultY = panelTop + (panelBottom - panelTop) * 0.76;
     const choice = this.selectedChoice;
     if (!choice) {
       this.renderChoices();
@@ -156,39 +196,39 @@ export class RouteDialogueScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor(COLORS.background);
     this.add.rectangle(layout.centerX, layout.centerY, layout.contentWidth, layout.height - 72, COLORS.panel, 0.97)
       .setStrokeStyle(3, this.getLaneColor(choice.lane), 0.65);
-    this.add.text(layout.centerX, 92, choice.label, {
+    this.add.text(layout.centerX, titleY, choice.label, {
       color: '#ffca6b',
       fontFamily: FONT_FAMILY,
-      fontSize: compact ? '32px' : '38px',
+      fontSize: compact ? '24px' : '30px',
       fontStyle: 'bold',
       align: 'center',
       wordWrap: { width: layout.contentWidth - 72 }
     }).setOrigin(0.5);
-    this.add.text(layout.centerX, 350, this.formatLines(choice.npcResponse), {
+    this.add.text(layout.centerX, npcY, this.formatLines(choice.npcResponse), {
       color: '#f6f7ff',
       fontFamily: FONT_FAMILY,
-      fontSize: compact ? '24px' : '28px',
+      fontSize: compact ? '17px' : '20px',
       align: 'center',
       wordWrap: { width: layout.contentWidth - 88 },
-      lineSpacing: 10
-    }).setOrigin(0.5);
-    this.add.text(layout.centerX, 545, choice.narration, {
-      color: '#d8deff',
-      fontFamily: FONT_FAMILY,
-      fontSize: compact ? '18px' : '20px',
-      align: 'center',
-      wordWrap: { width: layout.contentWidth - 86 },
       lineSpacing: 6
     }).setOrigin(0.5);
-    this.add.text(layout.centerX, 690, this.rewardMessages.join('\n'), {
+    this.add.text(layout.centerX, narrationY, choice.narration, {
+      color: '#d8deff',
+      fontFamily: FONT_FAMILY,
+      fontSize: compact ? '14px' : '16px',
+      align: 'center',
+      wordWrap: { width: layout.contentWidth - 86 },
+      lineSpacing: 4
+    }).setOrigin(0.5);
+    this.add.text(layout.centerX, resultY, this.rewardMessages.join('\n'), {
       color: '#65d6a5',
       fontFamily: FONT_FAMILY,
-      fontSize: compact ? '17px' : '19px',
+      fontSize: compact ? '13px' : '14px',
       align: 'center',
       wordWrap: { width: layout.contentWidth - 100 },
       lineSpacing: 4
     }).setOrigin(0.5);
-    new Button(this, layout.centerX, 832, 260, 58, 'Continue', () => this.finish());
+    new Button(this, layout.centerX, panelBottom - 26, 220, 48, 'Continue', () => this.finish());
   }
 
   private finish(): void {

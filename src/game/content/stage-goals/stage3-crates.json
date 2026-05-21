@@ -1,1 +1,1 @@
-{"id":"goal_stage3_ice_cream_crates","name":"Save 3 Ice Cream Crates","stageId":"stage_frosty_pantry","stage":3,"description":"Save 3 crates before Gelato Golem.","targetType":"battle_objective","requiredAmount":3,"bossDebuff":"start_shield","bossBuffOnFail":"speed_spike","enabled":true}
+{"id":"goal_stage3_ice_cream_crates","name":"Save 3 Ice Cream Crates","stageId":"stage_frosty_pantry","stage":3,"description":"Save 3 crates before Gelato Golem.","targetType":"crate_saved","requiredAmount":3,"bossDebuff":"start_shield","bossBuffOnFail":"speed_spike","enabled":true}

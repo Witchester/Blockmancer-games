@@ -9,7 +9,7 @@ import { InputSystem } from '../systems/InputSystem';
 import { OopsieSystem } from '../systems/OopsieSystem';
 import { SpellSystem } from '../systems/SpellSystem';
 import { contentRegistry } from '../systems/ContentRegistry';
-import type { ActiveHazardKind, ActiveHazardState, BoardCell, BoardTickResult, CascadeAnimationFrame, CascadeResult, CounterTag, EnemyInstance, RunState, SpellId, TetrominoType } from '../types/GameTypes';
+import type { ActiveHazardKind, ActiveHazardState, BoardCell, BoardTickResult, CascadeAnimationFrame, CascadeResult, CounterTag, EnemyInstance, IncomingJunkQueueEntry, RunState, SpellId, TetrominoType } from '../types/GameTypes';
 import { MobileControls } from '../ui/MobileControls';
 import { ProgressBar } from '../ui/ProgressBar';
 import { Button } from '../ui/Button';
@@ -34,6 +34,11 @@ import {
   BOARD_ROWS,
   COLORS,
   FONT_FAMILY,
+  LOCK_DELAY_MAX_GROUNDED_MS,
+  LOCK_DELAY_MS,
+  LOCK_DELAY_RESET_LIMIT,
+  MOVE_REPEAT_DELAY_MS,
+  MOVE_REPEAT_INTERVAL_MS,
   MAX_FALL_SPEED,
   TETROMINO_COLORS,
   TETROMINO_SHAPES
@@ -164,6 +169,15 @@ type CombatVisualEvent = {
 };
 
 type Rect = { x: number; y: number; width: number; height: number };
+type LockDelayState = {
+  isGrounded: boolean;
+  groundedSinceMs: number | null;
+  lockDelayStartedAtMs: number | null;
+  lastResetAtMs: number | null;
+  resetCount: number;
+  maxResetCount: number;
+  maxGroundedMs: number;
+};
 
 type BattleSceneLayout = {
   screenWidth: number;
@@ -218,6 +232,10 @@ type BattleSceneLayout = {
 };
 
 export class BattleScene extends Phaser.Scene {
+  private readonly maxIncomingQueueEntries = 2;
+  private readonly maxIncomingJunkNonBoss = 8;
+  private readonly maxIncomingJunkBoss = 12;
+  private readonly maxIncomingDelayPieces = 8;
   private board!: BoardSystem;
   private combat!: CombatSystem;
   private fever!: FeverSystem;
@@ -295,11 +313,17 @@ export class BattleScene extends Phaser.Scene {
   private logWidth = 0;
   private logHeight = 0;
   private dropTimer = 0;
-  private lockContactMs = 0;
-  private lockResetCount = 0;
   private handlePause = () => this.combat.addLog('Pause menu is not open during this battle build.');
   private readonly cascadeSettlePauseMs = 120;
-  private readonly maxLockResetsPerPiece = 6;
+  private lockDelayState: LockDelayState = {
+    isGrounded: false,
+    groundedSinceMs: null,
+    lockDelayStartedAtMs: null,
+    lastResetAtMs: null,
+    resetCount: 0,
+    maxResetCount: LOCK_DELAY_RESET_LIMIT,
+    maxGroundedMs: LOCK_DELAY_MAX_GROUNDED_MS
+  };
   private readonly visualEventQueue: CombatVisualEvent[] = [];
   private visualEventActive = false;
   private battleLayout?: BattleSceneLayout;
@@ -1158,15 +1182,15 @@ export class BattleScene extends Phaser.Scene {
     const buttonGap = layout.scaleMode === 'tiny' ? 3 : 4;
 
     const movementRow = [
-      { label: 'Left', width: row1ButtonW, height: row1ButtonH, onPress: () => this.moveHorizontal(-1), repeat: true, repeatDelayMs: 160, repeatIntervalMs: 80 },
-      { label: 'Right', width: row1ButtonW, height: row1ButtonH, onPress: () => this.moveHorizontal(1), repeat: true, repeatDelayMs: 160, repeatIntervalMs: 80 },
-      { label: 'Soft', width: row1ButtonW, height: row1ButtonH, onPress: () => this.softDrop(), repeat: true, repeatDelayMs: 120, repeatIntervalMs: 60 },
+      { label: 'Left', width: row1ButtonW, height: row1ButtonH, onPress: () => this.moveHorizontal(-1), repeat: true, repeatDelayMs: MOVE_REPEAT_DELAY_MS, repeatIntervalMs: MOVE_REPEAT_INTERVAL_MS },
+      { label: 'Right', width: row1ButtonW, height: row1ButtonH, onPress: () => this.moveHorizontal(1), repeat: true, repeatDelayMs: MOVE_REPEAT_DELAY_MS, repeatIntervalMs: MOVE_REPEAT_INTERVAL_MS },
+      { label: 'Soft', width: row1ButtonW, height: row1ButtonH, onPress: () => this.softDrop(), repeat: true, repeatDelayMs: MOVE_REPEAT_DELAY_MS, repeatIntervalMs: MOVE_REPEAT_INTERVAL_MS },
       { label: 'Rotate', width: row1ButtonW, height: row1ButtonH, onPress: () => this.rotatePiece() },
       { label: 'Hold', width: row1ButtonW, height: row1ButtonH, onPress: () => this.handleHold() },
       { label: 'Hard', width: row1ButtonW, height: row1ButtonH, onPress: () => this.hardDrop() }
     ];
 
-    const playableSpells = SPELLS.filter((spell) => this.sharedGame.runState.spells.includes(spell.id)).slice(0, 4);
+    const playableSpells = this.getPlayableSpells();
     while (playableSpells.length < 4) {
       playableSpells.push(SPELLS[0]);
     }
@@ -1250,23 +1274,25 @@ export class BattleScene extends Phaser.Scene {
     this.inventoryOverlay.add([bg, title]);
   }
 
-  private handleHold(): void {
+  private handleHold(): boolean {
     if (this.cascadeResolving) {
-      return;
+      return false;
     }
 
     if (this.board.hold()) {
+      this.cancelLockDelay();
       this.sharedGame.runState.runStats.holdsUsed += 1;
       this.sharedGame.battleObjectiveSystem.recordHold(this.sharedGame.runState);
       this.combat.addLog('Held the current block.');
       this.syncBoardState();
       this.sharedGame.saveRun();
       this.renderAll();
-      return;
+      return true;
     }
 
     this.combat.addLog('Hold is already used for this block.');
     this.renderAll();
+    return false;
   }
 
   private toggleInventory(): void {
@@ -1283,7 +1309,7 @@ export class BattleScene extends Phaser.Scene {
       hardDrop: () => this.hardDrop(),
       hold: () => this.handleHold(),
       castSpell: (slot) => {
-        const spell = SPELLS[slot];
+        const spell = this.getPlayableSpells()[slot];
         if (spell) {
           this.tryCast(spell.id);
         }
@@ -1293,9 +1319,9 @@ export class BattleScene extends Phaser.Scene {
     });
   }
 
-  private moveHorizontal(direction: -1 | 1): void {
+  private moveHorizontal(direction: -1 | 1): boolean {
     if (this.cascadeResolving) {
-      return;
+      return false;
     }
 
     const enemy = this.sharedGame.runState.activeEnemy;
@@ -1305,40 +1331,60 @@ export class BattleScene extends Phaser.Scene {
       this.combat.addLog('Slippery Buttons wiggles the move the other way.');
     }
     if (this.board.move(resolvedDirection, 0)) {
-      this.tryResetLockDelay();
+      this.tryResetLockDelay(this.time.now);
       this.syncBoardState();
       this.sharedGame.saveRun();
       this.renderBoard();
+          return true;
     }
+    return false;
   }
 
-  private rotatePiece(): void {
+  private rotatePiece(): boolean {
     if (this.cascadeResolving) {
-      return;
+      return false;
     }
 
     if (this.board.rotate()) {
-      this.tryResetLockDelay();
+      this.tryResetLockDelay(this.time.now);
       this.syncBoardState();
       this.sharedGame.saveRun();
       this.renderBoard();
+          return true;
     }
+    return false;
   }
 
-  private softDrop(): void {
+  private softDrop(): boolean {
     if (!this.cascadeResolving) {
-      this.resolveTick(this.board.tick());
+      const nowMs = this.time.now;
+      if (this.board.move(0, 1)) {
+        this.cancelLockDelay();
+        this.resolveTick({ moved: true, locked: false, clearedLines: 0, toppedOut: false });
+        return true;
+      }
+      this.startLockDelay(nowMs);
+      if (this.shouldLockGroundedPiece(nowMs)) {
+        this.resolveTick(this.board.tick());
+      } else {
+        this.resolveTick({ moved: false, locked: false, clearedLines: 0, toppedOut: false });
+      }
+      return true;
     }
+    return false;
   }
 
-  private hardDrop(): void {
+  private hardDrop(): boolean {
     if (!this.cascadeResolving) {
       const result = this.board.hardDrop();
+      this.resetLockDelayState();
       if (result.locked) {
         this.sharedGame.weaponSystem.onHardDrop(this.sharedGame.runState, this.combat);
       }
       this.resolveTick(result);
+      return true;
     }
+    return false;
   }
 
   private handleShutdown(): void {
@@ -1373,7 +1419,7 @@ export class BattleScene extends Phaser.Scene {
     }
   }
 
-  update(_time: number, delta: number): void {
+  update(nowMs: number, delta: number): void {
     if (this.cascadeResolving) {
       return;
     }
@@ -1387,18 +1433,26 @@ export class BattleScene extends Phaser.Scene {
 
     if (this.isActivePieceTouchingGround()) {
       this.dropTimer = Math.min(this.dropTimer, dropInterval);
-      this.lockContactMs += delta;
-      if (this.lockContactMs >= this.getLockDelayMs(effectiveFallSpeed)) {
-        this.lockContactMs = 0;
-        this.lockResetCount = 0;
+      this.startLockDelay(nowMs);
+      if (this.shouldLockGroundedPiece(nowMs)) {
         this.resolveTick(this.board.tick());
       }
     } else {
-      this.lockContactMs = 0;
-      this.lockResetCount = 0;
+      this.cancelLockDelay();
       while (this.dropTimer >= dropInterval && !this.cascadeResolving) {
         this.dropTimer -= dropInterval;
-        this.resolveTick(this.board.tick());
+        if (this.board.move(0, 1)) {
+          this.cancelLockDelay();
+          this.resolveTick({ moved: true, locked: false, clearedLines: 0, toppedOut: false });
+        } else {
+          this.startLockDelay(nowMs);
+          if (this.shouldLockGroundedPiece(nowMs)) {
+            this.resolveTick(this.board.tick());
+          } else {
+            this.resolveTick({ moved: false, locked: false, clearedLines: 0, toppedOut: false });
+          }
+          break;
+        }
       }
     }
 
@@ -1445,8 +1499,7 @@ export class BattleScene extends Phaser.Scene {
     }
 
     if (result.locked) {
-      this.lockContactMs = 0;
-      this.lockResetCount = 0;
+      this.resetLockDelayState();
       const cascade = result.cascadeResult ?? {
         totalLinesCleared: result.clearedLines,
         cascadeCount: result.clearedLines > 0 ? 1 : 0,
@@ -1529,12 +1582,7 @@ export class BattleScene extends Phaser.Scene {
     this.sharedGame.battleObjectiveSystem.recordCascade(state, cascade);
     this.sharedGame.weaponSystem.afterPieceLock(state, this.board, this.combat, cascade);
     this.reduceIncomingJunkFromCascade(cascade);
-    if (cascade.cascadeCount > 1) {
-      const stageGoalMessage = this.sharedGame.stageGoalSystem.addProgress(state, 'combo_score', cascade.cascadeCount);
-      if (stageGoalMessage) {
-        this.combat.addLog(stageGoalMessage);
-      }
-    }
+    this.sharedGame.stageGoalSystem.recordCascadeProgress(state, cascade).forEach((message) => this.combat.addLog(message));
     this.applyOopsieBoardEffects(cascade.totalLinesCleared);
     this.tickActiveHazards();
     this.renderCombatUi();
@@ -1971,25 +2019,43 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private queueIncomingJunk(amount: number, sourceId: string, delayPieces: number, blockId = 'block_crumb_junk'): void {
-    const existing = this.sharedGame.runState.activeHazards.find((hazard) => hazard.kind === 'incoming_junk');
-    if (existing) {
-      existing.amount = Math.min(12, (existing.amount ?? 0) + amount);
-      existing.remainingPieces = Math.max(existing.remainingPieces, delayPieces);
-      this.combat.addLog(`Incoming junk grows to ${existing.amount}. Cascades can still trim it.`);
+    const state = this.sharedGame.runState;
+    const cappedAmount = Math.max(0, Math.min(6, Math.floor(amount)));
+    if (cappedAmount <= 0) {
+      return;
+    }
+    const safeDelay = Math.max(1, Math.min(this.maxIncomingDelayPieces, Math.floor(delayPieces)));
+    const maxTotal = state.currentRoomType === 'boss' ? this.maxIncomingJunkBoss : this.maxIncomingJunkNonBoss;
+    const currentTotal = state.incomingJunkQueue.reduce((sum, entry) => sum + entry.remainingAmount, 0);
+    const available = Math.max(0, maxTotal - currentTotal);
+    const finalAmount = Math.min(cappedAmount, available);
+    if (finalAmount <= 0) {
+      this.combat.addLog('The junk tray is already packed to a safe limit.');
+      this.syncIncomingJunkHazardFromQueue();
       return;
     }
 
-    if (!this.canStartNewHazard('incoming_junk')) {
-      this.combat.addLog('The junk tray waits so active warnings stay readable.');
-      return;
-    }
-
-    this.sharedGame.runState.activeHazards.push(this.createHazard('incoming_junk', {
+    const sourceName = state.activeEnemy?.id === sourceId ? state.activeEnemy.name : undefined;
+    const entry: IncomingJunkQueueEntry = {
+      id: `incoming_junk_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
       sourceId,
-      amount,
-      blockId,
-      delayPieces
-    }));
+      sourceName,
+      amount: finalAmount,
+      remainingAmount: finalAmount,
+      delayPieces: safeDelay,
+      junkBlockId: blockId || 'block_crumb_junk',
+      severity: state.currentRoomType === 'boss' ? 'moderate' : 'minor',
+      createdAtPieceCount: state.runStats.piecesLocked,
+      reason: 'enemy_attack'
+    };
+    state.incomingJunkQueue.push(entry);
+    if (state.incomingJunkQueue.length > this.maxIncomingQueueEntries) {
+      state.incomingJunkQueue.sort((a, b) => a.delayPieces - b.delayPieces);
+      state.incomingJunkQueue = state.incomingJunkQueue.slice(0, this.maxIncomingQueueEntries);
+    }
+    this.syncIncomingJunkHazardFromQueue();
+    this.combat.addLog(`${sourceName ?? 'Enemy'} packed ${finalAmount} crumb junk into the queue!`);
+    this.combat.addLog(`Incoming Crumb Junk in ${safeDelay} piece${safeDelay === 1 ? '' : 's'}!`);
     this.playVfx('anim_hazard_incoming_junk_warning', this.screenWidth - 76, this.topSectionHeight + 52, ITEM_VFX_BOX_SIZE, 127);
   }
 
@@ -2104,29 +2170,27 @@ export class BattleScene extends Phaser.Scene {
     if (cascade.totalLinesCleared <= 0) {
       return;
     }
-
-    const incoming = this.sharedGame.runState.activeHazards.find((hazard) => hazard.kind === 'incoming_junk');
-    if (!incoming || !incoming.amount) {
+    if (this.sharedGame.runState.incomingJunkQueue.length === 0) {
       return;
     }
 
     if (this.sharedGame.runState.reactiveState.cleanupCouponPieces > 0) {
       this.sharedGame.runState.reactiveState.cleanupCouponPieces = 0;
-      incoming.amount = 0;
-      this.sharedGame.runState.activeHazards = this.sharedGame.runState.activeHazards.filter((hazard) => hazard !== incoming);
+      this.clearIncomingJunkQueue('Cleanup Coupon cashes in the line clear and cancels incoming junk.');
       this.combat.addLog('Cleanup Coupon cashes in the line clear and cancels incoming junk.');
       return;
     }
 
     let reduction = 1;
     if (cascade.cascadeCount >= 4) {
-      reduction = incoming.amount;
+      const totalIncoming = this.sharedGame.runState.incomingJunkQueue.reduce((sum, entry) => sum + entry.remainingAmount, 0);
+      reduction = Math.max(4, Math.ceil(totalIncoming * 0.5));
     } else if (cascade.cascadeCount >= 3) {
-      reduction = 6;
+      reduction = 3;
     } else if (cascade.cascadeCount >= 2) {
-      reduction = 4;
-    } else {
       reduction = 2;
+    } else {
+      reduction = 1;
     }
     const starClears = cascade.specialBlocksTriggered.filter((trigger) => trigger.startsWith('block_star')).length;
     reduction += starClears;
@@ -2139,23 +2203,28 @@ export class BattleScene extends Phaser.Scene {
       this.combat.addLog('Star Sticker helps the cascade trim one extra junk.');
     }
 
-    incoming.amount = Math.max(0, incoming.amount - reduction);
-    this.combat.addLog(`Cascade counterplay trims incoming junk by ${reduction}.`);
-    if (incoming.amount <= 0) {
-      this.sharedGame.runState.activeHazards = this.sharedGame.runState.activeHazards.filter((hazard) => hazard !== incoming);
-      this.combat.addLog('Incoming junk is fully cleared before it lands.');
+    const removed = this.reduceIncomingJunk(reduction, `Cascade ${Math.max(1, cascade.cascadeCount)}`);
+    if (removed > 0) {
+      this.combat.addLog(`Cascade cleanup reduced incoming junk by ${removed}.`);
     }
   }
 
   private tickActiveHazards(): void {
     const hazards = [...this.sharedGame.runState.activeHazards];
+    this.resolveIncomingJunkCountdown();
     hazards.forEach((hazard) => {
+      if (hazard.kind === 'incoming_junk') {
+        return;
+      }
       hazard.remainingPieces = Math.max(0, hazard.remainingPieces - 1);
       if (hazard.remainingPieces === 0) {
         this.resolveHazard(hazard);
       }
     });
-    this.sharedGame.runState.activeHazards = this.sharedGame.runState.activeHazards.filter((hazard) => hazard.remainingPieces > 0);
+    this.sharedGame.runState.activeHazards = this.sharedGame.runState.activeHazards.filter((hazard) =>
+      hazard.kind === 'incoming_junk' || hazard.remainingPieces > 0
+    );
+    this.syncIncomingJunkHazardFromQueue();
   }
 
   private resolveHazard(hazard: ActiveHazardState): void {
@@ -2220,6 +2289,154 @@ export class BattleScene extends Phaser.Scene {
     this.combat.addLog(`${added} incoming junk block${added === 1 ? '' : 's'} land with room to react.`);
   }
 
+  private syncIncomingJunkHazardFromQueue(): void {
+    const state = this.sharedGame.runState;
+    const total = state.incomingJunkQueue.reduce((sum, entry) => sum + entry.remainingAmount, 0);
+    const nextDelay = state.incomingJunkQueue.length > 0
+      ? Math.max(1, Math.min(...state.incomingJunkQueue.map((entry) => entry.delayPieces)))
+      : 0;
+    const existing = state.activeHazards.find((hazard) => hazard.kind === 'incoming_junk');
+    if (total <= 0) {
+      state.incomingJunkQueue = [];
+      if (existing) {
+        state.activeHazards = state.activeHazards.filter((hazard) => hazard !== existing);
+      }
+      return;
+    }
+
+    if (!existing) {
+      state.activeHazards.push(this.createHazard('incoming_junk', {
+        sourceId: state.incomingJunkQueue[0]?.sourceId ?? 'queue',
+        amount: total,
+        blockId: state.incomingJunkQueue[0]?.junkBlockId ?? 'block_crumb_junk',
+        delayPieces: nextDelay
+      }));
+      return;
+    }
+    existing.amount = total;
+    existing.remainingPieces = nextDelay;
+    existing.counterWindowPieces = Math.max(existing.counterWindowPieces, nextDelay);
+    existing.sourceId = state.incomingJunkQueue[0]?.sourceId ?? existing.sourceId;
+    existing.blockId = state.incomingJunkQueue[0]?.junkBlockId ?? existing.blockId;
+  }
+
+  private reduceIncomingJunk(amount: number, reason: string): number {
+    const state = this.sharedGame.runState;
+    let remaining = Math.max(0, Math.floor(amount));
+    let removed = 0;
+    state.incomingJunkQueue.sort((a, b) => a.delayPieces - b.delayPieces);
+    for (const entry of state.incomingJunkQueue) {
+      if (remaining <= 0) {
+        break;
+      }
+      const cut = Math.min(entry.remainingAmount, remaining);
+      entry.remainingAmount -= cut;
+      remaining -= cut;
+      removed += cut;
+    }
+    state.incomingJunkQueue = state.incomingJunkQueue.filter((entry) => entry.remainingAmount > 0);
+    this.syncIncomingJunkHazardFromQueue();
+    if (removed > 0) {
+      this.combat.addLog(`${reason} swept away ${removed} queued junk.`);
+    }
+    return removed;
+  }
+
+  private delayIncomingJunk(pieces: number, reason: string): number {
+    const state = this.sharedGame.runState;
+    if (state.incomingJunkQueue.length === 0) {
+      return 0;
+    }
+    const bump = Math.max(1, Math.floor(pieces));
+    state.incomingJunkQueue.forEach((entry) => {
+      entry.delayPieces = Math.min(this.maxIncomingDelayPieces, entry.delayPieces + bump);
+    });
+    this.syncIncomingJunkHazardFromQueue();
+    this.combat.addLog(`${reason} delayed the mess by ${bump} pieces.`);
+    return state.incomingJunkQueue.length;
+  }
+
+  private reflectIncomingJunk(amount: number, reason: string): number {
+    const total = this.sharedGame.runState.incomingJunkQueue.reduce((sum, entry) => sum + entry.remainingAmount, 0);
+    if (total <= 0) {
+      return 0;
+    }
+    const reflectAmount = Math.max(1, Math.min(total, Math.floor(amount)));
+    const reduced = this.reduceIncomingJunk(reflectAmount, reason);
+    if (reduced > 0) {
+      this.combat.applyDirectDamage(reduced * 2, reason);
+      this.combat.addLog(`${reason} sent ${reduced} crumbs back!`);
+    }
+    return reduced;
+  }
+
+  private resolveIncomingJunkCountdown(): void {
+    const state = this.sharedGame.runState;
+    if (state.incomingJunkQueue.length === 0) {
+      const legacy = state.activeHazards.find((hazard) => hazard.kind === 'incoming_junk' && (hazard.amount ?? 0) > 0);
+      if (legacy) {
+        state.incomingJunkQueue.push({
+          id: `incoming_junk_legacy_${Date.now()}`,
+          sourceId: legacy.sourceId ?? 'legacy',
+          sourceName: legacy.name,
+          amount: Math.max(0, legacy.amount ?? 0),
+          remainingAmount: Math.max(0, legacy.amount ?? 0),
+          delayPieces: Math.max(1, legacy.remainingPieces),
+          junkBlockId: legacy.blockId ?? 'block_crumb_junk',
+          severity: legacy.severity ?? 'minor',
+          createdAtPieceCount: state.runStats.piecesLocked,
+          reason: 'legacy_hazard_bridge'
+        });
+      }
+    }
+    if (state.incomingJunkQueue.length === 0) {
+      this.syncIncomingJunkHazardFromQueue();
+      return;
+    }
+    const ready: IncomingJunkQueueEntry[] = [];
+    state.incomingJunkQueue.forEach((entry) => {
+      entry.delayPieces = Math.max(0, entry.delayPieces - 1);
+      if (entry.delayPieces <= 0) {
+        ready.push(entry);
+      }
+    });
+    for (const entry of ready) {
+      this.resolveIncomingJunkLanding(entry);
+    }
+    state.incomingJunkQueue = state.incomingJunkQueue.filter((entry) => entry.delayPieces > 0 && entry.remainingAmount > 0);
+    this.syncIncomingJunkHazardFromQueue();
+  }
+
+  private resolveIncomingJunkLanding(entry: IncomingJunkQueueEntry): void {
+    const amount = Math.max(0, Math.min(this.maxIncomingJunkBoss, entry.remainingAmount));
+    if (amount <= 0) {
+      return;
+    }
+    let added = 0;
+    const cols = Array.from({ length: this.boardColumns }, (_, i) => i);
+    for (let i = cols.length - 1; i > 0; i -= 1) {
+      const j = Phaser.Math.Between(0, i);
+      [cols[i], cols[j]] = [cols[j], cols[i]];
+    }
+    for (let index = 0; index < amount; index += 1) {
+      const column = cols[index % cols.length] ?? Phaser.Math.Between(0, this.boardColumns - 1);
+      if (this.board.addJunkToColumn(column, entry.junkBlockId || 'block_crumb_junk')) {
+        added += 1;
+      }
+    }
+    if (added > 0) {
+      this.combat.addLog('The remaining crumbs tumble onto the board.');
+    } else {
+      this.combat.addLog('Incoming crumbs had no safe spot and fizzle out.');
+    }
+  }
+
+  private clearIncomingJunkQueue(reason: string): void {
+    this.sharedGame.runState.incomingJunkQueue = [];
+    this.syncIncomingJunkHazardFromQueue();
+    this.combat.addLog(reason);
+  }
+
   private dropFloatingBlock(hazard: ActiveHazardState): void {
     const column = Math.max(0, Math.min(this.boardColumns - 1, hazard.column ?? Phaser.Math.Between(0, this.boardColumns - 1)));
     const added = this.board.addJunkToColumn(column, hazard.onExpireBlockId ?? 'block_cloud_junk');
@@ -2237,7 +2454,11 @@ export class BattleScene extends Phaser.Scene {
 
     const counters = this.getAvailableCounterNames(hazard);
     const amount = hazard.amount ? ` ${hazard.amount}` : '';
-    const line1 = `${hazard.name}${amount} in ${hazard.remainingPieces} piece${hazard.remainingPieces === 1 ? '' : 's'}`;
+    const sourceName = hazard.kind === 'incoming_junk'
+      ? (state.incomingJunkQueue[0]?.sourceName ?? state.incomingJunkQueue[0]?.sourceId ?? '')
+      : '';
+    const sourceText = sourceName ? ` · ${sourceName}` : '';
+    const line1 = `${hazard.name}${amount} in ${hazard.remainingPieces} piece${hazard.remainingPieces === 1 ? '' : 's'}${sourceText}`;
     const line2 = `${counters.length ? `Counters: ${counters.join(', ')}` : hazard.cascadeCounterHint ?? 'Cascade or cleanup item can help.'}`;
     this.hazardTrayBg?.setVisible(true);
     this.hazardTrayText?.setText(`${line1}\n${line2}`).setVisible(true);
@@ -2407,6 +2628,10 @@ export class BattleScene extends Phaser.Scene {
     if (phaseMechanicMessage) {
       this.combat.addLog(phaseMechanicMessage);
     }
+    const phaseBoardSizeMessage = this.sharedGame.boardSizeModifierSystem.applyBossPhaseBoardSize(this.sharedGame.runState);
+    if (phaseBoardSizeMessage) {
+      this.combat.addLog(phaseBoardSizeMessage);
+    }
     this.showFloatingText('Phase 2', this.screenWidth / 2, 184, '#ffca6b', 34);
     this.setEnemyPose('phase_2');
     this.fitEnemyBattleSprite(enemy);
@@ -2446,16 +2671,15 @@ export class BattleScene extends Phaser.Scene {
       this.combat.addLog(friendshipMessage);
       this.sharedGame.metaSystem.save();
     }
-    const objectiveSucceeded = objectiveMessage?.startsWith('Mini-objective complete');
-    const goalMessage = objectiveSucceeded
-      ? this.sharedGame.stageGoalSystem.addProgress(state, 'battle_objective', 1, enemyId)
-      : null;
-    if (goalMessage) {
-      this.combat.addLog(goalMessage);
-      const goalProgress = this.sharedGame.stageGoalSystem.getProgress(state);
-      if (goalProgress?.progress.completed) {
-        this.sharedGame.metaSystem.recordStageGoalCompleted(goalProgress.goal.id);
-      }
+    const objectiveSucceeded = objectiveMessage?.startsWith('Mini-objective complete') ?? false;
+    this.sharedGame.stageGoalSystem.recordBattleVictoryProgress(state, {
+      objectiveSucceeded,
+      enemySleepTurns: state.activeEnemy?.sleepTurns ?? 0,
+      roomType: state.currentRoomType
+    }).forEach((message) => this.combat.addLog(message));
+    const goalProgress = this.sharedGame.stageGoalSystem.getProgress(state);
+    if (goalProgress?.progress.completed) {
+      this.sharedGame.metaSystem.recordStageGoalCompleted(goalProgress.goal.id);
     }
     this.sharedGame.chaosRuleSystem.clear(state);
     this.sharedGame.randomGameplayEventSystem.clearRoomEvents(state);
@@ -3023,25 +3247,64 @@ export class BattleScene extends Phaser.Scene {
     return this.board.collides(current.matrix, current.x, current.y + 1);
   }
 
-  private getLockDelayMs(effectiveFallSpeed: number): number {
-    const minDelayMs = 160;
-    const maxDelayMs = 380;
-    const normalized = Math.max(1, Math.min(effectiveFallSpeed, MAX_FALL_SPEED));
-    const ratio = (normalized - 1) / Math.max(1, MAX_FALL_SPEED - 1);
-    return Math.round(maxDelayMs - ((maxDelayMs - minDelayMs) * ratio));
+  private resetLockDelayState(): void {
+    this.lockDelayState.isGrounded = false;
+    this.lockDelayState.groundedSinceMs = null;
+    this.lockDelayState.lockDelayStartedAtMs = null;
+    this.lockDelayState.lastResetAtMs = null;
+    this.lockDelayState.resetCount = 0;
   }
 
-  private tryResetLockDelay(): void {
-    if (!this.isActivePieceTouchingGround()) {
-      this.lockContactMs = 0;
-      this.lockResetCount = 0;
+  private startLockDelay(nowMs: number): void {
+    if (!this.lockDelayState.isGrounded) {
+      this.lockDelayState.isGrounded = true;
+      this.lockDelayState.groundedSinceMs = nowMs;
+      this.lockDelayState.lockDelayStartedAtMs = nowMs;
       return;
     }
 
-    if (this.lockResetCount < this.maxLockResetsPerPiece) {
-      this.lockContactMs = 0;
-      this.lockResetCount += 1;
+    if (this.lockDelayState.lockDelayStartedAtMs === null) {
+      this.lockDelayState.lockDelayStartedAtMs = nowMs;
     }
+    if (this.lockDelayState.groundedSinceMs === null) {
+      this.lockDelayState.groundedSinceMs = nowMs;
+    }
+  }
+
+  private cancelLockDelay(): void {
+    this.resetLockDelayState();
+  }
+
+  private tryResetLockDelay(nowMs: number): void {
+    if (!this.isActivePieceTouchingGround()) {
+      this.cancelLockDelay();
+      return;
+    }
+
+    this.startLockDelay(nowMs);
+    if (this.lockDelayState.resetCount < this.lockDelayState.maxResetCount) {
+      this.lockDelayState.lockDelayStartedAtMs = nowMs;
+      this.lockDelayState.lastResetAtMs = nowMs;
+      this.lockDelayState.resetCount += 1;
+    }
+  }
+
+  private shouldLockGroundedPiece(nowMs: number): boolean {
+    if (!this.lockDelayState.isGrounded) {
+      return false;
+    }
+    const lockStart = this.lockDelayState.lockDelayStartedAtMs;
+    const groundedSince = this.lockDelayState.groundedSinceMs;
+    if (lockStart === null || groundedSince === null) {
+      return false;
+    }
+
+    const lockDelayElapsed = nowMs - lockStart;
+    const groundedElapsed = nowMs - groundedSince;
+    if (groundedElapsed >= this.lockDelayState.maxGroundedMs) {
+      return true;
+    }
+    return lockDelayElapsed >= LOCK_DELAY_MS;
   }
 
   private fitEnemyBattleSprite(enemy: EnemyInstance): void {
@@ -3350,7 +3613,37 @@ export class BattleScene extends Phaser.Scene {
         const btn = new Button(this, x + 70, y + 30, 158, 58, `${itemDef.name}\n(x${stack.count})`, () => {
           const hazardCountBefore = state.activeHazards.length;
           const shieldBefore = state.player.shield;
-          const msg = this.sharedGame.itemSystem.applyItem(state, stack.itemId, this.board, this.combat);
+          const incomingBefore = state.incomingJunkQueue.reduce((sum, entry) => sum + entry.remainingAmount, 0);
+          let consumed = true;
+          let msg = '';
+          const effectType = itemDef.effect?.type;
+          if (effectType === 'delay_incoming_junk') {
+            const touched = this.delayIncomingJunk(3, 'Snack Shield');
+            if (touched <= 0) {
+              consumed = false;
+              msg = 'No incoming junk to delay right now.';
+            } else {
+              msg = 'Snack Shield delayed the mess!';
+            }
+          } else if (effectType === 'reflect_incoming_junk') {
+            const reflected = this.reflectIncomingJunk(Math.max(1, Math.ceil(incomingBefore * 0.5)), 'Return Stamp');
+            if (reflected <= 0) {
+              consumed = false;
+              msg = 'No incoming junk to stamp yet.';
+            } else {
+              msg = `Return Stamp sent crumbs back! (${reflected})`;
+            }
+          } else if (effectType === 'block_incoming_junk') {
+            const blocked = this.reduceIncomingJunk(3, 'Trash Lid');
+            if (blocked <= 0) {
+              consumed = false;
+              msg = 'No incoming junk to cover right now.';
+            } else {
+              msg = `Trash Lid blocked ${blocked} incoming junk.`;
+            }
+          } else {
+            msg = this.sharedGame.itemSystem.applyItem(state, stack.itemId, this.board, this.combat);
+          }
           this.combat.addLog(msg);
           const itemAnimation = itemDef.useVfxKey ?? itemDef.vfxKey ?? `anim_${stack.itemId}_use`;
           this.playVfx(itemAnimation, x + 22, y + 30, ITEM_VFX_BOX_SIZE, 141);
@@ -3360,10 +3653,13 @@ export class BattleScene extends Phaser.Scene {
           if (state.player.shield > shieldBefore) {
             this.playVfx('anim_vfx_shield_gain', this.heroPortrait?.x ?? 112, this.heroPortrait?.y ?? 94, COMBAT_HIT_VFX_BOX_SIZE, 126);
           }
-          this.sharedGame.inventorySystem.removeItem(state, stack.itemId, 1);
-          state.runStats.itemsUsed += 1;
-          this.sharedGame.audioSystem.play('item_use', this);
-          this.sharedGame.saveRun();
+          this.syncIncomingJunkHazardFromQueue();
+          if (consumed) {
+            this.sharedGame.inventorySystem.removeItem(state, stack.itemId, 1);
+            state.runStats.itemsUsed += 1;
+            this.sharedGame.audioSystem.play('item_use', this);
+            this.sharedGame.saveRun();
+          }
           
           if (state.inventory.length === 0) {
             this.inventoryExpanded = false;
@@ -3563,6 +3859,14 @@ export class BattleScene extends Phaser.Scene {
     return match?.[0] ?? '';
   }
 
+  private getPlayableSpells(): typeof SPELLS {
+    const playableSpells = SPELLS.filter((spell) => this.sharedGame.runState.spells.includes(spell.id)).slice(0, 4);
+    while (playableSpells.length < 4) {
+      playableSpells.push(SPELLS[0]);
+    }
+    return playableSpells;
+  }
+
   private getBlockSymbol(blockId: string): string {
     const parts = blockId.split('_');
     return (parts[1]?.[0] ?? blockId[0] ?? '?').toUpperCase();
@@ -3589,6 +3893,9 @@ export class BattleScene extends Phaser.Scene {
     };
   }
 }
+
+
+
 
 
 

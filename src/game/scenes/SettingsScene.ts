@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { BlockmancerGame } from '../BlockmancerGame';
 import type { GameSettings } from '../types/SettingsTypes';
 import { Button } from '../ui/Button';
-import { COLORS, FONT_FAMILY } from '../utils/constants';
+import { COLORS, FONT_FAMILY_STACKS, FONT_SIZE_720 } from '../utils/constants';
 import { getPortraitLayout } from '../utils/layout';
 
 type SettingRow = {
@@ -40,15 +40,15 @@ export class SettingsScene extends Phaser.Scene {
 
     this.add.text(centerX, 70, 'Settings', {
       color: '#f6f7ff',
-      fontFamily: FONT_FAMILY,
-      fontSize: '40px',
+      fontFamily: FONT_FAMILY_STACKS.display,
+      fontSize: `${FONT_SIZE_720.modalTitle}px`,
       fontStyle: 'bold'
     }).setOrigin(0.5);
 
     this.add.text(centerX, 114, 'Audio, controls, and readability options', {
       color: '#98a0c7',
-      fontFamily: FONT_FAMILY,
-      fontSize: '19px'
+      fontFamily: FONT_FAMILY_STACKS.ui,
+      fontSize: `${FONT_SIZE_720.small}px`
     }).setOrigin(0.5);
 
     const rows = this.getRows();
@@ -58,8 +58,8 @@ export class SettingsScene extends Phaser.Scene {
         .setStrokeStyle(2, COLORS.accentSoft, 0.22);
       this.add.text(centerX - (contentWidth - 96) / 2, y, row.label, {
         color: '#f6f7ff',
-        fontFamily: FONT_FAMILY,
-        fontSize: '20px',
+        fontFamily: FONT_FAMILY_STACKS.ui,
+        fontSize: `${FONT_SIZE_720.body}px`,
         fontStyle: 'bold'
       }).setOrigin(0, 0.5);
       new Button(this, centerX + 194, y, 154, 44, row.value, row.onPress);

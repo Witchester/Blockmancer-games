@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { Button } from './Button';
-import { COLORS, FONT_FAMILY } from '../utils/constants';
+import { COLORS, FONT_FAMILY_STACKS, FONT_SIZE_720, MOVE_REPEAT_DELAY_MS, MOVE_REPEAT_INTERVAL_MS } from '../utils/constants';
 import { MOBILE_CONTROL_BUTTON_SIZE, UI_BUTTON_HEIGHT } from '../data/renderSizes';
 
 export type MobileControlsButtonConfig = {
@@ -57,8 +57,8 @@ export class MobileControls extends Phaser.GameObjects.Container {
     if (options.title) {
       const title = scene.add.text(0, -height / 2 + padding, options.title, {
         color: '#98a0c7',
-        fontFamily: FONT_FAMILY,
-        fontSize: '18px'
+        fontFamily: FONT_FAMILY_STACKS.pixelSmall,
+        fontSize: `${FONT_SIZE_720.small}px`
       }).setOrigin(0.5, 0);
       this.add(title);
     }
@@ -94,11 +94,11 @@ export class MobileControls extends Phaser.GameObjects.Container {
           button.on('pointerdown', () => {
             stopRepeat();
             repeatTimer = scene.time.addEvent({
-              delay: buttonConfig.repeatDelayMs ?? 220,
+              delay: buttonConfig.repeatDelayMs ?? MOVE_REPEAT_DELAY_MS,
               callback: () => {
                 buttonConfig.onPress();
                 repeatTimer = scene.time.addEvent({
-                  delay: buttonConfig.repeatIntervalMs ?? 90,
+                  delay: buttonConfig.repeatIntervalMs ?? MOVE_REPEAT_INTERVAL_MS,
                   callback: buttonConfig.onPress,
                   loop: true
                 });

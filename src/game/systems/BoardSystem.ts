@@ -8,7 +8,7 @@ import type {
   RunState,
   TetrominoType
 } from '../types/GameTypes';
-import { BOARD_COLS, BOARD_ROWS, TETROMINO_COLORS, TETROMINO_SHAPES } from '../utils/constants';
+import { BOARD_COLS, BOARD_ROWS, NEXT_QUEUE_SIZE, TETROMINO_COLORS, TETROMINO_SHAPES } from '../utils/constants';
 import { choice, randInt } from '../utils/random';
 import { contentRegistry } from './ContentRegistry';
 import { OopsieSystem } from './OopsieSystem';
@@ -54,6 +54,13 @@ export class BoardSystem {
   private readonly filledCellBuffer: Array<[number, number]> = [];
   private readonly oopsieSystem = new OopsieSystem();
   private readonly junkBlockIds = new Set(['block_crumb_junk', 'block_cloud_junk', 'block_cracked_junk', 'block_royal', 'block_sticky']);
+  private readonly specialSpawnCountsBySource = new Map<string, number>();
+  private readonly maxSpecialSpawnsPerBattleBySource = 3;
+  private readonly maxSpecialBlocksActive = 8;
+  private readonly maxHazardBlocksActiveStage1 = 3;
+  private readonly maxBombBlocksActive = 2;
+  private readonly maxStarBlocksActive = 2;
+  private readonly maxRoyalBlocksActive = 4;
 
   constructor(private readonly state?: RunState) {
     this.columns = state?.board.columns ?? BOARD_COLS;
@@ -62,7 +69,7 @@ export class BoardSystem {
     this.currentPiece = null;
     this.nextPieceType = this.rollPieceType();
     this.nextQueue = [this.nextPieceType];
-    this.refillNextQueue(5);
+    this.refillNextQueue(NEXT_QUEUE_SIZE + 1);
     this.restoreFromState();
   }
 
@@ -71,7 +78,7 @@ export class BoardSystem {
     this.currentPiece = null;
     this.nextPieceType = this.rollPieceType();
     this.nextQueue = [this.nextPieceType];
-    this.refillNextQueue(5);
+    this.refillNextQueue(NEXT_QUEUE_SIZE + 1);
     this.holdPieceType = null;
     this.holdUsedThisPiece = false;
     this.spawnPiece();
@@ -122,14 +129,14 @@ export class BoardSystem {
     if (this.nextQueue.length === 0) {
       this.nextQueue = [this.nextPieceType];
     }
-    this.refillNextQueue(5);
+    this.refillNextQueue(NEXT_QUEUE_SIZE + 1);
     this.nextPieceType = this.nextQueue[0];
     this.holdPieceType = board.holdPieceType ?? null;
     this.holdUsedThisPiece = board.holdUsedThisPiece;
 
     if (!this.currentPiece && !this.spawnPiece()) {
       this.currentPiece = this.makePiece(this.nextPieceType);
-      this.refillNextQueue(5);
+      this.refillNextQueue(NEXT_QUEUE_SIZE + 1);
     }
   }
 
@@ -253,7 +260,7 @@ export class BoardSystem {
   spawnPiece(): boolean {
     const pieceType = this.nextQueue.shift() ?? this.nextPieceType;
     const piece = this.makePiece(pieceType);
-    this.refillNextQueue(5);
+    this.refillNextQueue(NEXT_QUEUE_SIZE + 1);
     this.holdUsedThisPiece = false;
 
     if (this.collides(piece.matrix, piece.x, piece.y)) {
@@ -336,11 +343,21 @@ export class BoardSystem {
     }
 
     const rotated = this.rotateMatrix(this.currentPiece.matrix);
-    const kicks = [0, -1, 1, -2, 2];
+    const kicks: Array<{ dx: number; dy: number }> = [
+      { dx: 0, dy: 0 },
+      { dx: -1, dy: 0 },
+      { dx: 1, dy: 0 },
+      { dx: 0, dy: -1 },
+      { dx: -2, dy: 0 },
+      { dx: 2, dy: 0 }
+    ];
     for (const kick of kicks) {
-      if (!this.collides(rotated, this.currentPiece.x + kick, this.currentPiece.y)) {
+      const targetX = this.currentPiece.x + kick.dx;
+      const targetY = this.currentPiece.y + kick.dy;
+      if (!this.collides(rotated, targetX, targetY)) {
         this.currentPiece.matrix = rotated;
-        this.currentPiece.x += kick;
+        this.currentPiece.x = targetX;
+        this.currentPiece.y = targetY;
         return true;
       }
     }
@@ -600,8 +617,51 @@ export class BoardSystem {
     return this.addSpecialBlocks('block_cloud_junk', count);
   }
 
-  addSpecialBlocksForSpell(blockId: string, count: number): number {
-    return this.addSpecialBlocks(blockId, count);
+  addSpecialBlocksForSpell(blockId: string, count: number, sourceId = 'spell'): number {
+    return this.tryAddSpecialBlocks(blockId, count, 'spell', sourceId).added;
+  }
+
+  tryAddSpecialBlocks(blockId: string, count: number, sourceType: string, sourceId: string): { success: boolean; added: number; reason?: string; mode: 'replace_basic' } {
+    const normalized = this.normalizeBlockId(blockId);
+    const safeCount = Math.max(0, Math.min(4, Math.floor(count)));
+    if (safeCount <= 0) {
+      return { success: false, added: 0, reason: 'invalid_count', mode: 'replace_basic' };
+    }
+
+    const gateReason = this.getSpawnGateReason(normalized, sourceType);
+    if (gateReason) {
+      return { success: false, added: 0, reason: gateReason, mode: 'replace_basic' };
+    }
+
+    const sourceKey = `${sourceType}:${sourceId || 'unknown'}`;
+    const used = this.specialSpawnCountsBySource.get(sourceKey) ?? 0;
+    if (used >= this.maxSpecialSpawnsPerBattleBySource) {
+      return { success: false, added: 0, reason: 'source_cap', mode: 'replace_basic' };
+    }
+
+    const activeCap = this.getActiveCapForBlock(normalized);
+    const activeCount = this.countActiveBlockId(normalized);
+    if (activeCount >= activeCap) {
+      return { success: false, added: 0, reason: 'active_cap', mode: 'replace_basic' };
+    }
+
+    const remainingByCap = Math.max(0, activeCap - activeCount);
+    const requestCount = Math.min(safeCount, remainingByCap);
+    if (requestCount <= 0) {
+      return { success: false, added: 0, reason: 'active_cap', mode: 'replace_basic' };
+    }
+
+    const added = this.addSpecialBlocks(normalized, requestCount);
+    if (added > 0) {
+      this.specialSpawnCountsBySource.set(sourceKey, used + added);
+    }
+
+    return {
+      success: added > 0,
+      added,
+      reason: added > 0 ? undefined : 'no_safe_space',
+      mode: 'replace_basic'
+    };
   }
 
   setNextPieceType(type: TetrominoType): void {
@@ -611,13 +671,13 @@ export class BoardSystem {
     } else {
       this.nextQueue[0] = type;
     }
-    this.refillNextQueue(5);
+    this.refillNextQueue(NEXT_QUEUE_SIZE + 1);
   }
 
   rerollActiveAndNext(): void {
     this.currentPiece = this.makePiece(this.rollPieceType());
     this.nextQueue = [this.rollPieceType()];
-    this.refillNextQueue(5);
+    this.refillNextQueue(NEXT_QUEUE_SIZE + 1);
     this.nextPieceType = this.nextQueue[0];
     this.holdUsedThisPiece = false;
   }
@@ -628,14 +688,14 @@ export class BoardSystem {
       if (this.nextQueue.length > 0) {
         this.nextQueue.shift();
       }
-      this.refillNextQueue(5);
+      this.refillNextQueue(NEXT_QUEUE_SIZE + 1);
       return true;
     }
 
     const previousNext = this.nextQueue[0] ?? this.nextPieceType;
     this.nextQueue[0] = this.holdPieceType;
     this.holdPieceType = previousNext;
-    this.refillNextQueue(5);
+    this.refillNextQueue(NEXT_QUEUE_SIZE + 1);
     return true;
   }
 
@@ -827,7 +887,7 @@ export class BoardSystem {
   }
 
   getNextQueueSnapshot(): TetrominoType[] {
-    this.refillNextQueue(5);
+    this.refillNextQueue(NEXT_QUEUE_SIZE + 1);
     return [...this.nextQueue];
   }
 
@@ -901,8 +961,72 @@ export class BoardSystem {
     return added;
   }
 
+  private getSpawnGateReason(blockId: string, sourceType: string): string | null {
+    const stage = this.state?.stage ?? 1;
+    if (blockId === 'block_royal' && stage < 6 && sourceType !== 'boss') {
+      return 'stage_gate_royal';
+    }
+    if (blockId === 'block_ice' && stage < 3 && sourceType !== 'boss') {
+      return 'stage_gate_ice';
+    }
+    if (stage <= 1 && (blockId === 'block_sticky' || blockId === 'block_crumb_junk')) {
+      const activeHazards = this.countHazardSpecialBlocks();
+      if (activeHazards >= this.maxHazardBlocksActiveStage1) {
+        return 'stage1_hazard_cap';
+      }
+    }
+    return null;
+  }
+
+  private getActiveCapForBlock(blockId: string): number {
+    if (blockId === 'block_bomb') {
+      return this.maxBombBlocksActive;
+    }
+    if (blockId === 'block_star') {
+      return this.maxStarBlocksActive;
+    }
+    if (blockId === 'block_royal') {
+      return this.maxRoyalBlocksActive;
+    }
+    return this.maxSpecialBlocksActive;
+  }
+
+  private countActiveBlockId(blockId: string): number {
+    let count = 0;
+    for (let rowIndex = 0; rowIndex < this.rows; rowIndex += 1) {
+      for (let columnIndex = 0; columnIndex < this.columns; columnIndex += 1) {
+        const cell = this.grid[rowIndex][columnIndex];
+        if (typeof cell !== 'number' && cell.blockId === blockId) {
+          count += 1;
+        }
+      }
+    }
+    return count;
+  }
+
+  private countHazardSpecialBlocks(): number {
+    const hazardIds = new Set(['block_sticky', 'block_crumb_junk', 'block_cloud_junk', 'block_cracked_junk', 'block_ice', 'block_royal']);
+    let count = 0;
+    for (let rowIndex = 0; rowIndex < this.rows; rowIndex += 1) {
+      for (let columnIndex = 0; columnIndex < this.columns; columnIndex += 1) {
+        const cell = this.grid[rowIndex][columnIndex];
+        if (typeof cell !== 'number' && hazardIds.has(cell.blockId)) {
+          count += 1;
+        }
+      }
+    }
+    return count;
+  }
+
   private isJunkBlockCell(cell: BoardCell): boolean {
     return typeof cell !== 'number' && this.junkBlockIds.has(cell.blockId);
   }
 
 }
+
+
+
+
+
+
+

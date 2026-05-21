@@ -31,10 +31,7 @@ const ICON_CATEGORIES = [
   'spells',
   'map-nodes',
   'hub-buildings',
-  'route-story',
-  'heroes',
-  'monsters',
-  'bosses'
+  'route-story'
 ];
 
 function ensureDir(relativePath) {
@@ -56,7 +53,7 @@ const dirs = new Set([
   'effects',
   'icons',
   'stages',
-  'backgrounds',
+  'stages/global-scenes',
   'backgrounds/legacy',
   'ui',
   'ui/panels',
@@ -80,12 +77,14 @@ const dirs = new Set([
   'audio/music',
   'audio/ui',
   'fonts',
-  'placeholders'
+  'placeholders',
+  'store'
 ]);
 
 for (const stageId of STAGE_IDS) {
   dirs.add(`stages/${stageId}`);
   dirs.add(`stages/${stageId}/battle`);
+  dirs.add(`stages/${stageId}/puzzle`);
   dirs.add(`stages/${stageId}/boss-arena`);
   dirs.add(`stages/${stageId}/map`);
   dirs.add(`stages/${stageId}/route-scenes`);

@@ -1,16 +1,23 @@
 {
-  "id": "oops_overexcited_machine",
-  "name": "Overexcited Machine",
-  "rarity": "oopsie",
-  "description": "Enemies get ready one block sooner, but never faster than every block.",
-  "iconKey": "oops_overexcited_machine",
-  "effects": [
-    {
-      "type": "enemy_attack_interval_penalty",
-      "value": 1
-    }
-  ],
-  "removeCost": 65,
-  "tags": ["oopsie", "enemy"],
-  "enabled": true
+    "id":  "oops_overexcited_machine",
+    "name":  "Overexcited Machine",
+    "rarity":  "oopsie",
+    "description":  "Enemies get ready one block sooner, but never faster than every block.",
+    "iconKey":  "oops_overexcited_machine",
+    "effects":  [
+                    {
+                        "type":  "enemy_attack_interval_penalty",
+                        "value":  1
+                    }
+                ],
+    "removeCost":  65,
+    "tags":  [
+                 "oopsie",
+                 "enemy"
+             ],
+    "enabled":  true,
+    "severity":  "minor",
+    "duration":  "battle",
+    "triggerTiming":  "on_piece_lock",
+    "counterplayHint":  "Use Clean Cut, Cascade Cheer, or item counters to steady the board."
 }

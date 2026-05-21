@@ -42,5 +42,5 @@
     "condition": "befriend_20_slimes"
   },
   "tags": ["slime", "sticky", "chaos", "unlockable"],
-  "enabled": true
+  "enabled": false
 }

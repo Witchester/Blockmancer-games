@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { BlockmancerGame } from '../BlockmancerGame';
 import { Button } from '../ui/Button';
-import { COLORS, FONT_FAMILY } from '../utils/constants';
+import { COLORS, FONT_FAMILY_STACKS, FONT_SIZE_720 } from '../utils/constants';
 import { isCompactLayout } from '../utils/layout';
 
 export class MainMenuScene extends Phaser.Scene {
@@ -27,15 +27,15 @@ export class MainMenuScene extends Phaser.Scene {
 
     this.add.text(centerX, 96, 'Blockmancer Dungeon', {
       color: '#f6f7ff',
-      fontFamily: FONT_FAMILY,
-      fontSize: compact ? '46px' : '54px',
+      fontFamily: FONT_FAMILY_STACKS.display,
+      fontSize: compact ? `${FONT_SIZE_720.stageBanner}px` : `${FONT_SIZE_720.title}px`,
       fontStyle: 'bold'
     }).setOrigin(0.5);
 
     this.add.text(centerX, 170, 'A combat roguelike where the battlefield is built from falling magic.', {
       color: '#c4cbff',
-      fontFamily: FONT_FAMILY,
-      fontSize: compact ? '20px' : '23px',
+      fontFamily: FONT_FAMILY_STACKS.ui,
+      fontSize: compact ? `${FONT_SIZE_720.small}px` : `${FONT_SIZE_720.body}px`,
       align: 'center',
       wordWrap: { width: contentWidth - 80 }
     }).setOrigin(0.5);
@@ -96,8 +96,8 @@ export class MainMenuScene extends Phaser.Scene {
 
     this.add.text(centerX, height - 42, 'Built with Vite, TypeScript, Phaser 3, and Capacitor.', {
       color: '#98a0c7',
-      fontFamily: FONT_FAMILY,
-      fontSize: compact ? '16px' : '18px'
+      fontFamily: FONT_FAMILY_STACKS.readable,
+      fontSize: compact ? `${FONT_SIZE_720.tiny}px` : `${FONT_SIZE_720.small}px`
     }).setOrigin(0.5);
   }
 

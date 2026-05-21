@@ -63,6 +63,7 @@ type ContentAssetSource = {
   folder: string;
   field: AssetField;
   kind: AssetKind;
+  fallbackFolder?: string;
 };
 
 const CONTENT_ASSET_SOURCES: ContentAssetSource[] = [
@@ -72,12 +73,12 @@ const CONTENT_ASSET_SOURCES: ContentAssetSource[] = [
   { contentType: 'hero', folder: 'portraits/heroes', field: 'portraitKey', kind: 'sprite' },
   { contentType: 'item', folder: 'icons/items', field: 'iconKey', kind: 'icon' },
   { contentType: 'mapNode', folder: 'icons/map-nodes', field: 'iconKey', kind: 'icon' },
-  { contentType: 'monster', folder: 'sprites/monsters', field: 'spriteKey', kind: 'sprite' },
+  { contentType: 'monster', folder: 'sprites/monsters', field: 'spriteKey', kind: 'sprite', fallbackFolder: 'monsters' },
   { contentType: 'npc', folder: 'portraits/npcs', field: 'spriteKey', kind: 'sprite' },
   { contentType: 'oopsie', folder: 'icons/oopsies', field: 'iconKey', kind: 'icon' },
   { contentType: 'relic', folder: 'icons/relics', field: 'iconKey', kind: 'icon' },
-  { contentType: 'roomEvent', folder: 'story', field: 'iconKey', kind: 'icon' },
-  { contentType: 'roomEvent', folder: 'stages', field: 'backgroundKey', kind: 'background' },
+  { contentType: 'roomEvent', folder: 'icons/room-events', field: 'iconKey', kind: 'icon', fallbackFolder: 'story' },
+  { contentType: 'roomEvent', folder: 'stages/global-scenes', field: 'backgroundKey', kind: 'background', fallbackFolder: 'stages' },
   { contentType: 'spell', folder: 'icons/spells', field: 'iconKey', kind: 'icon' },
   { contentType: 'stage', folder: 'stages', field: 'backgroundKey', kind: 'background' },
   { contentType: 'statusEffect', folder: 'icons/status-effects', field: 'iconKey', kind: 'icon' },
@@ -86,10 +87,10 @@ const CONTENT_ASSET_SOURCES: ContentAssetSource[] = [
 ];
 
 export const CORE_IMAGE_ASSETS: AssetManifestEntry[] = [
-  { key: 'asset_missing', type: 'placeholder', path: '/assets/ui/fallback-missing.png', primaryPath: '/assets/ui/fallback-missing.png', kind: 'sprite' },
-  { key: 'asset_missing_icon', type: 'placeholder', path: '/assets/ui/fallback-icon.png', primaryPath: '/assets/ui/fallback-icon.png', kind: 'icon' },
-  { key: 'asset_missing_block', type: 'placeholder', path: '/assets/board-blocks/fallback-block.png', primaryPath: '/assets/board-blocks/fallback-block.png', kind: 'sprite' },
-  { key: 'asset_missing_background', type: 'placeholder', path: '/assets/stages/fallback-background.png', primaryPath: '/assets/stages/fallback-background.png', kind: 'background' },
+  { key: 'asset_missing', type: 'placeholder', path: '/assets/ui/placeholders/fallback-missing.png', primaryPath: '/assets/ui/placeholders/fallback-missing.png', fallbackPaths: ['/assets/ui/fallback-missing.png'], kind: 'sprite' },
+  { key: 'asset_missing_icon', type: 'placeholder', path: '/assets/ui/placeholders/fallback-icon.png', primaryPath: '/assets/ui/placeholders/fallback-icon.png', fallbackPaths: ['/assets/ui/fallback-icon.png'], kind: 'icon' },
+  { key: 'asset_missing_block', type: 'placeholder', path: '/assets/placeholders/fallback-block.png', primaryPath: '/assets/placeholders/fallback-block.png', fallbackPaths: ['/assets/board-blocks/fallback-block.png'], kind: 'sprite' },
+  { key: 'asset_missing_background', type: 'placeholder', path: '/assets/placeholders/fallback-background.png', primaryPath: '/assets/placeholders/fallback-background.png', fallbackPaths: ['/assets/stages/fallback-background.png', '/assets/backgrounds/legacy/fallback-background.png'], kind: 'background' },
   { key: 'ui_button_default', type: 'ui', path: '/assets/ui/buttons/ui_button_default.png', primaryPath: '/assets/ui/buttons/ui_button_default.png', fallbackPaths: ['/assets/ui/button-default.png'], kind: 'ui' },
   { key: 'ui_card_default', type: 'ui', path: '/assets/ui/panels/ui_card_default.png', primaryPath: '/assets/ui/panels/ui_card_default.png', fallbackPaths: ['/assets/ui/card-default.png'], kind: 'ui' },
   { key: 'ui_panel_default', type: 'ui', path: '/assets/ui/panels/ui_panel_default.png', primaryPath: '/assets/ui/panels/ui_panel_default.png', kind: 'ui' },
@@ -104,18 +105,18 @@ export const CORE_IMAGE_ASSETS: AssetManifestEntry[] = [
 ];
 
 export const AUDIO_ASSETS: AssetManifestEntry[] = [
-  { key: 'sfx_line_clear', path: '/assets/audio/line-clear.ogg', kind: 'audio' },
-  { key: 'sfx_cascade', path: '/assets/audio/cascade.ogg', kind: 'audio' },
-  { key: 'sfx_spell_cast', path: '/assets/audio/spell-cast.ogg', kind: 'audio' },
-  { key: 'sfx_enemy_hit', path: '/assets/audio/enemy-hit.ogg', kind: 'audio' },
-  { key: 'sfx_player_hit', path: '/assets/audio/player-hit.ogg', kind: 'audio' },
-  { key: 'sfx_reward_pick', path: '/assets/audio/reward-pick.ogg', kind: 'audio' },
-  { key: 'sfx_button_tap', path: '/assets/audio/button-tap.ogg', kind: 'audio' },
-  { key: 'sfx_boss_intro', path: '/assets/audio/boss-intro.ogg', kind: 'audio' },
-  { key: 'sfx_victory', path: '/assets/audio/victory.ogg', kind: 'audio' },
-  { key: 'sfx_defeat', path: '/assets/audio/defeat.ogg', kind: 'audio' },
-  { key: 'sfx_shop_purchase', path: '/assets/audio/shop-purchase.ogg', kind: 'audio' },
-  { key: 'sfx_item_use', path: '/assets/audio/item-use.ogg', kind: 'audio' }
+  { key: 'sfx_line_clear', path: '/assets/audio/sfx/line-clear.ogg', fallbackPaths: ['/assets/audio/line-clear.ogg'], kind: 'audio' },
+  { key: 'sfx_cascade', path: '/assets/audio/sfx/cascade.ogg', fallbackPaths: ['/assets/audio/cascade.ogg'], kind: 'audio' },
+  { key: 'sfx_spell_cast', path: '/assets/audio/sfx/spell-cast.ogg', fallbackPaths: ['/assets/audio/spell-cast.ogg'], kind: 'audio' },
+  { key: 'sfx_enemy_hit', path: '/assets/audio/sfx/enemy-hit.ogg', fallbackPaths: ['/assets/audio/enemy-hit.ogg'], kind: 'audio' },
+  { key: 'sfx_player_hit', path: '/assets/audio/sfx/player-hit.ogg', fallbackPaths: ['/assets/audio/player-hit.ogg'], kind: 'audio' },
+  { key: 'sfx_reward_pick', path: '/assets/audio/sfx/reward-pick.ogg', fallbackPaths: ['/assets/audio/reward-pick.ogg'], kind: 'audio' },
+  { key: 'sfx_button_tap', path: '/assets/audio/ui/button-tap.ogg', fallbackPaths: ['/assets/audio/button-tap.ogg'], kind: 'audio' },
+  { key: 'sfx_boss_intro', path: '/assets/audio/sfx/boss-intro.ogg', fallbackPaths: ['/assets/audio/boss-intro.ogg'], kind: 'audio' },
+  { key: 'sfx_victory', path: '/assets/audio/sfx/victory.ogg', fallbackPaths: ['/assets/audio/victory.ogg'], kind: 'audio' },
+  { key: 'sfx_defeat', path: '/assets/audio/sfx/defeat.ogg', fallbackPaths: ['/assets/audio/defeat.ogg'], kind: 'audio' },
+  { key: 'sfx_shop_purchase', path: '/assets/audio/ui/shop-purchase.ogg', fallbackPaths: ['/assets/audio/shop-purchase.ogg'], kind: 'audio' },
+  { key: 'sfx_item_use', path: '/assets/audio/sfx/item-use.ogg', fallbackPaths: ['/assets/audio/item-use.ogg'], kind: 'audio' }
 ];
 
 function getAssetValue(entry: Record<string, unknown>, field: AssetField): string | null {
@@ -125,6 +126,36 @@ function getAssetValue(entry: Record<string, unknown>, field: AssetField): strin
 
 function assetPath(folder: string, key: string): string {
   return `/assets/${folder}/${key}.png`;
+}
+
+function sourceFallbackPaths(source: ContentAssetSource, key: string, entry: ContentAssetEntry): string[] | undefined {
+  const fallbackPaths = new Set<string>();
+  if (source.fallbackFolder) {
+    fallbackPaths.add(assetPath(source.fallbackFolder, key));
+  }
+  if (source.contentType === 'hero') {
+    fallbackPaths.add(assetPath('heroes', key));
+  }
+  if (source.contentType === 'mapNode') {
+    fallbackPaths.add(assetPath('icons/map', key));
+  }
+  if (source.contentType === 'roomEvent' && source.field === 'backgroundKey') {
+    fallbackPaths.add(assetPath('backgrounds/legacy', key));
+  }
+  if (source.contentType === 'stage') {
+    fallbackPaths.add(assetPath('backgrounds/legacy', key));
+    if (typeof entry.theme === 'string') {
+      fallbackPaths.add(assetPath('backgrounds/legacy', `bg_${entry.theme}`));
+    }
+  }
+  return fallbackPaths.size > 0 ? [...fallbackPaths] : undefined;
+}
+
+function sourcePrimaryPath(source: ContentAssetSource, key: string): string {
+  if (source.contentType === 'monster' && key.startsWith('placeholder_')) {
+    return assetPath('placeholders', key);
+  }
+  return assetPath(source.folder, key);
 }
 
 function normalizeFinalBoardBlockId(key: string): string {
@@ -141,7 +172,7 @@ function normalizeFinalBoardBlockId(key: string): string {
   return aliases[key] ?? key.replace(/^spr_/, '');
 }
 
-function addAsset(assets: Map<string, AssetManifestEntry>, key: string | null | undefined, folder: string, kind: AssetKind): void {
+function addAsset(assets: Map<string, AssetManifestEntry>, key: string | null | undefined, folder: string, kind: AssetKind, fallbackPaths?: string[]): void {
   if (!key || assets.has(key)) {
     return;
   }
@@ -149,11 +180,12 @@ function addAsset(assets: Map<string, AssetManifestEntry>, key: string | null | 
   assets.set(key, {
     key,
     path: assetPath(folder, key),
-    kind
+    kind,
+    ...(fallbackPaths && fallbackPaths.length > 0 ? { fallbackPaths } : {})
   });
 }
 
-function addAssetPath(assets: Map<string, AssetManifestEntry>, key: string | null | undefined, path: string, kind: AssetKind): void {
+function addAssetPath(assets: Map<string, AssetManifestEntry>, key: string | null | undefined, path: string, kind: AssetKind, fallbackPaths?: string[]): void {
   if (!key || assets.has(key)) {
     return;
   }
@@ -161,7 +193,8 @@ function addAssetPath(assets: Map<string, AssetManifestEntry>, key: string | nul
   assets.set(key, {
     key,
     path,
-    kind
+    kind,
+    ...(fallbackPaths && fallbackPaths.length > 0 ? { fallbackPaths } : {})
   });
 }
 
@@ -278,12 +311,13 @@ export function createContentImageAssets(): AssetManifestEntry[] {
 
       assets.set(key, {
         key,
-        path: assetPath(source.folder, key),
-        kind: source.kind
+        path: sourcePrimaryPath(source, key),
+        kind: source.kind,
+        fallbackPaths: sourceFallbackPaths(source, key, entry)
       });
 
       for (const explicitRef of collectExplicitRefs(entry)) {
-        addAsset(assets, explicitRef, source.folder, source.kind);
+        addAsset(assets, explicitRef, source.folder, source.kind, sourceFallbackPaths(source, explicitRef, entry));
       }
     }
   }
@@ -339,7 +373,7 @@ export function createContentImageAssets(): AssetManifestEntry[] {
       addAssetPath(assets, `${hero.id}__${state}__f00`, `/assets/sprites/heroes/${hero.id}/${state}/${hero.id}__${state}__f00.png`, 'sprite');
       addAsset(assets, `spr_${hero.id}_${state}`, 'sprites/heroes', 'sprite');
     }
-    addAsset(assets, `ico_${hero.id}`, 'icons/heroes', 'icon');
+    addAssetPath(assets, `ico_${hero.id}`, `/assets/portraits/heroes/${hero.id}__portrait_icon__f00.png`, 'icon', [assetPath('icons/heroes', `ico_${hero.id}`)]);
   }
 
   for (const monster of contentRegistry.list<ContentAssetEntry>('monster')) {
@@ -358,8 +392,13 @@ export function createContentImageAssets(): AssetManifestEntry[] {
       addAssetPath(assets, `${actorId}__${state}__f00`, `/assets/${folder}/${actorId}/${state}/${actorId}__${state}__f00.png`, 'sprite');
       addAsset(assets, `spr_${monster.id}_${state}`, folder, 'sprite');
     }
-    addAsset(assets, `ico_${actorId}`, monster.id.startsWith('mon_boss_') ? 'icons/bosses' : 'icons/monsters', 'icon');
-    addAsset(assets, `ico_${monster.id}`, monster.id.startsWith('mon_boss_') ? 'icons/bosses' : 'icons/monsters', 'icon');
+    if (isBoss) {
+      addAssetPath(assets, `ico_${actorId}`, `/assets/portraits/bosses/${actorId}__portrait_icon__f00.png`, 'icon', [assetPath('icons/bosses', `ico_${actorId}`)]);
+      addAssetPath(assets, `ico_${monster.id}`, `/assets/portraits/bosses/${actorId}__portrait_icon__f00.png`, 'icon', [assetPath('icons/bosses', `ico_${monster.id}`)]);
+    } else {
+      addAssetPath(assets, `ico_${actorId}`, `/assets/sprites/monsters/${actorId}/icon/${actorId}__icon__f00.png`, 'icon', [assetPath('icons/monsters', `ico_${actorId}`)]);
+      addAssetPath(assets, `ico_${monster.id}`, `/assets/sprites/monsters/${actorId}/icon/${actorId}__icon__f00.png`, 'icon', [assetPath('icons/monsters', `ico_${monster.id}`)]);
+    }
   }
 
   for (const stage of contentRegistry.list<ContentAssetEntry>('stage')) {
@@ -383,7 +422,7 @@ export function createContentImageAssets(): AssetManifestEntry[] {
     const room = node.id.replace(/^node_/, '');
     const stem = room === 'fight' ? 'map_node_normal' : `map_node_${room}`;
     for (const state of ['available', 'current', 'completed', 'locked']) {
-      addAsset(assets, `${stem}_${state}`, 'icons/map', 'icon');
+      addAsset(assets, `${stem}_${state}`, 'icons/map-nodes', 'icon', [assetPath('icons/map', `${stem}_${state}`)]);
     }
   }
 
@@ -410,10 +449,10 @@ export function createContentImageAssets(): AssetManifestEntry[] {
   addAsset(assets, 'ui_route_choice_card_practical', 'ui/story-routes', 'ui');
   addAsset(assets, 'ui_route_choice_card_true', 'ui/story-routes', 'ui');
   addAsset(assets, 'ui_route_choice_card_risky', 'ui/story-routes', 'ui');
-  ['practical', 'true', 'risky'].forEach((lane) => addAsset(assets, `ico_route_badge_${lane}`, 'icons/story-routes', 'icon'));
+  ['practical', 'true', 'risky'].forEach((lane) => addAsset(assets, `ico_route_badge_${lane}`, 'icons/route-story', 'icon', [assetPath('icons/story-routes', `ico_route_badge_${lane}`)]));
   for (const hero of contentRegistry.list<ContentAssetEntry>('hero')) {
     for (const stage of contentRegistry.list<ContentAssetEntry>('stage')) {
-      addAsset(assets, `ico_route_trigger_${hero.id}_${stage.id}`, 'icons/story-routes', 'icon');
+      addAsset(assets, `ico_route_trigger_${hero.id}_${stage.id}`, 'icons/route-story', 'icon', [assetPath('icons/story-routes', `ico_route_trigger_${hero.id}_${stage.id}`)]);
       addAssetPath(assets, `bg_route_${hero.id}_${stage.id}`, `/assets/stages/${stage.id}/route-scenes/bg_route_${hero.id}_${stage.id}.png`, 'background');
     }
     for (const expression of ['neutral', 'happy', 'worried', 'determined']) {

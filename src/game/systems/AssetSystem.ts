@@ -386,6 +386,8 @@ export class AssetSystem {
       state !== 'icon' && state !== 'portrait' && heroId ? `${heroId}__${normalizedState}__f00` : undefined,
       state === 'icon' ? `ico_${heroId}` : undefined,
       heroId ? `spr_${heroId}_${normalizedState}` : undefined,
+      state === 'cast' && heroId ? `spr_${heroId}_cast` : undefined,
+      state === 'defeat' && heroId ? `spr_${heroId}_defeat` : undefined,
       hero?.portraitKey,
       heroId ? `spr_${heroId}_portrait` : undefined,
       heroId ? `spr_${heroId}_idle` : undefined,
@@ -399,7 +401,10 @@ export class AssetSystem {
     return this.getFirstTextureKey(scene, [
       this.getAssetRef(monster, state),
       state === 'icon' ? `ico_${actorId}` : undefined,
+      state === 'icon' && monsterId ? `ico_${monsterId}` : undefined,
       state !== 'icon' && actorId ? `${actorId}__${state}__f00` : undefined,
+      state !== 'icon' && actorId ? `spr_${actorId}_${state}` : undefined,
+      state !== 'icon' && actorId ? `spr_${actorId}_idle` : undefined,
       monsterId ? `spr_${monsterId}_${state}` : undefined,
       monsterId ? `spr_${monsterId}_idle` : undefined,
       monster?.spriteKey,
@@ -552,8 +557,8 @@ export class AssetSystem {
   ): string {
     const normalized = roomType === 'fight' ? 'normal' : roomType;
     return this.getFirstTextureKey(scene, [
-      `map_node_${normalized}_${state}`,
       explicitKey,
+      `map_node_${normalized}_${state}`,
       `node_${roomType}`
     ], 'icon');
   }

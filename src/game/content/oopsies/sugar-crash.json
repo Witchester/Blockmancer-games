@@ -1,18 +1,22 @@
 {
-  "id": "oops_sugar_crash",
-  "name": "Sugar Crash",
-  "rarity": "oopsie",
-  "description": "Mana gains are slightly lower until removed.",
-  "iconKey": "oops_sugar_crash",
-  "effects": [
-    {
-      "type": "reduce_mana_gain_percent",
-      "value": 0.15
-    }
-  ],
-  "removeCost": 50,
-  "tags": [
-    "oopsie"
-  ],
-  "enabled": true
+    "id":  "oops_sugar_crash",
+    "name":  "Sugar Crash",
+    "rarity":  "oopsie",
+    "description":  "Mana gains are slightly lower until removed.",
+    "iconKey":  "oops_sugar_crash",
+    "effects":  [
+                    {
+                        "type":  "reduce_mana_gain_percent",
+                        "value":  0.15
+                    }
+                ],
+    "removeCost":  50,
+    "tags":  [
+                 "oopsie"
+             ],
+    "enabled":  true,
+    "severity":  "minor",
+    "duration":  "battle",
+    "triggerTiming":  "on_piece_lock",
+    "counterplayHint":  "Use Clean Cut, Cascade Cheer, or item counters to steady the board."
 }

@@ -75,9 +75,23 @@ function makeAnimationId(category, assetId, animationName) {
 function folderFor(category, assetId, animationName) {
   if (category === 'boardBlock') {
     const blockId = assetId.replace(/^spr_/, '');
-    return animationName === 'glow' || animationName === 'clear'
-      ? `assets/sprites/board-blocks/${blockId}/${animationName}`
-      : `assets/sprites/board-blocks/${blockId}/special`;
+    const clearAnimations = new Set([
+      'clear',
+      'break',
+      'explode',
+      'crack_clear',
+      'squish_clear',
+      'expire_to_junk',
+      'clear_burst',
+      'stretch_clear'
+    ]);
+    if (animationName === 'base' || animationName === 'glow') {
+      return `assets/sprites/board-blocks/${blockId}/${animationName}`;
+    }
+    if (clearAnimations.has(animationName)) {
+      return `assets/sprites/board-blocks/${blockId}/clear`;
+    }
+    return `assets/sprites/board-blocks/${blockId}/special`;
   }
   if (category === 'spell') return `assets/effects/${assetId}`;
   if (category === 'item') return `assets/effects/items/${assetId}/${animationName}`;

@@ -59,6 +59,17 @@ const FALLBACK_BY_CATEGORY: Record<AnimationCategory, string> = {
   ui: 'asset_missing_icon'
 };
 
+const BOARD_CLEAR_ANIMATIONS = new Set([
+  'clear',
+  'break',
+  'explode',
+  'crack_clear',
+  'squish_clear',
+  'expire_to_junk',
+  'clear_burst',
+  'stretch_clear'
+]);
+
 function animationId(category: AnimationCategory, assetId: string, animationName: string): string {
   if (category === 'boardBlock') {
     const blockName = assetId.replace(/^spr_block_/, 'block_');
@@ -95,8 +106,11 @@ function animationId(category: AnimationCategory, assetId: string, animationName
 
 function boardBlockFolder(assetId: string, animationName: string): string {
   const blockId = assetId.replace(/^spr_/, '');
-  if (animationName === 'glow' || animationName === 'clear') {
+  if (animationName === 'base' || animationName === 'glow') {
     return `/assets/sprites/board-blocks/${blockId}/${animationName}`;
+  }
+  if (BOARD_CLEAR_ANIMATIONS.has(animationName)) {
+    return `/assets/sprites/board-blocks/${blockId}/clear`;
   }
   return `/assets/sprites/board-blocks/${blockId}/special`;
 }

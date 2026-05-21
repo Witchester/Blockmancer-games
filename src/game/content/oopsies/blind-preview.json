@@ -1,16 +1,23 @@
 {
-  "id": "oops_square_only",
-  "name": "Square Parade",
-  "rarity": "oopsie",
-  "description": "The Block-O-Matic gets extra fond of square blocks.",
-  "iconKey": "oops_square_only",
-  "effects": [
-    {
-      "type": "favor_square_blocks",
-      "value": 1
-    }
-  ],
-  "removeCost": 60,
-  "tags": ["oopsie", "pieces"],
-  "enabled": true
+    "id":  "oops_square_only",
+    "name":  "Square Parade",
+    "rarity":  "oopsie",
+    "description":  "The Block-O-Matic gets extra fond of square blocks.",
+    "iconKey":  "oops_square_only",
+    "effects":  [
+                    {
+                        "type":  "favor_square_blocks",
+                        "value":  1
+                    }
+                ],
+    "removeCost":  60,
+    "tags":  [
+                 "oopsie",
+                 "pieces"
+             ],
+    "enabled":  true,
+    "severity":  "minor",
+    "duration":  "battle",
+    "triggerTiming":  "on_piece_lock",
+    "counterplayHint":  "Use Clean Cut, Cascade Cheer, or item counters to steady the board."
 }

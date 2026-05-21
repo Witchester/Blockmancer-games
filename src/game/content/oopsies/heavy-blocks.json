@@ -1,16 +1,23 @@
 {
-  "id": "oops_heavy_blocks",
-  "name": "Heavy Blocks",
-  "rarity": "oopsie",
-  "description": "Blocks fall a little faster until this oopsie is cleaned up.",
-  "iconKey": "oops_heavy_blocks",
-  "effects": [
-    {
-      "type": "increase_fall_speed",
-      "value": 0.1
-    }
-  ],
-  "removeCost": 50,
-  "tags": ["oopsie", "fall_speed"],
-  "enabled": true
+    "id":  "oops_heavy_blocks",
+    "name":  "Heavy Blocks",
+    "rarity":  "oopsie",
+    "description":  "Blocks fall a little faster until this oopsie is cleaned up.",
+    "iconKey":  "oops_heavy_blocks",
+    "effects":  [
+                    {
+                        "type":  "increase_fall_speed",
+                        "value":  0.1
+                    }
+                ],
+    "removeCost":  50,
+    "tags":  [
+                 "oopsie",
+                 "fall_speed"
+             ],
+    "enabled":  true,
+    "severity":  "minor",
+    "duration":  "battle",
+    "triggerTiming":  "on_piece_lock",
+    "counterplayHint":  "Use Clean Cut, Cascade Cheer, or item counters to steady the board."
 }

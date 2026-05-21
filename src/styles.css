@@ -1,9 +1,19 @@
-@import '@fontsource/vt323/400.css';
-
 :root {
   color-scheme: dark;
-  --retro-font: 'VT323', 'CaskaydiaCove Nerd Font Mono', 'Cascadia Code', 'Cascadia Mono', 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
-  font-family: var(--retro-font);
+  --font-display: "Pixelify Sans", "Silkscreen", system-ui, sans-serif;
+  --font-ui: "Nunito Sans", "Atkinson Hyperlegible", system-ui, sans-serif;
+  --font-readable: "Atkinson Hyperlegible", "Nunito Sans", system-ui, sans-serif;
+  --font-pixel-small: "Silkscreen", "Pixelify Sans", monospace;
+
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-md: 16px;
+  --text-lg: 20px;
+  --text-xl: 26px;
+  --text-2xl: 34px;
+  --text-title: 48px;
+
+  font-family: var(--font-ui);
   font-synthesis: none;
   --safe-area-top: env(safe-area-inset-top, 0px);
   --safe-area-right: env(safe-area-inset-right, 0px);
@@ -33,6 +43,7 @@ body {
   height: 100vh;
   height: 100dvh;
   overflow: hidden;
+  font-family: var(--font-ui);
 }
 
 #app {

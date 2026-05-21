@@ -26,10 +26,7 @@ export class SpellSystem {
     const manaHexPenalty = this.state.activeEnemy?.manaHexTurns ? 10 : 0;
     const multiplier = this.state.reactiveState.nextSpellModifiers
       .filter((modifier) => this.isModifierCompatible(spellId, modifier))
-      .reduce(
-      (lowest, modifier) => Math.min(lowest, modifier.costMultiplier ?? 1),
-      1
-    );
+      .reduce((lowest, modifier) => Math.min(lowest, modifier.costMultiplier ?? 1), 1);
     return Math.max(0, Math.round((definition.cost - this.state.player.spellCostReduction + manaHexPenalty) * multiplier));
   }
 
@@ -59,13 +56,17 @@ export class SpellSystem {
     const spellPowerBonus = this.weaponSystem.getSpellDamageBonus(this.state, spellId);
 
     switch (spellId) {
-      case 'fireball':
+      case 'fireball': {
         this.combat.applyDirectDamage(22 + this.getSpellBonus('fireball') + spellPowerBonus, 'Fireball');
-        if (this.state.hero.passiveId === 'passive_preheat_cleanup' || this.hasCleanupModifier(spellModifiers)) {
-          const cleared = this.board.clearBlocksByIds(['block_sticky', 'block_crumb_junk', 'block_cloud_junk'], this.hasCleanupModifier(spellModifiers) ? 4 : 2);
-          this.combat.addLog(`Preheat Cleanup burns ${cleared} sticky or junk-prone blocks.`);
+        const cleanupCap = this.state.hero.passiveId === 'passive_preheat_cleanup' || this.hasCleanupModifier(spellModifiers) ? 3 : 2;
+        const toasted = this.board.clearBlocksByIds(['block_sticky', 'block_crumb_junk', 'block_cloud_junk'], cleanupCap);
+        const reducedIncoming = this.reduceIncomingJunk(1);
+        this.combat.addLog(`Fireball toasted ${toasted} sticky or junk block${toasted === 1 ? '' : 's'}.`);
+        if (reducedIncoming > 0) {
+          this.combat.addLog(`Cascade cleanup reduced incoming junk by ${reducedIncoming}.`);
         }
         break;
+      }
       case 'frost-lock':
         this.state.fallSpeed = Math.max(0.7, this.state.fallSpeed - 0.1);
         if (spellModifiers.some((modifier) => modifier.id === 'frosting_salt')) {
@@ -79,7 +80,7 @@ export class SpellSystem {
         if (this.state.player.frostLockDelayBonus && enemy.attackCounter > 1) {
           enemy.attackCounter += 1;
         }
-        this.combat.addLog('Frost Lock slows the battlefield.');
+        this.combat.addLog('Frost Lock cooled the board pressure.');
         break;
       case 'bomb-rune': {
         const zuzuBonus = this.state.hero.passiveId === 'passive_bombs_are_features' ? 8 : 0;
@@ -87,27 +88,12 @@ export class SpellSystem {
         this.combat.applyDirectDamage(35 + bonus, 'Bomb Rune');
         const radius = 1 + Math.max(0, ...spellModifiers.map((modifier) => modifier.bombRadiusBonus ?? 0));
         const removed = this.board.clearRandomFilledArea(radius);
-        this.combat.addLog(`Bomb Rune blasts a 3x3 area and removes ${removed} blocks.`);
-        if (this.state.hero.passiveId === 'passive_bombs_are_features' && Math.random() < 0.25) {
-          this.state.activeHazards.push({
-            hazardId: 'hazard_incoming_junk_queue',
-            instanceId: `zuzu_bomb_junk_${Date.now()}`,
-            kind: 'incoming_junk',
-            name: 'Goblin Bomb Crumbs',
-            warningText: 'Zuzu made the bomb stronger, and one crumb delivery is wobbling loose.',
-            counterTags: ['counter_incoming_junk', 'counter_junk'],
-            counterWindowPieces: 3,
-            remainingPieces: 3,
-            severity: 'minor',
-            defaultFailureEffect: 'One crumb junk drops into a safe random column.',
-            itemCounterHints: ['Snack Shield', 'Return Stamp'],
-            spellCounterHints: ['Bomb Rune', 'Clean Cut'],
-            cascadeCounterHint: 'Any line clear can trim it.',
-            amount: 1,
-            sourceId: 'passive_bombs_are_features',
-            blockId: 'block_crumb_junk'
-          });
-          this.combat.addLog('Bombs Are Features adds power, with one warned crumb risk.');
+        const spawn = this.board.tryAddSpecialBlocks('block_bomb', 1, 'spell', 'bomb-rune');
+        this.combat.addLog(`Bomb Rune blasts a focused area and removes ${removed} blocks.`);
+        if (spawn.success) {
+          this.combat.addLog('Bomb Rune primed one Bomb Block.');
+        } else {
+          this.combat.addLog('Bomb cap reached: no extra Bomb Block this time.');
         }
         break;
       }
@@ -120,9 +106,13 @@ export class SpellSystem {
           this.combat.addLog('Clean Cut refunds 20 mana.');
         }
         const cleaned = this.board.clearBlocksByIds(['block_sticky', 'block_crumb_junk', 'block_cloud_junk', 'block_cracked_junk', 'block_royal'], 3);
-        this.combat.addLog(`Clean Cut removes ${cleared} row blocks and tidies ${cleaned} hazard block${cleaned === 1 ? '' : 's'}.`);
+        const reducedIncoming = this.reduceIncomingJunk(2);
+        this.combat.addLog(`Clean Cut swept away ${cleaned} troublesome block${cleaned === 1 ? '' : 's'}.`);
+        if (reducedIncoming > 0) {
+          this.combat.addLog(`Clean Cut also blocked ${reducedIncoming} incoming junk.`);
+        }
         if (this.hasCleanupModifier(spellModifiers)) {
-          const extraCleaned = this.board.clearBlocksByIds(['block_sticky', 'block_crumb_junk', 'block_cloud_junk'], 4);
+          const extraCleaned = this.board.clearBlocksByIds(['block_sticky', 'block_crumb_junk', 'block_cloud_junk'], 2);
           this.combat.addLog(`Cleaning Charm clears ${extraCleaned} extra sticky or junk block${extraCleaned === 1 ? '' : 's'}.`);
         }
         break;
@@ -148,13 +138,24 @@ export class SpellSystem {
         this.combat.addLog(`Confetti Pop adds ${added} confetti and pops ${cleared} blocks.`);
         break;
       }
-      case 'bubble-shield':
+      case 'bubble-shield': {
         this.combat.addPlayerShield(10, 'Bubble Shield');
+        const delayed = this.delayIncomingJunk(2);
+        if (delayed > 0) {
+          this.combat.addLog('Snack Shield delayed the mess!');
+        } else {
+          this.combat.addLog('Bubble Shield wrapped the board in snack-safe sparkle.');
+        }
         break;
+      }
       case 'star-spark': {
-        const added = this.board.addSpecialBlocksForSpell('block_star', 1);
+        const spawn = this.board.tryAddSpecialBlocks('block_star', 1, 'spell', 'star-spark');
         this.combat.applyDirectDamage(14 + spellPowerBonus, 'Star Spark');
-        this.combat.addLog(`Star Spark plants ${added} star block for cascade setups.`);
+        if (spawn.success) {
+          this.combat.addLog('Star Spark placed a Star Block.');
+        } else {
+          this.combat.addLog('Star cap reached: no extra Star Block this time.');
+        }
         break;
       }
       case 'jelly-bounce': {
@@ -166,9 +167,7 @@ export class SpellSystem {
       }
       case 'snowcone-burst': {
         const thawed = this.board.convertBlocksByIds(['block_ice'], TETROMINO_COLORS.I, 4);
-        if (this.state.activeEnemy) {
-          this.state.activeEnemy.frozenTurns += 1;
-        }
+        enemy.frozenTurns += 1;
         this.combat.applyDirectDamage(10 + spellPowerBonus, 'Snowcone Burst');
         this.combat.addLog(`Snowcone Burst chills the enemy and thaws ${thawed} ice block${thawed === 1 ? '' : 's'}.`);
         break;
@@ -182,7 +181,7 @@ export class SpellSystem {
       case 'rainbow-reroll':
         this.board.rerollActiveAndNext();
         this.state.player.mana = clamp(this.state.player.mana + 5, 0, this.state.player.maxMana);
-        this.combat.addLog('Rainbow Reroll refreshes the active and next pieces.');
+        this.combat.addLog('Rainbow Reroll refreshed the queue.');
         break;
       case 'snack-break':
         this.state.player.hp = clamp(this.state.player.hp + 6, 0, this.state.player.maxHp);
@@ -193,7 +192,7 @@ export class SpellSystem {
         this.state.player.fever = clamp(this.state.player.fever + 18, 0, 100);
         this.state.player.lineDamageBonus += 1;
         this.combat.applyDirectDamage(6 + spellPowerBonus, 'Cascade Cheer');
-        this.combat.addLog('Cascade Cheer boosts Fever and line damage for the run.');
+        this.combat.addLog('Cascade Cheer is ready for the next chain!');
         break;
       default:
         this.combat.addLog(`${this.getSpellLabel(spellId)} is marked as a safe placeholder.`);
@@ -214,6 +213,38 @@ export class SpellSystem {
       this.combat.addLog('Your spell catalyst waits for a compatible spell.');
     }
     return true;
+  }
+
+  private delayIncomingJunk(pieces: number): number {
+    if (!Array.isArray(this.state.incomingJunkQueue) || this.state.incomingJunkQueue.length === 0) {
+      return 0;
+    }
+    const delayBy = Math.max(1, pieces);
+    this.state.incomingJunkQueue.forEach((entry) => {
+      entry.delayPieces = Math.min(8, Math.max(1, entry.delayPieces + delayBy));
+    });
+    return this.state.incomingJunkQueue.length;
+  }
+
+  private reduceIncomingJunk(amount: number): number {
+    if (!Array.isArray(this.state.incomingJunkQueue) || this.state.incomingJunkQueue.length === 0) {
+      return 0;
+    }
+
+    let remaining = Math.max(0, Math.floor(amount));
+    let reduced = 0;
+    this.state.incomingJunkQueue.sort((a, b) => a.delayPieces - b.delayPieces);
+    for (const entry of this.state.incomingJunkQueue) {
+      if (remaining <= 0) {
+        break;
+      }
+      const take = Math.min(entry.remainingAmount, remaining);
+      entry.remainingAmount -= take;
+      reduced += take;
+      remaining -= take;
+    }
+    this.state.incomingJunkQueue = this.state.incomingJunkQueue.filter((entry) => entry.remainingAmount > 0);
+    return reduced;
   }
 
   private getSpellLabel(spellId: SpellId): string {
@@ -243,7 +274,7 @@ export class SpellSystem {
     modifiers.forEach((modifier) => {
       if (modifier.extraBlockId) {
         const added = modifier.extraBlockId === 'block_star'
-          ? this.board.addSpecialBlocksForSpell('block_star', 1)
+          ? this.board.tryAddSpecialBlocks('block_star', 1, 'spell', 'star-syrup').added
           : 0;
         this.combat.addLog(`Star Syrup leaves ${added} bright star block${added === 1 ? '' : 's'} behind.`);
       }
@@ -254,3 +285,4 @@ export class SpellSystem {
     });
   }
 }
+

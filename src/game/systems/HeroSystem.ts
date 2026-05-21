@@ -1,6 +1,17 @@
 import type { RunState, SpellId } from '../types/GameTypes';
-import { RELEASE_1_SPELL_CONTENT_IDS, SPELL_ID_BY_CONTENT_ID } from '../data/spells';
+import { SPELL_ID_BY_CONTENT_ID } from '../data/spells';
 import { contentRegistry } from './ContentRegistry';
+
+const RELEASE_1_ROUTE_HERO_IDS = new Set([
+  'hero_milo_blockmancer',
+  'hero_pippa_pyromancer',
+  'hero_zuzu_goblin_engineer',
+  'hero_nixie_frostbinder',
+  'hero_bruk_snack_knight',
+  'hero_lumi_star_witch'
+]);
+
+const MILO_SAFE_DEFAULT_LOADOUT: SpellId[] = ['fireball', 'frost-lock'];
 
 export class HeroSystem {
   listHeroes() {
@@ -28,14 +39,29 @@ export class HeroSystem {
 
     // Apply loadout
     state.weapon.id = hero.startingLoadout.weaponId;
-    state.spells = hero.startingLoadout.spellIds
-      .map((spellId: string) => SPELL_ID_BY_CONTENT_ID[spellId] ?? spellId)
-      .filter((spellId: string): spellId is SpellId => Object.values(SPELL_ID_BY_CONTENT_ID).includes(spellId));
-    for (const contentId of RELEASE_1_SPELL_CONTENT_IDS) {
-      const spellId = SPELL_ID_BY_CONTENT_ID[contentId];
-      if (!state.spells.includes(spellId)) {
-        state.spells.push(spellId);
+    const configuredSpellIds = Array.isArray(hero.startingLoadout?.spellIds)
+      ? hero.startingLoadout.spellIds
+      : [];
+    const runtimeLoadout: SpellId[] = [];
+    for (const contentSpellId of configuredSpellIds) {
+      const runtimeSpellId = SPELL_ID_BY_CONTENT_ID[contentSpellId];
+      if (!runtimeSpellId) {
+        console.warn(`[HeroSystem] Unsupported spell id '${contentSpellId}' in hero loadout '${hero.id}'.`);
+        continue;
       }
+      if (!runtimeLoadout.includes(runtimeSpellId)) {
+        runtimeLoadout.push(runtimeSpellId);
+      }
+    }
+
+    if (runtimeLoadout.length === 0 && hero.id === 'hero_milo_blockmancer') {
+      state.spells = [...MILO_SAFE_DEFAULT_LOADOUT];
+    } else {
+      state.spells = runtimeLoadout;
+    }
+
+    if (!RELEASE_1_ROUTE_HERO_IDS.has(hero.id)) {
+      console.warn(`[HeroSystem] Hero '${hero.id}' is outside Release 1 route scope; keeping content-defined loadout only.`);
     }
 
     // Set HeroState

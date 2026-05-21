@@ -1,16 +1,23 @@
 {
-  "id": "oops_sticky_floor",
-  "name": "Sticky Floor",
-  "rarity": "oopsie",
-  "description": "When a block locks without clearing a line, sticky blocks may appear.",
-  "iconKey": "oops_sticky_floor",
-  "effects": [
-    {
-      "type": "sticky_junk_chance",
-      "value": 0.18
-    }
-  ],
-  "removeCost": 50,
-  "tags": ["oopsie", "board"],
-  "enabled": true
+    "id":  "oops_sticky_floor",
+    "name":  "Sticky Floor",
+    "rarity":  "oopsie",
+    "description":  "When a block locks without clearing a line, sticky blocks may appear.",
+    "iconKey":  "oops_sticky_floor",
+    "effects":  [
+                    {
+                        "type":  "sticky_junk_chance",
+                        "value":  0.18
+                    }
+                ],
+    "removeCost":  50,
+    "tags":  [
+                 "oopsie",
+                 "board"
+             ],
+    "enabled":  true,
+    "severity":  "minor",
+    "duration":  "battle",
+    "triggerTiming":  "on_piece_lock",
+    "counterplayHint":  "Use Clean Cut, Cascade Cheer, or item counters to steady the board."
 }

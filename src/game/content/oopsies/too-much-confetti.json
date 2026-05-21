@@ -1,18 +1,22 @@
 {
-  "id": "oops_too_much_confetti",
-  "name": "Too Much Confetti",
-  "rarity": "oopsie",
-  "description": "Sometimes the board gets one extra sparkle block.",
-  "iconKey": "oops_too_much_confetti",
-  "effects": [
-    {
-      "type": "confetti_junk_chance",
-      "value": 0.15
-    }
-  ],
-  "removeCost": 50,
-  "tags": [
-    "oopsie"
-  ],
-  "enabled": true
+    "id":  "oops_too_much_confetti",
+    "name":  "Too Much Confetti",
+    "rarity":  "oopsie",
+    "description":  "Sometimes the board gets one extra sparkle block.",
+    "iconKey":  "oops_too_much_confetti",
+    "effects":  [
+                    {
+                        "type":  "confetti_junk_chance",
+                        "value":  0.15
+                    }
+                ],
+    "removeCost":  50,
+    "tags":  [
+                 "oopsie"
+             ],
+    "enabled":  true,
+    "severity":  "minor",
+    "duration":  "battle",
+    "triggerTiming":  "on_piece_lock",
+    "counterplayHint":  "Use Clean Cut, Cascade Cheer, or item counters to steady the board."
 }

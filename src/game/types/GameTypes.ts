@@ -315,6 +315,19 @@ export type IncomingJunkQueue = ActiveHazardState & {
   junkType: string;
 };
 
+export type IncomingJunkQueueEntry = {
+  id: string;
+  sourceId: string;
+  sourceName?: string;
+  amount: number;
+  remainingAmount: number;
+  delayPieces: number;
+  junkBlockId: string;
+  severity: HazardSeverity;
+  createdAtPieceCount?: number;
+  reason?: string;
+};
+
 export type FloatingState = {
   isFloating: boolean;
   countdownPieces: number;
@@ -571,6 +584,7 @@ export interface RunState {
   completedBattleObjectives: string[];
   activeRandomGameplayEvents: string[];
   activeHazards: ActiveHazardState[];
+  incomingJunkQueue: IncomingJunkQueueEntry[];
   reactiveState: ReactiveBattleState;
   activeOopsies: string[];
   currentBossRule?: string;

@@ -1,16 +1,23 @@
 {
-  "id": "oops_snack_tax",
-  "name": "Snack Tax",
-  "rarity": "oopsie",
-  "description": "Shop prices rise while the snack fund is collecting.",
-  "iconKey": "oops_snack_tax",
-  "effects": [
-    {
-      "type": "shop_price_increase_percent",
-      "value": 0.2
-    }
-  ],
-  "removeCost": 55,
-  "tags": ["oopsie", "shop"],
-  "enabled": true
+    "id":  "oops_snack_tax",
+    "name":  "Snack Tax",
+    "rarity":  "oopsie",
+    "description":  "Shop prices rise while the snack fund is collecting.",
+    "iconKey":  "oops_snack_tax",
+    "effects":  [
+                    {
+                        "type":  "shop_price_increase_percent",
+                        "value":  0.2
+                    }
+                ],
+    "removeCost":  55,
+    "tags":  [
+                 "oopsie",
+                 "shop"
+             ],
+    "enabled":  true,
+    "severity":  "minor",
+    "duration":  "battle",
+    "triggerTiming":  "on_piece_lock",
+    "counterplayHint":  "Use Clean Cut, Cascade Cheer, or item counters to steady the board."
 }

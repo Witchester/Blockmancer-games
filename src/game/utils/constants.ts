@@ -22,6 +22,14 @@ export const BOARD_OFFSET_Y = 118;
 export const MAX_EVENT_LOG = 8;
 export const BASE_DROP_MS = 940;
 export const MAX_FALL_SPEED = 1.85;
+export const LOCK_DELAY_MS = 500;
+export const LOCK_DELAY_RESET_LIMIT = 8;
+export const LOCK_DELAY_MAX_GROUNDED_MS = 1500;
+export const INPUT_BUFFER_MS = 100;
+export const MOVE_REPEAT_DELAY_MS = 150;
+export const MOVE_REPEAT_INTERVAL_MS = 50;
+export const SOFT_DROP_MULTIPLIER = 12;
+export const NEXT_QUEUE_SIZE = 4;
 export const POST_BATTLE_FALL_SPEED_STEP = 0.035;
 export const LINE_CLEAR_BONUS: Record<number, number> = {
   1: 0,
@@ -39,16 +47,43 @@ export const MANA_GAIN: Record<number, number> = {
 
 export const CASCADE_MANA_BONUS_MULTIPLIER = 0.5;
 
-export const FONT_FAMILY = [
-  '"VT323"',
-  '"CaskaydiaCove Nerd Font Mono"',
-  '"Cascadia Code"',
-  '"Cascadia Mono"',
-  '"JetBrains Mono"',
-  '"Fira Code"',
-  '"Courier New"',
-  'monospace'
-].join(', ');
+export const FONT_FAMILY_STACKS = {
+  display: '"Pixelify Sans", "Silkscreen", system-ui, sans-serif',
+  ui: '"Nunito Sans", "Atkinson Hyperlegible", system-ui, sans-serif',
+  readable: '"Atkinson Hyperlegible", "Nunito Sans", system-ui, sans-serif',
+  pixelSmall: '"Silkscreen", "Pixelify Sans", monospace'
+} as const;
+
+export const FONT_SIZE = {
+  tiny: 36,
+  small: 42,
+  body: 48,
+  button: 48,
+  eventLog: 42,
+  stat: 42,
+  dialogue: 48,
+  dialogueName: 54,
+  callout: 72,
+  modalTitle: 90,
+  stageBanner: 84,
+  title: 144
+} as const;
+
+export const FONT_SIZE_720 = {
+  tiny: 24,
+  small: 28,
+  body: 32,
+  button: 32,
+  eventLog: 28,
+  stat: 28,
+  dialogue: 32,
+  dialogueName: 36,
+  callout: 48,
+  modalTitle: 60,
+  stageBanner: 56,
+  title: 96
+} as const;
+export const FONT_FAMILY = FONT_FAMILY_STACKS.ui;
 
 export const COLORS = {
   background: 0x090b13,
@@ -158,3 +193,8 @@ export function createDefaultPlayerState(): PlayerState {
     inventoryCapacity: 10
   };
 }
+
+
+
+
+

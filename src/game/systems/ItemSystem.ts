@@ -1,4 +1,4 @@
-import type { ActiveHazardState, ReactiveItemContent, RunState, SpellCatalystModifier } from '../types/GameTypes';
+import type { ActiveHazardState, IncomingJunkQueueEntry, ReactiveItemContent, RunState, SpellCatalystModifier } from '../types/GameTypes';
 import { clamp } from '../utils/math';
 import { TETROMINO_COLORS } from '../utils/constants';
 import { contentRegistry } from './ContentRegistry';
@@ -113,35 +113,22 @@ export class ItemSystem {
     }
 
     if (type === 'delay_incoming_junk') {
-      const delayed = this.modifyHazards(state, 'incoming_junk', (hazard) => {
-        hazard.remainingPieces += this.numberConfig(effectConfig, 'pieces', 3);
-      });
+      const delayed = this.delayIncomingQueue(state, this.numberConfig(effectConfig, 'pieces', 3));
       return delayed > 0 ? `${item.name} delays incoming junk.` : `${item.name} finds no incoming junk to delay.`;
     }
 
     if (type === 'block_incoming_junk') {
-      let blocked = 0;
-      const changed = this.modifyHazards(state, 'incoming_junk', (hazard) => {
-        const amount = hazard.amount ?? 0;
-        const remaining = Math.ceil(amount * this.numberConfig(effectConfig, 'remainingMultiplier', 0.5));
-        blocked += Math.max(0, amount - remaining);
-        hazard.amount = remaining;
-      });
-      state.activeHazards = state.activeHazards.filter((hazard) => hazard.kind !== 'incoming_junk' || (hazard.amount ?? 0) > 0);
-      return changed > 0 ? `${item.name} blocks ${blocked} incoming junk.` : `${item.name} finds no incoming junk to cover.`;
+      const blocked = this.reduceIncomingQueue(state, this.numberConfig(effectConfig, 'count', 3));
+      return blocked > 0 ? `${item.name} blocks ${blocked} incoming junk.` : `${item.name} finds no incoming junk to cover.`;
     }
 
     if (type === 'reflect_incoming_junk') {
-      let reflected = 0;
-      const changed = this.modifyHazards(state, 'incoming_junk', (hazard) => {
-        reflected += Math.ceil((hazard.amount ?? 0) / 2);
-        hazard.amount = Math.max(0, (hazard.amount ?? 0) - reflected);
-      });
+      const total = this.getIncomingQueueTotal(state);
+      const reflected = this.reduceIncomingQueue(state, Math.max(1, Math.ceil(total * 0.5)));
       if (reflected > 0) {
         combatSystem.applyDirectDamage(reflected * 2, item.name);
       }
-      state.activeHazards = state.activeHazards.filter((hazard) => hazard.kind !== 'incoming_junk' || (hazard.amount ?? 0) > 0);
-      return changed > 0 ? `${item.name} returns ${reflected} junk pieces as a snacky thump.` : `${item.name} has no incoming junk to stamp.`;
+      return reflected > 0 ? `${item.name} returns ${reflected} junk pieces as a snacky thump.` : `${item.name} has no incoming junk to stamp.`;
     }
 
     if (type === 'cleanup_coupon') {
@@ -333,6 +320,23 @@ export class ItemSystem {
     name?: string;
     warningText?: string;
   }): void {
+    if (kind === 'incoming_junk') {
+      const amount = Math.max(0, Math.floor(options.amount ?? 0));
+      if (amount > 0) {
+        const entry: IncomingJunkQueueEntry = {
+          id: `incoming_junk_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
+          sourceId: options.sourceId ?? 'item',
+          amount,
+          remainingAmount: amount,
+          delayPieces: Math.max(1, options.remainingPieces ?? 2),
+          junkBlockId: options.blockId ?? 'block_crumb_junk',
+          severity: 'minor',
+          reason: 'item'
+        };
+        state.incomingJunkQueue = [...state.incomingJunkQueue, entry].slice(-2);
+        this.syncIncomingHazardFromQueue(state);
+      }
+    }
     const existing = state.activeHazards.find((hazard) => hazard.kind === kind);
     if (existing) {
       existing.amount = Math.min(12, (existing.amount ?? 0) + (options.amount ?? 0));
@@ -451,5 +455,57 @@ export class ItemSystem {
       sourceId: options.sourceId,
       blockId: options.blockId
     });
+  }
+
+  private getIncomingQueueTotal(state: RunState): number {
+    return state.incomingJunkQueue.reduce((sum, entry) => sum + Math.max(0, entry.remainingAmount), 0);
+  }
+
+  private syncIncomingHazardFromQueue(state: RunState): void {
+    const total = this.getIncomingQueueTotal(state);
+    const nextDelay = state.incomingJunkQueue.length > 0
+      ? Math.max(1, Math.min(...state.incomingJunkQueue.map((entry) => entry.delayPieces)))
+      : 0;
+    const incoming = state.activeHazards.find((hazard) => hazard.kind === 'incoming_junk');
+    if (total <= 0) {
+      state.incomingJunkQueue = [];
+      state.activeHazards = state.activeHazards.filter((hazard) => hazard.kind !== 'incoming_junk');
+      return;
+    }
+    if (incoming) {
+      incoming.amount = total;
+      incoming.remainingPieces = nextDelay;
+      return;
+    }
+  }
+
+  private reduceIncomingQueue(state: RunState, amount: number): number {
+    let remaining = Math.max(0, Math.floor(amount));
+    let reduced = 0;
+    state.incomingJunkQueue.sort((a, b) => a.delayPieces - b.delayPieces);
+    for (const entry of state.incomingJunkQueue) {
+      if (remaining <= 0) {
+        break;
+      }
+      const cut = Math.min(entry.remainingAmount, remaining);
+      entry.remainingAmount -= cut;
+      remaining -= cut;
+      reduced += cut;
+    }
+    state.incomingJunkQueue = state.incomingJunkQueue.filter((entry) => entry.remainingAmount > 0);
+    this.syncIncomingHazardFromQueue(state);
+    return reduced;
+  }
+
+  private delayIncomingQueue(state: RunState, pieces: number): number {
+    if (state.incomingJunkQueue.length === 0) {
+      return 0;
+    }
+    const bump = Math.max(1, Math.floor(pieces));
+    state.incomingJunkQueue.forEach((entry) => {
+      entry.delayPieces = Math.min(8, entry.delayPieces + bump);
+    });
+    this.syncIncomingHazardFromQueue(state);
+    return state.incomingJunkQueue.length;
   }
 }

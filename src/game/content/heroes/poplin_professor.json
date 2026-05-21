@@ -42,5 +42,5 @@
     "condition": "finish_normal_ending"
   },
   "tags": ["utility", "random", "unlockable"],
-  "enabled": true
+  "enabled": false
 }

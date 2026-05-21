@@ -14,6 +14,10 @@ export type OopsieEntry = {
   name: string;
   description: string;
   effects: OopsieEffect[];
+  severity?: 'minor' | 'moderate' | 'spicy';
+  duration?: 'battle' | 'stage' | 'run';
+  triggerTiming?: 'on_battle_start' | 'on_piece_spawn' | 'on_piece_lock' | 'on_line_clear' | 'on_cascade' | 'on_spell_cast' | 'on_enemy_attack';
+  counterplayHint?: string;
   removeCost?: number;
   enabled?: boolean;
 };
@@ -95,7 +99,7 @@ export class OopsieSystem {
       return 'Oopsies: none';
     }
 
-    const names = active.slice(0, 2).map((entry) => entry.name).join(', ');
+    const names = active.slice(0, 2).map((entry) => `${entry.name} (${entry.severity ?? 'minor'})`).join(', ');
     return active.length > 2 ? `Oopsies: ${names} +${active.length - 2}` : `Oopsies: ${names}`;
   }
 
@@ -106,6 +110,9 @@ export class OopsieSystem {
 
   adjustFallSpeed(state: RunState, baseFallSpeed: number): number {
     const bonus = this.sumEffects(state, 'increase_fall_speed');
+    if (state.stage <= 1 && state.enemiesDefeated <= 1) {
+      return clamp(baseFallSpeed, 0.7, 2.0);
+    }
     return clamp(baseFallSpeed + bonus, 0.7, 2.0);
   }
 
@@ -137,10 +144,20 @@ export class OopsieSystem {
   }
 
   shouldSlipButton(state: RunState): boolean {
+    if (this.getActiveOopsies(state).some((entry) => entry.id === 'oops_slippery_buttons')) {
+      return false;
+    }
     return this.rollChance(state, 'slippery_button_chance');
   }
 
   shouldAddConfettiJunk(state: RunState): boolean {
+    if (state.currentRoomProgress === 'entered' && state.runStats.piecesLocked <= 1) {
+      return false;
+    }
+    const alreadyTriggered = state.eventLog.some((entry) => entry.includes('Too Much Confetti'));
+    if (alreadyTriggered) {
+      return false;
+    }
     return this.rollChance(state, 'confetti_junk_chance');
   }
 

@@ -1,16 +1,23 @@
 {
-  "id": "oops_slippery_buttons",
-  "name": "Slippery Buttons",
-  "rarity": "oopsie",
-  "description": "Move buttons sometimes wiggle the falling block the other way.",
-  "iconKey": "oops_slippery_buttons",
-  "effects": [
-    {
-      "type": "slippery_button_chance",
-      "value": 0.12
-    }
-  ],
-  "removeCost": 55,
-  "tags": ["oopsie", "controls"],
-  "enabled": true
+    "id":  "oops_slippery_buttons",
+    "name":  "Slippery Buttons",
+    "rarity":  "oopsie",
+    "description":  "Move buttons sometimes wiggle the falling block the other way.",
+    "iconKey":  "oops_slippery_buttons",
+    "effects":  [
+                    {
+                        "type":  "slippery_button_chance",
+                        "value":  0.12
+                    }
+                ],
+    "removeCost":  55,
+    "tags":  [
+                 "oopsie",
+                 "controls"
+             ],
+    "enabled":  true,
+    "severity":  "minor",
+    "duration":  "battle",
+    "triggerTiming":  "on_piece_lock",
+    "counterplayHint":  "Use Clean Cut, Cascade Cheer, or item counters to steady the board."
 }

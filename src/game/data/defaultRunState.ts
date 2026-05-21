@@ -29,7 +29,9 @@ import type {
   SpellId,
   StatusEffectState,
   WeaponState,
-  InventoryStack
+  InventoryStack,
+  IncomingJunkQueueEntry,
+  HazardSeverity
 } from '../types/GameTypes';
 import { createDefaultPlayerState } from '../utils/constants';
 import { OopsieSystem } from '../systems/OopsieSystem';
@@ -139,6 +141,36 @@ function normalizeActiveHazards(value: unknown): ActiveHazardState[] {
       row: typeof entry.row === 'number' ? entry.row : undefined
     }))
     .filter((entry) => entry.remainingPieces >= 0);
+}
+
+function normalizeIncomingJunkQueue(value: unknown): IncomingJunkQueueEntry[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  const allowedSeverity = new Set<HazardSeverity>(['minor', 'moderate', 'major', 'boss']);
+  return value
+    .filter((entry): entry is Partial<IncomingJunkQueueEntry> => Boolean(entry) && typeof entry === 'object')
+    .map((entry, index) => {
+      const amount = Math.max(0, Number(entry.amount ?? 0));
+      const remainingAmount = Math.max(0, Number(entry.remainingAmount ?? amount));
+      const delayPieces = Math.max(1, Number(entry.delayPieces ?? 1));
+      return {
+        id: typeof entry.id === 'string' ? entry.id : `incoming_junk_${index}`,
+        sourceId: typeof entry.sourceId === 'string' ? entry.sourceId : 'unknown_source',
+        sourceName: typeof entry.sourceName === 'string' ? entry.sourceName : undefined,
+        amount,
+        remainingAmount,
+        delayPieces,
+        junkBlockId: typeof entry.junkBlockId === 'string' ? entry.junkBlockId : 'block_crumb_junk',
+        severity: typeof entry.severity === 'string' && allowedSeverity.has(entry.severity as HazardSeverity)
+          ? entry.severity as HazardSeverity
+          : 'minor',
+        createdAtPieceCount: typeof entry.createdAtPieceCount === 'number' ? Math.max(0, entry.createdAtPieceCount) : undefined,
+        reason: typeof entry.reason === 'string' ? entry.reason : undefined
+      };
+    })
+    .filter((entry) => entry.remainingAmount > 0);
 }
 
 function normalizeReactiveState(value: Partial<ReactiveBattleState> | undefined): ReactiveBattleState {
@@ -332,6 +364,7 @@ export function createDefaultRunState(): RunState {
     completedBattleObjectives: [],
     activeRandomGameplayEvents: [],
     activeHazards: [],
+    incomingJunkQueue: [],
     reactiveState: createDefaultReactiveState(),
     activeOopsies: [],
     currentBossRule: undefined,
@@ -419,6 +452,7 @@ export function normalizeRunState(input: unknown): RunState {
     completedBattleObjectives: raw.completedBattleObjectives ? [...raw.completedBattleObjectives] : [],
     activeRandomGameplayEvents: raw.activeRandomGameplayEvents ? [...raw.activeRandomGameplayEvents] : [],
     activeHazards: normalizeActiveHazards(raw.activeHazards),
+    incomingJunkQueue: normalizeIncomingJunkQueue((raw as { incomingJunkQueue?: unknown }).incomingJunkQueue),
     reactiveState: normalizeReactiveState(raw.reactiveState),
     activeOopsies: raw.activeOopsies ? [...raw.activeOopsies] : [...player.oopsies],
     currentBossRule: raw.currentBossRule,

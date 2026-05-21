@@ -1,5 +1,6 @@
 import type { BoardCell, BoardSizeModifier, EncounterNodeType, RoomType, RunState } from '../types/GameTypes';
 import { clamp } from '../utils/math';
+import { contentRegistry } from './ContentRegistry';
 
 type BoardSizeRuleEntry = BoardSizeModifier & {
   allowedStages?: number[];
@@ -118,16 +119,8 @@ export class BoardSizeModifierSystem {
 
   private pickRule(state: RunState, encounterType: EncounterNodeType): BoardSizeRuleEntry | null {
     const enemyId = state.activeEnemy?.id;
-    const extraRules: BoardSizeRuleEntry[] = state.activeRandomGameplayEvents.includes('r_evt_machine_hiccup')
-      ? [{
-          id: 'bsize_machine_hiccup',
-          encounterType: 'normal' as const,
-          heightDelta: -1,
-          duration: 'room' as const,
-          reasonText: 'Machine Hiccup: the board is one row shorter for this room.'
-        }]
-      : [];
-    const rules = [...this.getRules(), ...extraRules].filter((rule) =>
+    const dynamicRules = this.getDynamicRules(state);
+    const rules = [...this.getRules(), ...dynamicRules].filter((rule) =>
       rule.encounterType === encounterType &&
       (!rule.allowedStages || rule.allowedStages.includes(state.stage)) &&
       (!rule.bossId || rule.bossId === enemyId)
@@ -137,6 +130,19 @@ export class BoardSizeModifierSystem {
 
   private getRules(): BoardSizeRuleEntry[] {
     return DEFAULT_RULES;
+  }
+
+  private getDynamicRules(state: RunState): BoardSizeRuleEntry[] {
+    const rules: BoardSizeRuleEntry[] = [];
+    for (const eventId of state.activeRandomGameplayEvents) {
+      const eventEntry = contentRegistry.getOptionalById('randomGameplayEvent', eventId) as
+        | { boardSizeModifiers?: BoardSizeRuleEntry[] }
+        | null;
+      if (Array.isArray(eventEntry?.boardSizeModifiers)) {
+        rules.push(...eventEntry.boardSizeModifiers);
+      }
+    }
+    return rules;
   }
 
   private resizeBoard(state: RunState, columns: number, rows: number): void {
