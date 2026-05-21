@@ -18,6 +18,8 @@ function assert(condition, message) {
   }
 }
 
+const { runCascadeGravitySmoke } = await import('./cascade-gravity-smoke.mjs');
+
 const heroSystemText = readText('src/game/systems/HeroSystem.ts');
 assert(!heroSystemText.includes('RELEASE_1_SPELL_CONTENT_IDS'), 'HeroSystem still injects full Release 1 spell pool.');
 
@@ -80,6 +82,8 @@ const requiredAssetFolders = [
 for (const filePath of requiredAssetFolders) {
   assert(fs.existsSync(path.join(repoRoot, filePath)), `Missing route/story asset scaffold: ${filePath}`);
 }
+
+await runCascadeGravitySmoke(assert);
 
 if (failures.length > 0) {
   console.error('Remediation smoke failed:');

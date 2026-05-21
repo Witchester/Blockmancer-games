@@ -50,3 +50,5 @@ scripts/*
 !scripts/validate-animations.mjs
 
 .gitkeep
+!public/assets/icons/story-routes/.gitkeep
+!public/assets/stage-backgrounds/route-scenes/.gitkeep
