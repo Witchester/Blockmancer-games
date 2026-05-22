@@ -1,0 +1,77 @@
+[
+  {
+    "id": "entry_none",
+    "name": "No Entry Effect",
+    "description": "Standard enemy entry with no special effects.",
+    "entryGracePieces": 3,
+    "warningText": "",
+    "eventLogText": "The enemy enters the battle.",
+    "tags": ["standard"]
+  },
+  {
+    "id": "entry_junk_pressure",
+    "name": "Junk Delivery",
+    "description": "Enemy enters with a small junk pressure gift for the player to counter.",
+    "pressureEffectId": "hazard_incoming_junk_queue",
+    "playerGiftEffectId": "counter_window_3_pieces",
+    "entryGracePieces": 3,
+    "warningText": "Incoming junk queued!",
+    "eventLogText": "The enemy arrives with a snack tray full of junk!",
+    "tags": ["junk", "pressure", "counterable"]
+  },
+  {
+    "id": "entry_preview_block",
+    "name": "Preview Glitter",
+    "description": "Enemy blocks preview but gives a small grace period.",
+    "pressureEffectId": "hazard_preview_hidden",
+    "playerGiftEffectId": "grace_3_pieces",
+    "entryGracePieces": 3,
+    "warningText": "Preview blocked!",
+    "eventLogText": "The enemy sparkles, hiding your preview!",
+    "tags": ["preview", "disrupt"]
+  },
+  {
+    "id": "entry_freeze_nudge",
+    "name": "Frost Warning",
+    "description": "Enemy brings frost but warns you first.",
+    "pressureEffectId": "hazard_freeze_warning",
+    "playerGiftEffectId": "counter_window_2_pieces",
+    "entryGracePieces": 2,
+    "warningText": "Frost is gathering!",
+    "eventLogText": "The enemy chills the air around your block!",
+    "tags": ["freeze", "speed"]
+  },
+  {
+    "id": "entry_low_ceiling",
+    "name": "Ceiling Dip",
+    "description": "Enemy makes the ceiling lower but gives time to react.",
+    "pressureEffectId": "hazard_low_ceiling",
+    "playerGiftEffectId": "counter_window_6_pieces",
+    "entryGracePieces": 4,
+    "warningText": "The ceiling is getting lower!",
+    "eventLogText": "The enemy squeezes into the room, lowering the ceiling!",
+    "tags": ["board_size", "pressure"]
+  },
+  {
+    "id": "entry_speed_wave",
+    "name": "Floor Wobble",
+    "description": "Enemy speeds up the floor slightly with warning.",
+    "pressureEffectId": "hazard_speed_wave",
+    "playerGiftEffectId": "counter_window_4_pieces",
+    "entryGracePieces": 3,
+    "warningText": "The floor wobbles faster!",
+    "eventLogText": "The enemy's energy makes the floor speed up!",
+    "tags": ["speed", "pressure"]
+  },
+  {
+    "id": "entry_royal_pattern",
+    "name": "Royal Demand",
+    "description": "Boss or elite demands a proper pattern with generous warning.",
+    "pressureEffectId": "hazard_royal_pattern",
+    "playerGiftEffectId": "counter_window_3_pieces",
+    "entryGracePieces": 4,
+    "warningText": "Bloxley demands a rectangle!",
+    "eventLogText": "The royal enemy demands proper block etiquette!",
+    "tags": ["pattern", "boss", "elite"]
+  }
+]
