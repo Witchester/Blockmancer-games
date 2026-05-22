@@ -11,6 +11,7 @@
     "mon_quilt_knight",
     "mon_crown_mime"
   ],
+  "eliteMonsterPool": ["mon_elite_blanket_ghost_duchess", "mon_elite_button_knight_captain"],
   "bossId": "mon_boss_sir_snore_a_lot",
   "lootTableId": "loot_battle_default",
   "enabled": true

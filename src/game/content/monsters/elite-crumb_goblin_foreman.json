@@ -1,0 +1,58 @@
+{
+  "id": "mon_elite_crumb_goblin_foreman",
+  "name": "Crumb Goblin Foreman",
+  "description": "A bossy goblin supervisor who loves filing messy paperwork... directly onto your board!",
+  "rarity": "elite",
+  "tier": 2,
+  "role": "elite",
+  "biome": "goblin_workshop",
+  "spriteKey": "placeholder_elite_goblin",
+  "stats": {
+    "hp": 65,
+    "attack": 6,
+    "armor": 0,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_throw_junk",
+    "label": "Junk Work Order",
+    "description": "Queues incoming junk blocks with warning."
+  },
+  "behaviors": [
+    "basic_attack",
+    "spawn_junk",
+    "incoming_junk_queue"
+  ],
+  "resistances": [],
+  "weaknesses": [
+    "combo_damage",
+    "cascade_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 20,
+    "goldMax": 35,
+    "rewardRolls": 2,
+    "lootTableId": "loot_elite_default"
+  },
+  "tags": [
+    "stage_2",
+    "elite",
+    "hazard_incoming_junk",
+    "counter_junk",
+    "goblin_workshop"
+  ],
+  "enabled": true,
+  "iconKey": "ico_mon_elite_crumb_goblin_foreman",
+  "animations": {
+    "idle": "anim_mon_elite_crumb_goblin_foreman_idle",
+    "attack": "anim_mon_elite_crumb_goblin_foreman_attack",
+    "hit": "anim_mon_elite_crumb_goblin_foreman_hit",
+    "defeat": "anim_mon_elite_crumb_goblin_foreman_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

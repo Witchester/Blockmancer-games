@@ -11,6 +11,7 @@
     "mon_snowcone_sprite",
     "mon_bubble_bat"
   ],
+  "eliteMonsterPool": ["mon_elite_ice_cream_imp_chillmaster", "mon_elite_freezer_mimic_deluxe"],
   "bossId": "mon_boss_gelato_golem",
   "lootTableId": "loot_battle_default",
   "enabled": true

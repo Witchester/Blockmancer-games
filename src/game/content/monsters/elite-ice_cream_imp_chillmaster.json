@@ -1,0 +1,60 @@
+{
+  "id": "mon_elite_ice_cream_imp_chillmaster",
+  "name": "Ice Cream Imp Chillmaster",
+  "description": "A frosty imp who keeps the pantry extra chilly. Watch out for frozen surprises!",
+  "rarity": "elite",
+  "tier": 3,
+  "role": "elite",
+  "biome": "ice_cave",
+  "spriteKey": "placeholder_elite_imp",
+  "stats": {
+    "hp": 75,
+    "attack": 7,
+    "armor": 0,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_freeze_piece",
+    "label": "Freeze Warning",
+    "description": "Chills your active piece with freeze effect."
+  },
+  "behaviors": [
+    "basic_attack",
+    "freeze_piece",
+    "spawn_ice_block"
+  ],
+  "resistances": [
+    "frost"
+  ],
+  "weaknesses": [
+    "fire",
+    "combo_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 22,
+    "goldMax": 38,
+    "rewardRolls": 2,
+    "lootTableId": "loot_elite_default"
+  },
+  "tags": [
+    "stage_3",
+    "elite",
+    "hazard_freeze",
+    "counter_freeze",
+    "frosty_pantry"
+  ],
+  "enabled": true,
+  "iconKey": "ico_mon_elite_ice_cream_imp_chillmaster",
+  "animations": {
+    "idle": "anim_mon_elite_ice_cream_imp_chillmaster_idle",
+    "attack": "anim_mon_elite_ice_cream_imp_chillmaster_attack",
+    "hit": "anim_mon_elite_ice_cream_imp_chillmaster_hit",
+    "defeat": "anim_mon_elite_ice_cream_imp_chillmaster_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

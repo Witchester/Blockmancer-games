@@ -11,6 +11,7 @@
     "mon_score_specter",
     "mon_witch"
   ],
+  "eliteMonsterPool": ["mon_elite_combo_gremlin_scorekeeper", "mon_elite_prize_claw_mimic_jackpot"],
   "bossId": "mon_boss_high_score_hydra",
   "lootTableId": "loot_battle_default",
   "enabled": true

@@ -11,6 +11,7 @@
     "mon_quilt_knight",
     "mon_stone_golem"
   ],
+  "eliteMonsterPool": ["mon_elite_square_jester_prime", "mon_elite_royal_block_guard_captain", "mon_elite_parade_golem_grand_marshal"],
   "bossId": "mon_boss_king_bloxley",
   "lootTableId": "loot_battle_default",
   "enabled": true

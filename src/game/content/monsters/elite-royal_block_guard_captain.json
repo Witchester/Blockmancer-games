@@ -1,0 +1,61 @@
+{
+  "id": "mon_elite_royal_block_guard_captain",
+  "name": "Royal Block Guard Captain",
+  "description": "A stern guard captain who enforces low ceiling rules and royal block decorum!",
+  "rarity": "elite",
+  "tier": 6,
+  "role": "elite",
+  "biome": "royal_ruins",
+  "spriteKey": "placeholder_elite_guard",
+  "stats": {
+    "hp": 110,
+    "attack": 11,
+    "armor": 2,
+    "attackIntervalLocks": 3
+  },
+  "intent": {
+    "id": "intent_heavy_slam",
+    "label": "Low Ceiling Order",
+    "description": "Temporarily shrinks board height."
+  },
+  "behaviors": [
+    "basic_attack",
+    "lock_random_column",
+    "royal_block_spawn"
+  ],
+  "resistances": [
+    "physical",
+    "line_damage"
+  ],
+  "weaknesses": [
+    "bomb",
+    "cascade_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 30,
+    "goldMax": 48,
+    "rewardRolls": 2,
+    "lootTableId": "loot_elite_default"
+  },
+  "tags": [
+    "stage_6",
+    "elite",
+    "hazard_low_ceiling",
+    "counter_low_ceiling",
+    "bloxley_block_palace"
+  ],
+  "enabled": true,
+  "iconKey": "ico_mon_elite_royal_block_guard_captain",
+  "animations": {
+    "idle": "anim_mon_elite_royal_block_guard_captain_idle",
+    "attack": "anim_mon_elite_royal_block_guard_captain_attack",
+    "hit": "anim_mon_elite_royal_block_guard_captain_hit",
+    "defeat": "anim_mon_elite_royal_block_guard_captain_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}
