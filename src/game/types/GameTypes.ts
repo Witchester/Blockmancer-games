@@ -646,6 +646,7 @@ export interface RunState {
   weapon: WeaponState;
   board: BoardState;
   activeEnemy: EnemyInstance | null;
+  activeEncounterPack: NodeEncounterPack | null;
   spells: SpellId[];
   relics: RewardId[];
   upgrades: RewardId[];
