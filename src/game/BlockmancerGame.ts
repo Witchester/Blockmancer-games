@@ -49,6 +49,7 @@ import { StageGoalSystem } from './systems/StageGoalSystem';
 import { StorySystem } from './systems/StorySystem';
 import { TutorialSystem } from './systems/TutorialSystem';
 import { WeaponSystem } from './systems/WeaponSystem';
+import { EncounterPackSystem } from './systems/EncounterPackSystem';
 import type { RunState } from './types/GameTypes';
 import type { GameSettings } from './types/SettingsTypes';
 import { createDefaultRunState, normalizeRunState } from './data/defaultRunState';
@@ -84,6 +85,7 @@ export class BlockmancerGame extends Phaser.Game {
   readonly tutorialSystem = new TutorialSystem();
   readonly settingsSystem = new SettingsSystem();
   readonly stageGoalSystem = new StageGoalSystem();
+  readonly encounterPackSystem = new EncounterPackSystem(this);
   runState: RunState;
 
   constructor(parent: HTMLElement) {
@@ -132,6 +134,7 @@ export class BlockmancerGame extends Phaser.Game {
     this.runState.map = this.mapSystem.createMap(this.runState.stage);
     this.stageGoalSystem.ensureGoal(this.runState);
     this.boardSizeModifierSystem.applyEncounterBoardSize(this.runState);
+    this.encounterPackSystem.clearRuntimeState();
     this.saveRun();
     return this.runState;
   }

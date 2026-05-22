@@ -23,7 +23,10 @@ export type ContentCategory =
   | 'battleObjective'
   | 'bossRule'
   | 'hubBuilding'
-  | 'friendship';
+  | 'friendship'
+  | 'biomeMonsterPool'
+  | 'encounterPackScaling'
+  | 'enemyEntryEffect';
 
 export interface ContentReference<TId extends string = string> {
   id: TId;

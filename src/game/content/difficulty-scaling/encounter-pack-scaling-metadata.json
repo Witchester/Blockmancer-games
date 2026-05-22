@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "idPrefix": "scale_encounter_",
   "displayName": "Encounter Pack Scaling Rules",
-  "description": "Rules for generating sequential enemy encounter packs per node type and stage.",
+  "description": "Defines how encounter packs scale per stage and node type, including enemy count, HP/attack budgets, and hazard limits.",
   "idFormat": "scale_encounter_<stage>_<nodeType>",
   "exampleIds": [
     "scale_encounter_stage1_normal",
-    "scale_encounter_stage2_elite",
-    "scale_encounter_stage6_boss"
+    "scale_encounter_stage1_elite",
+    "scale_encounter_stage1_boss"
   ],
   "requiredFields": [
     "id",
@@ -36,42 +36,30 @@
       "type": "string"
     },
     "nodeType": {
-      "type": "enum",
-      "values": ["normal", "elite", "boss", "event_battle", "royal_guard"]
+      "type": "string",
+      "enum": ["normal", "hard_normal", "elite", "boss", "event_battle", "mini_boss", "royal_guard"]
     },
     "minEnemies": {
       "type": "number",
-      "min": 1,
-      "max": 5
+      "min": 1
     },
     "maxEnemies": {
       "type": "number",
-      "min": 1,
-      "max": 5
+      "min": 1
     },
     "earlyNodeEnemyCap": {
-      "type": "number",
-      "min": 1,
-      "max": 5,
-      "optional": true
+      "type": "number"
     },
     "lateNodeEnemyCap": {
-      "type": "number",
-      "min": 1,
-      "max": 5,
-      "optional": true
+      "type": "number"
     },
     "totalHpBudgetMultiplierRange": {
       "type": "array",
-      "itemType": "number",
-      "minItems": 2,
-      "maxItems": 2
+      "items": {"type": "number"}
     },
     "totalAttackBudgetMultiplierRange": {
       "type": "array",
-      "itemType": "number",
-      "minItems": 2,
-      "maxItems": 2
+      "items": {"type": "number"}
     },
     "entryGracePieces": {
       "type": "number",
@@ -79,37 +67,36 @@
     },
     "maxActiveHazards": {
       "type": "number",
-      "min": 1,
-      "max": 3
+      "min": 1
     },
     "enabled": {
       "type": "boolean"
     }
   },
   "dataList": {
+    "stages": [
+      "stage_sprinkle_sewers",
+      "stage_frosty_pantry",
+      "stage_goblin_workshop",
+      "stage_pillow_castle",
+      "stage_starfall_arcade",
+      "stage_bloxley_block_palace"
+    ],
     "nodeTypes": [
       "normal",
+      "hard_normal",
       "elite",
       "boss",
       "event_battle",
+      "mini_boss",
       "royal_guard"
-    ],
-    "stages": [
-      "stage_1",
-      "stage_2",
-      "stage_3",
-      "stage_4",
-      "stage_5",
-      "stage_6"
     ]
   },
   "defaults": {
     "minEnemies": 1,
     "maxEnemies": 1,
-    "totalHpBudgetMultiplierRange": [1.0, 1.0],
-    "totalAttackBudgetMultiplierRange": [1.0, 1.0],
     "entryGracePieces": 3,
-    "maxActiveHazards": 2,
+    "maxActiveHazards": 1,
     "enabled": true
   }
 }

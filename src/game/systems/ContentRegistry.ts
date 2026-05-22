@@ -43,7 +43,10 @@ const CONTENT_FOLDERS: ContentFolderConfig[] = [
   { category: 'battleObjective', folder: 'battle-objectives', fallbackId: 'obj_trigger_cascade' },
   { category: 'bossRule', folder: 'boss-rules', fallbackId: 'boss_rule_cupcake_slime_king' },
   { category: 'hubBuilding', folder: 'hub-buildings', fallbackId: 'hub_cake_stall' },
-  { category: 'friendship', folder: 'friendship', fallbackId: 'friend_cupcake_slime' }
+  { category: 'friendship', folder: 'friendship', fallbackId: 'friend_cupcake_slime' },
+  { category: 'biomeMonsterPool', folder: 'difficulty-scaling', fallbackId: 'pool_sprinkle_sewers' },
+  { category: 'encounterPackScaling', folder: 'difficulty-scaling', fallbackId: 'scale_encounter_stage1_normal' },
+  { category: 'enemyEntryEffect', folder: 'difficulty-scaling', fallbackId: 'entry_none' }
 ];
 
 const jsonModules = (import.meta as unknown as {
@@ -230,6 +233,39 @@ export class ContentRegistry {
 
   getFriendship(id: string) {
     return this.getById('friendship', id);
+  }
+
+  getBiomeMonsterPool(id: string) {
+    return this.getById('biomeMonsterPool', id);
+  }
+
+  getEncounterPackScalingRule(id: string) {
+    return this.getById('encounterPackScaling', id);
+  }
+
+  getEnemyEntryEffect(id: string) {
+    return this.getById('enemyEntryEffect', id);
+  }
+
+  /**
+   * Get all biome monster pools (for EncounterPackSystem)
+   */
+  getBiomeMonsterPools() {
+    return this.listEnabled('biomeMonsterPool');
+  }
+
+  /**
+   * Get all encounter pack scaling rules (for EncounterPackSystem)
+   */
+  getEncounterPackScalingRules() {
+    return this.listEnabled('encounterPackScaling');
+  }
+
+  /**
+   * Get all enemy entry effects (for EncounterPackSystem)
+   */
+  getEnemyEntryEffects() {
+    return this.list('enemyEntryEffect');
   }
 
   private resolveLookupId(contentType: ContentCategory, id: string): string {

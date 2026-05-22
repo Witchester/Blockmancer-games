@@ -1,0 +1,77 @@
+{
+  "contentType": "enemyEntryEffect",
+  "version": "1.0.0",
+  "idPrefix": "entry_",
+  "displayName": "Enemy Entry Effects",
+  "description": "Defines pressure effects and player gifts that occur when enemies enter battle, especially in sequential encounter packs.",
+  "idFormat": "entry_<effect_name>",
+  "exampleIds": [
+    "entry_none",
+    "entry_junk_pressure",
+    "entry_preview_block",
+    "entry_freeze_nudge"
+  ],
+  "requiredFields": [
+    "id",
+    "name",
+    "description",
+    "entryGracePieces",
+    "warningText",
+    "eventLogText"
+  ],
+  "fields": {
+    "id": {
+      "type": "string",
+      "pattern": "^entry_[a-z0-9]+(?:_[a-z0-9]+)*$"
+    },
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "pressureEffectId": {
+      "type": "string"
+    },
+    "playerGiftEffectId": {
+      "type": "string"
+    },
+    "entryGracePieces": {
+      "type": "number",
+      "min": 0
+    },
+    "warningText": {
+      "type": "string"
+    },
+    "eventLogText": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "array"
+    }
+  },
+  "dataList": {
+    "effectTypes": [
+      "junk",
+      "preview",
+      "freeze",
+      "board_size",
+      "speed",
+      "pattern",
+      "sleep"
+    ],
+    "tags": [
+      "standard",
+      "pressure",
+      "counterable",
+      "disrupt",
+      "boss",
+      "elite"
+    ]
+  },
+  "defaults": {
+    "entryGracePieces": 3,
+    "warningText": "",
+    "eventLogText": "The enemy enters the battle."
+  }
+}

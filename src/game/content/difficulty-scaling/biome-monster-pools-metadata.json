@@ -1,0 +1,81 @@
+{
+  "contentType": "biomeMonsterPool",
+  "version": "1.0.0",
+  "idPrefix": "pool_",
+  "displayName": "Biome Monster Pools",
+  "description": "Monster pool definitions for each biome/stage, defining which monsters can appear and their weights.",
+  "idFormat": "pool_<biome_name>",
+  "exampleIds": [
+    "pool_sprinkle_sewers",
+    "pool_frosty_pantry",
+    "pool_goblin_workshop"
+  ],
+  "requiredFields": [
+    "id",
+    "stageId",
+    "biomeId",
+    "displayName",
+    "monsterRules",
+    "fallbackMonsterId"
+  ],
+  "fields": {
+    "id": {
+      "type": "string",
+      "pattern": "^pool_[a-z0-9]+(?:_[a-z0-9]+)*$"
+    },
+    "stageId": {
+      "type": "string"
+    },
+    "biomeId": {
+      "type": "string"
+    },
+    "displayName": {
+      "type": "string"
+    },
+    "monsterRules": {
+      "type": "array"
+    },
+    "maxDuplicatePerNode": {
+      "type": "number"
+    },
+    "recentMonsterMemoryCount": {
+      "type": "number"
+    },
+    "bannedPairTags": {
+      "type": "array"
+    },
+    "fallbackMonsterId": {
+      "type": "string"
+    },
+    "enabled": {
+      "type": "boolean"
+    }
+  },
+  "dataList": {
+    "stages": [
+      "stage_sprinkle_sewers",
+      "stage_frosty_pantry",
+      "stage_goblin_workshop",
+      "stage_pillow_castle",
+      "stage_starfall_arcade",
+      "stage_bloxley_block_palace"
+    ],
+    "roles": [
+      "starter",
+      "pressure",
+      "support",
+      "finisher"
+    ],
+    "ranks": [
+      "regular",
+      "elite",
+      "elite_miniboss",
+      "boss"
+    ]
+  },
+  "defaults": {
+    "maxDuplicatePerNode": 1,
+    "recentMonsterMemoryCount": 2,
+    "enabled": true
+  }
+}
