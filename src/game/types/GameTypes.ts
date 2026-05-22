@@ -53,6 +53,98 @@ export type ActiveHazardKind =
   | 'speed_wave'
   | 'royal_pattern';
 
+// Sequential Encounter Pack types (Step 1-2 foundation)
+export type MonsterRole = 'starter' | 'pressure' | 'support' | 'finisher';
+
+export type MonsterRank = 'regular' | 'elite' | 'elite_miniboss' | 'boss';
+
+export type WeightedMonsterRule = {
+  monsterId: string;
+  weight: number;
+  roles: MonsterRole[];
+  rank?: MonsterRank;
+  minNodeDepthPercent?: number;
+  maxNodeDepthPercent?: number;
+  allowedNodeTypes?: EncounterNodeType[];
+  bannedWithTags?: string[];
+  tags?: string[];
+};
+
+export type BiomeMonsterPool = {
+  id: string;
+  stageId: string;
+  biomeId: string;
+  displayName: string;
+  monsterRules: WeightedMonsterRule[];
+  maxDuplicatePerNode: number;
+  recentMonsterMemoryCount: number;
+  bannedPairTags?: string[];
+  fallbackMonsterId: string;
+};
+
+export type BreatherRewardPolicy = {
+  enabled: boolean;
+  maxHealPercentPerNode: number;
+  allowedRewards: Array<'hp' | 'mana' | 'shield' | 'fever'>;
+};
+
+export type EncounterEnemyEntry = {
+  enemyId: string;
+  role: MonsterRole;
+  rank: MonsterRank;
+  hpMultiplier: number;
+  attackMultiplier: number;
+  armorMultiplier?: number;
+  entryEffectId?: string;
+  entryGracePieces: number;
+  tags?: string[];
+};
+
+export type NodeEncounterPack = {
+  encounterPackId: string;
+  nodeId: string;
+  stageId: string;
+  biomeId: string;
+  nodeType: EncounterNodeType;
+  enemies: EncounterEnemyEntry[];
+  currentEnemyIndex: number;
+  totalHpBudgetMultiplier: number;
+  totalAttackBudgetMultiplier: number;
+  maxActiveHazards: number;
+  rewardsGrantedOnlyOnNodeClear: true;
+  xpGrantedOnlyOnNodeClear: true;
+  breatherRewardPolicy?: BreatherRewardPolicy;
+  generatedFromPoolId?: string;
+  seed?: string | number;
+};
+
+export type EncounterPackScalingRule = {
+  id: string;
+  stageNumber: 1 | 2 | 3 | 4 | 5 | 6;
+  stageId: string;
+  nodeType: EncounterNodeType;
+  minEnemies: number;
+  maxEnemies: number;
+  earlyNodeEnemyCap?: number;
+  lateNodeEnemyCap?: number;
+  totalHpBudgetMultiplierRange: [number, number];
+  totalAttackBudgetMultiplierRange: [number, number];
+  entryGracePieces: number;
+  maxActiveHazards: number;
+};
+
+export type EnemyEntryEffectContent = {
+  id: string;
+  name: string;
+  description: string;
+  pressureEffectId?: string;
+  playerGiftEffectId?: string;
+  entryGracePieces: number;
+  warningText: string;
+  eventLogText: string;
+  tags?: string[];
+};
+
 export interface PlayerState {
   maxHp: number;
   hp: number;

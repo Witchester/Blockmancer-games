@@ -1,0 +1,55 @@
+{
+  "id": "pool_sprinkle_sewers",
+  "stageId": "stage_sprinkle_sewers",
+  "biomeId": "biome_sprinkle_sewers",
+  "displayName": "Sprinkle Sewers Monster Pool",
+  "maxDuplicatePerNode": 1,
+  "recentMonsterMemoryCount": 2,
+  "fallbackMonsterId": "mon_cupcake_slime",
+  "bannedPairTags": ["heavy_hazard", "double_sticky"],
+  "monsterRules": [
+    {
+      "monsterId": "mon_cupcake_slime",
+      "weight": 35,
+      "roles": ["starter"],
+      "rank": "regular",
+      "tags": ["stage_1", "sprinkle_sewers", "tutorial"]
+    },
+    {
+      "monsterId": "mon_sugar_bat",
+      "weight": 20,
+      "roles": ["pressure"],
+      "rank": "regular",
+      "tags": ["stage_1", "sprinkle_sewers", "preview_disrupt"]
+    },
+    {
+      "monsterId": "mon_crumb_goblin",
+      "weight": 20,
+      "roles": ["pressure"],
+      "rank": "regular",
+      "tags": ["stage_1", "sprinkle_sewers", "junk"]
+    },
+    {
+      "monsterId": "mon_jelly_rat",
+      "weight": 15,
+      "roles": ["finisher"],
+      "rank": "regular",
+      "tags": ["stage_1", "sprinkle_sewers", "fast"]
+    },
+    {
+      "monsterId": "mon_sprinkle_snail",
+      "weight": 10,
+      "roles": ["support"],
+      "rank": "regular",
+      "tags": ["stage_1", "sprinkle_sewers", "sticky"]
+    },
+    {
+      "monsterId": "mon_frosting_blob",
+      "weight": 10,
+      "roles": ["support"],
+      "rank": "regular",
+      "tags": ["stage_1", "sprinkle_sewers", "tank"]
+    }
+  ],
+  "enabled": true
+}
