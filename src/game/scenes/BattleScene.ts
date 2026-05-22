@@ -44,6 +44,8 @@ import {
   TETROMINO_SHAPES
 } from '../utils/constants';
 
+type SpellDefinition = typeof SPELLS[number];
+
 const HAZARD_WINDOWS: Record<ActiveHazardKind, Omit<ActiveHazardState, 'instanceId' | 'kind' | 'remainingPieces'>> = {
   incoming_junk: {
     hazardId: 'hazard_incoming_junk_queue',
@@ -1190,12 +1192,19 @@ export class BattleScene extends Phaser.Scene {
       { label: 'Hard', width: row1ButtonW, height: row1ButtonH, onPress: () => this.hardDrop() }
     ];
 
-    const playableSpells = this.getPlayableSpells();
-    while (playableSpells.length < 4) {
-      playableSpells.push(SPELLS[0]);
-    }
+    const spellSlots = this.getPlayableSpellSlots();
 
-    const spellButtons = playableSpells.map((spell, index) => {
+    const spellButtons = spellSlots.map((spell, index) => {
+      if (!spell) {
+        return {
+          label: layout.scaleMode === 'tiny' ? `S${index + 1}\n-` : `Spell ${index + 1}\nEmpty`,
+          width: row2ButtonW,
+          height: row2ButtonH,
+          disabled: true,
+          onPress: () => this.combat.addLog('No spell in that slot yet.')
+        };
+      }
+
       const spellContent = contentRegistry.getSpell('spl_' + spell.id.replace(/-/g, '_')) as { iconKey?: string } | null;
       const cost = this.spells.getCost(spell.id);
       const label = layout.scaleMode === 'full'
@@ -1309,9 +1318,11 @@ export class BattleScene extends Phaser.Scene {
       hardDrop: () => this.hardDrop(),
       hold: () => this.handleHold(),
       castSpell: (slot) => {
-        const spell = this.getPlayableSpells()[slot];
+        const spell = this.getPlayableSpellSlots()[slot];
         if (spell) {
           this.tryCast(spell.id);
+        } else {
+          this.combat.addLog('No spell in that slot yet.');
         }
       },
       inventory: () => this.toggleInventory(),
@@ -3859,10 +3870,14 @@ export class BattleScene extends Phaser.Scene {
     return match?.[0] ?? '';
   }
 
-  private getPlayableSpells(): typeof SPELLS {
-    const playableSpells = SPELLS.filter((spell) => this.sharedGame.runState.spells.includes(spell.id)).slice(0, 4);
+  private getPlayableSpellSlots(): Array<SpellDefinition | null> {
+    const spellById = new Map(SPELLS.map((spell) => [spell.id, spell]));
+    const playableSpells: Array<SpellDefinition | null> = this.sharedGame.runState.spells
+      .map((spellId) => spellById.get(spellId) ?? null)
+      .filter((spell): spell is SpellDefinition => Boolean(spell))
+      .slice(0, 4);
     while (playableSpells.length < 4) {
-      playableSpells.push(SPELLS[0]);
+      playableSpells.push(null);
     }
     return playableSpells;
   }

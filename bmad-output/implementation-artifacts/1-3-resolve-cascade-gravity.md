@@ -1,6 +1,6 @@
 # Story 1.3: Resolve Cascade Gravity
 
-Status: review
+Status: done
 
 ## Story
 
@@ -206,3 +206,4 @@ GPT-5 Codex
 ### Change Log
 
 - 2026-05-21: Implemented Story 1.3 Cascade Gravity stabilization and deterministic smoke coverage; story moved to review.
+- 2026-05-22: Code review completed with no remaining findings; story moved to done.
