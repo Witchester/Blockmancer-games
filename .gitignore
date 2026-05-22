@@ -6,6 +6,18 @@ __pycache__/
 dist/
 build/
 target/
+*.class
+*.jar
+*.war
+*.ear
+*.a
+*.lib
+*.dylib
+*.dll
+*.exe
+*.test
+*.prof
+Cargo.lock
 
 # Dependencies
 node_modules/
@@ -14,15 +26,24 @@ venv/
 .env
 .env.local
 .env.*
+.mypy_cache/
+.pytest_cache/
+.gradle/
+.git/
 
 # Logs and temp files
 *.log
 *.tmp
 *.swp
+.DS_Store
+Thumbs.db
 
 # Editors
 .vscode/
 .idea/
+*~
+beautify-powershell.ps1
+Aider.md
 
 # Coverage reports
 coverage/
@@ -53,10 +74,6 @@ htmlcov/
 *.tar.xz
 *.tar.zst
 
-# System files
-.DS_Store
-Thumbs.db
-
 # Python specific
 *.pyo
 *.pyd
@@ -70,31 +87,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Java specific
-*.class
-*.jar
-*.war
-*.ear
-
-# C/C++ specific
-*.a
-*.lib
-*.dylib
-*.dll
-*.exe
-
-# Go specific
-*.test
-*.prof
-
-# MyPy cache
-.mypy_cache/
-
-# PyTest cache
-.pytest_cache/
-
-# Gradle
-.gradle/
-
 # Rust
-Cargo.lock
+.aider*
+
+# IDE specific
