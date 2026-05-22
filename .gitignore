@@ -4,6 +4,7 @@ bmad-output/
 dist/
 build/
 target/
+ui-check/
 
 # Dependencies
 node_modules/
@@ -38,3 +39,5 @@ htmlcov/
 .DS_Store
 Thumbs.db
 ```
+*.gitkeep
+*.txt
