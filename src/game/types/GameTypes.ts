@@ -1,5 +1,5 @@
-export type RoomType = 'start' | 'fight' | 'event' | 'shop' | 'elite' | 'rest' | 'treasure' | 'boss';
-export type EncounterNodeType = 'normal' | 'hard_normal' | 'elite' | 'boss' | 'event' | 'shop' | 'rest' | 'treasure';
+export type RoomType = 'start' | 'fight' | 'event' | 'shop' | 'elite' | 'rest' | 'treasure' | 'boss' | 'mini_boss' | 'royal_guard';
+export type EncounterNodeType = 'normal' | 'hard_normal' | 'elite' | 'boss' | 'event' | 'shop' | 'rest' | 'treasure' | 'mini_boss' | 'royal_guard';
 export type TetrominoType = 'I' | 'O' | 'T' | 'S' | 'Z' | 'J' | 'L';
 export type SpellId = string;
 export type RunStatus = 'menu' | 'map' | 'battle' | 'reward' | 'game-over' | 'victory';
