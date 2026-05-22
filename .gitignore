@@ -81,3 +81,6 @@ coverage/
 *.lz
 *.lzo
 ```
+*.txt
+artifacts/
+.gitkeep
