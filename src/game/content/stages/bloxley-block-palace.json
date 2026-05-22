@@ -4,14 +4,18 @@
   "description": "The final palace stacked high with royal blocks.",
   "theme": "royal_ruins",
   "monsterPool": [
-    "mon_block_baron",
-    "mon_royal_page",
-    "mon_palace_jester",
-    "mon_crown_mime",
-    "mon_quilt_knight",
-    "mon_stone_golem"
+    "mon_royal_block_guard",
+    "mon_square_jester",
+    "mon_crown_bat",
+    "mon_parade_golem",
+    "mon_confetti_mage",
+    "mon_banner_bug"
   ],
-  "eliteMonsterPool": ["mon_elite_square_jester_prime", "mon_elite_royal_block_guard_captain", "mon_elite_parade_golem_grand_marshal"],
+  "eliteMonsterPool": [
+    "mon_elite_square_jester_prime",
+    "mon_elite_royal_block_guard_captain",
+    "mon_elite_parade_golem_grand_marshal"
+  ],
   "bossId": "mon_boss_king_bloxley",
   "lootTableId": "loot_battle_default",
   "enabled": true

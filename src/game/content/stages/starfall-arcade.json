@@ -4,14 +4,17 @@
   "description": "A neon arcade where combos become carnival tickets.",
   "theme": "void",
   "monsterPool": [
-    "mon_arcade_spark",
-    "mon_combo_crab",
-    "mon_ticket_tumbler",
-    "mon_joystick_jinxer",
-    "mon_score_specter",
-    "mon_witch"
+    "mon_token_sprite",
+    "mon_combo_gremlin",
+    "mon_neon_bat",
+    "mon_prize_claw_mimic",
+    "mon_pixel_blob",
+    "mon_joystick_jester"
   ],
-  "eliteMonsterPool": ["mon_elite_combo_gremlin_scorekeeper", "mon_elite_prize_claw_mimic_jackpot"],
+  "eliteMonsterPool": [
+    "mon_elite_combo_gremlin_scorekeeper",
+    "mon_elite_prize_claw_mimic_jackpot"
+  ],
   "bossId": "mon_boss_high_score_hydra",
   "lootTableId": "loot_battle_default",
   "enabled": true

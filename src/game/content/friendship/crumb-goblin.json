@@ -1,1 +1,25 @@
-{"id":"friend_crumb_goblin","monsterId":"mon_dungeon_goblin","name":"Crumb Goblin","pointsRequired":6,"gainMethods":[{"type":"defeat","points":1},{"type":"event_choice","points":2}],"unlockReward":{"effect":[{"type":"junk_to_normal_chance","value":0.1}]},"enabled":true}
+{
+  "id": "friend_crumb_goblin",
+  "monsterId": "mon_crumb_goblin",
+  "name": "Crumb Goblin",
+  "pointsRequired": 6,
+  "gainMethods": [
+    {
+      "type": "defeat",
+      "points": 1
+    },
+    {
+      "type": "event_choice",
+      "points": 2
+    }
+  ],
+  "unlockReward": {
+    "effect": [
+      {
+        "type": "junk_to_normal_chance",
+        "value": 0.1
+      }
+    ]
+  },
+  "enabled": true
+}

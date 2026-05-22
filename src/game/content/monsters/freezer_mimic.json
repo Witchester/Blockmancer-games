@@ -1,0 +1,74 @@
+{
+  "id": "mon_freezer_mimic",
+  "name": "Freezer Mimic",
+  "description": "A snack freezer pretending to be ordinary until someone opens the door.",
+  "stageId": "stage_frosty_pantry",
+  "rank": "regular",
+  "encounterRank": "regular",
+  "rarity": "uncommon",
+  "tier": 2,
+  "role": "tank",
+  "wikiRole": "Trap / tank",
+  "biome": "frosty_pantry",
+  "primaryMechanic": "Uses delayed freeze or cold storage pressure.",
+  "spriteKey": "mon_freezer_mimic",
+  "iconKey": "ico_mon_freezer_mimic",
+  "assetRefs": {
+    "idle": "mon_freezer_mimic__idle",
+    "attack": "mon_freezer_mimic__attack",
+    "hit": "mon_freezer_mimic__hit",
+    "defeat": "mon_freezer_mimic__defeat",
+    "icon": "ico_mon_freezer_mimic",
+    "poseSheet": "mon_freezer_mimic__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 48,
+    "attack": 5,
+    "armor": 0,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_guard",
+    "label": "Chilly Warning",
+    "description": "Uses delayed freeze or cold storage pressure."
+  },
+  "behaviors": [
+    "basic_attack",
+    "freeze_piece",
+    "armor_up"
+  ],
+  "eliteActions": [],
+  "bossActions": [],
+  "resistances": [],
+  "weaknesses": [
+    "fire",
+    "bomb"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 17,
+    "goldMax": 33,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "stage_3",
+    "large",
+    "armored",
+    "frosty_pantry",
+    "normal"
+  ],
+  "implementationStatus": "partial",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_mon_freezer_mimic_idle",
+    "attack": "anim_mon_freezer_mimic_attack",
+    "hit": "anim_mon_freezer_mimic_hit",
+    "defeat": "anim_mon_freezer_mimic_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

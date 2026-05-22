@@ -1,0 +1,84 @@
+{
+  "id": "mon_elite_button_masher_supervisor",
+  "name": "Button Masher Supervisor",
+  "description": "Button Masher Supervisor is an elite Goblin Workshop encounter. Warns before sneaking a bad piece into delivery.",
+  "stageId": "stage_goblin_workshop",
+  "rank": "elite",
+  "encounterRank": "elite",
+  "rarity": "elite",
+  "tier": 2,
+  "role": "elite",
+  "wikiRole": "Bad piece / machine mishap",
+  "biome": "goblin_workshop",
+  "primaryMechanic": "Warns before sneaking a bad piece into delivery.",
+  "spriteKey": "mon_elite_button_masher_supervisor",
+  "iconKey": "ico_mon_elite_button_masher_supervisor",
+  "assetRefs": {
+    "idle": "mon_elite_button_masher_supervisor__idle",
+    "attack": "mon_elite_button_masher_supervisor__attack",
+    "hit": "mon_elite_button_masher_supervisor__hit",
+    "defeat": "mon_elite_button_masher_supervisor__defeat",
+    "icon": "ico_mon_elite_button_masher_supervisor",
+    "poseSheet": "mon_elite_button_masher_supervisor__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 72,
+    "attack": 6,
+    "armor": 0,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_screech",
+    "label": "Button Masher Supervisor Attack",
+    "description": "Warns before sneaking a bad piece into delivery."
+  },
+  "behaviors": [
+    "basic_attack",
+    "swap_next_hold"
+  ],
+  "eliteActions": [
+    {
+      "id": "basic_attack",
+      "label": "basic attack",
+      "warningRequired": false
+    },
+    {
+      "id": "swap_next_hold",
+      "label": "swap next hold",
+      "warningRequired": true
+    }
+  ],
+  "bossActions": [],
+  "resistances": [],
+  "weaknesses": [
+    "combo_damage",
+    "cascade_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.75,
+    "fallSpeedModifier": 0.01
+  },
+  "rewards": {
+    "goldMin": 28,
+    "goldMax": 47,
+    "rewardRolls": 2,
+    "lootTableId": "loot_elite_default"
+  },
+  "tags": [
+    "hazard_bad_piece_delivery",
+    "counter_piece_queue",
+    "stage_2",
+    "goblin_workshop",
+    "elite"
+  ],
+  "implementationStatus": "partial",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_mon_elite_button_masher_supervisor_idle",
+    "attack": "anim_mon_elite_button_masher_supervisor_attack",
+    "hit": "anim_mon_elite_button_masher_supervisor_hit",
+    "defeat": "anim_mon_elite_button_masher_supervisor_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

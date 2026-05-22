@@ -6,20 +6,28 @@
   "description": "Schema metadata for enemy units, encounter behaviors, combat scaling, and reward hooks.",
   "idFormat": "mon_<biome_or_family>_<name>",
   "exampleIds": [
-    "mon_dungeon_slime",
-    "mon_dungeon_goblin",
-    "mon_stone_golem",
-    "mon_bat",
-    "mon_witch",
-    "mon_elite_knight",
-    "mon_boss_falling_king"
+    "mon_cupcake_slime",
+    "mon_wrench_goblin",
+    "mon_ice_cream_imp",
+    "mon_button_knight",
+    "mon_combo_gremlin",
+    "mon_royal_block_guard",
+    "mon_elite_crumb_goblin_foreman",
+    "mon_boss_king_bloxley"
   ],
   "requiredFields": [
     "id",
     "name",
+    "description",
+    "stageId",
+    "rank",
+    "encounterRank",
     "rarity",
     "tier",
     "role",
+    "spriteKey",
+    "iconKey",
+    "assetRefs",
     "stats",
     "intent",
     "behaviors",
@@ -187,6 +195,42 @@
     "enabled": {
       "type": "boolean",
       "label": "Enabled"
+    },
+    "stageId": {
+      "type": "enum",
+      "label": "Stage ID",
+      "dataList": "stageIds"
+    },
+    "rank": {
+      "type": "enum",
+      "label": "Wiki Rank",
+      "dataList": "rank"
+    },
+    "encounterRank": {
+      "type": "enum",
+      "label": "Encounter Rank",
+      "dataList": "encounterRank"
+    },
+    "iconKey": {
+      "type": "string",
+      "label": "Icon Key"
+    },
+    "assetRefs": {
+      "type": "object",
+      "label": "Canonical Asset References"
+    },
+    "eliteActions": {
+      "type": "array",
+      "label": "Elite Actions"
+    },
+    "bossActions": {
+      "type": "array",
+      "label": "Boss Actions"
+    },
+    "implementationStatus": {
+      "type": "enum",
+      "label": "Implementation Status",
+      "dataList": "implementationStatus"
     }
   },
   "dataList": {
@@ -214,6 +258,12 @@
       "boss"
     ],
     "biome": [
+      "sprinkle_sewers",
+      "goblin_workshop",
+      "frosty_pantry",
+      "pillow_castle",
+      "starfall_arcade",
+      "bloxley_block_palace",
       "dungeon",
       "crypt",
       "forest",
@@ -245,7 +295,8 @@
       "hydra_combo_check",
       "pattern_junk",
       "royal_block_spawn",
-      "lock_random_column"
+      "lock_random_column",
+      "incoming_junk_queue"
     ],
     "intentIds": [
       "intent_attack",
@@ -300,7 +351,59 @@
       "board_disruptor",
       "speed_scaler",
       "junk_spawner",
-      "boss_phase"
+      "boss_phase",
+      "normal",
+      "elite",
+      "boss",
+      "stage_1",
+      "stage_2",
+      "stage_3",
+      "stage_4",
+      "stage_5",
+      "stage_6",
+      "sprinkle_sewers",
+      "goblin_workshop",
+      "frosty_pantry",
+      "pillow_castle",
+      "starfall_arcade",
+      "bloxley_block_palace",
+      "preview",
+      "freeze",
+      "sticky",
+      "sleepy",
+      "royal",
+      "royal_guard",
+      "combo",
+      "cascade",
+      "shield",
+      "support",
+      "friendship"
+    ],
+    "stageIds": [
+      "stage_sprinkle_sewers",
+      "stage_goblin_workshop",
+      "stage_frosty_pantry",
+      "stage_pillow_castle",
+      "stage_starfall_arcade",
+      "stage_bloxley_block_palace"
+    ],
+    "rank": [
+      "regular",
+      "elite",
+      "elite_miniboss",
+      "boss"
+    ],
+    "encounterRank": [
+      "regular",
+      "elite",
+      "boss"
+    ],
+    "implementationStatus": [
+      "implemented",
+      "partial",
+      "fallback_only",
+      "not_implemented",
+      "unknown"
     ]
   },
   "commonDataList": {
@@ -371,20 +474,46 @@
     "enabled": true
   },
   "compatibilityAliases": {
-    "mon_cupcake_slime": "mon_dungeon_slime",
-    "mon_sugar_bat": "mon_bat",
-    "mon_crumb_goblin": "mon_dungeon_goblin",
-    "mon_popsicle_bat": "mon_bubble_bat",
-    "mon_freezer_mimic": "mon_ice_pop_mimic",
-    "mon_pillow_squire": "mon_pillow_pawn",
-    "mon_combo_gremlin": "mon_combo_crab",
-    "mon_joystick_jester": "mon_joystick_jinxer",
-    "mon_square_jester": "mon_palace_jester",
+    "mon_dungeon_slime": "mon_cupcake_slime",
+    "mon_bat": "mon_sugar_bat",
+    "mon_dungeon_goblin": "mon_crumb_goblin",
+    "mon_sprinkle_rat": "mon_jelly_rat",
+    "mon_pipe_peeker": "mon_sprinkle_snail",
+    "mon_syrup_slug": "mon_frosting_blob",
+    "mon_cupcake_imp": "mon_cupcake_slime",
+    "mon_gear_gremlin": "mon_wrench_goblin",
+    "mon_gadget_goblin": "mon_button_masher",
+    "mon_wrench_wisp": "mon_spark_gremlin",
+    "mon_bolt_beetle": "mon_rattle_drone",
+    "mon_elite_knight": "mon_elite_button_knight_captain",
+    "mon_frosting_fox": "mon_ice_cream_imp",
+    "mon_chilly_churro": "mon_popsicle_bat",
+    "mon_gelato_blob": "mon_chill_slime",
+    "mon_ice_pop_mimic": "mon_freezer_mimic",
+    "mon_bubble_bat": "mon_popsicle_bat",
+    "mon_pillow_pawn": "mon_button_knight",
+    "mon_blanket_bard": "mon_blanket_ghost",
+    "mon_dream_drummer": "mon_plush_dragon",
+    "mon_snore_squire": "mon_pillow_squire",
+    "mon_quilt_knight": "mon_toy_soldier",
+    "mon_crown_mime": "mon_crown_bat",
+    "mon_arcade_spark": "mon_token_sprite",
+    "mon_combo_crab": "mon_combo_gremlin",
+    "mon_ticket_tumbler": "mon_neon_bat",
+    "mon_joystick_jinxer": "mon_joystick_jester",
+    "mon_score_specter": "mon_pixel_blob",
+    "mon_witch": "mon_prize_claw_mimic",
+    "mon_block_baron": "mon_royal_block_guard",
+    "mon_royal_page": "mon_banner_bug",
+    "mon_palace_jester": "mon_square_jester",
+    "mon_stone_golem": "mon_parade_golem",
+    "mon_boss_falling_king": "mon_boss_king_bloxley",
     "boss_cupcake_slime_king": "mon_boss_cupcake_slime_king",
     "boss_prototype_no_7": "mon_boss_prototype_no_7",
     "boss_gelato_golem": "mon_boss_gelato_golem",
     "boss_sir_snore_a_lot": "mon_boss_sir_snore_a_lot",
     "boss_high_score_hydra": "mon_boss_high_score_hydra",
     "boss_king_bloxley": "mon_boss_king_bloxley"
-  }
+  },
+  "fallbackId": "mon_cupcake_slime"
 }

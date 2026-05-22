@@ -1,0 +1,90 @@
+{
+  "id": "mon_elite_freezer_mimic_deluxe",
+  "name": "Deluxe Freezer Mimic",
+  "description": "Deluxe Freezer Mimic is an elite Frosty Pantry encounter. Alternates speed waves with cold follow-up pressure.",
+  "stageId": "stage_frosty_pantry",
+  "rank": "elite",
+  "encounterRank": "elite",
+  "rarity": "elite",
+  "tier": 3,
+  "role": "elite",
+  "wikiRole": "Speed wave / freeze follow-up",
+  "biome": "frosty_pantry",
+  "primaryMechanic": "Alternates speed waves with cold follow-up pressure.",
+  "spriteKey": "mon_elite_freezer_mimic_deluxe",
+  "iconKey": "ico_mon_elite_freezer_mimic_deluxe",
+  "assetRefs": {
+    "idle": "mon_elite_freezer_mimic_deluxe__idle",
+    "attack": "mon_elite_freezer_mimic_deluxe__attack",
+    "hit": "mon_elite_freezer_mimic_deluxe__hit",
+    "defeat": "mon_elite_freezer_mimic_deluxe__defeat",
+    "icon": "ico_mon_elite_freezer_mimic_deluxe",
+    "poseSheet": "mon_elite_freezer_mimic_deluxe__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 84,
+    "attack": 7,
+    "armor": 0,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_hex",
+    "label": "Chilly Warning",
+    "description": "Alternates speed waves with cold follow-up pressure."
+  },
+  "behaviors": [
+    "basic_attack",
+    "freeze_piece",
+    "increase_fall_speed"
+  ],
+  "eliteActions": [
+    {
+      "id": "basic_attack",
+      "label": "basic attack",
+      "warningRequired": false
+    },
+    {
+      "id": "freeze_piece",
+      "label": "freeze piece",
+      "warningRequired": true
+    },
+    {
+      "id": "increase_fall_speed",
+      "label": "increase fall speed",
+      "warningRequired": true
+    }
+  ],
+  "bossActions": [],
+  "resistances": [],
+  "weaknesses": [
+    "combo_damage",
+    "cascade_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.75,
+    "fallSpeedModifier": 0.03
+  },
+  "rewards": {
+    "goldMin": 32,
+    "goldMax": 53,
+    "rewardRolls": 2,
+    "lootTableId": "loot_elite_default"
+  },
+  "tags": [
+    "hazard_speed_wave",
+    "counter_speed",
+    "stage_3",
+    "frosty_pantry",
+    "elite"
+  ],
+  "implementationStatus": "partial",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_mon_elite_freezer_mimic_deluxe_idle",
+    "attack": "anim_mon_elite_freezer_mimic_deluxe_attack",
+    "hit": "anim_mon_elite_freezer_mimic_deluxe_hit",
+    "defeat": "anim_mon_elite_freezer_mimic_deluxe_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

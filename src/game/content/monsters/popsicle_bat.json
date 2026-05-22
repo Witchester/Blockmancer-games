@@ -1,0 +1,74 @@
+{
+  "id": "mon_popsicle_bat",
+  "name": "Popsicle Bat",
+  "description": "A chilly bat with a popsicle stick cape and very cold opinions.",
+  "stageId": "stage_frosty_pantry",
+  "rank": "regular",
+  "encounterRank": "regular",
+  "rarity": "uncommon",
+  "tier": 2,
+  "role": "disruptor",
+  "wikiRole": "Disruptor",
+  "biome": "frosty_pantry",
+  "primaryMechanic": "Creates chilly preview or active-piece pressure.",
+  "spriteKey": "mon_popsicle_bat",
+  "iconKey": "ico_mon_popsicle_bat",
+  "assetRefs": {
+    "idle": "mon_popsicle_bat__idle",
+    "attack": "mon_popsicle_bat__attack",
+    "hit": "mon_popsicle_bat__hit",
+    "defeat": "mon_popsicle_bat__defeat",
+    "icon": "ico_mon_popsicle_bat",
+    "poseSheet": "mon_popsicle_bat__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 48,
+    "attack": 5,
+    "armor": 0,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_hex",
+    "label": "Chilly Warning",
+    "description": "Creates chilly preview or active-piece pressure."
+  },
+  "behaviors": [
+    "basic_attack",
+    "hide_next_piece",
+    "freeze_piece"
+  ],
+  "eliteActions": [],
+  "bossActions": [],
+  "resistances": [],
+  "weaknesses": [
+    "fire",
+    "combo_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 17,
+    "goldMax": 33,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "stage_3",
+    "flying",
+    "preview",
+    "frosty_pantry",
+    "normal"
+  ],
+  "implementationStatus": "partial",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_mon_popsicle_bat_idle",
+    "attack": "anim_mon_popsicle_bat_attack",
+    "hit": "anim_mon_popsicle_bat_hit",
+    "defeat": "anim_mon_popsicle_bat_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

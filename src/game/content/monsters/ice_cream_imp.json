@@ -1,0 +1,72 @@
+{
+  "id": "mon_ice_cream_imp",
+  "name": "Ice Cream Imp",
+  "description": "A cheerful freezer imp scooping rainbow ice cream too enthusiastically.",
+  "stageId": "stage_frosty_pantry",
+  "rank": "regular",
+  "encounterRank": "regular",
+  "rarity": "uncommon",
+  "tier": 2,
+  "role": "caster",
+  "wikiRole": "Freeze learner",
+  "biome": "frosty_pantry",
+  "primaryMechanic": "Applies light freeze or ice conversion.",
+  "spriteKey": "mon_ice_cream_imp",
+  "iconKey": "ico_mon_ice_cream_imp",
+  "assetRefs": {
+    "idle": "mon_ice_cream_imp__idle",
+    "attack": "mon_ice_cream_imp__attack",
+    "hit": "mon_ice_cream_imp__hit",
+    "defeat": "mon_ice_cream_imp__defeat",
+    "icon": "ico_mon_ice_cream_imp",
+    "poseSheet": "mon_ice_cream_imp__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 48,
+    "attack": 5,
+    "armor": 0,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_hex",
+    "label": "Chilly Warning",
+    "description": "Applies light freeze or ice conversion."
+  },
+  "behaviors": [
+    "basic_attack",
+    "freeze_piece"
+  ],
+  "eliteActions": [],
+  "bossActions": [],
+  "resistances": [],
+  "weaknesses": [
+    "fire"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 17,
+    "goldMax": 33,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "stage_3",
+    "freeze",
+    "friendship",
+    "frosty_pantry",
+    "normal"
+  ],
+  "implementationStatus": "partial",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_mon_ice_cream_imp_idle",
+    "attack": "anim_mon_ice_cream_imp_attack",
+    "hit": "anim_mon_ice_cream_imp_hit",
+    "defeat": "anim_mon_ice_cream_imp_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

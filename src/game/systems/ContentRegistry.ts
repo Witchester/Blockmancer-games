@@ -19,7 +19,7 @@ type ContentFolderConfig = {
 };
 
 const CONTENT_FOLDERS: ContentFolderConfig[] = [
-  { category: 'monster', folder: 'monsters', fallbackId: 'mon_dungeon_slime' },
+  { category: 'monster', folder: 'monsters', fallbackId: 'mon_cupcake_slime' },
   { category: 'hero', folder: 'heroes', fallbackId: 'hero_milo_blockmancer' },
   { category: 'weapon', folder: 'weapons', fallbackId: 'wpn_basic_wand' },
   { category: 'spell', folder: 'spells', fallbackId: 'spl_fireball' },

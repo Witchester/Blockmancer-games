@@ -1,0 +1,90 @@
+{
+  "id": "mon_elite_royal_block_guard_captain",
+  "name": "Royal Block Guard Captain",
+  "description": "Royal Block Guard Captain is an elite Bloxley's Block Palace encounter. Applies royal block pressure and low-ceiling warnings.",
+  "stageId": "stage_bloxley_block_palace",
+  "rank": "elite",
+  "encounterRank": "elite",
+  "rarity": "elite",
+  "tier": 5,
+  "role": "elite",
+  "wikiRole": "Low ceiling / royal block",
+  "biome": "bloxley_block_palace",
+  "primaryMechanic": "Applies royal block pressure and low-ceiling warnings.",
+  "spriteKey": "mon_elite_royal_block_guard_captain",
+  "iconKey": "ico_mon_elite_royal_block_guard_captain",
+  "assetRefs": {
+    "idle": "mon_elite_royal_block_guard_captain__idle",
+    "attack": "mon_elite_royal_block_guard_captain__attack",
+    "hit": "mon_elite_royal_block_guard_captain__hit",
+    "defeat": "mon_elite_royal_block_guard_captain__defeat",
+    "icon": "ico_mon_elite_royal_block_guard_captain",
+    "poseSheet": "mon_elite_royal_block_guard_captain__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 120,
+    "attack": 10,
+    "armor": 1,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_royal_collapse",
+    "label": "Royal Decree",
+    "description": "Applies royal block pressure and low-ceiling warnings."
+  },
+  "behaviors": [
+    "basic_attack",
+    "royal_block_spawn",
+    "lock_random_column"
+  ],
+  "eliteActions": [
+    {
+      "id": "basic_attack",
+      "label": "basic attack",
+      "warningRequired": false
+    },
+    {
+      "id": "royal_block_spawn",
+      "label": "royal block spawn",
+      "warningRequired": true
+    },
+    {
+      "id": "lock_random_column",
+      "label": "lock random column",
+      "warningRequired": true
+    }
+  ],
+  "bossActions": [],
+  "resistances": [],
+  "weaknesses": [
+    "combo_damage",
+    "cascade_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.75,
+    "fallSpeedModifier": 0.01
+  },
+  "rewards": {
+    "goldMin": 44,
+    "goldMax": 71,
+    "rewardRolls": 2,
+    "lootTableId": "loot_elite_default"
+  },
+  "tags": [
+    "hazard_low_ceiling",
+    "counter_low_ceiling",
+    "stage_6",
+    "bloxley_block_palace",
+    "elite"
+  ],
+  "implementationStatus": "fallback_only",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_mon_elite_royal_block_guard_captain_idle",
+    "attack": "anim_mon_elite_royal_block_guard_captain_attack",
+    "hit": "anim_mon_elite_royal_block_guard_captain_hit",
+    "defeat": "anim_mon_elite_royal_block_guard_captain_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

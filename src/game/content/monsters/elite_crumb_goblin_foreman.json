@@ -1,0 +1,90 @@
+{
+  "id": "mon_elite_crumb_goblin_foreman",
+  "name": "Crumb Goblin Foreman",
+  "description": "Crumb Goblin Foreman is an elite Goblin Workshop encounter. Queues batches of crumb junk with warning.",
+  "stageId": "stage_goblin_workshop",
+  "rank": "elite",
+  "encounterRank": "elite",
+  "rarity": "elite",
+  "tier": 2,
+  "role": "elite",
+  "wikiRole": "Incoming junk commander",
+  "biome": "goblin_workshop",
+  "primaryMechanic": "Queues batches of crumb junk with warning.",
+  "spriteKey": "mon_elite_crumb_goblin_foreman",
+  "iconKey": "ico_mon_elite_crumb_goblin_foreman",
+  "assetRefs": {
+    "idle": "mon_elite_crumb_goblin_foreman__idle",
+    "attack": "mon_elite_crumb_goblin_foreman__attack",
+    "hit": "mon_elite_crumb_goblin_foreman__hit",
+    "defeat": "mon_elite_crumb_goblin_foreman__defeat",
+    "icon": "ico_mon_elite_crumb_goblin_foreman",
+    "poseSheet": "mon_elite_crumb_goblin_foreman__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 72,
+    "attack": 6,
+    "armor": 0,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_throw_junk",
+    "label": "Incoming Junk",
+    "description": "Queues batches of crumb junk with warning."
+  },
+  "behaviors": [
+    "basic_attack",
+    "spawn_junk",
+    "incoming_junk_queue"
+  ],
+  "eliteActions": [
+    {
+      "id": "basic_attack",
+      "label": "basic attack",
+      "warningRequired": false
+    },
+    {
+      "id": "spawn_junk",
+      "label": "spawn junk",
+      "warningRequired": true
+    },
+    {
+      "id": "incoming_junk_queue",
+      "label": "incoming junk queue",
+      "warningRequired": true
+    }
+  ],
+  "bossActions": [],
+  "resistances": [],
+  "weaknesses": [
+    "combo_damage",
+    "cascade_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.75,
+    "fallSpeedModifier": 0.01
+  },
+  "rewards": {
+    "goldMin": 28,
+    "goldMax": 47,
+    "rewardRolls": 2,
+    "lootTableId": "loot_elite_default"
+  },
+  "tags": [
+    "hazard_incoming_junk",
+    "counter_junk",
+    "stage_2",
+    "goblin_workshop",
+    "elite"
+  ],
+  "implementationStatus": "partial",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_mon_elite_crumb_goblin_foreman_idle",
+    "attack": "anim_mon_elite_crumb_goblin_foreman_attack",
+    "hit": "anim_mon_elite_crumb_goblin_foreman_hit",
+    "defeat": "anim_mon_elite_crumb_goblin_foreman_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

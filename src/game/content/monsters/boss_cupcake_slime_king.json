@@ -1,0 +1,86 @@
+{
+  "id": "mon_boss_cupcake_slime_king",
+  "name": "Cupcake Slime King",
+  "description": "A huge cupcake slime boss whose royal frosting mess teaches sticky cleanup and sprinkle mana value.",
+  "stageId": "stage_sprinkle_sewers",
+  "rank": "boss",
+  "encounterRank": "boss",
+  "rarity": "boss",
+  "tier": 5,
+  "role": "boss",
+  "wikiRole": "Sticky blocks",
+  "biome": "sprinkle_sewers",
+  "primaryMechanic": "Sticky blocks",
+  "spriteKey": "boss_cupcake_slime_king",
+  "iconKey": "ico_boss_cupcake_slime_king",
+  "assetRefs": {
+    "idle": "boss_cupcake_slime_king__idle",
+    "attack": "boss_cupcake_slime_king__attack",
+    "hit": "boss_cupcake_slime_king__hit",
+    "phaseChange": "boss_cupcake_slime_king__phase_change",
+    "specialAttack": "boss_cupcake_slime_king__special_attack",
+    "defeat": "boss_cupcake_slime_king__defeat",
+    "icon": "ico_boss_cupcake_slime_king",
+    "poseSheet": "boss_cupcake_slime_king__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 155,
+    "attack": 9,
+    "armor": 1,
+    "attackIntervalLocks": 5
+  },
+  "intent": {
+    "id": "intent_royal_collapse",
+    "label": "Sticky blocks",
+    "description": "A huge cupcake slime boss whose royal frosting mess teaches sticky cleanup and sprinkle mana value."
+  },
+  "behaviors": [
+    "spawn_junk",
+    "hide_hold_block"
+  ],
+  "eliteActions": [],
+  "bossActions": [
+    {
+      "id": "spawn_junk",
+      "label": "spawn junk",
+      "warningRequired": true
+    },
+    {
+      "id": "hide_hold_block",
+      "label": "hide hold block",
+      "warningRequired": true
+    }
+  ],
+  "resistances": [],
+  "weaknesses": [
+    "combo_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 10,
+    "attackPerStage": 1,
+    "fallSpeedModifier": 0.02
+  },
+  "rewards": {
+    "goldMin": 48,
+    "goldMax": 87,
+    "rewardRolls": 2,
+    "lootTableId": "loot_boss_default"
+  },
+  "tags": [
+    "boss_phase",
+    "stage_1",
+    "sprinkle_sewers",
+    "boss"
+  ],
+  "implementationStatus": "partial",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_boss_cupcake_slime_king_idle",
+    "attack": "anim_boss_cupcake_slime_king_attack",
+    "hit": "anim_boss_cupcake_slime_king_hit",
+    "defeat": "anim_boss_cupcake_slime_king_defeat",
+    "phase_change": "anim_boss_cupcake_slime_king_phase_change",
+    "special_attack": "anim_boss_cupcake_slime_king_special_attack"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

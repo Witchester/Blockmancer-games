@@ -1,0 +1,73 @@
+{
+  "id": "mon_crumb_goblin",
+  "name": "Crumb Goblin",
+  "description": "A snack-sized goblin who treats crumbs like confetti paperwork.",
+  "stageId": "stage_sprinkle_sewers",
+  "rank": "regular",
+  "encounterRank": "regular",
+  "rarity": "common",
+  "tier": 1,
+  "role": "summoner",
+  "wikiRole": "Junk",
+  "biome": "sprinkle_sewers",
+  "primaryMechanic": "Throws or queues crumb junk blocks.",
+  "spriteKey": "mon_crumb_goblin",
+  "iconKey": "ico_mon_crumb_goblin",
+  "assetRefs": {
+    "idle": "mon_crumb_goblin__idle",
+    "attack": "mon_crumb_goblin__attack",
+    "hit": "mon_crumb_goblin__hit",
+    "defeat": "mon_crumb_goblin__defeat",
+    "icon": "ico_mon_crumb_goblin",
+    "poseSheet": "mon_crumb_goblin__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 32,
+    "attack": 3,
+    "armor": 0,
+    "attackIntervalLocks": 5
+  },
+  "intent": {
+    "id": "intent_throw_junk",
+    "label": "Crumb Toss",
+    "description": "Throws or queues crumb junk blocks."
+  },
+  "behaviors": [
+    "basic_attack",
+    "spawn_junk"
+  ],
+  "eliteActions": [],
+  "bossActions": [],
+  "resistances": [],
+  "weaknesses": [
+    "bomb",
+    "cascade_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 11,
+    "goldMax": 23,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "stage_1",
+    "junk_spawner",
+    "friendship",
+    "sprinkle_sewers",
+    "normal"
+  ],
+  "implementationStatus": "partial",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_mon_crumb_goblin_idle",
+    "attack": "anim_mon_crumb_goblin_attack",
+    "hit": "anim_mon_crumb_goblin_hit",
+    "defeat": "anim_mon_crumb_goblin_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

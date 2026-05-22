@@ -1,0 +1,86 @@
+{
+  "id": "mon_boss_sir_snore_a_lot",
+  "name": "Sir Snore-a-Lot",
+  "description": "A dozing pillow knight boss that tests soft blocks, shields, and Sleepy status.",
+  "stageId": "stage_pillow_castle",
+  "rank": "boss",
+  "encounterRank": "boss",
+  "rarity": "boss",
+  "tier": 5,
+  "role": "boss",
+  "wikiRole": "Sleep + shield",
+  "biome": "pillow_castle",
+  "primaryMechanic": "Sleep + shield",
+  "spriteKey": "boss_sir_snore_a_lot",
+  "iconKey": "ico_boss_sir_snore_a_lot",
+  "assetRefs": {
+    "idle": "boss_sir_snore_a_lot__idle",
+    "attack": "boss_sir_snore_a_lot__attack",
+    "hit": "boss_sir_snore_a_lot__hit",
+    "phaseChange": "boss_sir_snore_a_lot__phase_change",
+    "specialAttack": "boss_sir_snore_a_lot__special_attack",
+    "defeat": "boss_sir_snore_a_lot__defeat",
+    "icon": "ico_boss_sir_snore_a_lot",
+    "poseSheet": "boss_sir_snore_a_lot__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 260,
+    "attack": 15,
+    "armor": 2,
+    "attackIntervalLocks": 3
+  },
+  "intent": {
+    "id": "intent_royal_collapse",
+    "label": "Sleep + shield",
+    "description": "A dozing pillow knight boss that tests soft blocks, shields, and Sleepy status."
+  },
+  "behaviors": [
+    "sleep_player",
+    "shield_self"
+  ],
+  "eliteActions": [],
+  "bossActions": [
+    {
+      "id": "sleep_player",
+      "label": "sleep player",
+      "warningRequired": true
+    },
+    {
+      "id": "shield_self",
+      "label": "shield self",
+      "warningRequired": true
+    }
+  ],
+  "resistances": [],
+  "weaknesses": [
+    "combo_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 10,
+    "attackPerStage": 1,
+    "fallSpeedModifier": 0.02
+  },
+  "rewards": {
+    "goldMin": 72,
+    "goldMax": 123,
+    "rewardRolls": 2,
+    "lootTableId": "loot_boss_default"
+  },
+  "tags": [
+    "boss_phase",
+    "stage_4",
+    "pillow_castle",
+    "boss"
+  ],
+  "implementationStatus": "partial",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_boss_sir_snore_a_lot_idle",
+    "attack": "anim_boss_sir_snore_a_lot_attack",
+    "hit": "anim_boss_sir_snore_a_lot_hit",
+    "defeat": "anim_boss_sir_snore_a_lot_defeat",
+    "phase_change": "anim_boss_sir_snore_a_lot_phase_change",
+    "special_attack": "anim_boss_sir_snore_a_lot_special_attack"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

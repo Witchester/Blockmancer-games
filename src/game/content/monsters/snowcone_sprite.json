@@ -1,44 +1,68 @@
 {
   "id": "mon_snowcone_sprite",
   "name": "Snowcone Sprite",
-  "description": "Snowcone Sprite joins the festival dungeon with cheerful trouble.",
-  "rarity": "common",
-  "tier": 3,
-  "role": "basic",
-  "biome": "ice_cave",
-  "spriteKey": "placeholder_snowcone_sprite",
+  "description": "A sparkly snowcone sprite who keeps adding too much syrupy snow.",
+  "stageId": "stage_frosty_pantry",
+  "rank": "regular",
+  "encounterRank": "regular",
+  "rarity": "uncommon",
+  "tier": 2,
+  "role": "caster",
+  "wikiRole": "Support",
+  "biome": "frosty_pantry",
+  "primaryMechanic": "Creates snow or ice sprinkle pressure.",
+  "spriteKey": "mon_snowcone_sprite",
+  "iconKey": "ico_mon_snowcone_sprite",
+  "assetRefs": {
+    "idle": "mon_snowcone_sprite__idle",
+    "attack": "mon_snowcone_sprite__attack",
+    "hit": "mon_snowcone_sprite__hit",
+    "defeat": "mon_snowcone_sprite__defeat",
+    "icon": "ico_mon_snowcone_sprite",
+    "poseSheet": "mon_snowcone_sprite__pose_sheet_2x2"
+  },
   "stats": {
-    "hp": 42,
-    "attack": 4,
+    "hp": 48,
+    "attack": 5,
     "armor": 0,
     "attackIntervalLocks": 4
   },
   "intent": {
-    "id": "intent_screech",
-    "label": "Frost Blink",
-    "description": "Snowcone Sprite prepares Frost Blink."
+    "id": "intent_hex",
+    "label": "Chilly Warning",
+    "description": "Creates snow or ice sprinkle pressure."
   },
   "behaviors": [
-    "hide_next_piece"
+    "basic_attack",
+    "freeze_piece"
   ],
+  "eliteActions": [],
+  "bossActions": [],
   "resistances": [],
-  "weaknesses": [],
+  "weaknesses": [
+    "fire",
+    "line_damage"
+  ],
   "scaling": {
     "hpPerStage": 8,
     "attackPerStage": 0.5,
     "fallSpeedModifier": 0
   },
   "rewards": {
-    "goldMin": 10,
-    "goldMax": 28,
+    "goldMin": 17,
+    "goldMax": 33,
     "rewardRolls": 1,
     "lootTableId": "loot_battle_default"
   },
   "tags": [
-    "early_game"
+    "stage_3",
+    "magical",
+    "small",
+    "frosty_pantry",
+    "normal"
   ],
+  "implementationStatus": "partial",
   "enabled": true,
-  "iconKey": "ico_mon_snowcone_sprite",
   "animations": {
     "idle": "anim_mon_snowcone_sprite_idle",
     "attack": "anim_mon_snowcone_sprite_attack",

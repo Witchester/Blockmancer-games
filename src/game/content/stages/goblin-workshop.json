@@ -3,8 +3,18 @@
   "name": "Goblin Workshop",
   "description": "An inventive factory floor filled with noisy machines and mischievous goblin engineers.",
   "theme": "goblin_workshop",
-  "monsterPool": ["mon_gear_gremlin", "mon_gadget_goblin", "mon_wrench_wisp", "mon_spring_bot", "mon_bolt_beetle", "mon_elite_knight"],
-  "eliteMonsterPool": ["mon_elite_crumb_goblin_foreman", "mon_elite_button_masher_supervisor"],
+  "monsterPool": [
+    "mon_wrench_goblin",
+    "mon_button_masher",
+    "mon_spring_bot",
+    "mon_spark_gremlin",
+    "mon_gear_slime",
+    "mon_rattle_drone"
+  ],
+  "eliteMonsterPool": [
+    "mon_elite_crumb_goblin_foreman",
+    "mon_elite_button_masher_supervisor"
+  ],
   "bossId": "mon_boss_prototype_no_7",
   "lootTableId": "loot_battle_default",
   "enabled": true

@@ -1,0 +1,84 @@
+{
+  "id": "mon_elite_combo_gremlin_scorekeeper",
+  "name": "Combo Gremlin Scorekeeper",
+  "description": "Combo Gremlin Scorekeeper is an elite Starfall Arcade encounter. Challenges the player to keep cascades going.",
+  "stageId": "stage_starfall_arcade",
+  "rank": "elite",
+  "encounterRank": "elite",
+  "rarity": "elite",
+  "tier": 5,
+  "role": "elite",
+  "wikiRole": "Combo quota",
+  "biome": "starfall_arcade",
+  "primaryMechanic": "Challenges the player to keep cascades going.",
+  "spriteKey": "mon_elite_combo_gremlin_scorekeeper",
+  "iconKey": "ico_mon_elite_combo_gremlin_scorekeeper",
+  "assetRefs": {
+    "idle": "mon_elite_combo_gremlin_scorekeeper__idle",
+    "attack": "mon_elite_combo_gremlin_scorekeeper__attack",
+    "hit": "mon_elite_combo_gremlin_scorekeeper__hit",
+    "defeat": "mon_elite_combo_gremlin_scorekeeper__defeat",
+    "icon": "ico_mon_elite_combo_gremlin_scorekeeper",
+    "poseSheet": "mon_elite_combo_gremlin_scorekeeper__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 108,
+    "attack": 9,
+    "armor": 1,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_attack",
+    "label": "Combo Gremlin Scorekeeper Attack",
+    "description": "Challenges the player to keep cascades going."
+  },
+  "behaviors": [
+    "basic_attack",
+    "hydra_combo_check"
+  ],
+  "eliteActions": [
+    {
+      "id": "basic_attack",
+      "label": "basic attack",
+      "warningRequired": false
+    },
+    {
+      "id": "hydra_combo_check",
+      "label": "hydra combo check",
+      "warningRequired": true
+    }
+  ],
+  "bossActions": [],
+  "resistances": [],
+  "weaknesses": [
+    "combo_damage",
+    "cascade_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.75,
+    "fallSpeedModifier": 0.01
+  },
+  "rewards": {
+    "goldMin": 40,
+    "goldMax": 65,
+    "rewardRolls": 2,
+    "lootTableId": "loot_elite_default"
+  },
+  "tags": [
+    "combo",
+    "cascade",
+    "stage_5",
+    "starfall_arcade",
+    "elite"
+  ],
+  "implementationStatus": "fallback_only",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_mon_elite_combo_gremlin_scorekeeper_idle",
+    "attack": "anim_mon_elite_combo_gremlin_scorekeeper_attack",
+    "hit": "anim_mon_elite_combo_gremlin_scorekeeper_hit",
+    "defeat": "anim_mon_elite_combo_gremlin_scorekeeper_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

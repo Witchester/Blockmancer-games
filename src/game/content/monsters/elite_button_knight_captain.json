@@ -1,0 +1,83 @@
+{
+  "id": "mon_elite_button_knight_captain",
+  "name": "Button Knight Captain",
+  "description": "Button Knight Captain is an elite Pillow Castle encounter. Builds shield pressure before a readable attack.",
+  "stageId": "stage_pillow_castle",
+  "rank": "elite",
+  "encounterRank": "elite",
+  "rarity": "elite",
+  "tier": 4,
+  "role": "elite",
+  "wikiRole": "Shield / quilt wall",
+  "biome": "pillow_castle",
+  "primaryMechanic": "Builds shield pressure before a readable attack.",
+  "spriteKey": "mon_elite_button_knight_captain",
+  "iconKey": "ico_mon_elite_button_knight_captain",
+  "assetRefs": {
+    "idle": "mon_elite_button_knight_captain__idle",
+    "attack": "mon_elite_button_knight_captain__attack",
+    "hit": "mon_elite_button_knight_captain__hit",
+    "defeat": "mon_elite_button_knight_captain__defeat",
+    "icon": "ico_mon_elite_button_knight_captain",
+    "poseSheet": "mon_elite_button_knight_captain__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 96,
+    "attack": 8,
+    "armor": 1,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_guard",
+    "label": "Guard Up",
+    "description": "Builds shield pressure before a readable attack."
+  },
+  "behaviors": [
+    "basic_attack",
+    "shield_self"
+  ],
+  "eliteActions": [
+    {
+      "id": "basic_attack",
+      "label": "basic attack",
+      "warningRequired": false
+    },
+    {
+      "id": "shield_self",
+      "label": "shield self",
+      "warningRequired": true
+    }
+  ],
+  "bossActions": [],
+  "resistances": [],
+  "weaknesses": [
+    "combo_damage",
+    "cascade_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.75,
+    "fallSpeedModifier": 0.01
+  },
+  "rewards": {
+    "goldMin": 36,
+    "goldMax": 59,
+    "rewardRolls": 2,
+    "lootTableId": "loot_elite_default"
+  },
+  "tags": [
+    "shield",
+    "stage_4",
+    "pillow_castle",
+    "elite"
+  ],
+  "implementationStatus": "fallback_only",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_mon_elite_button_knight_captain_idle",
+    "attack": "anim_mon_elite_button_knight_captain_attack",
+    "hit": "anim_mon_elite_button_knight_captain_hit",
+    "defeat": "anim_mon_elite_button_knight_captain_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

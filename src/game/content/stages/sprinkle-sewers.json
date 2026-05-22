@@ -3,7 +3,14 @@
   "name": "Sprinkle Sewers",
   "description": "A syrupy first stage where goblins and slime minions spill out under dripping pipes.",
   "theme": "sprinkle_sewers",
-  "monsterPool": ["mon_dungeon_slime", "mon_dungeon_goblin", "mon_sprinkle_rat", "mon_pipe_peeker", "mon_syrup_slug", "mon_cupcake_imp"],
+  "monsterPool": [
+    "mon_cupcake_slime",
+    "mon_sugar_bat",
+    "mon_crumb_goblin",
+    "mon_jelly_rat",
+    "mon_sprinkle_snail",
+    "mon_frosting_blob"
+  ],
   "bossId": "mon_boss_cupcake_slime_king",
   "lootTableId": "loot_battle_default",
   "enabled": true

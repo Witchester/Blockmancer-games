@@ -1,0 +1,72 @@
+{
+  "id": "mon_neon_bat",
+  "name": "Neon Bat",
+  "description": "A neon bat that flashes like a tiny prize sign.",
+  "stageId": "stage_starfall_arcade",
+  "rank": "regular",
+  "encounterRank": "regular",
+  "rarity": "rare",
+  "tier": 3,
+  "role": "disruptor",
+  "wikiRole": "Preview disruptor",
+  "biome": "starfall_arcade",
+  "primaryMechanic": "Uses neon flash or preview flicker.",
+  "spriteKey": "mon_neon_bat",
+  "iconKey": "ico_mon_neon_bat",
+  "assetRefs": {
+    "idle": "mon_neon_bat__idle",
+    "attack": "mon_neon_bat__attack",
+    "hit": "mon_neon_bat__hit",
+    "defeat": "mon_neon_bat__defeat",
+    "icon": "ico_mon_neon_bat",
+    "poseSheet": "mon_neon_bat__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 64,
+    "attack": 7,
+    "armor": 1,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_screech",
+    "label": "Preview Peekaboo",
+    "description": "Uses neon flash or preview flicker."
+  },
+  "behaviors": [
+    "basic_attack",
+    "hide_next_piece"
+  ],
+  "eliteActions": [],
+  "bossActions": [],
+  "resistances": [],
+  "weaknesses": [
+    "line_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 23,
+    "goldMax": 43,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "stage_5",
+    "preview",
+    "flying",
+    "starfall_arcade",
+    "normal"
+  ],
+  "implementationStatus": "partial",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_mon_neon_bat_idle",
+    "attack": "anim_mon_neon_bat_attack",
+    "hit": "anim_mon_neon_bat_hit",
+    "defeat": "anim_mon_neon_bat_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

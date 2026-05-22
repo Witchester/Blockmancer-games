@@ -1,0 +1,90 @@
+{
+  "id": "mon_elite_square_jester_prime",
+  "name": "Square Jester Prime",
+  "description": "Square Jester Prime is an elite Bloxley's Block Palace encounter. Calls royal pattern warnings and square tricks.",
+  "stageId": "stage_bloxley_block_palace",
+  "rank": "elite",
+  "encounterRank": "elite",
+  "rarity": "elite",
+  "tier": 5,
+  "role": "elite",
+  "wikiRole": "Royal pattern",
+  "biome": "bloxley_block_palace",
+  "primaryMechanic": "Calls royal pattern warnings and square tricks.",
+  "spriteKey": "mon_elite_square_jester_prime",
+  "iconKey": "ico_mon_elite_square_jester_prime",
+  "assetRefs": {
+    "idle": "mon_elite_square_jester_prime__idle",
+    "attack": "mon_elite_square_jester_prime__attack",
+    "hit": "mon_elite_square_jester_prime__hit",
+    "defeat": "mon_elite_square_jester_prime__defeat",
+    "icon": "ico_mon_elite_square_jester_prime",
+    "poseSheet": "mon_elite_square_jester_prime__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 120,
+    "attack": 10,
+    "armor": 1,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_royal_collapse",
+    "label": "Royal Decree",
+    "description": "Calls royal pattern warnings and square tricks."
+  },
+  "behaviors": [
+    "basic_attack",
+    "pattern_junk",
+    "royal_block_spawn"
+  ],
+  "eliteActions": [
+    {
+      "id": "basic_attack",
+      "label": "basic attack",
+      "warningRequired": false
+    },
+    {
+      "id": "pattern_junk",
+      "label": "pattern junk",
+      "warningRequired": true
+    },
+    {
+      "id": "royal_block_spawn",
+      "label": "royal block spawn",
+      "warningRequired": true
+    }
+  ],
+  "bossActions": [],
+  "resistances": [],
+  "weaknesses": [
+    "combo_damage",
+    "cascade_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.75,
+    "fallSpeedModifier": 0.01
+  },
+  "rewards": {
+    "goldMin": 44,
+    "goldMax": 71,
+    "rewardRolls": 2,
+    "lootTableId": "loot_elite_default"
+  },
+  "tags": [
+    "hazard_royal_pattern",
+    "counter_royal",
+    "stage_6",
+    "bloxley_block_palace",
+    "elite"
+  ],
+  "implementationStatus": "partial",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_mon_elite_square_jester_prime_idle",
+    "attack": "anim_mon_elite_square_jester_prime_attack",
+    "hit": "anim_mon_elite_square_jester_prime_hit",
+    "defeat": "anim_mon_elite_square_jester_prime_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

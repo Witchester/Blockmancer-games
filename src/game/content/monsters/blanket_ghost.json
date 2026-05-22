@@ -1,0 +1,73 @@
+{
+  "id": "mon_blanket_ghost",
+  "name": "Blanket Ghost",
+  "description": "A friendly blanket ghost that wants everyone to take a cozy nap.",
+  "stageId": "stage_pillow_castle",
+  "rank": "regular",
+  "encounterRank": "regular",
+  "rarity": "uncommon",
+  "tier": 2,
+  "role": "caster",
+  "wikiRole": "Sleepy/status",
+  "biome": "pillow_castle",
+  "primaryMechanic": "Uses Sleepy-style warning or sleepy pressure.",
+  "spriteKey": "mon_blanket_ghost",
+  "iconKey": "ico_mon_blanket_ghost",
+  "assetRefs": {
+    "idle": "mon_blanket_ghost__idle",
+    "attack": "mon_blanket_ghost__attack",
+    "hit": "mon_blanket_ghost__hit",
+    "defeat": "mon_blanket_ghost__defeat",
+    "icon": "ico_mon_blanket_ghost",
+    "poseSheet": "mon_blanket_ghost__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 56,
+    "attack": 6,
+    "armor": 1,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_hex",
+    "label": "Sleepy Tune",
+    "description": "Uses Sleepy-style warning or sleepy pressure."
+  },
+  "behaviors": [
+    "basic_attack",
+    "sleep_player"
+  ],
+  "eliteActions": [],
+  "bossActions": [],
+  "resistances": [],
+  "weaknesses": [
+    "lightning",
+    "line_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 20,
+    "goldMax": 38,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "stage_4",
+    "magical",
+    "friendship",
+    "pillow_castle",
+    "normal"
+  ],
+  "implementationStatus": "partial",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_mon_blanket_ghost_idle",
+    "attack": "anim_mon_blanket_ghost_attack",
+    "hit": "anim_mon_blanket_ghost_hit",
+    "defeat": "anim_mon_blanket_ghost_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

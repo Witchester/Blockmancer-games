@@ -1,0 +1,73 @@
+{
+  "id": "mon_sugar_bat",
+  "name": "Sugar Bat",
+  "description": "A tiny candy bat that flutters around the next-piece sign with sugary enthusiasm.",
+  "stageId": "stage_sprinkle_sewers",
+  "rank": "regular",
+  "encounterRank": "regular",
+  "rarity": "common",
+  "tier": 1,
+  "role": "disruptor",
+  "wikiRole": "Disruptor",
+  "biome": "sprinkle_sewers",
+  "primaryMechanic": "Briefly hides or flickers next preview.",
+  "spriteKey": "mon_sugar_bat",
+  "iconKey": "ico_mon_sugar_bat",
+  "assetRefs": {
+    "idle": "mon_sugar_bat__idle",
+    "attack": "mon_sugar_bat__attack",
+    "hit": "mon_sugar_bat__hit",
+    "defeat": "mon_sugar_bat__defeat",
+    "icon": "ico_mon_sugar_bat",
+    "poseSheet": "mon_sugar_bat__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 32,
+    "attack": 3,
+    "armor": 0,
+    "attackIntervalLocks": 5
+  },
+  "intent": {
+    "id": "intent_screech",
+    "label": "Preview Peekaboo",
+    "description": "Briefly hides or flickers next preview."
+  },
+  "behaviors": [
+    "basic_attack",
+    "hide_next_piece"
+  ],
+  "eliteActions": [],
+  "bossActions": [],
+  "resistances": [],
+  "weaknesses": [
+    "line_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 11,
+    "goldMax": 23,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "stage_1",
+    "preview",
+    "flying",
+    "friendship",
+    "sprinkle_sewers",
+    "normal"
+  ],
+  "implementationStatus": "partial",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_mon_sugar_bat_idle",
+    "attack": "anim_mon_sugar_bat_attack",
+    "hit": "anim_mon_sugar_bat_hit",
+    "defeat": "anim_mon_sugar_bat_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

@@ -1,0 +1,71 @@
+{
+  "id": "mon_pillow_squire",
+  "name": "Pillow Squire",
+  "description": "A pillow squire proudly carrying spare cushions for the castle guard.",
+  "stageId": "stage_pillow_castle",
+  "rank": "regular",
+  "encounterRank": "regular",
+  "rarity": "uncommon",
+  "tier": 2,
+  "role": "summoner",
+  "wikiRole": "Support",
+  "biome": "pillow_castle",
+  "primaryMechanic": "Shields allies or adds soft block pressure.",
+  "spriteKey": "mon_pillow_squire",
+  "iconKey": "ico_mon_pillow_squire",
+  "assetRefs": {
+    "idle": "mon_pillow_squire__idle",
+    "attack": "mon_pillow_squire__attack",
+    "hit": "mon_pillow_squire__hit",
+    "defeat": "mon_pillow_squire__defeat",
+    "icon": "ico_mon_pillow_squire",
+    "poseSheet": "mon_pillow_squire__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 56,
+    "attack": 6,
+    "armor": 1,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_guard",
+    "label": "Guard Up",
+    "description": "Shields allies or adds soft block pressure."
+  },
+  "behaviors": [
+    "basic_attack",
+    "shield_self"
+  ],
+  "eliteActions": [],
+  "bossActions": [],
+  "resistances": [],
+  "weaknesses": [
+    "combo_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 20,
+    "goldMax": 38,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "stage_4",
+    "support",
+    "pillow_castle",
+    "normal"
+  ],
+  "implementationStatus": "partial",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_mon_pillow_squire_idle",
+    "attack": "anim_mon_pillow_squire_attack",
+    "hit": "anim_mon_pillow_squire_hit",
+    "defeat": "anim_mon_pillow_squire_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

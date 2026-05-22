@@ -1,0 +1,72 @@
+{
+  "id": "mon_button_masher",
+  "name": "Button Masher",
+  "description": "A giggling goblin who mashes bright buttons before reading the labels.",
+  "stageId": "stage_goblin_workshop",
+  "rank": "regular",
+  "encounterRank": "regular",
+  "rarity": "common",
+  "tier": 1,
+  "role": "disruptor",
+  "wikiRole": "Disruptor",
+  "biome": "goblin_workshop",
+  "primaryMechanic": "Board shake or button-prank warning.",
+  "spriteKey": "mon_button_masher",
+  "iconKey": "ico_mon_button_masher",
+  "assetRefs": {
+    "idle": "mon_button_masher__idle",
+    "attack": "mon_button_masher__attack",
+    "hit": "mon_button_masher__hit",
+    "defeat": "mon_button_masher__defeat",
+    "icon": "ico_mon_button_masher",
+    "poseSheet": "mon_button_masher__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 40,
+    "attack": 4,
+    "armor": 0,
+    "attackIntervalLocks": 5
+  },
+  "intent": {
+    "id": "intent_screech",
+    "label": "Button Masher Attack",
+    "description": "Board shake or button-prank warning."
+  },
+  "behaviors": [
+    "basic_attack",
+    "shake_board"
+  ],
+  "eliteActions": [],
+  "bossActions": [],
+  "resistances": [],
+  "weaknesses": [
+    "line_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 14,
+    "goldMax": 28,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "stage_2",
+    "board_disruptor",
+    "friendship",
+    "goblin_workshop",
+    "normal"
+  ],
+  "implementationStatus": "partial",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_mon_button_masher_idle",
+    "attack": "anim_mon_button_masher_attack",
+    "hit": "anim_mon_button_masher_hit",
+    "defeat": "anim_mon_button_masher_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

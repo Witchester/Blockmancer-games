@@ -4,14 +4,17 @@
   "description": "A soft fortress where sleepy guards patrol blanket halls.",
   "theme": "royal_ruins",
   "monsterPool": [
-    "mon_pillow_pawn",
-    "mon_blanket_bard",
-    "mon_dream_drummer",
-    "mon_snore_squire",
-    "mon_quilt_knight",
-    "mon_crown_mime"
+    "mon_button_knight",
+    "mon_blanket_ghost",
+    "mon_plush_dragon",
+    "mon_toy_soldier",
+    "mon_pillow_squire",
+    "mon_sock_sprite"
   ],
-  "eliteMonsterPool": ["mon_elite_blanket_ghost_duchess", "mon_elite_button_knight_captain"],
+  "eliteMonsterPool": [
+    "mon_elite_blanket_ghost_duchess",
+    "mon_elite_button_knight_captain"
+  ],
   "bossId": "mon_boss_sir_snore_a_lot",
   "lootTableId": "loot_battle_default",
   "enabled": true

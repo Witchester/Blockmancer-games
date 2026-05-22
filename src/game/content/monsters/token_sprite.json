@@ -1,0 +1,70 @@
+{
+  "id": "mon_token_sprite",
+  "name": "Token Sprite",
+  "description": "A bright arcade token sprite that jingles with every bounce.",
+  "stageId": "stage_starfall_arcade",
+  "rank": "regular",
+  "encounterRank": "regular",
+  "rarity": "rare",
+  "tier": 3,
+  "role": "basic",
+  "wikiRole": "Basic arcade attacker",
+  "biome": "starfall_arcade",
+  "primaryMechanic": "Uses token toss and small score pressure.",
+  "spriteKey": "mon_token_sprite",
+  "iconKey": "ico_mon_token_sprite",
+  "assetRefs": {
+    "idle": "mon_token_sprite__idle",
+    "attack": "mon_token_sprite__attack",
+    "hit": "mon_token_sprite__hit",
+    "defeat": "mon_token_sprite__defeat",
+    "icon": "ico_mon_token_sprite",
+    "poseSheet": "mon_token_sprite__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 64,
+    "attack": 7,
+    "armor": 1,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_attack",
+    "label": "Token Sprite Attack",
+    "description": "Uses token toss and small score pressure."
+  },
+  "behaviors": [
+    "basic_attack"
+  ],
+  "eliteActions": [],
+  "bossActions": [],
+  "resistances": [],
+  "weaknesses": [
+    "combo_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 23,
+    "goldMax": 43,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "stage_5",
+    "arcade",
+    "starfall_arcade",
+    "normal"
+  ],
+  "implementationStatus": "partial",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_mon_token_sprite_idle",
+    "attack": "anim_mon_token_sprite_attack",
+    "hit": "anim_mon_token_sprite_hit",
+    "defeat": "anim_mon_token_sprite_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

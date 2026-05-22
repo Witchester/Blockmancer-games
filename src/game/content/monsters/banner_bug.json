@@ -1,0 +1,74 @@
+{
+  "id": "mon_banner_bug",
+  "name": "Banner Bug",
+  "description": "A small banner bug dragging ribbons through the palace floor plan.",
+  "stageId": "stage_bloxley_block_palace",
+  "rank": "regular",
+  "encounterRank": "regular",
+  "rarity": "rare",
+  "tier": 3,
+  "role": "summoner",
+  "wikiRole": "Support / pest",
+  "biome": "bloxley_block_palace",
+  "primaryMechanic": "Adds banner-pattern nuisance and cleanup priority.",
+  "spriteKey": "mon_banner_bug",
+  "iconKey": "ico_mon_banner_bug",
+  "assetRefs": {
+    "idle": "mon_banner_bug__idle",
+    "attack": "mon_banner_bug__attack",
+    "hit": "mon_banner_bug__hit",
+    "defeat": "mon_banner_bug__defeat",
+    "icon": "ico_mon_banner_bug",
+    "poseSheet": "mon_banner_bug__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 72,
+    "attack": 8,
+    "armor": 1,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_throw_junk",
+    "label": "Crumb Toss",
+    "description": "Adds banner-pattern nuisance and cleanup priority."
+  },
+  "behaviors": [
+    "basic_attack",
+    "spawn_junk",
+    "pattern_junk"
+  ],
+  "eliteActions": [],
+  "bossActions": [],
+  "resistances": [],
+  "weaknesses": [
+    "bomb",
+    "line_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 26,
+    "goldMax": 48,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "stage_6",
+    "small",
+    "royal",
+    "bloxley_block_palace",
+    "normal"
+  ],
+  "implementationStatus": "partial",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_mon_banner_bug_idle",
+    "attack": "anim_mon_banner_bug_attack",
+    "hit": "anim_mon_banner_bug_hit",
+    "defeat": "anim_mon_banner_bug_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

@@ -1,0 +1,84 @@
+{
+  "id": "mon_elite_blanket_ghost_duchess",
+  "name": "Blanket Ghost Duchess",
+  "description": "Blanket Ghost Duchess is an elite Pillow Castle encounter. Uses sleepy warnings and soft castle pressure.",
+  "stageId": "stage_pillow_castle",
+  "rank": "elite",
+  "encounterRank": "elite",
+  "rarity": "elite",
+  "tier": 4,
+  "role": "elite",
+  "wikiRole": "Sleepy / soft pressure",
+  "biome": "pillow_castle",
+  "primaryMechanic": "Uses sleepy warnings and soft castle pressure.",
+  "spriteKey": "mon_elite_blanket_ghost_duchess",
+  "iconKey": "ico_mon_elite_blanket_ghost_duchess",
+  "assetRefs": {
+    "idle": "mon_elite_blanket_ghost_duchess__idle",
+    "attack": "mon_elite_blanket_ghost_duchess__attack",
+    "hit": "mon_elite_blanket_ghost_duchess__hit",
+    "defeat": "mon_elite_blanket_ghost_duchess__defeat",
+    "icon": "ico_mon_elite_blanket_ghost_duchess",
+    "poseSheet": "mon_elite_blanket_ghost_duchess__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 96,
+    "attack": 8,
+    "armor": 1,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_hex",
+    "label": "Sleepy Tune",
+    "description": "Uses sleepy warnings and soft castle pressure."
+  },
+  "behaviors": [
+    "basic_attack",
+    "sleep_player"
+  ],
+  "eliteActions": [
+    {
+      "id": "basic_attack",
+      "label": "basic attack",
+      "warningRequired": false
+    },
+    {
+      "id": "sleep_player",
+      "label": "sleep player",
+      "warningRequired": true
+    }
+  ],
+  "bossActions": [],
+  "resistances": [],
+  "weaknesses": [
+    "combo_damage",
+    "cascade_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.75,
+    "fallSpeedModifier": 0.01
+  },
+  "rewards": {
+    "goldMin": 36,
+    "goldMax": 59,
+    "rewardRolls": 2,
+    "lootTableId": "loot_elite_default"
+  },
+  "tags": [
+    "sleepy",
+    "counter_sleep",
+    "stage_4",
+    "pillow_castle",
+    "elite"
+  ],
+  "implementationStatus": "fallback_only",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_mon_elite_blanket_ghost_duchess_idle",
+    "attack": "anim_mon_elite_blanket_ghost_duchess_attack",
+    "hit": "anim_mon_elite_blanket_ghost_duchess_hit",
+    "defeat": "anim_mon_elite_blanket_ghost_duchess_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

@@ -1,16 +1,16 @@
 # ASSET Folder Structure Standardization Audit
 
-Generated: 2026-05-21T06:25:46.421Z
+Generated: 2026-05-22T09:06:15.632Z
 
 ## Summary
-- Runtime/content asset-like keys scanned: 521
-- Expected unique keys and exact frames: 2130
-- Physical assets scanned: 585
-- Missing primary files: 1676
+- Runtime/content asset-like keys scanned: 873
+- Expected unique keys and exact frames: 2657
+- Physical assets scanned: 581
+- Missing primary files: 2227
 - Legacy-only files: 13
-- Fallback-safe missing production assets: 1663
-- Content keys with no physical primary or legacy file: 113
-- Physical-only orphan/legacy candidates: 118
+- Fallback-safe missing production assets: 2214
+- Content keys with no physical primary or legacy file: 451
+- Physical-only orphan/legacy candidates: 141
 
 ## Missing primary files
 - `block_toolbox__glow__f01` -> `/assets/sprites/board-blocks/block_toolbox/glow/block_toolbox__glow__f01.png` (animation_manifest)
@@ -33,286 +33,286 @@ Generated: 2026-05-21T06:25:46.421Z
 - `hero_poplin_professor` -> `/assets/sprites/heroes/hero_poplin_professor/idle/hero_poplin_professor__idle__f00.png` (content_json)
 - `hero_zuzu_goblin_engineer` -> `/assets/sprites/heroes/hero_zuzu_goblin_engineer/idle/hero_zuzu_goblin_engineer__idle__f00.png` (content_json)
 - `ico_hero_zuzu_goblin_engineer` -> `/assets/portraits/heroes/hero_zuzu_goblin_engineer__portrait_icon__f00.png` (content_json)
-- `ico_mon_arcade_spark` -> `/assets/placeholders/ico_mon_arcade_spark.png` (content_json)
-- `ico_mon_bat` -> `/assets/placeholders/ico_mon_bat.png` (content_json)
-- `ico_mon_blanket_bard` -> `/assets/placeholders/ico_mon_blanket_bard.png` (content_json)
-- `ico_mon_block_baron` -> `/assets/placeholders/ico_mon_block_baron.png` (content_json)
-- `ico_mon_bolt_beetle` -> `/assets/placeholders/ico_mon_bolt_beetle.png` (content_json)
-- `ico_mon_boss_cupcake_slime_king` -> `/assets/placeholders/ico_mon_boss_cupcake_slime_king.png` (content_json)
-- `ico_mon_boss_gelato_golem` -> `/assets/placeholders/ico_mon_boss_gelato_golem.png` (content_json)
-- `ico_mon_boss_high_score_hydra` -> `/assets/placeholders/ico_mon_boss_high_score_hydra.png` (content_json)
-- `ico_mon_boss_king_bloxley` -> `/assets/placeholders/ico_mon_boss_king_bloxley.png` (content_json)
-- `ico_mon_boss_prototype_no_7` -> `/assets/placeholders/ico_mon_boss_prototype_no_7.png` (content_json)
-- `ico_mon_boss_sir_snore_a_lot` -> `/assets/placeholders/ico_mon_boss_sir_snore_a_lot.png` (content_json)
-- `ico_mon_bubble_bat` -> `/assets/placeholders/ico_mon_bubble_bat.png` (content_json)
-- `ico_mon_chilly_churro` -> `/assets/placeholders/ico_mon_chilly_churro.png` (content_json)
-- `ico_mon_combo_crab` -> `/assets/placeholders/ico_mon_combo_crab.png` (content_json)
-- `ico_mon_crown_mime` -> `/assets/placeholders/ico_mon_crown_mime.png` (content_json)
-- `ico_mon_cupcake_imp` -> `/assets/placeholders/ico_mon_cupcake_imp.png` (content_json)
-- `ico_mon_dream_drummer` -> `/assets/placeholders/ico_mon_dream_drummer.png` (content_json)
-- `ico_mon_elite_knight` -> `/assets/placeholders/ico_mon_elite_knight.png` (content_json)
-- `ico_mon_boss_falling_king` -> `/assets/placeholders/ico_mon_boss_falling_king.png` (content_json)
-- `ico_mon_frosting_fox` -> `/assets/placeholders/ico_mon_frosting_fox.png` (content_json)
-- `ico_mon_gadget_goblin` -> `/assets/placeholders/ico_mon_gadget_goblin.png` (content_json)
-- `ico_mon_gear_gremlin` -> `/assets/placeholders/ico_mon_gear_gremlin.png` (content_json)
-- `ico_mon_gelato_blob` -> `/assets/placeholders/ico_mon_gelato_blob.png` (content_json)
-- `ico_mon_dungeon_goblin` -> `/assets/placeholders/ico_mon_dungeon_goblin.png` (content_json)
-- `ico_mon_ice_pop_mimic` -> `/assets/placeholders/ico_mon_ice_pop_mimic.png` (content_json)
-- `ico_mon_joystick_jinxer` -> `/assets/placeholders/ico_mon_joystick_jinxer.png` (content_json)
-- `ico_mon_palace_jester` -> `/assets/placeholders/ico_mon_palace_jester.png` (content_json)
-- `ico_mon_pillow_pawn` -> `/assets/placeholders/ico_mon_pillow_pawn.png` (content_json)
-- `ico_mon_pipe_peeker` -> `/assets/placeholders/ico_mon_pipe_peeker.png` (content_json)
-- `ico_mon_quilt_knight` -> `/assets/placeholders/ico_mon_quilt_knight.png` (content_json)
-- `ico_mon_royal_page` -> `/assets/placeholders/ico_mon_royal_page.png` (content_json)
-- `ico_mon_score_specter` -> `/assets/placeholders/ico_mon_score_specter.png` (content_json)
-- `ico_mon_dungeon_slime` -> `/assets/placeholders/ico_mon_dungeon_slime.png` (content_json)
-- `ico_mon_snore_squire` -> `/assets/placeholders/ico_mon_snore_squire.png` (content_json)
-- `ico_mon_snowcone_sprite` -> `/assets/placeholders/ico_mon_snowcone_sprite.png` (content_json)
-- `ico_mon_spring_bot` -> `/assets/placeholders/ico_mon_spring_bot.png` (content_json)
-- `ico_mon_sprinkle_rat` -> `/assets/placeholders/ico_mon_sprinkle_rat.png` (content_json)
-- `ico_mon_stone_golem` -> `/assets/placeholders/ico_mon_stone_golem.png` (content_json)
-- `ico_mon_syrup_slug` -> `/assets/placeholders/ico_mon_syrup_slug.png` (content_json)
-- `ico_mon_ticket_tumbler` -> `/assets/placeholders/ico_mon_ticket_tumbler.png` (content_json)
-- `ico_mon_witch` -> `/assets/placeholders/ico_mon_witch.png` (content_json)
-- `ico_mon_wrench_wisp` -> `/assets/placeholders/ico_mon_wrench_wisp.png` (content_json)
-- `oops_square_only` -> `/assets/placeholders/oops_square_only.png` (content_json)
-- `oops_slippery_buttons` -> `/assets/placeholders/oops_slippery_buttons.png` (content_json)
-- `oops_sticky_floor` -> `/assets/placeholders/oops_sticky_floor.png` (content_json)
-- `oops_snack_tax` -> `/assets/placeholders/oops_snack_tax.png` (content_json)
-- `oops_overexcited_machine` -> `/assets/placeholders/oops_overexcited_machine.png` (content_json)
-- `oops_heavy_blocks` -> `/assets/placeholders/oops_heavy_blocks.png` (content_json)
-- `oops_sugar_crash` -> `/assets/placeholders/oops_sugar_crash.png` (content_json)
-- `oops_too_much_confetti` -> `/assets/placeholders/oops_too_much_confetti.png` (content_json)
-- `placeholder_relic` -> `/assets/placeholders/placeholder_relic.png` (content_json)
-- `icon_broken_hourglass` -> `/assets/placeholders/icon_broken_hourglass.png` (content_json)
-- `icon_goblin_coin` -> `/assets/placeholders/icon_goblin_coin.png` (content_json)
-- `icon_slime_core` -> `/assets/placeholders/icon_slime_core.png` (content_json)
-- `evt_arcade_challenge` -> `/assets/icons/room-events/evt_arcade_challenge.png` (content_json)
-- `bg_event_arcade` -> `/assets/stages/global-scenes/bg_event_arcade.png` (content_json)
-- `evt_block_o_manual_page` -> `/assets/icons/room-events/evt_block_o_manual_page.png` (content_json)
-- `bg_event_manual` -> `/assets/stages/global-scenes/bg_event_manual.png` (content_json)
-- `evt_cursed_fountain` -> `/assets/icons/room-events/evt_cursed_fountain.png` (content_json)
-- `bg_event_fountain` -> `/assets/stages/global-scenes/bg_event_fountain.png` (content_json)
-- `evt_goblin_quality_test` -> `/assets/icons/room-events/evt_goblin_quality_test.png` (content_json)
-- `bg_event_workshop` -> `/assets/stages/global-scenes/bg_event_workshop.png` (content_json)
-- `evt_mana_well` -> `/assets/icons/room-events/evt_mana_well.png` (content_json)
-- `bg_event_well` -> `/assets/stages/global-scenes/bg_event_well.png` (content_json)
-- `evt_rainbow_fountain` -> `/assets/icons/room-events/evt_rainbow_fountain.png` (content_json)
-- `bg_event_festival` -> `/assets/stages/global-scenes/bg_event_festival.png` (content_json)
-- `evt_suspicious_button` -> `/assets/icons/room-events/evt_suspicious_button.png` (content_json)
-- `icon_confetti_bomb` -> `/assets/placeholders/icon_confetti_bomb.png` (content_json)
-- `anim_spell_bomb_rune` -> `/assets/placeholders/anim_spell_bomb_rune.png` (content_json)
-- `placeholder_spell` -> `/assets/placeholders/placeholder_spell.png` (content_json)
-- `anim_spell_bubble_shield` -> `/assets/placeholders/anim_spell_bubble_shield.png` (content_json)
-- `spell_glaze_line` -> `/assets/placeholders/spell_glaze_line.png` (content_json)
-- `effect_burn_line` -> `/assets/placeholders/effect_burn_line.png` (content_json)
-- `anim_spell_cascade_cheer` -> `/assets/placeholders/anim_spell_cascade_cheer.png` (content_json)
-- `icon_void_cut` -> `/assets/placeholders/icon_void_cut.png` (content_json)
-- `anim_spell_clean_cut` -> `/assets/placeholders/anim_spell_clean_cut.png` (content_json)
-- `anim_spell_confetti_pop` -> `/assets/placeholders/anim_spell_confetti_pop.png` (content_json)
-- `anim_spell_cupcake_blast` -> `/assets/placeholders/anim_spell_cupcake_blast.png` (content_json)
-- `icon_sprinkle_spark` -> `/assets/placeholders/icon_sprinkle_spark.png` (content_json)
-- `anim_spell_fireball` -> `/assets/placeholders/anim_spell_fireball.png` (content_json)
-- `icon_frost_lock` -> `/assets/placeholders/icon_frost_lock.png` (content_json)
-- `anim_spell_frost_lock` -> `/assets/placeholders/anim_spell_frost_lock.png` (content_json)
-- `anim_spell_goblin_gadget` -> `/assets/placeholders/anim_spell_goblin_gadget.png` (content_json)
-- `spell_cascade_gravity` -> `/assets/placeholders/spell_cascade_gravity.png` (content_json)
-- `effect_gravity_flip` -> `/assets/placeholders/effect_gravity_flip.png` (content_json)
-- `spell_snack_glyph` -> `/assets/placeholders/spell_snack_glyph.png` (content_json)
-- `effect_heal_glyph` -> `/assets/placeholders/effect_heal_glyph.png` (content_json)
-- `spell_snowcone_shield` -> `/assets/placeholders/spell_snowcone_shield.png` (content_json)
-- `effect_ice_wall` -> `/assets/placeholders/effect_ice_wall.png` (content_json)
-- `anim_spell_jelly_bounce` -> `/assets/placeholders/anim_spell_jelly_bounce.png` (content_json)
-- `spell_spark_chain` -> `/assets/placeholders/spell_spark_chain.png` (content_json)
-- `effect_lightning_chain` -> `/assets/placeholders/effect_lightning_chain.png` (content_json)
-- `spell_mana_pop` -> `/assets/placeholders/spell_mana_pop.png` (content_json)
-- `effect_mana_burst` -> `/assets/placeholders/effect_mana_burst.png` (content_json)
-- `anim_spell_rainbow_reroll` -> `/assets/placeholders/anim_spell_rainbow_reroll.png` (content_json)
-- `anim_spell_snack_break` -> `/assets/placeholders/anim_spell_snack_break.png` (content_json)
-- `anim_spell_snowcone_burst` -> `/assets/placeholders/anim_spell_snowcone_burst.png` (content_json)
-- `anim_spell_sprinkle_shower` -> `/assets/placeholders/anim_spell_sprinkle_shower.png` (content_json)
-- `anim_spell_star_spark` -> `/assets/placeholders/anim_spell_star_spark.png` (content_json)
-- `icon_rainbow_slice` -> `/assets/placeholders/icon_rainbow_slice.png` (content_json)
-- `effect_slow` -> `/assets/placeholders/effect_slow.png` (content_json)
-- `effect_stun` -> `/assets/placeholders/effect_stun.png` (content_json)
-- `effect_vulnerable` -> `/assets/placeholders/effect_vulnerable.png` (content_json)
-- `icon_bomb_expert` -> `/assets/placeholders/icon_bomb_expert.png` (content_json)
-- `placeholder_upgrade` -> `/assets/placeholders/placeholder_upgrade.png` (content_json)
-- `icon_combo_heart` -> `/assets/placeholders/icon_combo_heart.png` (content_json)
-- `icon_fire_mastery` -> `/assets/placeholders/icon_fire_mastery.png` (content_json)
-- `icon_mana_echo` -> `/assets/placeholders/icon_mana_echo.png` (content_json)
-- `icon_sharp_edges` -> `/assets/placeholders/icon_sharp_edges.png` (content_json)
-- `icon_stable_hands` -> `/assets/placeholders/icon_stable_hands.png` (content_json)
-- `icon_festival_wand` -> `/assets/placeholders/icon_festival_wand.png` (content_json)
-- `placeholder_weapon` -> `/assets/placeholders/placeholder_weapon.png` (content_json)
-- `vfx_line_clear__play__f00` -> `/assets/effects/vfx_line_clear/vfx_line_clear__play__f00.png` (animation_manifest)
-- `vfx_line_clear__play__f01` -> `/assets/effects/vfx_line_clear/vfx_line_clear__play__f01.png` (animation_manifest)
-- `vfx_line_clear__play__f02` -> `/assets/effects/vfx_line_clear/vfx_line_clear__play__f02.png` (animation_manifest)
-- `vfx_line_clear__play__f03` -> `/assets/effects/vfx_line_clear/vfx_line_clear__play__f03.png` (animation_manifest)
-- `vfx_line_clear__play__f04` -> `/assets/effects/vfx_line_clear/vfx_line_clear__play__f04.png` (animation_manifest)
-- `vfx_line_clear__play__f05` -> `/assets/effects/vfx_line_clear/vfx_line_clear__play__f05.png` (animation_manifest)
-- `vfx_cascade_pop__play__f00` -> `/assets/effects/vfx_cascade_pop/vfx_cascade_pop__play__f00.png` (animation_manifest)
-- `vfx_cascade_pop__play__f01` -> `/assets/effects/vfx_cascade_pop/vfx_cascade_pop__play__f01.png` (animation_manifest)
-- `vfx_cascade_pop__play__f02` -> `/assets/effects/vfx_cascade_pop/vfx_cascade_pop__play__f02.png` (animation_manifest)
-- `vfx_cascade_pop__play__f03` -> `/assets/effects/vfx_cascade_pop/vfx_cascade_pop__play__f03.png` (animation_manifest)
-- `vfx_cascade_pop__play__f04` -> `/assets/effects/vfx_cascade_pop/vfx_cascade_pop__play__f04.png` (animation_manifest)
-- `vfx_cascade_pop__play__f05` -> `/assets/effects/vfx_cascade_pop/vfx_cascade_pop__play__f05.png` (animation_manifest)
-- `vfx_cascade_chain_bonus__play__f00` -> `/assets/effects/vfx_cascade_chain_bonus/vfx_cascade_chain_bonus__play__f00.png` (animation_manifest)
-- `vfx_cascade_chain_bonus__play__f01` -> `/assets/effects/vfx_cascade_chain_bonus/vfx_cascade_chain_bonus__play__f01.png` (animation_manifest)
-- `vfx_cascade_chain_bonus__play__f02` -> `/assets/effects/vfx_cascade_chain_bonus/vfx_cascade_chain_bonus__play__f02.png` (animation_manifest)
-- `vfx_cascade_chain_bonus__play__f03` -> `/assets/effects/vfx_cascade_chain_bonus/vfx_cascade_chain_bonus__play__f03.png` (animation_manifest)
-- `vfx_cascade_chain_bonus__play__f04` -> `/assets/effects/vfx_cascade_chain_bonus/vfx_cascade_chain_bonus__play__f04.png` (animation_manifest)
-- `vfx_bomb_explosion__play__f00` -> `/assets/effects/vfx_bomb_explosion/vfx_bomb_explosion__play__f00.png` (animation_manifest)
-- `vfx_bomb_explosion__play__f01` -> `/assets/effects/vfx_bomb_explosion/vfx_bomb_explosion__play__f01.png` (animation_manifest)
-- `vfx_bomb_explosion__play__f02` -> `/assets/effects/vfx_bomb_explosion/vfx_bomb_explosion__play__f02.png` (animation_manifest)
-- `vfx_bomb_explosion__play__f03` -> `/assets/effects/vfx_bomb_explosion/vfx_bomb_explosion__play__f03.png` (animation_manifest)
-- `vfx_bomb_explosion__play__f04` -> `/assets/effects/vfx_bomb_explosion/vfx_bomb_explosion__play__f04.png` (animation_manifest)
-- `vfx_bomb_explosion__play__f05` -> `/assets/effects/vfx_bomb_explosion/vfx_bomb_explosion__play__f05.png` (animation_manifest)
-- `vfx_bomb_explosion__play__f06` -> `/assets/effects/vfx_bomb_explosion/vfx_bomb_explosion__play__f06.png` (animation_manifest)
-- `vfx_bomb_explosion__play__f07` -> `/assets/effects/vfx_bomb_explosion/vfx_bomb_explosion__play__f07.png` (animation_manifest)
-- `vfx_star_burst__play__f00` -> `/assets/effects/vfx_star_burst/vfx_star_burst__play__f00.png` (animation_manifest)
-- `vfx_star_burst__play__f01` -> `/assets/effects/vfx_star_burst/vfx_star_burst__play__f01.png` (animation_manifest)
-- `vfx_star_burst__play__f02` -> `/assets/effects/vfx_star_burst/vfx_star_burst__play__f02.png` (animation_manifest)
-- `vfx_star_burst__play__f03` -> `/assets/effects/vfx_star_burst/vfx_star_burst__play__f03.png` (animation_manifest)
-- `vfx_star_burst__play__f04` -> `/assets/effects/vfx_star_burst/vfx_star_burst__play__f04.png` (animation_manifest)
-- `vfx_star_burst__play__f05` -> `/assets/effects/vfx_star_burst/vfx_star_burst__play__f05.png` (animation_manifest)
-- `vfx_mana_gain__play__f00` -> `/assets/effects/vfx_mana_gain/vfx_mana_gain__play__f00.png` (animation_manifest)
-- `vfx_mana_gain__play__f01` -> `/assets/effects/vfx_mana_gain/vfx_mana_gain__play__f01.png` (animation_manifest)
-- `vfx_mana_gain__play__f02` -> `/assets/effects/vfx_mana_gain/vfx_mana_gain__play__f02.png` (animation_manifest)
-- `vfx_mana_gain__play__f03` -> `/assets/effects/vfx_mana_gain/vfx_mana_gain__play__f03.png` (animation_manifest)
-- `vfx_mana_gain__play__f04` -> `/assets/effects/vfx_mana_gain/vfx_mana_gain__play__f04.png` (animation_manifest)
-- `vfx_heal_pop__play__f00` -> `/assets/effects/vfx_heal_pop/vfx_heal_pop__play__f00.png` (animation_manifest)
-- `vfx_heal_pop__play__f01` -> `/assets/effects/vfx_heal_pop/vfx_heal_pop__play__f01.png` (animation_manifest)
-- `vfx_heal_pop__play__f02` -> `/assets/effects/vfx_heal_pop/vfx_heal_pop__play__f02.png` (animation_manifest)
-- `vfx_heal_pop__play__f03` -> `/assets/effects/vfx_heal_pop/vfx_heal_pop__play__f03.png` (animation_manifest)
-- `vfx_heal_pop__play__f04` -> `/assets/effects/vfx_heal_pop/vfx_heal_pop__play__f04.png` (animation_manifest)
-- `vfx_enemy_hit__play__f00` -> `/assets/effects/vfx_enemy_hit/vfx_enemy_hit__play__f00.png` (animation_manifest)
-- `vfx_enemy_hit__play__f01` -> `/assets/effects/vfx_enemy_hit/vfx_enemy_hit__play__f01.png` (animation_manifest)
-- `vfx_enemy_hit__play__f02` -> `/assets/effects/vfx_enemy_hit/vfx_enemy_hit__play__f02.png` (animation_manifest)
-- `vfx_enemy_hit__play__f03` -> `/assets/effects/vfx_enemy_hit/vfx_enemy_hit__play__f03.png` (animation_manifest)
-- `vfx_enemy_defeat_poof__play__f00` -> `/assets/effects/vfx_enemy_defeat_poof/vfx_enemy_defeat_poof__play__f00.png` (animation_manifest)
-- `vfx_enemy_defeat_poof__play__f01` -> `/assets/effects/vfx_enemy_defeat_poof/vfx_enemy_defeat_poof__play__f01.png` (animation_manifest)
-- `vfx_enemy_defeat_poof__play__f02` -> `/assets/effects/vfx_enemy_defeat_poof/vfx_enemy_defeat_poof__play__f02.png` (animation_manifest)
-- `vfx_enemy_defeat_poof__play__f03` -> `/assets/effects/vfx_enemy_defeat_poof/vfx_enemy_defeat_poof__play__f03.png` (animation_manifest)
-- `vfx_enemy_defeat_poof__play__f04` -> `/assets/effects/vfx_enemy_defeat_poof/vfx_enemy_defeat_poof__play__f04.png` (animation_manifest)
-- `vfx_enemy_defeat_poof__play__f05` -> `/assets/effects/vfx_enemy_defeat_poof/vfx_enemy_defeat_poof__play__f05.png` (animation_manifest)
-- `vfx_player_hit__play__f00` -> `/assets/effects/vfx_player_hit/vfx_player_hit__play__f00.png` (animation_manifest)
-- `vfx_player_hit__play__f01` -> `/assets/effects/vfx_player_hit/vfx_player_hit__play__f01.png` (animation_manifest)
-- `vfx_player_hit__play__f02` -> `/assets/effects/vfx_player_hit/vfx_player_hit__play__f02.png` (animation_manifest)
-- `vfx_player_hit__play__f03` -> `/assets/effects/vfx_player_hit/vfx_player_hit__play__f03.png` (animation_manifest)
-- `vfx_shield_gain__play__f00` -> `/assets/effects/vfx_shield_gain/vfx_shield_gain__play__f00.png` (animation_manifest)
-- `vfx_shield_gain__play__f01` -> `/assets/effects/vfx_shield_gain/vfx_shield_gain__play__f01.png` (animation_manifest)
-- `vfx_shield_gain__play__f02` -> `/assets/effects/vfx_shield_gain/vfx_shield_gain__play__f02.png` (animation_manifest)
-- `vfx_shield_gain__play__f03` -> `/assets/effects/vfx_shield_gain/vfx_shield_gain__play__f03.png` (animation_manifest)
-- `vfx_shield_gain__play__f04` -> `/assets/effects/vfx_shield_gain/vfx_shield_gain__play__f04.png` (animation_manifest)
-- `vfx_reward_pickup__play__f00` -> `/assets/effects/vfx_reward_pickup/vfx_reward_pickup__play__f00.png` (animation_manifest)
-- `vfx_reward_pickup__play__f01` -> `/assets/effects/vfx_reward_pickup/vfx_reward_pickup__play__f01.png` (animation_manifest)
-- `vfx_reward_pickup__play__f02` -> `/assets/effects/vfx_reward_pickup/vfx_reward_pickup__play__f02.png` (animation_manifest)
-- `vfx_reward_pickup__play__f03` -> `/assets/effects/vfx_reward_pickup/vfx_reward_pickup__play__f03.png` (animation_manifest)
-- `vfx_reward_pickup__play__f04` -> `/assets/effects/vfx_reward_pickup/vfx_reward_pickup__play__f04.png` (animation_manifest)
-- `spl_fireball__cast__f00` -> `/assets/effects/spl_fireball/spl_fireball__cast__f00.png` (animation_manifest)
-- `spl_fireball__cast__f01` -> `/assets/effects/spl_fireball/spl_fireball__cast__f01.png` (animation_manifest)
-- `spl_fireball__cast__f02` -> `/assets/effects/spl_fireball/spl_fireball__cast__f02.png` (animation_manifest)
-- `spl_fireball__cast__f03` -> `/assets/effects/spl_fireball/spl_fireball__cast__f03.png` (animation_manifest)
-- `spl_fireball__cast__f04` -> `/assets/effects/spl_fireball/spl_fireball__cast__f04.png` (animation_manifest)
-- `spl_fireball__cast__f05` -> `/assets/effects/spl_fireball/spl_fireball__cast__f05.png` (animation_manifest)
-- `spl_fireball__cast__f06` -> `/assets/effects/spl_fireball/spl_fireball__cast__f06.png` (animation_manifest)
-- `spl_fireball__cast__f07` -> `/assets/effects/spl_fireball/spl_fireball__cast__f07.png` (animation_manifest)
-- `spl_frost_lock__cast__f00` -> `/assets/effects/spl_frost_lock/spl_frost_lock__cast__f00.png` (animation_manifest)
-- `spl_frost_lock__cast__f01` -> `/assets/effects/spl_frost_lock/spl_frost_lock__cast__f01.png` (animation_manifest)
-- `spl_frost_lock__cast__f02` -> `/assets/effects/spl_frost_lock/spl_frost_lock__cast__f02.png` (animation_manifest)
-- `spl_frost_lock__cast__f03` -> `/assets/effects/spl_frost_lock/spl_frost_lock__cast__f03.png` (animation_manifest)
-- `spl_frost_lock__cast__f04` -> `/assets/effects/spl_frost_lock/spl_frost_lock__cast__f04.png` (animation_manifest)
-- `spl_frost_lock__cast__f05` -> `/assets/effects/spl_frost_lock/spl_frost_lock__cast__f05.png` (animation_manifest)
-- `spl_bomb_rune__cast__f00` -> `/assets/effects/spl_bomb_rune/spl_bomb_rune__cast__f00.png` (animation_manifest)
-- `spl_bomb_rune__cast__f01` -> `/assets/effects/spl_bomb_rune/spl_bomb_rune__cast__f01.png` (animation_manifest)
-- `spl_bomb_rune__cast__f02` -> `/assets/effects/spl_bomb_rune/spl_bomb_rune__cast__f02.png` (animation_manifest)
-- `spl_bomb_rune__cast__f03` -> `/assets/effects/spl_bomb_rune/spl_bomb_rune__cast__f03.png` (animation_manifest)
-- `spl_bomb_rune__cast__f04` -> `/assets/effects/spl_bomb_rune/spl_bomb_rune__cast__f04.png` (animation_manifest)
-- `spl_bomb_rune__cast__f05` -> `/assets/effects/spl_bomb_rune/spl_bomb_rune__cast__f05.png` (animation_manifest)
-- `spl_bomb_rune__cast__f06` -> `/assets/effects/spl_bomb_rune/spl_bomb_rune__cast__f06.png` (animation_manifest)
-- `spl_bomb_rune__cast__f07` -> `/assets/effects/spl_bomb_rune/spl_bomb_rune__cast__f07.png` (animation_manifest)
-- `spl_clean_cut__cast__f00` -> `/assets/effects/spl_clean_cut/spl_clean_cut__cast__f00.png` (animation_manifest)
-- `spl_clean_cut__cast__f01` -> `/assets/effects/spl_clean_cut/spl_clean_cut__cast__f01.png` (animation_manifest)
-- `spl_clean_cut__cast__f02` -> `/assets/effects/spl_clean_cut/spl_clean_cut__cast__f02.png` (animation_manifest)
-- `spl_clean_cut__cast__f03` -> `/assets/effects/spl_clean_cut/spl_clean_cut__cast__f03.png` (animation_manifest)
-- `spl_clean_cut__cast__f04` -> `/assets/effects/spl_clean_cut/spl_clean_cut__cast__f04.png` (animation_manifest)
-- `spl_clean_cut__cast__f05` -> `/assets/effects/spl_clean_cut/spl_clean_cut__cast__f05.png` (animation_manifest)
-- `spl_sprinkle_shower__cast__f00` -> `/assets/effects/spl_sprinkle_shower/spl_sprinkle_shower__cast__f00.png` (animation_manifest)
-- `spl_sprinkle_shower__cast__f01` -> `/assets/effects/spl_sprinkle_shower/spl_sprinkle_shower__cast__f01.png` (animation_manifest)
-- `spl_sprinkle_shower__cast__f02` -> `/assets/effects/spl_sprinkle_shower/spl_sprinkle_shower__cast__f02.png` (animation_manifest)
-- `spl_sprinkle_shower__cast__f03` -> `/assets/effects/spl_sprinkle_shower/spl_sprinkle_shower__cast__f03.png` (animation_manifest)
-- `spl_sprinkle_shower__cast__f04` -> `/assets/effects/spl_sprinkle_shower/spl_sprinkle_shower__cast__f04.png` (animation_manifest)
-- `spl_sprinkle_shower__cast__f05` -> `/assets/effects/spl_sprinkle_shower/spl_sprinkle_shower__cast__f05.png` (animation_manifest)
-- `spl_cupcake_blast__cast__f00` -> `/assets/effects/spl_cupcake_blast/spl_cupcake_blast__cast__f00.png` (animation_manifest)
-- `spl_cupcake_blast__cast__f01` -> `/assets/effects/spl_cupcake_blast/spl_cupcake_blast__cast__f01.png` (animation_manifest)
-- `spl_cupcake_blast__cast__f02` -> `/assets/effects/spl_cupcake_blast/spl_cupcake_blast__cast__f02.png` (animation_manifest)
-- `spl_cupcake_blast__cast__f03` -> `/assets/effects/spl_cupcake_blast/spl_cupcake_blast__cast__f03.png` (animation_manifest)
-- `spl_cupcake_blast__cast__f04` -> `/assets/effects/spl_cupcake_blast/spl_cupcake_blast__cast__f04.png` (animation_manifest)
-- `spl_cupcake_blast__cast__f05` -> `/assets/effects/spl_cupcake_blast/spl_cupcake_blast__cast__f05.png` (animation_manifest)
-- `spl_confetti_pop__cast__f00` -> `/assets/effects/spl_confetti_pop/spl_confetti_pop__cast__f00.png` (animation_manifest)
-- `spl_confetti_pop__cast__f01` -> `/assets/effects/spl_confetti_pop/spl_confetti_pop__cast__f01.png` (animation_manifest)
-- `spl_confetti_pop__cast__f02` -> `/assets/effects/spl_confetti_pop/spl_confetti_pop__cast__f02.png` (animation_manifest)
-- `spl_confetti_pop__cast__f03` -> `/assets/effects/spl_confetti_pop/spl_confetti_pop__cast__f03.png` (animation_manifest)
-- `spl_confetti_pop__cast__f04` -> `/assets/effects/spl_confetti_pop/spl_confetti_pop__cast__f04.png` (animation_manifest)
-- `spl_confetti_pop__cast__f05` -> `/assets/effects/spl_confetti_pop/spl_confetti_pop__cast__f05.png` (animation_manifest)
-- `spl_bubble_shield__cast__f00` -> `/assets/effects/spl_bubble_shield/spl_bubble_shield__cast__f00.png` (animation_manifest)
-- `spl_bubble_shield__cast__f01` -> `/assets/effects/spl_bubble_shield/spl_bubble_shield__cast__f01.png` (animation_manifest)
-- `spl_bubble_shield__cast__f02` -> `/assets/effects/spl_bubble_shield/spl_bubble_shield__cast__f02.png` (animation_manifest)
-- `spl_bubble_shield__cast__f03` -> `/assets/effects/spl_bubble_shield/spl_bubble_shield__cast__f03.png` (animation_manifest)
-- `spl_bubble_shield__cast__f04` -> `/assets/effects/spl_bubble_shield/spl_bubble_shield__cast__f04.png` (animation_manifest)
-- `spl_bubble_shield__cast__f05` -> `/assets/effects/spl_bubble_shield/spl_bubble_shield__cast__f05.png` (animation_manifest)
-- `spl_star_spark__cast__f00` -> `/assets/effects/spl_star_spark/spl_star_spark__cast__f00.png` (animation_manifest)
-- `spl_star_spark__cast__f01` -> `/assets/effects/spl_star_spark/spl_star_spark__cast__f01.png` (animation_manifest)
-- `spl_star_spark__cast__f02` -> `/assets/effects/spl_star_spark/spl_star_spark__cast__f02.png` (animation_manifest)
-- `spl_star_spark__cast__f03` -> `/assets/effects/spl_star_spark/spl_star_spark__cast__f03.png` (animation_manifest)
-- `spl_star_spark__cast__f04` -> `/assets/effects/spl_star_spark/spl_star_spark__cast__f04.png` (animation_manifest)
-- `spl_star_spark__cast__f05` -> `/assets/effects/spl_star_spark/spl_star_spark__cast__f05.png` (animation_manifest)
-- `spl_star_spark__cast__f06` -> `/assets/effects/spl_star_spark/spl_star_spark__cast__f06.png` (animation_manifest)
-- `spl_jelly_bounce__cast__f00` -> `/assets/effects/spl_jelly_bounce/spl_jelly_bounce__cast__f00.png` (animation_manifest)
-- `spl_jelly_bounce__cast__f01` -> `/assets/effects/spl_jelly_bounce/spl_jelly_bounce__cast__f01.png` (animation_manifest)
-- `spl_jelly_bounce__cast__f02` -> `/assets/effects/spl_jelly_bounce/spl_jelly_bounce__cast__f02.png` (animation_manifest)
-- `spl_jelly_bounce__cast__f03` -> `/assets/effects/spl_jelly_bounce/spl_jelly_bounce__cast__f03.png` (animation_manifest)
-- `spl_jelly_bounce__cast__f04` -> `/assets/effects/spl_jelly_bounce/spl_jelly_bounce__cast__f04.png` (animation_manifest)
-- `spl_jelly_bounce__cast__f05` -> `/assets/effects/spl_jelly_bounce/spl_jelly_bounce__cast__f05.png` (animation_manifest)
-- `spl_snowcone_burst__cast__f00` -> `/assets/effects/spl_snowcone_burst/spl_snowcone_burst__cast__f00.png` (animation_manifest)
-- `spl_snowcone_burst__cast__f01` -> `/assets/effects/spl_snowcone_burst/spl_snowcone_burst__cast__f01.png` (animation_manifest)
-- `spl_snowcone_burst__cast__f02` -> `/assets/effects/spl_snowcone_burst/spl_snowcone_burst__cast__f02.png` (animation_manifest)
-- `spl_snowcone_burst__cast__f03` -> `/assets/effects/spl_snowcone_burst/spl_snowcone_burst__cast__f03.png` (animation_manifest)
-- `spl_snowcone_burst__cast__f04` -> `/assets/effects/spl_snowcone_burst/spl_snowcone_burst__cast__f04.png` (animation_manifest)
-- `spl_snowcone_burst__cast__f05` -> `/assets/effects/spl_snowcone_burst/spl_snowcone_burst__cast__f05.png` (animation_manifest)
-- `spl_goblin_gadget__cast__f00` -> `/assets/effects/spl_goblin_gadget/spl_goblin_gadget__cast__f00.png` (animation_manifest)
-- `spl_goblin_gadget__cast__f01` -> `/assets/effects/spl_goblin_gadget/spl_goblin_gadget__cast__f01.png` (animation_manifest)
-- `spl_goblin_gadget__cast__f02` -> `/assets/effects/spl_goblin_gadget/spl_goblin_gadget__cast__f02.png` (animation_manifest)
-- `spl_goblin_gadget__cast__f03` -> `/assets/effects/spl_goblin_gadget/spl_goblin_gadget__cast__f03.png` (animation_manifest)
-- `spl_goblin_gadget__cast__f04` -> `/assets/effects/spl_goblin_gadget/spl_goblin_gadget__cast__f04.png` (animation_manifest)
-- `spl_goblin_gadget__cast__f05` -> `/assets/effects/spl_goblin_gadget/spl_goblin_gadget__cast__f05.png` (animation_manifest)
-- `spl_goblin_gadget__cast__f06` -> `/assets/effects/spl_goblin_gadget/spl_goblin_gadget__cast__f06.png` (animation_manifest)
-- `spl_rainbow_reroll__cast__f00` -> `/assets/effects/spl_rainbow_reroll/spl_rainbow_reroll__cast__f00.png` (animation_manifest)
-- `spl_rainbow_reroll__cast__f01` -> `/assets/effects/spl_rainbow_reroll/spl_rainbow_reroll__cast__f01.png` (animation_manifest)
-- `spl_rainbow_reroll__cast__f02` -> `/assets/effects/spl_rainbow_reroll/spl_rainbow_reroll__cast__f02.png` (animation_manifest)
-- `spl_rainbow_reroll__cast__f03` -> `/assets/effects/spl_rainbow_reroll/spl_rainbow_reroll__cast__f03.png` (animation_manifest)
-- `spl_rainbow_reroll__cast__f04` -> `/assets/effects/spl_rainbow_reroll/spl_rainbow_reroll__cast__f04.png` (animation_manifest)
-- `spl_rainbow_reroll__cast__f05` -> `/assets/effects/spl_rainbow_reroll/spl_rainbow_reroll__cast__f05.png` (animation_manifest)
-- `spl_rainbow_reroll__cast__f06` -> `/assets/effects/spl_rainbow_reroll/spl_rainbow_reroll__cast__f06.png` (animation_manifest)
-- `spl_snack_break__cast__f00` -> `/assets/effects/spl_snack_break/spl_snack_break__cast__f00.png` (animation_manifest)
-- `spl_snack_break__cast__f01` -> `/assets/effects/spl_snack_break/spl_snack_break__cast__f01.png` (animation_manifest)
-- `spl_snack_break__cast__f02` -> `/assets/effects/spl_snack_break/spl_snack_break__cast__f02.png` (animation_manifest)
-- `spl_snack_break__cast__f03` -> `/assets/effects/spl_snack_break/spl_snack_break__cast__f03.png` (animation_manifest)
-- `spl_snack_break__cast__f04` -> `/assets/effects/spl_snack_break/spl_snack_break__cast__f04.png` (animation_manifest)
-- `spl_snack_break__cast__f05` -> `/assets/effects/spl_snack_break/spl_snack_break__cast__f05.png` (animation_manifest)
-- `spl_cascade_cheer__cast__f00` -> `/assets/effects/spl_cascade_cheer/spl_cascade_cheer__cast__f00.png` (animation_manifest)
-- `spl_cascade_cheer__cast__f01` -> `/assets/effects/spl_cascade_cheer/spl_cascade_cheer__cast__f01.png` (animation_manifest)
-- `spl_cascade_cheer__cast__f02` -> `/assets/effects/spl_cascade_cheer/spl_cascade_cheer__cast__f02.png` (animation_manifest)
-- `spl_cascade_cheer__cast__f03` -> `/assets/effects/spl_cascade_cheer/spl_cascade_cheer__cast__f03.png` (animation_manifest)
-- `spl_cascade_cheer__cast__f04` -> `/assets/effects/spl_cascade_cheer/spl_cascade_cheer__cast__f04.png` (animation_manifest)
-- `spl_cascade_cheer__cast__f05` -> `/assets/effects/spl_cascade_cheer/spl_cascade_cheer__cast__f05.png` (animation_manifest)
-- `spl_cascade_cheer__cast__f06` -> `/assets/effects/spl_cascade_cheer/spl_cascade_cheer__cast__f06.png` (animation_manifest)
-- `item_mini_cupcake__use_vfx__f00` -> `/assets/effects/item_mini_cupcake/item_mini_cupcake__use_vfx__f00.png` (animation_manifest)
-- `item_mini_cupcake__use_vfx__f01` -> `/assets/effects/item_mini_cupcake/item_mini_cupcake__use_vfx__f01.png` (animation_manifest)
-- `item_mini_cupcake__use_vfx__f02` -> `/assets/effects/item_mini_cupcake/item_mini_cupcake__use_vfx__f02.png` (animation_manifest)
-- `item_mini_cupcake__use_vfx__f03` -> `/assets/effects/item_mini_cupcake/item_mini_cupcake__use_vfx__f03.png` (animation_manifest)
-- `item_mini_cupcake__use_vfx__f04` -> `/assets/effects/item_mini_cupcake/item_mini_cupcake__use_vfx__f04.png` (animation_manifest)
+- `mon_banner_bug` -> `/assets/sprites/monsters/mon_banner_bug/idle/mon_banner_bug__idle__f00.png` (content_json)
+- `ico_mon_banner_bug` -> `/assets/placeholders/ico_mon_banner_bug.png` (content_json)
+- `mon_banner_bug__idle` -> `/assets/sprites/monsters/mon_banner_bug__idle/idle/mon_banner_bug__idle__idle__f00.png` (content_json)
+- `mon_banner_bug__attack` -> `/assets/sprites/monsters/mon_banner_bug__attack/idle/mon_banner_bug__attack__idle__f00.png` (content_json)
+- `mon_banner_bug__hit` -> `/assets/sprites/monsters/mon_banner_bug__hit/idle/mon_banner_bug__hit__idle__f00.png` (content_json)
+- `mon_banner_bug__defeat` -> `/assets/sprites/monsters/mon_banner_bug__defeat/idle/mon_banner_bug__defeat__idle__f00.png` (content_json)
+- `mon_banner_bug__pose_sheet_2x2` -> `/assets/sprites/monsters/mon_banner_bug__pose_sheet_2x2/idle/mon_banner_bug__pose_sheet_2x2__idle__f00.png` (content_json)
+- `mon_blanket_ghost` -> `/assets/sprites/monsters/mon_blanket_ghost/idle/mon_blanket_ghost__idle__f00.png` (content_json)
+- `ico_mon_blanket_ghost` -> `/assets/placeholders/ico_mon_blanket_ghost.png` (content_json)
+- `mon_blanket_ghost__idle` -> `/assets/sprites/monsters/mon_blanket_ghost__idle/idle/mon_blanket_ghost__idle__idle__f00.png` (content_json)
+- `mon_blanket_ghost__attack` -> `/assets/sprites/monsters/mon_blanket_ghost__attack/idle/mon_blanket_ghost__attack__idle__f00.png` (content_json)
+- `mon_blanket_ghost__hit` -> `/assets/sprites/monsters/mon_blanket_ghost__hit/idle/mon_blanket_ghost__hit__idle__f00.png` (content_json)
+- `mon_blanket_ghost__defeat` -> `/assets/sprites/monsters/mon_blanket_ghost__defeat/idle/mon_blanket_ghost__defeat__idle__f00.png` (content_json)
+- `mon_blanket_ghost__pose_sheet_2x2` -> `/assets/sprites/monsters/mon_blanket_ghost__pose_sheet_2x2/idle/mon_blanket_ghost__pose_sheet_2x2__idle__f00.png` (content_json)
+- `ico_boss_cupcake_slime_king` -> `/assets/portraits/bosses/boss_cupcake_slime_king__portrait_icon__f00.png` (content_json)
+- `boss_cupcake_slime_king__idle` -> `/assets/sprites/bosses/boss_cupcake_slime_king__idle/idle/boss_cupcake_slime_king__idle__idle__f00.png` (content_json)
+- `boss_cupcake_slime_king__attack` -> `/assets/sprites/bosses/boss_cupcake_slime_king__attack/idle/boss_cupcake_slime_king__attack__idle__f00.png` (content_json)
+- `boss_cupcake_slime_king__hit` -> `/assets/sprites/bosses/boss_cupcake_slime_king__hit/idle/boss_cupcake_slime_king__hit__idle__f00.png` (content_json)
+- `boss_cupcake_slime_king__phase_change` -> `/assets/sprites/bosses/boss_cupcake_slime_king__phase_change/idle/boss_cupcake_slime_king__phase_change__idle__f00.png` (content_json)
+- `boss_cupcake_slime_king__special_attack` -> `/assets/sprites/bosses/boss_cupcake_slime_king__special_attack/idle/boss_cupcake_slime_king__special_attack__idle__f00.png` (content_json)
+- `boss_cupcake_slime_king__defeat` -> `/assets/sprites/bosses/boss_cupcake_slime_king__defeat/idle/boss_cupcake_slime_king__defeat__idle__f00.png` (content_json)
+- `boss_cupcake_slime_king__pose_sheet_2x2` -> `/assets/sprites/bosses/boss_cupcake_slime_king__pose_sheet_2x2/idle/boss_cupcake_slime_king__pose_sheet_2x2__idle__f00.png` (content_json)
+- `boss_gelato_golem` -> `/assets/sprites/bosses/boss_gelato_golem/idle/boss_gelato_golem__idle__f00.png` (content_json)
+- `ico_boss_gelato_golem` -> `/assets/portraits/bosses/boss_gelato_golem__portrait_icon__f00.png` (content_json)
+- `boss_gelato_golem__idle` -> `/assets/sprites/bosses/boss_gelato_golem__idle/idle/boss_gelato_golem__idle__idle__f00.png` (content_json)
+- `boss_gelato_golem__attack` -> `/assets/sprites/bosses/boss_gelato_golem__attack/idle/boss_gelato_golem__attack__idle__f00.png` (content_json)
+- `boss_gelato_golem__hit` -> `/assets/sprites/bosses/boss_gelato_golem__hit/idle/boss_gelato_golem__hit__idle__f00.png` (content_json)
+- `boss_gelato_golem__phase_change` -> `/assets/sprites/bosses/boss_gelato_golem__phase_change/idle/boss_gelato_golem__phase_change__idle__f00.png` (content_json)
+- `boss_gelato_golem__special_attack` -> `/assets/sprites/bosses/boss_gelato_golem__special_attack/idle/boss_gelato_golem__special_attack__idle__f00.png` (content_json)
+- `boss_gelato_golem__defeat` -> `/assets/sprites/bosses/boss_gelato_golem__defeat/idle/boss_gelato_golem__defeat__idle__f00.png` (content_json)
+- `boss_gelato_golem__pose_sheet_2x2` -> `/assets/sprites/bosses/boss_gelato_golem__pose_sheet_2x2/idle/boss_gelato_golem__pose_sheet_2x2__idle__f00.png` (content_json)
+- `boss_high_score_hydra` -> `/assets/sprites/bosses/boss_high_score_hydra/idle/boss_high_score_hydra__idle__f00.png` (content_json)
+- `ico_boss_high_score_hydra` -> `/assets/portraits/bosses/boss_high_score_hydra__portrait_icon__f00.png` (content_json)
+- `boss_high_score_hydra__idle` -> `/assets/sprites/bosses/boss_high_score_hydra__idle/idle/boss_high_score_hydra__idle__idle__f00.png` (content_json)
+- `boss_high_score_hydra__attack` -> `/assets/sprites/bosses/boss_high_score_hydra__attack/idle/boss_high_score_hydra__attack__idle__f00.png` (content_json)
+- `boss_high_score_hydra__hit` -> `/assets/sprites/bosses/boss_high_score_hydra__hit/idle/boss_high_score_hydra__hit__idle__f00.png` (content_json)
+- `boss_high_score_hydra__phase_change` -> `/assets/sprites/bosses/boss_high_score_hydra__phase_change/idle/boss_high_score_hydra__phase_change__idle__f00.png` (content_json)
+- `boss_high_score_hydra__special_attack` -> `/assets/sprites/bosses/boss_high_score_hydra__special_attack/idle/boss_high_score_hydra__special_attack__idle__f00.png` (content_json)
+- `boss_high_score_hydra__defeat` -> `/assets/sprites/bosses/boss_high_score_hydra__defeat/idle/boss_high_score_hydra__defeat__idle__f00.png` (content_json)
+- `boss_high_score_hydra__pose_sheet_2x2` -> `/assets/sprites/bosses/boss_high_score_hydra__pose_sheet_2x2/idle/boss_high_score_hydra__pose_sheet_2x2__idle__f00.png` (content_json)
+- `boss_king_bloxley` -> `/assets/sprites/bosses/boss_king_bloxley/idle/boss_king_bloxley__idle__f00.png` (content_json)
+- `ico_boss_king_bloxley` -> `/assets/portraits/bosses/boss_king_bloxley__portrait_icon__f00.png` (content_json)
+- `boss_king_bloxley__idle` -> `/assets/sprites/bosses/boss_king_bloxley__idle/idle/boss_king_bloxley__idle__idle__f00.png` (content_json)
+- `boss_king_bloxley__attack` -> `/assets/sprites/bosses/boss_king_bloxley__attack/idle/boss_king_bloxley__attack__idle__f00.png` (content_json)
+- `boss_king_bloxley__hit` -> `/assets/sprites/bosses/boss_king_bloxley__hit/idle/boss_king_bloxley__hit__idle__f00.png` (content_json)
+- `boss_king_bloxley__phase_change` -> `/assets/sprites/bosses/boss_king_bloxley__phase_change/idle/boss_king_bloxley__phase_change__idle__f00.png` (content_json)
+- `boss_king_bloxley__special_attack` -> `/assets/sprites/bosses/boss_king_bloxley__special_attack/idle/boss_king_bloxley__special_attack__idle__f00.png` (content_json)
+- `boss_king_bloxley__defeat` -> `/assets/sprites/bosses/boss_king_bloxley__defeat/idle/boss_king_bloxley__defeat__idle__f00.png` (content_json)
+- `boss_king_bloxley__pose_sheet_2x2` -> `/assets/sprites/bosses/boss_king_bloxley__pose_sheet_2x2/idle/boss_king_bloxley__pose_sheet_2x2__idle__f00.png` (content_json)
+- `boss_prototype_no_7` -> `/assets/sprites/bosses/boss_prototype_no_7/idle/boss_prototype_no_7__idle__f00.png` (content_json)
+- `ico_boss_prototype_no_7` -> `/assets/portraits/bosses/boss_prototype_no_7__portrait_icon__f00.png` (content_json)
+- `boss_prototype_no_7__idle` -> `/assets/sprites/bosses/boss_prototype_no_7__idle/idle/boss_prototype_no_7__idle__idle__f00.png` (content_json)
+- `boss_prototype_no_7__attack` -> `/assets/sprites/bosses/boss_prototype_no_7__attack/idle/boss_prototype_no_7__attack__idle__f00.png` (content_json)
+- `boss_prototype_no_7__hit` -> `/assets/sprites/bosses/boss_prototype_no_7__hit/idle/boss_prototype_no_7__hit__idle__f00.png` (content_json)
+- `boss_prototype_no_7__phase_change` -> `/assets/sprites/bosses/boss_prototype_no_7__phase_change/idle/boss_prototype_no_7__phase_change__idle__f00.png` (content_json)
+- `boss_prototype_no_7__special_attack` -> `/assets/sprites/bosses/boss_prototype_no_7__special_attack/idle/boss_prototype_no_7__special_attack__idle__f00.png` (content_json)
+- `boss_prototype_no_7__defeat` -> `/assets/sprites/bosses/boss_prototype_no_7__defeat/idle/boss_prototype_no_7__defeat__idle__f00.png` (content_json)
+- `boss_prototype_no_7__pose_sheet_2x2` -> `/assets/sprites/bosses/boss_prototype_no_7__pose_sheet_2x2/idle/boss_prototype_no_7__pose_sheet_2x2__idle__f00.png` (content_json)
+- `boss_sir_snore_a_lot` -> `/assets/sprites/bosses/boss_sir_snore_a_lot/idle/boss_sir_snore_a_lot__idle__f00.png` (content_json)
+- `ico_boss_sir_snore_a_lot` -> `/assets/portraits/bosses/boss_sir_snore_a_lot__portrait_icon__f00.png` (content_json)
+- `boss_sir_snore_a_lot__idle` -> `/assets/sprites/bosses/boss_sir_snore_a_lot__idle/idle/boss_sir_snore_a_lot__idle__idle__f00.png` (content_json)
+- `boss_sir_snore_a_lot__attack` -> `/assets/sprites/bosses/boss_sir_snore_a_lot__attack/idle/boss_sir_snore_a_lot__attack__idle__f00.png` (content_json)
+- `boss_sir_snore_a_lot__hit` -> `/assets/sprites/bosses/boss_sir_snore_a_lot__hit/idle/boss_sir_snore_a_lot__hit__idle__f00.png` (content_json)
+- `boss_sir_snore_a_lot__phase_change` -> `/assets/sprites/bosses/boss_sir_snore_a_lot__phase_change/idle/boss_sir_snore_a_lot__phase_change__idle__f00.png` (content_json)
+- `boss_sir_snore_a_lot__special_attack` -> `/assets/sprites/bosses/boss_sir_snore_a_lot__special_attack/idle/boss_sir_snore_a_lot__special_attack__idle__f00.png` (content_json)
+- `boss_sir_snore_a_lot__defeat` -> `/assets/sprites/bosses/boss_sir_snore_a_lot__defeat/idle/boss_sir_snore_a_lot__defeat__idle__f00.png` (content_json)
+- `boss_sir_snore_a_lot__pose_sheet_2x2` -> `/assets/sprites/bosses/boss_sir_snore_a_lot__pose_sheet_2x2/idle/boss_sir_snore_a_lot__pose_sheet_2x2__idle__f00.png` (content_json)
+- `mon_button_knight` -> `/assets/sprites/monsters/mon_button_knight/idle/mon_button_knight__idle__f00.png` (content_json)
+- `ico_mon_button_knight` -> `/assets/placeholders/ico_mon_button_knight.png` (content_json)
+- `mon_button_knight__idle` -> `/assets/sprites/monsters/mon_button_knight__idle/idle/mon_button_knight__idle__idle__f00.png` (content_json)
+- `mon_button_knight__attack` -> `/assets/sprites/monsters/mon_button_knight__attack/idle/mon_button_knight__attack__idle__f00.png` (content_json)
+- `mon_button_knight__hit` -> `/assets/sprites/monsters/mon_button_knight__hit/idle/mon_button_knight__hit__idle__f00.png` (content_json)
+- `mon_button_knight__defeat` -> `/assets/sprites/monsters/mon_button_knight__defeat/idle/mon_button_knight__defeat__idle__f00.png` (content_json)
+- `mon_button_knight__pose_sheet_2x2` -> `/assets/sprites/monsters/mon_button_knight__pose_sheet_2x2/idle/mon_button_knight__pose_sheet_2x2__idle__f00.png` (content_json)
+- `mon_button_masher` -> `/assets/sprites/monsters/mon_button_masher/idle/mon_button_masher__idle__f00.png` (content_json)
+- `ico_mon_button_masher` -> `/assets/placeholders/ico_mon_button_masher.png` (content_json)
+- `mon_button_masher__idle` -> `/assets/sprites/monsters/mon_button_masher__idle/idle/mon_button_masher__idle__idle__f00.png` (content_json)
+- `mon_button_masher__attack` -> `/assets/sprites/monsters/mon_button_masher__attack/idle/mon_button_masher__attack__idle__f00.png` (content_json)
+- `mon_button_masher__hit` -> `/assets/sprites/monsters/mon_button_masher__hit/idle/mon_button_masher__hit__idle__f00.png` (content_json)
+- `mon_button_masher__defeat` -> `/assets/sprites/monsters/mon_button_masher__defeat/idle/mon_button_masher__defeat__idle__f00.png` (content_json)
+- `mon_button_masher__pose_sheet_2x2` -> `/assets/sprites/monsters/mon_button_masher__pose_sheet_2x2/idle/mon_button_masher__pose_sheet_2x2__idle__f00.png` (content_json)
+- `mon_chill_slime` -> `/assets/sprites/monsters/mon_chill_slime/idle/mon_chill_slime__idle__f00.png` (content_json)
+- `ico_mon_chill_slime` -> `/assets/placeholders/ico_mon_chill_slime.png` (content_json)
+- `mon_chill_slime__idle` -> `/assets/sprites/monsters/mon_chill_slime__idle/idle/mon_chill_slime__idle__idle__f00.png` (content_json)
+- `mon_chill_slime__attack` -> `/assets/sprites/monsters/mon_chill_slime__attack/idle/mon_chill_slime__attack__idle__f00.png` (content_json)
+- `mon_chill_slime__hit` -> `/assets/sprites/monsters/mon_chill_slime__hit/idle/mon_chill_slime__hit__idle__f00.png` (content_json)
+- `mon_chill_slime__defeat` -> `/assets/sprites/monsters/mon_chill_slime__defeat/idle/mon_chill_slime__defeat__idle__f00.png` (content_json)
+- `mon_chill_slime__pose_sheet_2x2` -> `/assets/sprites/monsters/mon_chill_slime__pose_sheet_2x2/idle/mon_chill_slime__pose_sheet_2x2__idle__f00.png` (content_json)
+- `mon_combo_gremlin` -> `/assets/sprites/monsters/mon_combo_gremlin/idle/mon_combo_gremlin__idle__f00.png` (content_json)
+- `ico_mon_combo_gremlin` -> `/assets/placeholders/ico_mon_combo_gremlin.png` (content_json)
+- `mon_combo_gremlin__idle` -> `/assets/sprites/monsters/mon_combo_gremlin__idle/idle/mon_combo_gremlin__idle__idle__f00.png` (content_json)
+- `mon_combo_gremlin__attack` -> `/assets/sprites/monsters/mon_combo_gremlin__attack/idle/mon_combo_gremlin__attack__idle__f00.png` (content_json)
+- `mon_combo_gremlin__hit` -> `/assets/sprites/monsters/mon_combo_gremlin__hit/idle/mon_combo_gremlin__hit__idle__f00.png` (content_json)
+- `mon_combo_gremlin__defeat` -> `/assets/sprites/monsters/mon_combo_gremlin__defeat/idle/mon_combo_gremlin__defeat__idle__f00.png` (content_json)
+- `mon_combo_gremlin__pose_sheet_2x2` -> `/assets/sprites/monsters/mon_combo_gremlin__pose_sheet_2x2/idle/mon_combo_gremlin__pose_sheet_2x2__idle__f00.png` (content_json)
+- `mon_confetti_mage` -> `/assets/sprites/monsters/mon_confetti_mage/idle/mon_confetti_mage__idle__f00.png` (content_json)
+- `ico_mon_confetti_mage` -> `/assets/placeholders/ico_mon_confetti_mage.png` (content_json)
+- `mon_confetti_mage__idle` -> `/assets/sprites/monsters/mon_confetti_mage__idle/idle/mon_confetti_mage__idle__idle__f00.png` (content_json)
+- `mon_confetti_mage__attack` -> `/assets/sprites/monsters/mon_confetti_mage__attack/idle/mon_confetti_mage__attack__idle__f00.png` (content_json)
+- `mon_confetti_mage__hit` -> `/assets/sprites/monsters/mon_confetti_mage__hit/idle/mon_confetti_mage__hit__idle__f00.png` (content_json)
+- `mon_confetti_mage__defeat` -> `/assets/sprites/monsters/mon_confetti_mage__defeat/idle/mon_confetti_mage__defeat__idle__f00.png` (content_json)
+- `mon_confetti_mage__pose_sheet_2x2` -> `/assets/sprites/monsters/mon_confetti_mage__pose_sheet_2x2/idle/mon_confetti_mage__pose_sheet_2x2__idle__f00.png` (content_json)
+- `mon_crown_bat` -> `/assets/sprites/monsters/mon_crown_bat/idle/mon_crown_bat__idle__f00.png` (content_json)
+- `ico_mon_crown_bat` -> `/assets/placeholders/ico_mon_crown_bat.png` (content_json)
+- `mon_crown_bat__idle` -> `/assets/sprites/monsters/mon_crown_bat__idle/idle/mon_crown_bat__idle__idle__f00.png` (content_json)
+- `mon_crown_bat__attack` -> `/assets/sprites/monsters/mon_crown_bat__attack/idle/mon_crown_bat__attack__idle__f00.png` (content_json)
+- `mon_crown_bat__hit` -> `/assets/sprites/monsters/mon_crown_bat__hit/idle/mon_crown_bat__hit__idle__f00.png` (content_json)
+- `mon_crown_bat__defeat` -> `/assets/sprites/monsters/mon_crown_bat__defeat/idle/mon_crown_bat__defeat__idle__f00.png` (content_json)
+- `mon_crown_bat__pose_sheet_2x2` -> `/assets/sprites/monsters/mon_crown_bat__pose_sheet_2x2/idle/mon_crown_bat__pose_sheet_2x2__idle__f00.png` (content_json)
+- `mon_crumb_goblin` -> `/assets/sprites/monsters/mon_crumb_goblin/idle/mon_crumb_goblin__idle__f00.png` (content_json)
+- `ico_mon_crumb_goblin` -> `/assets/placeholders/ico_mon_crumb_goblin.png` (content_json)
+- `mon_crumb_goblin__idle` -> `/assets/sprites/monsters/mon_crumb_goblin__idle/idle/mon_crumb_goblin__idle__idle__f00.png` (content_json)
+- `mon_crumb_goblin__attack` -> `/assets/sprites/monsters/mon_crumb_goblin__attack/idle/mon_crumb_goblin__attack__idle__f00.png` (content_json)
+- `mon_crumb_goblin__hit` -> `/assets/sprites/monsters/mon_crumb_goblin__hit/idle/mon_crumb_goblin__hit__idle__f00.png` (content_json)
+- `mon_crumb_goblin__defeat` -> `/assets/sprites/monsters/mon_crumb_goblin__defeat/idle/mon_crumb_goblin__defeat__idle__f00.png` (content_json)
+- `mon_crumb_goblin__pose_sheet_2x2` -> `/assets/sprites/monsters/mon_crumb_goblin__pose_sheet_2x2/idle/mon_crumb_goblin__pose_sheet_2x2__idle__f00.png` (content_json)
+- `ico_mon_cupcake_slime` -> `/assets/placeholders/ico_mon_cupcake_slime.png` (content_json)
+- `mon_cupcake_slime__idle` -> `/assets/sprites/monsters/mon_cupcake_slime__idle/idle/mon_cupcake_slime__idle__idle__f00.png` (content_json)
+- `mon_cupcake_slime__attack` -> `/assets/sprites/monsters/mon_cupcake_slime__attack/idle/mon_cupcake_slime__attack__idle__f00.png` (content_json)
+- `mon_cupcake_slime__hit` -> `/assets/sprites/monsters/mon_cupcake_slime__hit/idle/mon_cupcake_slime__hit__idle__f00.png` (content_json)
+- `mon_cupcake_slime__defeat` -> `/assets/sprites/monsters/mon_cupcake_slime__defeat/idle/mon_cupcake_slime__defeat__idle__f00.png` (content_json)
+- `mon_cupcake_slime__pose_sheet_2x2` -> `/assets/sprites/monsters/mon_cupcake_slime__pose_sheet_2x2/idle/mon_cupcake_slime__pose_sheet_2x2__idle__f00.png` (content_json)
+- `mon_elite_blanket_ghost_duchess` -> `/assets/sprites/monsters/mon_elite_blanket_ghost_duchess/idle/mon_elite_blanket_ghost_duchess__idle__f00.png` (content_json)
+- `ico_mon_elite_blanket_ghost_duchess` -> `/assets/placeholders/ico_mon_elite_blanket_ghost_duchess.png` (content_json)
+- `mon_elite_blanket_ghost_duchess__idle` -> `/assets/sprites/monsters/mon_elite_blanket_ghost_duchess__idle/idle/mon_elite_blanket_ghost_duchess__idle__idle__f00.png` (content_json)
+- `mon_elite_blanket_ghost_duchess__attack` -> `/assets/sprites/monsters/mon_elite_blanket_ghost_duchess__attack/idle/mon_elite_blanket_ghost_duchess__attack__idle__f00.png` (content_json)
+- `mon_elite_blanket_ghost_duchess__hit` -> `/assets/sprites/monsters/mon_elite_blanket_ghost_duchess__hit/idle/mon_elite_blanket_ghost_duchess__hit__idle__f00.png` (content_json)
+- `mon_elite_blanket_ghost_duchess__defeat` -> `/assets/sprites/monsters/mon_elite_blanket_ghost_duchess__defeat/idle/mon_elite_blanket_ghost_duchess__defeat__idle__f00.png` (content_json)
+- `mon_elite_blanket_ghost_duchess__pose_sheet_2x2` -> `/assets/sprites/monsters/mon_elite_blanket_ghost_duchess__pose_sheet_2x2/idle/mon_elite_blanket_ghost_duchess__pose_sheet_2x2__idle__f00.png` (content_json)
+- `mon_elite_button_knight_captain` -> `/assets/sprites/monsters/mon_elite_button_knight_captain/idle/mon_elite_button_knight_captain__idle__f00.png` (content_json)
+- `ico_mon_elite_button_knight_captain` -> `/assets/placeholders/ico_mon_elite_button_knight_captain.png` (content_json)
+- `mon_elite_button_knight_captain__idle` -> `/assets/sprites/monsters/mon_elite_button_knight_captain__idle/idle/mon_elite_button_knight_captain__idle__idle__f00.png` (content_json)
+- `mon_elite_button_knight_captain__attack` -> `/assets/sprites/monsters/mon_elite_button_knight_captain__attack/idle/mon_elite_button_knight_captain__attack__idle__f00.png` (content_json)
+- `mon_elite_button_knight_captain__hit` -> `/assets/sprites/monsters/mon_elite_button_knight_captain__hit/idle/mon_elite_button_knight_captain__hit__idle__f00.png` (content_json)
+- `mon_elite_button_knight_captain__defeat` -> `/assets/sprites/monsters/mon_elite_button_knight_captain__defeat/idle/mon_elite_button_knight_captain__defeat__idle__f00.png` (content_json)
+- `mon_elite_button_knight_captain__pose_sheet_2x2` -> `/assets/sprites/monsters/mon_elite_button_knight_captain__pose_sheet_2x2/idle/mon_elite_button_knight_captain__pose_sheet_2x2__idle__f00.png` (content_json)
+- `mon_elite_button_masher_supervisor` -> `/assets/sprites/monsters/mon_elite_button_masher_supervisor/idle/mon_elite_button_masher_supervisor__idle__f00.png` (content_json)
+- `ico_mon_elite_button_masher_supervisor` -> `/assets/placeholders/ico_mon_elite_button_masher_supervisor.png` (content_json)
+- `mon_elite_button_masher_supervisor__idle` -> `/assets/sprites/monsters/mon_elite_button_masher_supervisor__idle/idle/mon_elite_button_masher_supervisor__idle__idle__f00.png` (content_json)
+- `mon_elite_button_masher_supervisor__attack` -> `/assets/sprites/monsters/mon_elite_button_masher_supervisor__attack/idle/mon_elite_button_masher_supervisor__attack__idle__f00.png` (content_json)
+- `mon_elite_button_masher_supervisor__hit` -> `/assets/sprites/monsters/mon_elite_button_masher_supervisor__hit/idle/mon_elite_button_masher_supervisor__hit__idle__f00.png` (content_json)
+- `mon_elite_button_masher_supervisor__defeat` -> `/assets/sprites/monsters/mon_elite_button_masher_supervisor__defeat/idle/mon_elite_button_masher_supervisor__defeat__idle__f00.png` (content_json)
+- `mon_elite_button_masher_supervisor__pose_sheet_2x2` -> `/assets/sprites/monsters/mon_elite_button_masher_supervisor__pose_sheet_2x2/idle/mon_elite_button_masher_supervisor__pose_sheet_2x2__idle__f00.png` (content_json)
+- `mon_elite_combo_gremlin_scorekeeper` -> `/assets/sprites/monsters/mon_elite_combo_gremlin_scorekeeper/idle/mon_elite_combo_gremlin_scorekeeper__idle__f00.png` (content_json)
+- `ico_mon_elite_combo_gremlin_scorekeeper` -> `/assets/placeholders/ico_mon_elite_combo_gremlin_scorekeeper.png` (content_json)
+- `mon_elite_combo_gremlin_scorekeeper__idle` -> `/assets/sprites/monsters/mon_elite_combo_gremlin_scorekeeper__idle/idle/mon_elite_combo_gremlin_scorekeeper__idle__idle__f00.png` (content_json)
+- `mon_elite_combo_gremlin_scorekeeper__attack` -> `/assets/sprites/monsters/mon_elite_combo_gremlin_scorekeeper__attack/idle/mon_elite_combo_gremlin_scorekeeper__attack__idle__f00.png` (content_json)
+- `mon_elite_combo_gremlin_scorekeeper__hit` -> `/assets/sprites/monsters/mon_elite_combo_gremlin_scorekeeper__hit/idle/mon_elite_combo_gremlin_scorekeeper__hit__idle__f00.png` (content_json)
+- `mon_elite_combo_gremlin_scorekeeper__defeat` -> `/assets/sprites/monsters/mon_elite_combo_gremlin_scorekeeper__defeat/idle/mon_elite_combo_gremlin_scorekeeper__defeat__idle__f00.png` (content_json)
+- `mon_elite_combo_gremlin_scorekeeper__pose_sheet_2x2` -> `/assets/sprites/monsters/mon_elite_combo_gremlin_scorekeeper__pose_sheet_2x2/idle/mon_elite_combo_gremlin_scorekeeper__pose_sheet_2x2__idle__f00.png` (content_json)
+- `mon_elite_crumb_goblin_foreman` -> `/assets/sprites/monsters/mon_elite_crumb_goblin_foreman/idle/mon_elite_crumb_goblin_foreman__idle__f00.png` (content_json)
+- `ico_mon_elite_crumb_goblin_foreman` -> `/assets/placeholders/ico_mon_elite_crumb_goblin_foreman.png` (content_json)
+- `mon_elite_crumb_goblin_foreman__idle` -> `/assets/sprites/monsters/mon_elite_crumb_goblin_foreman__idle/idle/mon_elite_crumb_goblin_foreman__idle__idle__f00.png` (content_json)
+- `mon_elite_crumb_goblin_foreman__attack` -> `/assets/sprites/monsters/mon_elite_crumb_goblin_foreman__attack/idle/mon_elite_crumb_goblin_foreman__attack__idle__f00.png` (content_json)
+- `mon_elite_crumb_goblin_foreman__hit` -> `/assets/sprites/monsters/mon_elite_crumb_goblin_foreman__hit/idle/mon_elite_crumb_goblin_foreman__hit__idle__f00.png` (content_json)
+- `mon_elite_crumb_goblin_foreman__defeat` -> `/assets/sprites/monsters/mon_elite_crumb_goblin_foreman__defeat/idle/mon_elite_crumb_goblin_foreman__defeat__idle__f00.png` (content_json)
+- `mon_elite_crumb_goblin_foreman__pose_sheet_2x2` -> `/assets/sprites/monsters/mon_elite_crumb_goblin_foreman__pose_sheet_2x2/idle/mon_elite_crumb_goblin_foreman__pose_sheet_2x2__idle__f00.png` (content_json)
+- `mon_elite_freezer_mimic_deluxe` -> `/assets/sprites/monsters/mon_elite_freezer_mimic_deluxe/idle/mon_elite_freezer_mimic_deluxe__idle__f00.png` (content_json)
+- `ico_mon_elite_freezer_mimic_deluxe` -> `/assets/placeholders/ico_mon_elite_freezer_mimic_deluxe.png` (content_json)
+- `mon_elite_freezer_mimic_deluxe__idle` -> `/assets/sprites/monsters/mon_elite_freezer_mimic_deluxe__idle/idle/mon_elite_freezer_mimic_deluxe__idle__idle__f00.png` (content_json)
+- `mon_elite_freezer_mimic_deluxe__attack` -> `/assets/sprites/monsters/mon_elite_freezer_mimic_deluxe__attack/idle/mon_elite_freezer_mimic_deluxe__attack__idle__f00.png` (content_json)
+- `mon_elite_freezer_mimic_deluxe__hit` -> `/assets/sprites/monsters/mon_elite_freezer_mimic_deluxe__hit/idle/mon_elite_freezer_mimic_deluxe__hit__idle__f00.png` (content_json)
+- `mon_elite_freezer_mimic_deluxe__defeat` -> `/assets/sprites/monsters/mon_elite_freezer_mimic_deluxe__defeat/idle/mon_elite_freezer_mimic_deluxe__defeat__idle__f00.png` (content_json)
+- `mon_elite_freezer_mimic_deluxe__pose_sheet_2x2` -> `/assets/sprites/monsters/mon_elite_freezer_mimic_deluxe__pose_sheet_2x2/idle/mon_elite_freezer_mimic_deluxe__pose_sheet_2x2__idle__f00.png` (content_json)
+- `mon_elite_ice_cream_imp_chillmaster` -> `/assets/sprites/monsters/mon_elite_ice_cream_imp_chillmaster/idle/mon_elite_ice_cream_imp_chillmaster__idle__f00.png` (content_json)
+- `ico_mon_elite_ice_cream_imp_chillmaster` -> `/assets/placeholders/ico_mon_elite_ice_cream_imp_chillmaster.png` (content_json)
+- `mon_elite_ice_cream_imp_chillmaster__idle` -> `/assets/sprites/monsters/mon_elite_ice_cream_imp_chillmaster__idle/idle/mon_elite_ice_cream_imp_chillmaster__idle__idle__f00.png` (content_json)
+- `mon_elite_ice_cream_imp_chillmaster__attack` -> `/assets/sprites/monsters/mon_elite_ice_cream_imp_chillmaster__attack/idle/mon_elite_ice_cream_imp_chillmaster__attack__idle__f00.png` (content_json)
+- `mon_elite_ice_cream_imp_chillmaster__hit` -> `/assets/sprites/monsters/mon_elite_ice_cream_imp_chillmaster__hit/idle/mon_elite_ice_cream_imp_chillmaster__hit__idle__f00.png` (content_json)
+- `mon_elite_ice_cream_imp_chillmaster__defeat` -> `/assets/sprites/monsters/mon_elite_ice_cream_imp_chillmaster__defeat/idle/mon_elite_ice_cream_imp_chillmaster__defeat__idle__f00.png` (content_json)
+- `mon_elite_ice_cream_imp_chillmaster__pose_sheet_2x2` -> `/assets/sprites/monsters/mon_elite_ice_cream_imp_chillmaster__pose_sheet_2x2/idle/mon_elite_ice_cream_imp_chillmaster__pose_sheet_2x2__idle__f00.png` (content_json)
+- `mon_elite_parade_golem_grand_marshal` -> `/assets/sprites/monsters/mon_elite_parade_golem_grand_marshal/idle/mon_elite_parade_golem_grand_marshal__idle__f00.png` (content_json)
+- `ico_mon_elite_parade_golem_grand_marshal` -> `/assets/placeholders/ico_mon_elite_parade_golem_grand_marshal.png` (content_json)
+- `mon_elite_parade_golem_grand_marshal__idle` -> `/assets/sprites/monsters/mon_elite_parade_golem_grand_marshal__idle/idle/mon_elite_parade_golem_grand_marshal__idle__idle__f00.png` (content_json)
+- `mon_elite_parade_golem_grand_marshal__attack` -> `/assets/sprites/monsters/mon_elite_parade_golem_grand_marshal__attack/idle/mon_elite_parade_golem_grand_marshal__attack__idle__f00.png` (content_json)
+- `mon_elite_parade_golem_grand_marshal__hit` -> `/assets/sprites/monsters/mon_elite_parade_golem_grand_marshal__hit/idle/mon_elite_parade_golem_grand_marshal__hit__idle__f00.png` (content_json)
+- `mon_elite_parade_golem_grand_marshal__defeat` -> `/assets/sprites/monsters/mon_elite_parade_golem_grand_marshal__defeat/idle/mon_elite_parade_golem_grand_marshal__defeat__idle__f00.png` (content_json)
+- `mon_elite_parade_golem_grand_marshal__pose_sheet_2x2` -> `/assets/sprites/monsters/mon_elite_parade_golem_grand_marshal__pose_sheet_2x2/idle/mon_elite_parade_golem_grand_marshal__pose_sheet_2x2__idle__f00.png` (content_json)
+- `mon_elite_prize_claw_mimic_jackpot` -> `/assets/sprites/monsters/mon_elite_prize_claw_mimic_jackpot/idle/mon_elite_prize_claw_mimic_jackpot__idle__f00.png` (content_json)
+- `ico_mon_elite_prize_claw_mimic_jackpot` -> `/assets/placeholders/ico_mon_elite_prize_claw_mimic_jackpot.png` (content_json)
+- `mon_elite_prize_claw_mimic_jackpot__idle` -> `/assets/sprites/monsters/mon_elite_prize_claw_mimic_jackpot__idle/idle/mon_elite_prize_claw_mimic_jackpot__idle__idle__f00.png` (content_json)
+- `mon_elite_prize_claw_mimic_jackpot__attack` -> `/assets/sprites/monsters/mon_elite_prize_claw_mimic_jackpot__attack/idle/mon_elite_prize_claw_mimic_jackpot__attack__idle__f00.png` (content_json)
+- `mon_elite_prize_claw_mimic_jackpot__hit` -> `/assets/sprites/monsters/mon_elite_prize_claw_mimic_jackpot__hit/idle/mon_elite_prize_claw_mimic_jackpot__hit__idle__f00.png` (content_json)
+- `mon_elite_prize_claw_mimic_jackpot__defeat` -> `/assets/sprites/monsters/mon_elite_prize_claw_mimic_jackpot__defeat/idle/mon_elite_prize_claw_mimic_jackpot__defeat__idle__f00.png` (content_json)
+- `mon_elite_prize_claw_mimic_jackpot__pose_sheet_2x2` -> `/assets/sprites/monsters/mon_elite_prize_claw_mimic_jackpot__pose_sheet_2x2/idle/mon_elite_prize_claw_mimic_jackpot__pose_sheet_2x2__idle__f00.png` (content_json)
+- `mon_elite_royal_block_guard_captain` -> `/assets/sprites/monsters/mon_elite_royal_block_guard_captain/idle/mon_elite_royal_block_guard_captain__idle__f00.png` (content_json)
+- `ico_mon_elite_royal_block_guard_captain` -> `/assets/placeholders/ico_mon_elite_royal_block_guard_captain.png` (content_json)
+- `mon_elite_royal_block_guard_captain__idle` -> `/assets/sprites/monsters/mon_elite_royal_block_guard_captain__idle/idle/mon_elite_royal_block_guard_captain__idle__idle__f00.png` (content_json)
+- `mon_elite_royal_block_guard_captain__attack` -> `/assets/sprites/monsters/mon_elite_royal_block_guard_captain__attack/idle/mon_elite_royal_block_guard_captain__attack__idle__f00.png` (content_json)
+- `mon_elite_royal_block_guard_captain__hit` -> `/assets/sprites/monsters/mon_elite_royal_block_guard_captain__hit/idle/mon_elite_royal_block_guard_captain__hit__idle__f00.png` (content_json)
+- `mon_elite_royal_block_guard_captain__defeat` -> `/assets/sprites/monsters/mon_elite_royal_block_guard_captain__defeat/idle/mon_elite_royal_block_guard_captain__defeat__idle__f00.png` (content_json)
+- `mon_elite_royal_block_guard_captain__pose_sheet_2x2` -> `/assets/sprites/monsters/mon_elite_royal_block_guard_captain__pose_sheet_2x2/idle/mon_elite_royal_block_guard_captain__pose_sheet_2x2__idle__f00.png` (content_json)
+- `mon_elite_square_jester_prime` -> `/assets/sprites/monsters/mon_elite_square_jester_prime/idle/mon_elite_square_jester_prime__idle__f00.png` (content_json)
+- `ico_mon_elite_square_jester_prime` -> `/assets/placeholders/ico_mon_elite_square_jester_prime.png` (content_json)
+- `mon_elite_square_jester_prime__idle` -> `/assets/sprites/monsters/mon_elite_square_jester_prime__idle/idle/mon_elite_square_jester_prime__idle__idle__f00.png` (content_json)
+- `mon_elite_square_jester_prime__attack` -> `/assets/sprites/monsters/mon_elite_square_jester_prime__attack/idle/mon_elite_square_jester_prime__attack__idle__f00.png` (content_json)
+- `mon_elite_square_jester_prime__hit` -> `/assets/sprites/monsters/mon_elite_square_jester_prime__hit/idle/mon_elite_square_jester_prime__hit__idle__f00.png` (content_json)
+- `mon_elite_square_jester_prime__defeat` -> `/assets/sprites/monsters/mon_elite_square_jester_prime__defeat/idle/mon_elite_square_jester_prime__defeat__idle__f00.png` (content_json)
+- `mon_elite_square_jester_prime__pose_sheet_2x2` -> `/assets/sprites/monsters/mon_elite_square_jester_prime__pose_sheet_2x2/idle/mon_elite_square_jester_prime__pose_sheet_2x2__idle__f00.png` (content_json)
+- `mon_freezer_mimic` -> `/assets/sprites/monsters/mon_freezer_mimic/idle/mon_freezer_mimic__idle__f00.png` (content_json)
+- `ico_mon_freezer_mimic` -> `/assets/placeholders/ico_mon_freezer_mimic.png` (content_json)
+- `mon_freezer_mimic__idle` -> `/assets/sprites/monsters/mon_freezer_mimic__idle/idle/mon_freezer_mimic__idle__idle__f00.png` (content_json)
+- `mon_freezer_mimic__attack` -> `/assets/sprites/monsters/mon_freezer_mimic__attack/idle/mon_freezer_mimic__attack__idle__f00.png` (content_json)
+- `mon_freezer_mimic__hit` -> `/assets/sprites/monsters/mon_freezer_mimic__hit/idle/mon_freezer_mimic__hit__idle__f00.png` (content_json)
+- `mon_freezer_mimic__defeat` -> `/assets/sprites/monsters/mon_freezer_mimic__defeat/idle/mon_freezer_mimic__defeat__idle__f00.png` (content_json)
+- `mon_freezer_mimic__pose_sheet_2x2` -> `/assets/sprites/monsters/mon_freezer_mimic__pose_sheet_2x2/idle/mon_freezer_mimic__pose_sheet_2x2__idle__f00.png` (content_json)
+- `mon_frosting_blob` -> `/assets/sprites/monsters/mon_frosting_blob/idle/mon_frosting_blob__idle__f00.png` (content_json)
+- `ico_mon_frosting_blob` -> `/assets/placeholders/ico_mon_frosting_blob.png` (content_json)
+- `mon_frosting_blob__idle` -> `/assets/sprites/monsters/mon_frosting_blob__idle/idle/mon_frosting_blob__idle__idle__f00.png` (content_json)
+- `mon_frosting_blob__attack` -> `/assets/sprites/monsters/mon_frosting_blob__attack/idle/mon_frosting_blob__attack__idle__f00.png` (content_json)
+- `mon_frosting_blob__hit` -> `/assets/sprites/monsters/mon_frosting_blob__hit/idle/mon_frosting_blob__hit__idle__f00.png` (content_json)
+- `mon_frosting_blob__defeat` -> `/assets/sprites/monsters/mon_frosting_blob__defeat/idle/mon_frosting_blob__defeat__idle__f00.png` (content_json)
+- `mon_frosting_blob__pose_sheet_2x2` -> `/assets/sprites/monsters/mon_frosting_blob__pose_sheet_2x2/idle/mon_frosting_blob__pose_sheet_2x2__idle__f00.png` (content_json)
+- `mon_gear_slime` -> `/assets/sprites/monsters/mon_gear_slime/idle/mon_gear_slime__idle__f00.png` (content_json)
+- `ico_mon_gear_slime` -> `/assets/placeholders/ico_mon_gear_slime.png` (content_json)
+- `mon_gear_slime__idle` -> `/assets/sprites/monsters/mon_gear_slime__idle/idle/mon_gear_slime__idle__idle__f00.png` (content_json)
+- `mon_gear_slime__attack` -> `/assets/sprites/monsters/mon_gear_slime__attack/idle/mon_gear_slime__attack__idle__f00.png` (content_json)
+- `mon_gear_slime__hit` -> `/assets/sprites/monsters/mon_gear_slime__hit/idle/mon_gear_slime__hit__idle__f00.png` (content_json)
+- `mon_gear_slime__defeat` -> `/assets/sprites/monsters/mon_gear_slime__defeat/idle/mon_gear_slime__defeat__idle__f00.png` (content_json)
+- `mon_gear_slime__pose_sheet_2x2` -> `/assets/sprites/monsters/mon_gear_slime__pose_sheet_2x2/idle/mon_gear_slime__pose_sheet_2x2__idle__f00.png` (content_json)
+- `mon_ice_cream_imp` -> `/assets/sprites/monsters/mon_ice_cream_imp/idle/mon_ice_cream_imp__idle__f00.png` (content_json)
+- `ico_mon_ice_cream_imp` -> `/assets/placeholders/ico_mon_ice_cream_imp.png` (content_json)
+- `mon_ice_cream_imp__idle` -> `/assets/sprites/monsters/mon_ice_cream_imp__idle/idle/mon_ice_cream_imp__idle__idle__f00.png` (content_json)
+- `mon_ice_cream_imp__attack` -> `/assets/sprites/monsters/mon_ice_cream_imp__attack/idle/mon_ice_cream_imp__attack__idle__f00.png` (content_json)
+- `mon_ice_cream_imp__hit` -> `/assets/sprites/monsters/mon_ice_cream_imp__hit/idle/mon_ice_cream_imp__hit__idle__f00.png` (content_json)
+- `mon_ice_cream_imp__defeat` -> `/assets/sprites/monsters/mon_ice_cream_imp__defeat/idle/mon_ice_cream_imp__defeat__idle__f00.png` (content_json)
+- `mon_ice_cream_imp__pose_sheet_2x2` -> `/assets/sprites/monsters/mon_ice_cream_imp__pose_sheet_2x2/idle/mon_ice_cream_imp__pose_sheet_2x2__idle__f00.png` (content_json)
+- `mon_jelly_rat` -> `/assets/sprites/monsters/mon_jelly_rat/idle/mon_jelly_rat__idle__f00.png` (content_json)
+- `ico_mon_jelly_rat` -> `/assets/placeholders/ico_mon_jelly_rat.png` (content_json)
+- `mon_jelly_rat__idle` -> `/assets/sprites/monsters/mon_jelly_rat__idle/idle/mon_jelly_rat__idle__idle__f00.png` (content_json)
+- `mon_jelly_rat__attack` -> `/assets/sprites/monsters/mon_jelly_rat__attack/idle/mon_jelly_rat__attack__idle__f00.png` (content_json)
+- `mon_jelly_rat__hit` -> `/assets/sprites/monsters/mon_jelly_rat__hit/idle/mon_jelly_rat__hit__idle__f00.png` (content_json)
+- `mon_jelly_rat__defeat` -> `/assets/sprites/monsters/mon_jelly_rat__defeat/idle/mon_jelly_rat__defeat__idle__f00.png` (content_json)
+- `mon_jelly_rat__pose_sheet_2x2` -> `/assets/sprites/monsters/mon_jelly_rat__pose_sheet_2x2/idle/mon_jelly_rat__pose_sheet_2x2__idle__f00.png` (content_json)
+- `mon_joystick_jester` -> `/assets/sprites/monsters/mon_joystick_jester/idle/mon_joystick_jester__idle__f00.png` (content_json)
+- `ico_mon_joystick_jester` -> `/assets/placeholders/ico_mon_joystick_jester.png` (content_json)
+- `mon_joystick_jester__idle` -> `/assets/sprites/monsters/mon_joystick_jester__idle/idle/mon_joystick_jester__idle__idle__f00.png` (content_json)
+- `mon_joystick_jester__attack` -> `/assets/sprites/monsters/mon_joystick_jester__attack/idle/mon_joystick_jester__attack__idle__f00.png` (content_json)
+- `mon_joystick_jester__hit` -> `/assets/sprites/monsters/mon_joystick_jester__hit/idle/mon_joystick_jester__hit__idle__f00.png` (content_json)
+- `mon_joystick_jester__defeat` -> `/assets/sprites/monsters/mon_joystick_jester__defeat/idle/mon_joystick_jester__defeat__idle__f00.png` (content_json)
+- `mon_joystick_jester__pose_sheet_2x2` -> `/assets/sprites/monsters/mon_joystick_jester__pose_sheet_2x2/idle/mon_joystick_jester__pose_sheet_2x2__idle__f00.png` (content_json)
+- `mon_neon_bat` -> `/assets/sprites/monsters/mon_neon_bat/idle/mon_neon_bat__idle__f00.png` (content_json)
+- `ico_mon_neon_bat` -> `/assets/placeholders/ico_mon_neon_bat.png` (content_json)
+- `mon_neon_bat__idle` -> `/assets/sprites/monsters/mon_neon_bat__idle/idle/mon_neon_bat__idle__idle__f00.png` (content_json)
+- `mon_neon_bat__attack` -> `/assets/sprites/monsters/mon_neon_bat__attack/idle/mon_neon_bat__attack__idle__f00.png` (content_json)
+- `mon_neon_bat__hit` -> `/assets/sprites/monsters/mon_neon_bat__hit/idle/mon_neon_bat__hit__idle__f00.png` (content_json)
+- `mon_neon_bat__defeat` -> `/assets/sprites/monsters/mon_neon_bat__defeat/idle/mon_neon_bat__defeat__idle__f00.png` (content_json)
+- `mon_neon_bat__pose_sheet_2x2` -> `/assets/sprites/monsters/mon_neon_bat__pose_sheet_2x2/idle/mon_neon_bat__pose_sheet_2x2__idle__f00.png` (content_json)
+- `mon_parade_golem` -> `/assets/sprites/monsters/mon_parade_golem/idle/mon_parade_golem__idle__f00.png` (content_json)
+- `ico_mon_parade_golem` -> `/assets/placeholders/ico_mon_parade_golem.png` (content_json)
+- `mon_parade_golem__idle` -> `/assets/sprites/monsters/mon_parade_golem__idle/idle/mon_parade_golem__idle__idle__f00.png` (content_json)
+- `mon_parade_golem__attack` -> `/assets/sprites/monsters/mon_parade_golem__attack/idle/mon_parade_golem__attack__idle__f00.png` (content_json)
+- `mon_parade_golem__hit` -> `/assets/sprites/monsters/mon_parade_golem__hit/idle/mon_parade_golem__hit__idle__f00.png` (content_json)
+- `mon_parade_golem__defeat` -> `/assets/sprites/monsters/mon_parade_golem__defeat/idle/mon_parade_golem__defeat__idle__f00.png` (content_json)
+- `mon_parade_golem__pose_sheet_2x2` -> `/assets/sprites/monsters/mon_parade_golem__pose_sheet_2x2/idle/mon_parade_golem__pose_sheet_2x2__idle__f00.png` (content_json)
+- `mon_pillow_squire` -> `/assets/sprites/monsters/mon_pillow_squire/idle/mon_pillow_squire__idle__f00.png` (content_json)
+- `ico_mon_pillow_squire` -> `/assets/placeholders/ico_mon_pillow_squire.png` (content_json)
+- `mon_pillow_squire__idle` -> `/assets/sprites/monsters/mon_pillow_squire__idle/idle/mon_pillow_squire__idle__idle__f00.png` (content_json)
+- `mon_pillow_squire__attack` -> `/assets/sprites/monsters/mon_pillow_squire__attack/idle/mon_pillow_squire__attack__idle__f00.png` (content_json)
+- `mon_pillow_squire__hit` -> `/assets/sprites/monsters/mon_pillow_squire__hit/idle/mon_pillow_squire__hit__idle__f00.png` (content_json)
+- `mon_pillow_squire__defeat` -> `/assets/sprites/monsters/mon_pillow_squire__defeat/idle/mon_pillow_squire__defeat__idle__f00.png` (content_json)
+- `mon_pillow_squire__pose_sheet_2x2` -> `/assets/sprites/monsters/mon_pillow_squire__pose_sheet_2x2/idle/mon_pillow_squire__pose_sheet_2x2__idle__f00.png` (content_json)
+- `mon_pixel_blob` -> `/assets/sprites/monsters/mon_pixel_blob/idle/mon_pixel_blob__idle__f00.png` (content_json)
+- `ico_mon_pixel_blob` -> `/assets/placeholders/ico_mon_pixel_blob.png` (content_json)
+- `mon_pixel_blob__idle` -> `/assets/sprites/monsters/mon_pixel_blob__idle/idle/mon_pixel_blob__idle__idle__f00.png` (content_json)
+- `mon_pixel_blob__attack` -> `/assets/sprites/monsters/mon_pixel_blob__attack/idle/mon_pixel_blob__attack__idle__f00.png` (content_json)
+- `mon_pixel_blob__hit` -> `/assets/sprites/monsters/mon_pixel_blob__hit/idle/mon_pixel_blob__hit__idle__f00.png` (content_json)
+- `mon_pixel_blob__defeat` -> `/assets/sprites/monsters/mon_pixel_blob__defeat/idle/mon_pixel_blob__defeat__idle__f00.png` (content_json)
+- `mon_pixel_blob__pose_sheet_2x2` -> `/assets/sprites/monsters/mon_pixel_blob__pose_sheet_2x2/idle/mon_pixel_blob__pose_sheet_2x2__idle__f00.png` (content_json)
+- `mon_plush_dragon` -> `/assets/sprites/monsters/mon_plush_dragon/idle/mon_plush_dragon__idle__f00.png` (content_json)
+- `ico_mon_plush_dragon` -> `/assets/placeholders/ico_mon_plush_dragon.png` (content_json)
+- `mon_plush_dragon__idle` -> `/assets/sprites/monsters/mon_plush_dragon__idle/idle/mon_plush_dragon__idle__idle__f00.png` (content_json)
+- `mon_plush_dragon__attack` -> `/assets/sprites/monsters/mon_plush_dragon__attack/idle/mon_plush_dragon__attack__idle__f00.png` (content_json)
+- `mon_plush_dragon__hit` -> `/assets/sprites/monsters/mon_plush_dragon__hit/idle/mon_plush_dragon__hit__idle__f00.png` (content_json)
+- `mon_plush_dragon__defeat` -> `/assets/sprites/monsters/mon_plush_dragon__defeat/idle/mon_plush_dragon__defeat__idle__f00.png` (content_json)
+- `mon_plush_dragon__pose_sheet_2x2` -> `/assets/sprites/monsters/mon_plush_dragon__pose_sheet_2x2/idle/mon_plush_dragon__pose_sheet_2x2__idle__f00.png` (content_json)
+- `mon_popsicle_bat` -> `/assets/sprites/monsters/mon_popsicle_bat/idle/mon_popsicle_bat__idle__f00.png` (content_json)
+- `ico_mon_popsicle_bat` -> `/assets/placeholders/ico_mon_popsicle_bat.png` (content_json)
+- `mon_popsicle_bat__idle` -> `/assets/sprites/monsters/mon_popsicle_bat__idle/idle/mon_popsicle_bat__idle__idle__f00.png` (content_json)
+- `mon_popsicle_bat__attack` -> `/assets/sprites/monsters/mon_popsicle_bat__attack/idle/mon_popsicle_bat__attack__idle__f00.png` (content_json)
 
 ## Files only found in legacy fallback paths
 - `evt_arcade_challenge` -> `/assets/story/evt_arcade_challenge.png`
@@ -344,105 +344,292 @@ Generated: 2026-05-21T06:25:46.421Z
 - `hero_poplin_professor` from src/game/content/heroes/poplin_professor.json/portraitKey
 - `hero_zuzu_goblin_engineer` from src/game/content/heroes/zuzu_goblin_engineer.json/portraitKey
 - `ico_hero_zuzu_goblin_engineer` from src/game/content/heroes/zuzu_goblin_engineer.json/iconKey
-- `ico_mon_arcade_spark` from src/game/content/monsters/arcade_spark.json/iconKey
-- `ico_mon_bat` from src/game/content/monsters/bat.json/iconKey
-- `ico_mon_blanket_bard` from src/game/content/monsters/blanket_bard.json/iconKey
-- `ico_mon_block_baron` from src/game/content/monsters/block_baron.json/iconKey
-- `ico_mon_bolt_beetle` from src/game/content/monsters/bolt_beetle.json/iconKey
-- `ico_mon_boss_cupcake_slime_king` from src/game/content/monsters/boss-cupcake_slime_king.json/iconKey
-- `ico_mon_boss_gelato_golem` from src/game/content/monsters/boss-gelato_golem.json/iconKey
-- `ico_mon_boss_high_score_hydra` from src/game/content/monsters/boss-high_score_hydra.json/iconKey
-- `ico_mon_boss_king_bloxley` from src/game/content/monsters/boss-king_bloxley.json/iconKey
-- `ico_mon_boss_prototype_no_7` from src/game/content/monsters/boss-prototype_no_7.json/iconKey
-- `ico_mon_boss_sir_snore_a_lot` from src/game/content/monsters/boss-sir_snore_a_lot.json/iconKey
-- `ico_mon_bubble_bat` from src/game/content/monsters/bubble_bat.json/iconKey
-- `ico_mon_chilly_churro` from src/game/content/monsters/chilly_churro.json/iconKey
-- `ico_mon_combo_crab` from src/game/content/monsters/combo_crab.json/iconKey
-- `ico_mon_crown_mime` from src/game/content/monsters/crown_mime.json/iconKey
-- `ico_mon_cupcake_imp` from src/game/content/monsters/cupcake_imp.json/iconKey
-- `ico_mon_dream_drummer` from src/game/content/monsters/dream_drummer.json/iconKey
-- `ico_mon_elite_knight` from src/game/content/monsters/elite-knight.json/iconKey
-- `ico_mon_boss_falling_king` from src/game/content/monsters/falling-king.json/iconKey
-- `ico_mon_frosting_fox` from src/game/content/monsters/frosting_fox.json/iconKey
-- `ico_mon_gadget_goblin` from src/game/content/monsters/gadget_goblin.json/iconKey
-- `ico_mon_gear_gremlin` from src/game/content/monsters/gear_gremlin.json/iconKey
-- `ico_mon_gelato_blob` from src/game/content/monsters/gelato_blob.json/iconKey
-- `ico_mon_dungeon_goblin` from src/game/content/monsters/goblin.json/iconKey
-- `ico_mon_ice_pop_mimic` from src/game/content/monsters/ice_pop_mimic.json/iconKey
-- `ico_mon_joystick_jinxer` from src/game/content/monsters/joystick_jinxer.json/iconKey
-- `ico_mon_palace_jester` from src/game/content/monsters/palace_jester.json/iconKey
-- `ico_mon_pillow_pawn` from src/game/content/monsters/pillow_pawn.json/iconKey
-- `ico_mon_pipe_peeker` from src/game/content/monsters/pipe_peeker.json/iconKey
-- `ico_mon_quilt_knight` from src/game/content/monsters/quilt_knight.json/iconKey
-- `ico_mon_royal_page` from src/game/content/monsters/royal_page.json/iconKey
-- `ico_mon_score_specter` from src/game/content/monsters/score_specter.json/iconKey
-- `ico_mon_dungeon_slime` from src/game/content/monsters/slime.json/iconKey
-- `ico_mon_snore_squire` from src/game/content/monsters/snore_squire.json/iconKey
-- `ico_mon_snowcone_sprite` from src/game/content/monsters/snowcone_sprite.json/iconKey
-- `ico_mon_spring_bot` from src/game/content/monsters/spring_bot.json/iconKey
-- `ico_mon_sprinkle_rat` from src/game/content/monsters/sprinkle_rat.json/iconKey
-- `ico_mon_stone_golem` from src/game/content/monsters/stone-golem.json/iconKey
-- `ico_mon_syrup_slug` from src/game/content/monsters/syrup_slug.json/iconKey
-- `ico_mon_ticket_tumbler` from src/game/content/monsters/ticket_tumbler.json/iconKey
-- `ico_mon_witch` from src/game/content/monsters/witch.json/iconKey
-- `ico_mon_wrench_wisp` from src/game/content/monsters/wrench_wisp.json/iconKey
-- `oops_square_only` from src/game/content/oopsies/blind-preview.json/iconKey
-- `oops_slippery_buttons` from src/game/content/oopsies/blood-magic.json/iconKey
-- `oops_sticky_floor` from src/game/content/oopsies/cracked-board.json/iconKey
-- `oops_snack_tax` from src/game/content/oopsies/fragile-mana.json/iconKey
-- `oops_overexcited_machine` from src/game/content/oopsies/greedy-goblin.json/iconKey
-- `oops_heavy_blocks` from src/game/content/oopsies/heavy-blocks.json/iconKey
-- `oops_sugar_crash` from src/game/content/oopsies/sugar-crash.json/iconKey
-- `oops_too_much_confetti` from src/game/content/oopsies/too-much-confetti.json/iconKey
-- `placeholder_relic` from src/game/content/relics/arcade-token.json/iconKey, src/game/content/relics/cupcake-wrapper.json/iconKey, src/game/content/relics/royal-napkin.json/iconKey
-- `icon_broken_hourglass` from src/game/content/relics/broken-hourglass.json/iconKey
-- `icon_goblin_coin` from src/game/content/relics/goblin-coin.json/iconKey
-- `icon_slime_core` from src/game/content/relics/slime-core.json/iconKey
-- `icon_confetti_bomb` from src/game/content/spells/bomb-rune.json/iconKey
-- `anim_spell_bomb_rune` from src/game/content/spells/bomb-rune.json/vfxKey
-- `placeholder_spell` from src/game/content/spells/bubble-shield.json/iconKey, src/game/content/spells/cascade-cheer.json/iconKey, src/game/content/spells/confetti-pop.json/iconKey
-- `anim_spell_bubble_shield` from src/game/content/spells/bubble-shield.json/vfxKey
-- `spell_glaze_line` from src/game/content/spells/burn-line.json/iconKey
-- `effect_burn_line` from src/game/content/spells/burn-line.json/effectKey
-- `anim_spell_cascade_cheer` from src/game/content/spells/cascade-cheer.json/vfxKey
-- `icon_void_cut` from src/game/content/spells/clean-cut.json/iconKey
-- `anim_spell_clean_cut` from src/game/content/spells/clean-cut.json/vfxKey, src/game/content/spells/void-cut.json/vfxKey
-- `anim_spell_confetti_pop` from src/game/content/spells/confetti-pop.json/vfxKey
-- `anim_spell_cupcake_blast` from src/game/content/spells/cupcake-blast.json/vfxKey
-- `icon_sprinkle_spark` from src/game/content/spells/fireball.json/iconKey
-- `anim_spell_fireball` from src/game/content/spells/fireball.json/vfxKey
-- `icon_frost_lock` from src/game/content/spells/frost-lock.json/iconKey
-- `anim_spell_frost_lock` from src/game/content/spells/frost-lock.json/vfxKey
-- `anim_spell_goblin_gadget` from src/game/content/spells/goblin-gadget.json/vfxKey
-- `spell_cascade_gravity` from src/game/content/spells/gravity-flip.json/iconKey
-- `effect_gravity_flip` from src/game/content/spells/gravity-flip.json/effectKey
-- `spell_snack_glyph` from src/game/content/spells/heal-glyph.json/iconKey
-- `effect_heal_glyph` from src/game/content/spells/heal-glyph.json/effectKey
-- `spell_snowcone_shield` from src/game/content/spells/ice-wall.json/iconKey
-- `effect_ice_wall` from src/game/content/spells/ice-wall.json/effectKey
-- `anim_spell_jelly_bounce` from src/game/content/spells/jelly-bounce.json/vfxKey
-- `spell_spark_chain` from src/game/content/spells/lightning-chain.json/iconKey
-- `effect_lightning_chain` from src/game/content/spells/lightning-chain.json/effectKey
-- `spell_mana_pop` from src/game/content/spells/mana-burst.json/iconKey
-- `effect_mana_burst` from src/game/content/spells/mana-burst.json/effectKey
-- `anim_spell_rainbow_reroll` from src/game/content/spells/rainbow-reroll.json/vfxKey
-- `anim_spell_snack_break` from src/game/content/spells/snack-break.json/vfxKey
-- `anim_spell_snowcone_burst` from src/game/content/spells/snowcone-burst.json/vfxKey
-- `anim_spell_sprinkle_shower` from src/game/content/spells/sprinkle-shower.json/vfxKey
-- `anim_spell_star_spark` from src/game/content/spells/star-spark.json/vfxKey
-- `icon_rainbow_slice` from src/game/content/spells/void-cut.json/iconKey
-- `effect_slow` from src/game/content/status-effects/slow.json/effectKey
-- `effect_stun` from src/game/content/status-effects/stun.json/effectKey
-- `effect_vulnerable` from src/game/content/status-effects/vulnerable.json/effectKey
-- `icon_bomb_expert` from src/game/content/upgrades/bomb-expert.json/iconKey
-- `placeholder_upgrade` from src/game/content/upgrades/cascade-choir.json/iconKey, src/game/content/upgrades/fever-fizz.json/iconKey, src/game/content/upgrades/snack-pockets.json/iconKey
-- `icon_combo_heart` from src/game/content/upgrades/combo-heart.json/iconKey
-- `icon_fire_mastery` from src/game/content/upgrades/fire-mastery.json/iconKey
-- `icon_mana_echo` from src/game/content/upgrades/mana-echo.json/iconKey
-- `icon_sharp_edges` from src/game/content/upgrades/sharp-edges.json/iconKey
-- `icon_stable_hands` from src/game/content/upgrades/stable-hands.json/iconKey
-- `icon_festival_wand` from src/game/content/weapons/basic-wand.json/iconKey
-- `placeholder_weapon` from src/game/content/weapons/party-popper.json/iconKey, src/game/content/weapons/star-scepter.json/iconKey
+- `mon_banner_bug` from src/game/content/monsters/banner_bug.json/spriteKey
+- `ico_mon_banner_bug` from src/game/content/monsters/banner_bug.json/iconKey, src/game/content/monsters/banner_bug.json/assetRefs/icon
+- `mon_banner_bug__idle` from src/game/content/monsters/banner_bug.json/assetRefs/idle
+- `mon_banner_bug__attack` from src/game/content/monsters/banner_bug.json/assetRefs/attack
+- `mon_banner_bug__hit` from src/game/content/monsters/banner_bug.json/assetRefs/hit
+- `mon_banner_bug__defeat` from src/game/content/monsters/banner_bug.json/assetRefs/defeat
+- `mon_banner_bug__pose_sheet_2x2` from src/game/content/monsters/banner_bug.json/assetRefs/poseSheet
+- `mon_blanket_ghost` from src/game/content/monsters/blanket_ghost.json/spriteKey
+- `ico_mon_blanket_ghost` from src/game/content/monsters/blanket_ghost.json/iconKey, src/game/content/monsters/blanket_ghost.json/assetRefs/icon
+- `mon_blanket_ghost__idle` from src/game/content/monsters/blanket_ghost.json/assetRefs/idle
+- `mon_blanket_ghost__attack` from src/game/content/monsters/blanket_ghost.json/assetRefs/attack
+- `mon_blanket_ghost__hit` from src/game/content/monsters/blanket_ghost.json/assetRefs/hit
+- `mon_blanket_ghost__defeat` from src/game/content/monsters/blanket_ghost.json/assetRefs/defeat
+- `mon_blanket_ghost__pose_sheet_2x2` from src/game/content/monsters/blanket_ghost.json/assetRefs/poseSheet
+- `ico_boss_cupcake_slime_king` from src/game/content/monsters/boss_cupcake_slime_king.json/iconKey, src/game/content/monsters/boss_cupcake_slime_king.json/assetRefs/icon
+- `boss_cupcake_slime_king__idle` from src/game/content/monsters/boss_cupcake_slime_king.json/assetRefs/idle
+- `boss_cupcake_slime_king__attack` from src/game/content/monsters/boss_cupcake_slime_king.json/assetRefs/attack
+- `boss_cupcake_slime_king__hit` from src/game/content/monsters/boss_cupcake_slime_king.json/assetRefs/hit
+- `boss_cupcake_slime_king__phase_change` from src/game/content/monsters/boss_cupcake_slime_king.json/assetRefs/phaseChange
+- `boss_cupcake_slime_king__special_attack` from src/game/content/monsters/boss_cupcake_slime_king.json/assetRefs/specialAttack
+- `boss_cupcake_slime_king__defeat` from src/game/content/monsters/boss_cupcake_slime_king.json/assetRefs/defeat
+- `boss_cupcake_slime_king__pose_sheet_2x2` from src/game/content/monsters/boss_cupcake_slime_king.json/assetRefs/poseSheet
+- `boss_gelato_golem` from src/game/content/monsters/boss_gelato_golem.json/spriteKey
+- `ico_boss_gelato_golem` from src/game/content/monsters/boss_gelato_golem.json/iconKey, src/game/content/monsters/boss_gelato_golem.json/assetRefs/icon
+- `boss_gelato_golem__idle` from src/game/content/monsters/boss_gelato_golem.json/assetRefs/idle
+- `boss_gelato_golem__attack` from src/game/content/monsters/boss_gelato_golem.json/assetRefs/attack
+- `boss_gelato_golem__hit` from src/game/content/monsters/boss_gelato_golem.json/assetRefs/hit
+- `boss_gelato_golem__phase_change` from src/game/content/monsters/boss_gelato_golem.json/assetRefs/phaseChange
+- `boss_gelato_golem__special_attack` from src/game/content/monsters/boss_gelato_golem.json/assetRefs/specialAttack
+- `boss_gelato_golem__defeat` from src/game/content/monsters/boss_gelato_golem.json/assetRefs/defeat
+- `boss_gelato_golem__pose_sheet_2x2` from src/game/content/monsters/boss_gelato_golem.json/assetRefs/poseSheet
+- `boss_high_score_hydra` from src/game/content/monsters/boss_high_score_hydra.json/spriteKey
+- `ico_boss_high_score_hydra` from src/game/content/monsters/boss_high_score_hydra.json/iconKey, src/game/content/monsters/boss_high_score_hydra.json/assetRefs/icon
+- `boss_high_score_hydra__idle` from src/game/content/monsters/boss_high_score_hydra.json/assetRefs/idle
+- `boss_high_score_hydra__attack` from src/game/content/monsters/boss_high_score_hydra.json/assetRefs/attack
+- `boss_high_score_hydra__hit` from src/game/content/monsters/boss_high_score_hydra.json/assetRefs/hit
+- `boss_high_score_hydra__phase_change` from src/game/content/monsters/boss_high_score_hydra.json/assetRefs/phaseChange
+- `boss_high_score_hydra__special_attack` from src/game/content/monsters/boss_high_score_hydra.json/assetRefs/specialAttack
+- `boss_high_score_hydra__defeat` from src/game/content/monsters/boss_high_score_hydra.json/assetRefs/defeat
+- `boss_high_score_hydra__pose_sheet_2x2` from src/game/content/monsters/boss_high_score_hydra.json/assetRefs/poseSheet
+- `boss_king_bloxley` from src/game/content/monsters/boss_king_bloxley.json/spriteKey
+- `ico_boss_king_bloxley` from src/game/content/monsters/boss_king_bloxley.json/iconKey, src/game/content/monsters/boss_king_bloxley.json/assetRefs/icon
+- `boss_king_bloxley__idle` from src/game/content/monsters/boss_king_bloxley.json/assetRefs/idle
+- `boss_king_bloxley__attack` from src/game/content/monsters/boss_king_bloxley.json/assetRefs/attack
+- `boss_king_bloxley__hit` from src/game/content/monsters/boss_king_bloxley.json/assetRefs/hit
+- `boss_king_bloxley__phase_change` from src/game/content/monsters/boss_king_bloxley.json/assetRefs/phaseChange
+- `boss_king_bloxley__special_attack` from src/game/content/monsters/boss_king_bloxley.json/assetRefs/specialAttack
+- `boss_king_bloxley__defeat` from src/game/content/monsters/boss_king_bloxley.json/assetRefs/defeat
+- `boss_king_bloxley__pose_sheet_2x2` from src/game/content/monsters/boss_king_bloxley.json/assetRefs/poseSheet
+- `boss_prototype_no_7` from src/game/content/monsters/boss_prototype_no_7.json/spriteKey
+- `ico_boss_prototype_no_7` from src/game/content/monsters/boss_prototype_no_7.json/iconKey, src/game/content/monsters/boss_prototype_no_7.json/assetRefs/icon
+- `boss_prototype_no_7__idle` from src/game/content/monsters/boss_prototype_no_7.json/assetRefs/idle
+- `boss_prototype_no_7__attack` from src/game/content/monsters/boss_prototype_no_7.json/assetRefs/attack
+- `boss_prototype_no_7__hit` from src/game/content/monsters/boss_prototype_no_7.json/assetRefs/hit
+- `boss_prototype_no_7__phase_change` from src/game/content/monsters/boss_prototype_no_7.json/assetRefs/phaseChange
+- `boss_prototype_no_7__special_attack` from src/game/content/monsters/boss_prototype_no_7.json/assetRefs/specialAttack
+- `boss_prototype_no_7__defeat` from src/game/content/monsters/boss_prototype_no_7.json/assetRefs/defeat
+- `boss_prototype_no_7__pose_sheet_2x2` from src/game/content/monsters/boss_prototype_no_7.json/assetRefs/poseSheet
+- `boss_sir_snore_a_lot` from src/game/content/monsters/boss_sir_snore_a_lot.json/spriteKey
+- `ico_boss_sir_snore_a_lot` from src/game/content/monsters/boss_sir_snore_a_lot.json/iconKey, src/game/content/monsters/boss_sir_snore_a_lot.json/assetRefs/icon
+- `boss_sir_snore_a_lot__idle` from src/game/content/monsters/boss_sir_snore_a_lot.json/assetRefs/idle
+- `boss_sir_snore_a_lot__attack` from src/game/content/monsters/boss_sir_snore_a_lot.json/assetRefs/attack
+- `boss_sir_snore_a_lot__hit` from src/game/content/monsters/boss_sir_snore_a_lot.json/assetRefs/hit
+- `boss_sir_snore_a_lot__phase_change` from src/game/content/monsters/boss_sir_snore_a_lot.json/assetRefs/phaseChange
+- `boss_sir_snore_a_lot__special_attack` from src/game/content/monsters/boss_sir_snore_a_lot.json/assetRefs/specialAttack
+- `boss_sir_snore_a_lot__defeat` from src/game/content/monsters/boss_sir_snore_a_lot.json/assetRefs/defeat
+- `boss_sir_snore_a_lot__pose_sheet_2x2` from src/game/content/monsters/boss_sir_snore_a_lot.json/assetRefs/poseSheet
+- `mon_button_knight` from src/game/content/monsters/button_knight.json/spriteKey
+- `ico_mon_button_knight` from src/game/content/monsters/button_knight.json/iconKey, src/game/content/monsters/button_knight.json/assetRefs/icon
+- `mon_button_knight__idle` from src/game/content/monsters/button_knight.json/assetRefs/idle
+- `mon_button_knight__attack` from src/game/content/monsters/button_knight.json/assetRefs/attack
+- `mon_button_knight__hit` from src/game/content/monsters/button_knight.json/assetRefs/hit
+- `mon_button_knight__defeat` from src/game/content/monsters/button_knight.json/assetRefs/defeat
+- `mon_button_knight__pose_sheet_2x2` from src/game/content/monsters/button_knight.json/assetRefs/poseSheet
+- `mon_button_masher` from src/game/content/monsters/button_masher.json/spriteKey
+- `ico_mon_button_masher` from src/game/content/monsters/button_masher.json/iconKey, src/game/content/monsters/button_masher.json/assetRefs/icon
+- `mon_button_masher__idle` from src/game/content/monsters/button_masher.json/assetRefs/idle
+- `mon_button_masher__attack` from src/game/content/monsters/button_masher.json/assetRefs/attack
+- `mon_button_masher__hit` from src/game/content/monsters/button_masher.json/assetRefs/hit
+- `mon_button_masher__defeat` from src/game/content/monsters/button_masher.json/assetRefs/defeat
+- `mon_button_masher__pose_sheet_2x2` from src/game/content/monsters/button_masher.json/assetRefs/poseSheet
+- `mon_chill_slime` from src/game/content/monsters/chill_slime.json/spriteKey
+- `ico_mon_chill_slime` from src/game/content/monsters/chill_slime.json/iconKey, src/game/content/monsters/chill_slime.json/assetRefs/icon
+- `mon_chill_slime__idle` from src/game/content/monsters/chill_slime.json/assetRefs/idle
+- `mon_chill_slime__attack` from src/game/content/monsters/chill_slime.json/assetRefs/attack
+- `mon_chill_slime__hit` from src/game/content/monsters/chill_slime.json/assetRefs/hit
+- `mon_chill_slime__defeat` from src/game/content/monsters/chill_slime.json/assetRefs/defeat
+- `mon_chill_slime__pose_sheet_2x2` from src/game/content/monsters/chill_slime.json/assetRefs/poseSheet
+- `mon_combo_gremlin` from src/game/content/monsters/combo_gremlin.json/spriteKey
+- `ico_mon_combo_gremlin` from src/game/content/monsters/combo_gremlin.json/iconKey, src/game/content/monsters/combo_gremlin.json/assetRefs/icon
+- `mon_combo_gremlin__idle` from src/game/content/monsters/combo_gremlin.json/assetRefs/idle
+- `mon_combo_gremlin__attack` from src/game/content/monsters/combo_gremlin.json/assetRefs/attack
+- `mon_combo_gremlin__hit` from src/game/content/monsters/combo_gremlin.json/assetRefs/hit
+- `mon_combo_gremlin__defeat` from src/game/content/monsters/combo_gremlin.json/assetRefs/defeat
+- `mon_combo_gremlin__pose_sheet_2x2` from src/game/content/monsters/combo_gremlin.json/assetRefs/poseSheet
+- `mon_confetti_mage` from src/game/content/monsters/confetti_mage.json/spriteKey
+- `ico_mon_confetti_mage` from src/game/content/monsters/confetti_mage.json/iconKey, src/game/content/monsters/confetti_mage.json/assetRefs/icon
+- `mon_confetti_mage__idle` from src/game/content/monsters/confetti_mage.json/assetRefs/idle
+- `mon_confetti_mage__attack` from src/game/content/monsters/confetti_mage.json/assetRefs/attack
+- `mon_confetti_mage__hit` from src/game/content/monsters/confetti_mage.json/assetRefs/hit
+- `mon_confetti_mage__defeat` from src/game/content/monsters/confetti_mage.json/assetRefs/defeat
+- `mon_confetti_mage__pose_sheet_2x2` from src/game/content/monsters/confetti_mage.json/assetRefs/poseSheet
+- `mon_crown_bat` from src/game/content/monsters/crown_bat.json/spriteKey
+- `ico_mon_crown_bat` from src/game/content/monsters/crown_bat.json/iconKey, src/game/content/monsters/crown_bat.json/assetRefs/icon
+- `mon_crown_bat__idle` from src/game/content/monsters/crown_bat.json/assetRefs/idle
+- `mon_crown_bat__attack` from src/game/content/monsters/crown_bat.json/assetRefs/attack
+- `mon_crown_bat__hit` from src/game/content/monsters/crown_bat.json/assetRefs/hit
+- `mon_crown_bat__defeat` from src/game/content/monsters/crown_bat.json/assetRefs/defeat
+- `mon_crown_bat__pose_sheet_2x2` from src/game/content/monsters/crown_bat.json/assetRefs/poseSheet
+- `mon_crumb_goblin` from src/game/content/monsters/crumb_goblin.json/spriteKey
+- `ico_mon_crumb_goblin` from src/game/content/monsters/crumb_goblin.json/iconKey, src/game/content/monsters/crumb_goblin.json/assetRefs/icon
+- `mon_crumb_goblin__idle` from src/game/content/monsters/crumb_goblin.json/assetRefs/idle
+- `mon_crumb_goblin__attack` from src/game/content/monsters/crumb_goblin.json/assetRefs/attack
+- `mon_crumb_goblin__hit` from src/game/content/monsters/crumb_goblin.json/assetRefs/hit
+- `mon_crumb_goblin__defeat` from src/game/content/monsters/crumb_goblin.json/assetRefs/defeat
+- `mon_crumb_goblin__pose_sheet_2x2` from src/game/content/monsters/crumb_goblin.json/assetRefs/poseSheet
+- `ico_mon_cupcake_slime` from src/game/content/monsters/cupcake_slime.json/iconKey, src/game/content/monsters/cupcake_slime.json/assetRefs/icon
+- `mon_cupcake_slime__idle` from src/game/content/monsters/cupcake_slime.json/assetRefs/idle
+- `mon_cupcake_slime__attack` from src/game/content/monsters/cupcake_slime.json/assetRefs/attack
+- `mon_cupcake_slime__hit` from src/game/content/monsters/cupcake_slime.json/assetRefs/hit
+- `mon_cupcake_slime__defeat` from src/game/content/monsters/cupcake_slime.json/assetRefs/defeat
+- `mon_cupcake_slime__pose_sheet_2x2` from src/game/content/monsters/cupcake_slime.json/assetRefs/poseSheet
+- `mon_elite_blanket_ghost_duchess` from src/game/content/monsters/elite_blanket_ghost_duchess.json/spriteKey
+- `ico_mon_elite_blanket_ghost_duchess` from src/game/content/monsters/elite_blanket_ghost_duchess.json/iconKey, src/game/content/monsters/elite_blanket_ghost_duchess.json/assetRefs/icon
+- `mon_elite_blanket_ghost_duchess__idle` from src/game/content/monsters/elite_blanket_ghost_duchess.json/assetRefs/idle
+- `mon_elite_blanket_ghost_duchess__attack` from src/game/content/monsters/elite_blanket_ghost_duchess.json/assetRefs/attack
+- `mon_elite_blanket_ghost_duchess__hit` from src/game/content/monsters/elite_blanket_ghost_duchess.json/assetRefs/hit
+- `mon_elite_blanket_ghost_duchess__defeat` from src/game/content/monsters/elite_blanket_ghost_duchess.json/assetRefs/defeat
+- `mon_elite_blanket_ghost_duchess__pose_sheet_2x2` from src/game/content/monsters/elite_blanket_ghost_duchess.json/assetRefs/poseSheet
+- `mon_elite_button_knight_captain` from src/game/content/monsters/elite_button_knight_captain.json/spriteKey
+- `ico_mon_elite_button_knight_captain` from src/game/content/monsters/elite_button_knight_captain.json/iconKey, src/game/content/monsters/elite_button_knight_captain.json/assetRefs/icon
+- `mon_elite_button_knight_captain__idle` from src/game/content/monsters/elite_button_knight_captain.json/assetRefs/idle
+- `mon_elite_button_knight_captain__attack` from src/game/content/monsters/elite_button_knight_captain.json/assetRefs/attack
+- `mon_elite_button_knight_captain__hit` from src/game/content/monsters/elite_button_knight_captain.json/assetRefs/hit
+- `mon_elite_button_knight_captain__defeat` from src/game/content/monsters/elite_button_knight_captain.json/assetRefs/defeat
+- `mon_elite_button_knight_captain__pose_sheet_2x2` from src/game/content/monsters/elite_button_knight_captain.json/assetRefs/poseSheet
+- `mon_elite_button_masher_supervisor` from src/game/content/monsters/elite_button_masher_supervisor.json/spriteKey
+- `ico_mon_elite_button_masher_supervisor` from src/game/content/monsters/elite_button_masher_supervisor.json/iconKey, src/game/content/monsters/elite_button_masher_supervisor.json/assetRefs/icon
+- `mon_elite_button_masher_supervisor__idle` from src/game/content/monsters/elite_button_masher_supervisor.json/assetRefs/idle
+- `mon_elite_button_masher_supervisor__attack` from src/game/content/monsters/elite_button_masher_supervisor.json/assetRefs/attack
+- `mon_elite_button_masher_supervisor__hit` from src/game/content/monsters/elite_button_masher_supervisor.json/assetRefs/hit
+- `mon_elite_button_masher_supervisor__defeat` from src/game/content/monsters/elite_button_masher_supervisor.json/assetRefs/defeat
+- `mon_elite_button_masher_supervisor__pose_sheet_2x2` from src/game/content/monsters/elite_button_masher_supervisor.json/assetRefs/poseSheet
+- `mon_elite_combo_gremlin_scorekeeper` from src/game/content/monsters/elite_combo_gremlin_scorekeeper.json/spriteKey
+- `ico_mon_elite_combo_gremlin_scorekeeper` from src/game/content/monsters/elite_combo_gremlin_scorekeeper.json/iconKey, src/game/content/monsters/elite_combo_gremlin_scorekeeper.json/assetRefs/icon
+- `mon_elite_combo_gremlin_scorekeeper__idle` from src/game/content/monsters/elite_combo_gremlin_scorekeeper.json/assetRefs/idle
+- `mon_elite_combo_gremlin_scorekeeper__attack` from src/game/content/monsters/elite_combo_gremlin_scorekeeper.json/assetRefs/attack
+- `mon_elite_combo_gremlin_scorekeeper__hit` from src/game/content/monsters/elite_combo_gremlin_scorekeeper.json/assetRefs/hit
+- `mon_elite_combo_gremlin_scorekeeper__defeat` from src/game/content/monsters/elite_combo_gremlin_scorekeeper.json/assetRefs/defeat
+- `mon_elite_combo_gremlin_scorekeeper__pose_sheet_2x2` from src/game/content/monsters/elite_combo_gremlin_scorekeeper.json/assetRefs/poseSheet
+- `mon_elite_crumb_goblin_foreman` from src/game/content/monsters/elite_crumb_goblin_foreman.json/spriteKey
+- `ico_mon_elite_crumb_goblin_foreman` from src/game/content/monsters/elite_crumb_goblin_foreman.json/iconKey, src/game/content/monsters/elite_crumb_goblin_foreman.json/assetRefs/icon
+- `mon_elite_crumb_goblin_foreman__idle` from src/game/content/monsters/elite_crumb_goblin_foreman.json/assetRefs/idle
+- `mon_elite_crumb_goblin_foreman__attack` from src/game/content/monsters/elite_crumb_goblin_foreman.json/assetRefs/attack
+- `mon_elite_crumb_goblin_foreman__hit` from src/game/content/monsters/elite_crumb_goblin_foreman.json/assetRefs/hit
+- `mon_elite_crumb_goblin_foreman__defeat` from src/game/content/monsters/elite_crumb_goblin_foreman.json/assetRefs/defeat
+- `mon_elite_crumb_goblin_foreman__pose_sheet_2x2` from src/game/content/monsters/elite_crumb_goblin_foreman.json/assetRefs/poseSheet
+- `mon_elite_freezer_mimic_deluxe` from src/game/content/monsters/elite_freezer_mimic_deluxe.json/spriteKey
+- `ico_mon_elite_freezer_mimic_deluxe` from src/game/content/monsters/elite_freezer_mimic_deluxe.json/iconKey, src/game/content/monsters/elite_freezer_mimic_deluxe.json/assetRefs/icon
+- `mon_elite_freezer_mimic_deluxe__idle` from src/game/content/monsters/elite_freezer_mimic_deluxe.json/assetRefs/idle
+- `mon_elite_freezer_mimic_deluxe__attack` from src/game/content/monsters/elite_freezer_mimic_deluxe.json/assetRefs/attack
+- `mon_elite_freezer_mimic_deluxe__hit` from src/game/content/monsters/elite_freezer_mimic_deluxe.json/assetRefs/hit
+- `mon_elite_freezer_mimic_deluxe__defeat` from src/game/content/monsters/elite_freezer_mimic_deluxe.json/assetRefs/defeat
+- `mon_elite_freezer_mimic_deluxe__pose_sheet_2x2` from src/game/content/monsters/elite_freezer_mimic_deluxe.json/assetRefs/poseSheet
+- `mon_elite_ice_cream_imp_chillmaster` from src/game/content/monsters/elite_ice_cream_imp_chillmaster.json/spriteKey
+- `ico_mon_elite_ice_cream_imp_chillmaster` from src/game/content/monsters/elite_ice_cream_imp_chillmaster.json/iconKey, src/game/content/monsters/elite_ice_cream_imp_chillmaster.json/assetRefs/icon
+- `mon_elite_ice_cream_imp_chillmaster__idle` from src/game/content/monsters/elite_ice_cream_imp_chillmaster.json/assetRefs/idle
+- `mon_elite_ice_cream_imp_chillmaster__attack` from src/game/content/monsters/elite_ice_cream_imp_chillmaster.json/assetRefs/attack
+- `mon_elite_ice_cream_imp_chillmaster__hit` from src/game/content/monsters/elite_ice_cream_imp_chillmaster.json/assetRefs/hit
+- `mon_elite_ice_cream_imp_chillmaster__defeat` from src/game/content/monsters/elite_ice_cream_imp_chillmaster.json/assetRefs/defeat
+- `mon_elite_ice_cream_imp_chillmaster__pose_sheet_2x2` from src/game/content/monsters/elite_ice_cream_imp_chillmaster.json/assetRefs/poseSheet
+- `mon_elite_parade_golem_grand_marshal` from src/game/content/monsters/elite_parade_golem_grand_marshal.json/spriteKey
+- `ico_mon_elite_parade_golem_grand_marshal` from src/game/content/monsters/elite_parade_golem_grand_marshal.json/iconKey, src/game/content/monsters/elite_parade_golem_grand_marshal.json/assetRefs/icon
+- `mon_elite_parade_golem_grand_marshal__idle` from src/game/content/monsters/elite_parade_golem_grand_marshal.json/assetRefs/idle
+- `mon_elite_parade_golem_grand_marshal__attack` from src/game/content/monsters/elite_parade_golem_grand_marshal.json/assetRefs/attack
+- `mon_elite_parade_golem_grand_marshal__hit` from src/game/content/monsters/elite_parade_golem_grand_marshal.json/assetRefs/hit
+- `mon_elite_parade_golem_grand_marshal__defeat` from src/game/content/monsters/elite_parade_golem_grand_marshal.json/assetRefs/defeat
+- `mon_elite_parade_golem_grand_marshal__pose_sheet_2x2` from src/game/content/monsters/elite_parade_golem_grand_marshal.json/assetRefs/poseSheet
+- `mon_elite_prize_claw_mimic_jackpot` from src/game/content/monsters/elite_prize_claw_mimic_jackpot.json/spriteKey
+- `ico_mon_elite_prize_claw_mimic_jackpot` from src/game/content/monsters/elite_prize_claw_mimic_jackpot.json/iconKey, src/game/content/monsters/elite_prize_claw_mimic_jackpot.json/assetRefs/icon
+- `mon_elite_prize_claw_mimic_jackpot__idle` from src/game/content/monsters/elite_prize_claw_mimic_jackpot.json/assetRefs/idle
+- `mon_elite_prize_claw_mimic_jackpot__attack` from src/game/content/monsters/elite_prize_claw_mimic_jackpot.json/assetRefs/attack
+- `mon_elite_prize_claw_mimic_jackpot__hit` from src/game/content/monsters/elite_prize_claw_mimic_jackpot.json/assetRefs/hit
+- `mon_elite_prize_claw_mimic_jackpot__defeat` from src/game/content/monsters/elite_prize_claw_mimic_jackpot.json/assetRefs/defeat
+- `mon_elite_prize_claw_mimic_jackpot__pose_sheet_2x2` from src/game/content/monsters/elite_prize_claw_mimic_jackpot.json/assetRefs/poseSheet
+- `mon_elite_royal_block_guard_captain` from src/game/content/monsters/elite_royal_block_guard_captain.json/spriteKey
+- `ico_mon_elite_royal_block_guard_captain` from src/game/content/monsters/elite_royal_block_guard_captain.json/iconKey, src/game/content/monsters/elite_royal_block_guard_captain.json/assetRefs/icon
+- `mon_elite_royal_block_guard_captain__idle` from src/game/content/monsters/elite_royal_block_guard_captain.json/assetRefs/idle
+- `mon_elite_royal_block_guard_captain__attack` from src/game/content/monsters/elite_royal_block_guard_captain.json/assetRefs/attack
+- `mon_elite_royal_block_guard_captain__hit` from src/game/content/monsters/elite_royal_block_guard_captain.json/assetRefs/hit
+- `mon_elite_royal_block_guard_captain__defeat` from src/game/content/monsters/elite_royal_block_guard_captain.json/assetRefs/defeat
+- `mon_elite_royal_block_guard_captain__pose_sheet_2x2` from src/game/content/monsters/elite_royal_block_guard_captain.json/assetRefs/poseSheet
+- `mon_elite_square_jester_prime` from src/game/content/monsters/elite_square_jester_prime.json/spriteKey
+- `ico_mon_elite_square_jester_prime` from src/game/content/monsters/elite_square_jester_prime.json/iconKey, src/game/content/monsters/elite_square_jester_prime.json/assetRefs/icon
+- `mon_elite_square_jester_prime__idle` from src/game/content/monsters/elite_square_jester_prime.json/assetRefs/idle
+- `mon_elite_square_jester_prime__attack` from src/game/content/monsters/elite_square_jester_prime.json/assetRefs/attack
+- `mon_elite_square_jester_prime__hit` from src/game/content/monsters/elite_square_jester_prime.json/assetRefs/hit
+- `mon_elite_square_jester_prime__defeat` from src/game/content/monsters/elite_square_jester_prime.json/assetRefs/defeat
+- `mon_elite_square_jester_prime__pose_sheet_2x2` from src/game/content/monsters/elite_square_jester_prime.json/assetRefs/poseSheet
+- `mon_freezer_mimic` from src/game/content/monsters/freezer_mimic.json/spriteKey
+- `ico_mon_freezer_mimic` from src/game/content/monsters/freezer_mimic.json/iconKey, src/game/content/monsters/freezer_mimic.json/assetRefs/icon
+- `mon_freezer_mimic__idle` from src/game/content/monsters/freezer_mimic.json/assetRefs/idle
+- `mon_freezer_mimic__attack` from src/game/content/monsters/freezer_mimic.json/assetRefs/attack
+- `mon_freezer_mimic__hit` from src/game/content/monsters/freezer_mimic.json/assetRefs/hit
+- `mon_freezer_mimic__defeat` from src/game/content/monsters/freezer_mimic.json/assetRefs/defeat
+- `mon_freezer_mimic__pose_sheet_2x2` from src/game/content/monsters/freezer_mimic.json/assetRefs/poseSheet
+- `mon_frosting_blob` from src/game/content/monsters/frosting_blob.json/spriteKey
+- `ico_mon_frosting_blob` from src/game/content/monsters/frosting_blob.json/iconKey, src/game/content/monsters/frosting_blob.json/assetRefs/icon
+- `mon_frosting_blob__idle` from src/game/content/monsters/frosting_blob.json/assetRefs/idle
+- `mon_frosting_blob__attack` from src/game/content/monsters/frosting_blob.json/assetRefs/attack
+- `mon_frosting_blob__hit` from src/game/content/monsters/frosting_blob.json/assetRefs/hit
+- `mon_frosting_blob__defeat` from src/game/content/monsters/frosting_blob.json/assetRefs/defeat
+- `mon_frosting_blob__pose_sheet_2x2` from src/game/content/monsters/frosting_blob.json/assetRefs/poseSheet
+- `mon_gear_slime` from src/game/content/monsters/gear_slime.json/spriteKey
+- `ico_mon_gear_slime` from src/game/content/monsters/gear_slime.json/iconKey, src/game/content/monsters/gear_slime.json/assetRefs/icon
+- `mon_gear_slime__idle` from src/game/content/monsters/gear_slime.json/assetRefs/idle
+- `mon_gear_slime__attack` from src/game/content/monsters/gear_slime.json/assetRefs/attack
+- `mon_gear_slime__hit` from src/game/content/monsters/gear_slime.json/assetRefs/hit
+- `mon_gear_slime__defeat` from src/game/content/monsters/gear_slime.json/assetRefs/defeat
+- `mon_gear_slime__pose_sheet_2x2` from src/game/content/monsters/gear_slime.json/assetRefs/poseSheet
+- `mon_ice_cream_imp` from src/game/content/monsters/ice_cream_imp.json/spriteKey
+- `ico_mon_ice_cream_imp` from src/game/content/monsters/ice_cream_imp.json/iconKey, src/game/content/monsters/ice_cream_imp.json/assetRefs/icon
+- `mon_ice_cream_imp__idle` from src/game/content/monsters/ice_cream_imp.json/assetRefs/idle
+- `mon_ice_cream_imp__attack` from src/game/content/monsters/ice_cream_imp.json/assetRefs/attack
+- `mon_ice_cream_imp__hit` from src/game/content/monsters/ice_cream_imp.json/assetRefs/hit
+- `mon_ice_cream_imp__defeat` from src/game/content/monsters/ice_cream_imp.json/assetRefs/defeat
+- `mon_ice_cream_imp__pose_sheet_2x2` from src/game/content/monsters/ice_cream_imp.json/assetRefs/poseSheet
+- `mon_jelly_rat` from src/game/content/monsters/jelly_rat.json/spriteKey
+- `ico_mon_jelly_rat` from src/game/content/monsters/jelly_rat.json/iconKey, src/game/content/monsters/jelly_rat.json/assetRefs/icon
+- `mon_jelly_rat__idle` from src/game/content/monsters/jelly_rat.json/assetRefs/idle
+- `mon_jelly_rat__attack` from src/game/content/monsters/jelly_rat.json/assetRefs/attack
+- `mon_jelly_rat__hit` from src/game/content/monsters/jelly_rat.json/assetRefs/hit
+- `mon_jelly_rat__defeat` from src/game/content/monsters/jelly_rat.json/assetRefs/defeat
+- `mon_jelly_rat__pose_sheet_2x2` from src/game/content/monsters/jelly_rat.json/assetRefs/poseSheet
+- `mon_joystick_jester` from src/game/content/monsters/joystick_jester.json/spriteKey
+- `ico_mon_joystick_jester` from src/game/content/monsters/joystick_jester.json/iconKey, src/game/content/monsters/joystick_jester.json/assetRefs/icon
+- `mon_joystick_jester__idle` from src/game/content/monsters/joystick_jester.json/assetRefs/idle
+- `mon_joystick_jester__attack` from src/game/content/monsters/joystick_jester.json/assetRefs/attack
+- `mon_joystick_jester__hit` from src/game/content/monsters/joystick_jester.json/assetRefs/hit
+- `mon_joystick_jester__defeat` from src/game/content/monsters/joystick_jester.json/assetRefs/defeat
+- `mon_joystick_jester__pose_sheet_2x2` from src/game/content/monsters/joystick_jester.json/assetRefs/poseSheet
+- `mon_neon_bat` from src/game/content/monsters/neon_bat.json/spriteKey
+- `ico_mon_neon_bat` from src/game/content/monsters/neon_bat.json/iconKey, src/game/content/monsters/neon_bat.json/assetRefs/icon
+- `mon_neon_bat__idle` from src/game/content/monsters/neon_bat.json/assetRefs/idle
+- `mon_neon_bat__attack` from src/game/content/monsters/neon_bat.json/assetRefs/attack
+- `mon_neon_bat__hit` from src/game/content/monsters/neon_bat.json/assetRefs/hit
+- `mon_neon_bat__defeat` from src/game/content/monsters/neon_bat.json/assetRefs/defeat
+- `mon_neon_bat__pose_sheet_2x2` from src/game/content/monsters/neon_bat.json/assetRefs/poseSheet
+- `mon_parade_golem` from src/game/content/monsters/parade_golem.json/spriteKey
+- `ico_mon_parade_golem` from src/game/content/monsters/parade_golem.json/iconKey, src/game/content/monsters/parade_golem.json/assetRefs/icon
+- `mon_parade_golem__idle` from src/game/content/monsters/parade_golem.json/assetRefs/idle
+- `mon_parade_golem__attack` from src/game/content/monsters/parade_golem.json/assetRefs/attack
+- `mon_parade_golem__hit` from src/game/content/monsters/parade_golem.json/assetRefs/hit
+- `mon_parade_golem__defeat` from src/game/content/monsters/parade_golem.json/assetRefs/defeat
+- `mon_parade_golem__pose_sheet_2x2` from src/game/content/monsters/parade_golem.json/assetRefs/poseSheet
+- `mon_pillow_squire` from src/game/content/monsters/pillow_squire.json/spriteKey
+- `ico_mon_pillow_squire` from src/game/content/monsters/pillow_squire.json/iconKey, src/game/content/monsters/pillow_squire.json/assetRefs/icon
+- `mon_pillow_squire__idle` from src/game/content/monsters/pillow_squire.json/assetRefs/idle
+- `mon_pillow_squire__attack` from src/game/content/monsters/pillow_squire.json/assetRefs/attack
+- `mon_pillow_squire__hit` from src/game/content/monsters/pillow_squire.json/assetRefs/hit
+- `mon_pillow_squire__defeat` from src/game/content/monsters/pillow_squire.json/assetRefs/defeat
+- `mon_pillow_squire__pose_sheet_2x2` from src/game/content/monsters/pillow_squire.json/assetRefs/poseSheet
+- `mon_pixel_blob` from src/game/content/monsters/pixel_blob.json/spriteKey
+- `ico_mon_pixel_blob` from src/game/content/monsters/pixel_blob.json/iconKey, src/game/content/monsters/pixel_blob.json/assetRefs/icon
+- `mon_pixel_blob__idle` from src/game/content/monsters/pixel_blob.json/assetRefs/idle
+- `mon_pixel_blob__attack` from src/game/content/monsters/pixel_blob.json/assetRefs/attack
+- `mon_pixel_blob__hit` from src/game/content/monsters/pixel_blob.json/assetRefs/hit
+- `mon_pixel_blob__defeat` from src/game/content/monsters/pixel_blob.json/assetRefs/defeat
+- `mon_pixel_blob__pose_sheet_2x2` from src/game/content/monsters/pixel_blob.json/assetRefs/poseSheet
+- `mon_plush_dragon` from src/game/content/monsters/plush_dragon.json/spriteKey
+- `ico_mon_plush_dragon` from src/game/content/monsters/plush_dragon.json/iconKey, src/game/content/monsters/plush_dragon.json/assetRefs/icon
+- `mon_plush_dragon__idle` from src/game/content/monsters/plush_dragon.json/assetRefs/idle
+- `mon_plush_dragon__attack` from src/game/content/monsters/plush_dragon.json/assetRefs/attack
+- `mon_plush_dragon__hit` from src/game/content/monsters/plush_dragon.json/assetRefs/hit
+- `mon_plush_dragon__defeat` from src/game/content/monsters/plush_dragon.json/assetRefs/defeat
+- `mon_plush_dragon__pose_sheet_2x2` from src/game/content/monsters/plush_dragon.json/assetRefs/poseSheet
+- `mon_popsicle_bat` from src/game/content/monsters/popsicle_bat.json/spriteKey
+- `ico_mon_popsicle_bat` from src/game/content/monsters/popsicle_bat.json/iconKey, src/game/content/monsters/popsicle_bat.json/assetRefs/icon
+- `mon_popsicle_bat__idle` from src/game/content/monsters/popsicle_bat.json/assetRefs/idle
+- `mon_popsicle_bat__attack` from src/game/content/monsters/popsicle_bat.json/assetRefs/attack
+- `mon_popsicle_bat__hit` from src/game/content/monsters/popsicle_bat.json/assetRefs/hit
+- `mon_popsicle_bat__defeat` from src/game/content/monsters/popsicle_bat.json/assetRefs/defeat
+- `mon_popsicle_bat__pose_sheet_2x2` from src/game/content/monsters/popsicle_bat.json/assetRefs/poseSheet
+- `mon_prize_claw_mimic` from src/game/content/monsters/prize_claw_mimic.json/spriteKey
+- `ico_mon_prize_claw_mimic` from src/game/content/monsters/prize_claw_mimic.json/iconKey, src/game/content/monsters/prize_claw_mimic.json/assetRefs/icon
+- `mon_prize_claw_mimic__idle` from src/game/content/monsters/prize_claw_mimic.json/assetRefs/idle
 
 ## Duplicate nested sprites/sprites paths
 - None
@@ -491,6 +678,48 @@ Generated: 2026-05-21T06:25:46.421Z
 - `/assets/icons/upgrades/placeholder_upgrade.png`
 - `/assets/icons/weapons/icon_festival_wand.png`
 - `/assets/icons/weapons/placeholder_weapon.png`
+- `/assets/placeholders/placeholder_arcade_spark.png`
+- `/assets/placeholders/placeholder_bat.png`
+- `/assets/placeholders/placeholder_blanket_bard.png`
+- `/assets/placeholders/placeholder_block_baron.png`
+- `/assets/placeholders/placeholder_bolt_beetle.png`
+- `/assets/placeholders/placeholder_bubble_bat.png`
+- `/assets/placeholders/placeholder_chilly_churro.png`
+- `/assets/placeholders/placeholder_combo_crab.png`
+- `/assets/placeholders/placeholder_crown_mime.png`
+- `/assets/placeholders/placeholder_cupcake_imp.png`
+- `/assets/placeholders/placeholder_cupcake_slime_king.png`
+- `/assets/placeholders/placeholder_dream_drummer.png`
+- `/assets/placeholders/placeholder_elite_knight.png`
+- `/assets/placeholders/placeholder_falling_king.png`
+- `/assets/placeholders/placeholder_frosting_fox.png`
+- `/assets/placeholders/placeholder_gadget_goblin.png`
+- `/assets/placeholders/placeholder_gear_gremlin.png`
+- `/assets/placeholders/placeholder_gelato_blob.png`
+- `/assets/placeholders/placeholder_gelato_golem.png`
+- `/assets/placeholders/placeholder_goblin.png`
+- `/assets/placeholders/placeholder_high_score_hydra.png`
+- `/assets/placeholders/placeholder_ice_pop_mimic.png`
+- `/assets/placeholders/placeholder_joystick_jinxer.png`
+- `/assets/placeholders/placeholder_king_bloxley.png`
+- `/assets/placeholders/placeholder_palace_jester.png`
+- `/assets/placeholders/placeholder_pillow_pawn.png`
+- `/assets/placeholders/placeholder_pipe_peeker.png`
+- `/assets/placeholders/placeholder_prototype_no_7.png`
+- `/assets/placeholders/placeholder_quilt_knight.png`
+- `/assets/placeholders/placeholder_royal_page.png`
+- `/assets/placeholders/placeholder_score_specter.png`
+- `/assets/placeholders/placeholder_sir_snore_a_lot.png`
+- `/assets/placeholders/placeholder_slime.png`
+- `/assets/placeholders/placeholder_snore_squire.png`
+- `/assets/placeholders/placeholder_snowcone_sprite.png`
+- `/assets/placeholders/placeholder_spring_bot.png`
+- `/assets/placeholders/placeholder_sprinkle_rat.png`
+- `/assets/placeholders/placeholder_stone_golem.png`
+- `/assets/placeholders/placeholder_syrup_slug.png`
+- `/assets/placeholders/placeholder_ticket_tumbler.png`
+- `/assets/placeholders/placeholder_witch.png`
+- `/assets/placeholders/placeholder_wrench_wisp.png`
 - `/assets/portraits/heroes/hero_bloop_slime_friend.png`
 - `/assets/portraits/heroes/hero_bruk_snack_knight.png`
 - `/assets/portraits/heroes/hero_lumi_star_witch.png`
@@ -539,25 +768,6 @@ Generated: 2026-05-21T06:25:46.421Z
 - `/assets/sprites/board-blocks/block_void/clear/block_void__clear__f00.png`
 - `/assets/sprites/board-blocks/block_void/glow/block_void__glow__f00.png`
 - `/assets/sprites/bosses/boss_cupcake_slime_king_intro/idle/boss_cupcake_slime_king_intro__idle__f00.png`
-- `/assets/sprites/monsters/mon_cupcake_slime/attack/spr_mon_cupcake_slime__attack__f00.png`
-- `/assets/sprites/monsters/mon_cupcake_slime/attack/spr_mon_cupcake_slime__attack__f01.png`
-- `/assets/sprites/monsters/mon_cupcake_slime/attack/spr_mon_cupcake_slime__attack__f02.png`
-- `/assets/sprites/monsters/mon_cupcake_slime/attack/spr_mon_cupcake_slime__attack__f03.png`
-- `/assets/sprites/monsters/mon_cupcake_slime/attack/spr_mon_cupcake_slime__attack__f04.png`
-- `/assets/sprites/monsters/mon_cupcake_slime/attack/spr_mon_cupcake_slime__attack__f05.png`
-- `/assets/sprites/monsters/mon_cupcake_slime/defeat/spr_mon_cupcake_slime__defeat__f00.png`
-- `/assets/sprites/monsters/mon_cupcake_slime/defeat/spr_mon_cupcake_slime__defeat__f01.png`
-- `/assets/sprites/monsters/mon_cupcake_slime/defeat/spr_mon_cupcake_slime__defeat__f02.png`
-- `/assets/sprites/monsters/mon_cupcake_slime/defeat/spr_mon_cupcake_slime__defeat__f03.png`
-- `/assets/sprites/monsters/mon_cupcake_slime/defeat/spr_mon_cupcake_slime__defeat__f04.png`
-- `/assets/sprites/monsters/mon_cupcake_slime/defeat/spr_mon_cupcake_slime__defeat__f05.png`
-- `/assets/sprites/monsters/mon_cupcake_slime/hit/spr_mon_cupcake_slime__hit__f00.png`
-- `/assets/sprites/monsters/mon_cupcake_slime/hit/spr_mon_cupcake_slime__hit__f01.png`
-- `/assets/sprites/monsters/mon_cupcake_slime/hit/spr_mon_cupcake_slime__hit__f02.png`
-- `/assets/sprites/monsters/mon_cupcake_slime/idle/mon_cupcake_slime__idle__f00.png`
-- `/assets/sprites/monsters/mon_cupcake_slime/idle/mon_cupcake_slime__idle__f01.png`
-- `/assets/sprites/monsters/mon_cupcake_slime/idle/mon_cupcake_slime__idle__f02.png`
-- `/assets/sprites/monsters/mon_cupcake_slime/idle/mon_cupcake_slime__idle__f03.png`
 - `/assets/stages/bg_goblin_workshop.png`
 - `/assets/stages/bg_ice_cave.png`
 - `/assets/stages/bg_royal_ruins.png`

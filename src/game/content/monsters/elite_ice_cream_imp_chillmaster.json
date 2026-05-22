@@ -1,0 +1,84 @@
+{
+  "id": "mon_elite_ice_cream_imp_chillmaster",
+  "name": "Ice Cream Imp Chillmaster",
+  "description": "Ice Cream Imp Chillmaster is an elite Frosty Pantry encounter. Warns before freeze pressure and ice block tricks.",
+  "stageId": "stage_frosty_pantry",
+  "rank": "elite",
+  "encounterRank": "elite",
+  "rarity": "elite",
+  "tier": 3,
+  "role": "elite",
+  "wikiRole": "Freeze / ice pressure",
+  "biome": "frosty_pantry",
+  "primaryMechanic": "Warns before freeze pressure and ice block tricks.",
+  "spriteKey": "mon_elite_ice_cream_imp_chillmaster",
+  "iconKey": "ico_mon_elite_ice_cream_imp_chillmaster",
+  "assetRefs": {
+    "idle": "mon_elite_ice_cream_imp_chillmaster__idle",
+    "attack": "mon_elite_ice_cream_imp_chillmaster__attack",
+    "hit": "mon_elite_ice_cream_imp_chillmaster__hit",
+    "defeat": "mon_elite_ice_cream_imp_chillmaster__defeat",
+    "icon": "ico_mon_elite_ice_cream_imp_chillmaster",
+    "poseSheet": "mon_elite_ice_cream_imp_chillmaster__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 84,
+    "attack": 7,
+    "armor": 0,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_hex",
+    "label": "Chilly Warning",
+    "description": "Warns before freeze pressure and ice block tricks."
+  },
+  "behaviors": [
+    "basic_attack",
+    "freeze_piece"
+  ],
+  "eliteActions": [
+    {
+      "id": "basic_attack",
+      "label": "basic attack",
+      "warningRequired": false
+    },
+    {
+      "id": "freeze_piece",
+      "label": "freeze piece",
+      "warningRequired": true
+    }
+  ],
+  "bossActions": [],
+  "resistances": [],
+  "weaknesses": [
+    "combo_damage",
+    "cascade_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.75,
+    "fallSpeedModifier": 0.01
+  },
+  "rewards": {
+    "goldMin": 32,
+    "goldMax": 53,
+    "rewardRolls": 2,
+    "lootTableId": "loot_elite_default"
+  },
+  "tags": [
+    "hazard_freeze_warning",
+    "counter_freeze",
+    "stage_3",
+    "frosty_pantry",
+    "elite"
+  ],
+  "implementationStatus": "partial",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_mon_elite_ice_cream_imp_chillmaster_idle",
+    "attack": "anim_mon_elite_ice_cream_imp_chillmaster_attack",
+    "hit": "anim_mon_elite_ice_cream_imp_chillmaster_hit",
+    "defeat": "anim_mon_elite_ice_cream_imp_chillmaster_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

@@ -1,44 +1,66 @@
 {
   "id": "mon_spring_bot",
   "name": "Spring Bot",
-  "description": "Spring Bot joins the festival dungeon with cheerful trouble.",
-  "rarity": "uncommon",
-  "tier": 3,
-  "role": "basic",
-  "biome": "royal_ruins",
-  "spriteKey": "placeholder_spring_bot",
+  "description": "A bouncy clockwork bot that sproings around the board lane.",
+  "stageId": "stage_goblin_workshop",
+  "rank": "regular",
+  "encounterRank": "regular",
+  "rarity": "common",
+  "tier": 1,
+  "role": "disruptor",
+  "wikiRole": "Tempo",
+  "biome": "goblin_workshop",
+  "primaryMechanic": "Changes timing with springy attack cadence.",
+  "spriteKey": "mon_spring_bot",
+  "iconKey": "ico_mon_spring_bot",
+  "assetRefs": {
+    "idle": "mon_spring_bot__idle",
+    "attack": "mon_spring_bot__attack",
+    "hit": "mon_spring_bot__hit",
+    "defeat": "mon_spring_bot__defeat",
+    "icon": "ico_mon_spring_bot",
+    "poseSheet": "mon_spring_bot__pose_sheet_2x2"
+  },
   "stats": {
-    "hp": 52,
-    "attack": 5,
+    "hp": 40,
+    "attack": 4,
     "armor": 0,
-    "attackIntervalLocks": 4
+    "attackIntervalLocks": 5
   },
   "intent": {
     "id": "intent_charge",
-    "label": "Speed Spring",
-    "description": "Spring Bot prepares Speed Spring."
+    "label": "Spring Bot Attack",
+    "description": "Changes timing with springy attack cadence."
   },
   "behaviors": [
+    "basic_attack",
     "increase_fall_speed"
   ],
+  "eliteActions": [],
+  "bossActions": [],
   "resistances": [],
-  "weaknesses": [],
+  "weaknesses": [
+    "frost"
+  ],
   "scaling": {
     "hpPerStage": 8,
     "attackPerStage": 0.5,
     "fallSpeedModifier": 0.02
   },
   "rewards": {
-    "goldMin": 10,
+    "goldMin": 14,
     "goldMax": 28,
     "rewardRolls": 1,
     "lootTableId": "loot_battle_default"
   },
   "tags": [
-    "early_game"
+    "stage_2",
+    "speed_scaler",
+    "goblin_workshop",
+    "normal"
   ],
+  "implementationStatus": "partial",
   "enabled": true,
-  "iconKey": "ico_mon_spring_bot",
   "animations": {
     "idle": "anim_mon_spring_bot_idle",
     "attack": "anim_mon_spring_bot_attack",

@@ -1,0 +1,72 @@
+{
+  "id": "mon_prize_claw_mimic",
+  "name": "Prize Claw Mimic",
+  "description": "A prize claw machine that hugs rewards before giving them back.",
+  "stageId": "stage_starfall_arcade",
+  "rank": "regular",
+  "encounterRank": "regular",
+  "rarity": "rare",
+  "tier": 3,
+  "role": "summoner",
+  "wikiRole": "Reward/board pest",
+  "biome": "starfall_arcade",
+  "primaryMechanic": "Threatens a useful block or reward value.",
+  "spriteKey": "mon_prize_claw_mimic",
+  "iconKey": "ico_mon_prize_claw_mimic",
+  "assetRefs": {
+    "idle": "mon_prize_claw_mimic__idle",
+    "attack": "mon_prize_claw_mimic__attack",
+    "hit": "mon_prize_claw_mimic__hit",
+    "defeat": "mon_prize_claw_mimic__defeat",
+    "icon": "ico_mon_prize_claw_mimic",
+    "poseSheet": "mon_prize_claw_mimic__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 64,
+    "attack": 7,
+    "armor": 1,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_screech",
+    "label": "Prize Claw Mimic Attack",
+    "description": "Threatens a useful block or reward value."
+  },
+  "behaviors": [
+    "basic_attack",
+    "swap_next_hold"
+  ],
+  "eliteActions": [],
+  "bossActions": [],
+  "resistances": [],
+  "weaknesses": [
+    "lightning",
+    "cascade_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 23,
+    "goldMax": 43,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "stage_5",
+    "board_disruptor",
+    "starfall_arcade",
+    "normal"
+  ],
+  "implementationStatus": "partial",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_mon_prize_claw_mimic_idle",
+    "attack": "anim_mon_prize_claw_mimic_attack",
+    "hit": "anim_mon_prize_claw_mimic_hit",
+    "defeat": "anim_mon_prize_claw_mimic_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

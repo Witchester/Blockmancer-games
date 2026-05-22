@@ -1,0 +1,72 @@
+{
+  "id": "mon_pixel_blob",
+  "name": "Pixel Blob",
+  "description": "A blocky pixel blob that flickers through cute arcade colors.",
+  "stageId": "stage_starfall_arcade",
+  "rank": "regular",
+  "encounterRank": "regular",
+  "rarity": "rare",
+  "tier": 3,
+  "role": "tank",
+  "wikiRole": "Basic / tank",
+  "biome": "starfall_arcade",
+  "primaryMechanic": "Acts as a high-HP sponge for Fever practice.",
+  "spriteKey": "mon_pixel_blob",
+  "iconKey": "ico_mon_pixel_blob",
+  "assetRefs": {
+    "idle": "mon_pixel_blob__idle",
+    "attack": "mon_pixel_blob__attack",
+    "hit": "mon_pixel_blob__hit",
+    "defeat": "mon_pixel_blob__defeat",
+    "icon": "ico_mon_pixel_blob",
+    "poseSheet": "mon_pixel_blob__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 64,
+    "attack": 7,
+    "armor": 1,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_guard",
+    "label": "Pixel Blob Attack",
+    "description": "Acts as a high-HP sponge for Fever practice."
+  },
+  "behaviors": [
+    "basic_attack",
+    "armor_up"
+  ],
+  "eliteActions": [],
+  "bossActions": [],
+  "resistances": [],
+  "weaknesses": [
+    "combo_damage",
+    "spell_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 23,
+    "goldMax": 43,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "stage_5",
+    "large",
+    "starfall_arcade",
+    "normal"
+  ],
+  "implementationStatus": "partial",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_mon_pixel_blob_idle",
+    "attack": "anim_mon_pixel_blob_attack",
+    "hit": "anim_mon_pixel_blob_hit",
+    "defeat": "anim_mon_pixel_blob_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

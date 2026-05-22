@@ -1,0 +1,74 @@
+{
+  "id": "mon_royal_block_guard",
+  "name": "Royal Block Guard",
+  "description": "A toy royal guard carrying square banners and a serious snack schedule.",
+  "stageId": "stage_bloxley_block_palace",
+  "rank": "regular",
+  "encounterRank": "regular",
+  "rarity": "rare",
+  "tier": 3,
+  "role": "tank",
+  "wikiRole": "Heavy guard",
+  "biome": "bloxley_block_palace",
+  "primaryMechanic": "Drops royal blocks or guards with shield pressure.",
+  "spriteKey": "mon_royal_block_guard",
+  "iconKey": "ico_mon_royal_block_guard",
+  "assetRefs": {
+    "idle": "mon_royal_block_guard__idle",
+    "attack": "mon_royal_block_guard__attack",
+    "hit": "mon_royal_block_guard__hit",
+    "defeat": "mon_royal_block_guard__defeat",
+    "icon": "ico_mon_royal_block_guard",
+    "poseSheet": "mon_royal_block_guard__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 72,
+    "attack": 8,
+    "armor": 1,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_guard",
+    "label": "Guard Up",
+    "description": "Drops royal blocks or guards with shield pressure."
+  },
+  "behaviors": [
+    "basic_attack",
+    "royal_block_spawn",
+    "shield_self"
+  ],
+  "eliteActions": [],
+  "bossActions": [],
+  "resistances": [],
+  "weaknesses": [
+    "void",
+    "combo_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 26,
+    "goldMax": 48,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "stage_6",
+    "royal",
+    "armored",
+    "bloxley_block_palace",
+    "normal"
+  ],
+  "implementationStatus": "partial",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_mon_royal_block_guard_idle",
+    "attack": "anim_mon_royal_block_guard_attack",
+    "hit": "anim_mon_royal_block_guard_hit",
+    "defeat": "anim_mon_royal_block_guard_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

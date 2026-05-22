@@ -1,0 +1,72 @@
+{
+  "id": "mon_wrench_goblin",
+  "name": "Wrench Goblin",
+  "description": "A workshop goblin who taps every machine with a wrench and calls it testing.",
+  "stageId": "stage_goblin_workshop",
+  "rank": "regular",
+  "encounterRank": "regular",
+  "rarity": "common",
+  "tier": 1,
+  "role": "basic",
+  "wikiRole": "Basic gadget attacker",
+  "biome": "goblin_workshop",
+  "primaryMechanic": "Basic machine-flavored attack with small junk pressure.",
+  "spriteKey": "mon_wrench_goblin",
+  "iconKey": "ico_mon_wrench_goblin",
+  "assetRefs": {
+    "idle": "mon_wrench_goblin__idle",
+    "attack": "mon_wrench_goblin__attack",
+    "hit": "mon_wrench_goblin__hit",
+    "defeat": "mon_wrench_goblin__defeat",
+    "icon": "ico_mon_wrench_goblin",
+    "poseSheet": "mon_wrench_goblin__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 40,
+    "attack": 4,
+    "armor": 0,
+    "attackIntervalLocks": 5
+  },
+  "intent": {
+    "id": "intent_throw_junk",
+    "label": "Crumb Toss",
+    "description": "Basic machine-flavored attack with small junk pressure."
+  },
+  "behaviors": [
+    "basic_attack",
+    "spawn_junk"
+  ],
+  "eliteActions": [],
+  "bossActions": [],
+  "resistances": [],
+  "weaknesses": [
+    "bomb",
+    "cascade_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 14,
+    "goldMax": 28,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "stage_2",
+    "goblin_workshop",
+    "junk_spawner",
+    "normal"
+  ],
+  "implementationStatus": "partial",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_mon_wrench_goblin_idle",
+    "attack": "anim_mon_wrench_goblin_attack",
+    "hit": "anim_mon_wrench_goblin_hit",
+    "defeat": "anim_mon_wrench_goblin_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

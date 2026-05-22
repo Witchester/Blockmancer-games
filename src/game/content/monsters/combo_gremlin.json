@@ -1,0 +1,73 @@
+{
+  "id": "mon_combo_gremlin",
+  "name": "Combo Gremlin",
+  "description": "A hyper arcade gremlin who cheers every cascade a little too loudly.",
+  "stageId": "stage_starfall_arcade",
+  "rank": "regular",
+  "encounterRank": "regular",
+  "rarity": "rare",
+  "tier": 3,
+  "role": "disruptor",
+  "wikiRole": "Combo tester",
+  "biome": "starfall_arcade",
+  "primaryMechanic": "Rewards and pressures combo or cascade play.",
+  "spriteKey": "mon_combo_gremlin",
+  "iconKey": "ico_mon_combo_gremlin",
+  "assetRefs": {
+    "idle": "mon_combo_gremlin__idle",
+    "attack": "mon_combo_gremlin__attack",
+    "hit": "mon_combo_gremlin__hit",
+    "defeat": "mon_combo_gremlin__defeat",
+    "icon": "ico_mon_combo_gremlin",
+    "poseSheet": "mon_combo_gremlin__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 64,
+    "attack": 7,
+    "armor": 1,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_attack",
+    "label": "Combo Gremlin Attack",
+    "description": "Rewards and pressures combo or cascade play."
+  },
+  "behaviors": [
+    "basic_attack",
+    "hydra_combo_check"
+  ],
+  "eliteActions": [],
+  "bossActions": [],
+  "resistances": [],
+  "weaknesses": [
+    "cascade_damage",
+    "combo_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 23,
+    "goldMax": 43,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "stage_5",
+    "friendship",
+    "speed_scaler",
+    "starfall_arcade",
+    "normal"
+  ],
+  "implementationStatus": "partial",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_mon_combo_gremlin_idle",
+    "attack": "anim_mon_combo_gremlin_attack",
+    "hit": "anim_mon_combo_gremlin_hit",
+    "defeat": "anim_mon_combo_gremlin_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

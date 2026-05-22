@@ -1,0 +1,74 @@
+{
+  "id": "mon_plush_dragon",
+  "name": "Plush Dragon",
+  "description": "A plush dragon with button eyes and a dramatic pillow roar.",
+  "stageId": "stage_pillow_castle",
+  "rank": "regular",
+  "encounterRank": "regular",
+  "rarity": "uncommon",
+  "tier": 2,
+  "role": "tank",
+  "wikiRole": "Heavy soft attacker",
+  "biome": "pillow_castle",
+  "primaryMechanic": "Adds soft block or shield pressure.",
+  "spriteKey": "mon_plush_dragon",
+  "iconKey": "ico_mon_plush_dragon",
+  "assetRefs": {
+    "idle": "mon_plush_dragon__idle",
+    "attack": "mon_plush_dragon__attack",
+    "hit": "mon_plush_dragon__hit",
+    "defeat": "mon_plush_dragon__defeat",
+    "icon": "ico_mon_plush_dragon",
+    "poseSheet": "mon_plush_dragon__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 56,
+    "attack": 6,
+    "armor": 1,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_throw_junk",
+    "label": "Crumb Toss",
+    "description": "Adds soft block or shield pressure."
+  },
+  "behaviors": [
+    "basic_attack",
+    "shield_self",
+    "spawn_junk"
+  ],
+  "eliteActions": [],
+  "bossActions": [],
+  "resistances": [],
+  "weaknesses": [
+    "fire",
+    "bomb"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 20,
+    "goldMax": 38,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "stage_4",
+    "large",
+    "armored",
+    "pillow_castle",
+    "normal"
+  ],
+  "implementationStatus": "partial",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_mon_plush_dragon_idle",
+    "attack": "anim_mon_plush_dragon_attack",
+    "hit": "anim_mon_plush_dragon_hit",
+    "defeat": "anim_mon_plush_dragon_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

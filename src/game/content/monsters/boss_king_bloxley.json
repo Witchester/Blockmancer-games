@@ -1,0 +1,92 @@
+{
+  "id": "mon_boss_king_bloxley",
+  "name": "King Bloxley",
+  "description": "The self-appointed Block King testing royal blocks, pattern pressure, symmetry, and final cascade mastery.",
+  "stageId": "stage_bloxley_block_palace",
+  "rank": "boss",
+  "encounterRank": "boss",
+  "rarity": "boss",
+  "tier": 5,
+  "role": "boss",
+  "wikiRole": "Symmetry + royal blocks",
+  "biome": "bloxley_block_palace",
+  "primaryMechanic": "Symmetry + royal blocks",
+  "spriteKey": "boss_king_bloxley",
+  "iconKey": "ico_boss_king_bloxley",
+  "assetRefs": {
+    "idle": "boss_king_bloxley__idle",
+    "attack": "boss_king_bloxley__attack",
+    "hit": "boss_king_bloxley__hit",
+    "phaseChange": "boss_king_bloxley__phase_change",
+    "specialAttack": "boss_king_bloxley__special_attack",
+    "defeat": "boss_king_bloxley__defeat",
+    "icon": "ico_boss_king_bloxley",
+    "poseSheet": "boss_king_bloxley__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 330,
+    "attack": 19,
+    "armor": 2,
+    "attackIntervalLocks": 3
+  },
+  "intent": {
+    "id": "intent_royal_collapse",
+    "label": "Symmetry + royal blocks",
+    "description": "The self-appointed Block King testing royal blocks, pattern pressure, symmetry, and final cascade mastery."
+  },
+  "behaviors": [
+    "royal_block_spawn",
+    "pattern_junk",
+    "lock_random_column"
+  ],
+  "eliteActions": [],
+  "bossActions": [
+    {
+      "id": "royal_block_spawn",
+      "label": "royal block spawn",
+      "warningRequired": true
+    },
+    {
+      "id": "pattern_junk",
+      "label": "pattern junk",
+      "warningRequired": true
+    },
+    {
+      "id": "lock_random_column",
+      "label": "lock random column",
+      "warningRequired": true
+    }
+  ],
+  "resistances": [],
+  "weaknesses": [
+    "combo_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 10,
+    "attackPerStage": 1,
+    "fallSpeedModifier": 0.02
+  },
+  "rewards": {
+    "goldMin": 88,
+    "goldMax": 147,
+    "rewardRolls": 2,
+    "lootTableId": "loot_boss_default"
+  },
+  "tags": [
+    "boss_phase",
+    "stage_6",
+    "bloxley_block_palace",
+    "boss"
+  ],
+  "implementationStatus": "partial",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_boss_king_bloxley_idle",
+    "attack": "anim_boss_king_bloxley_attack",
+    "hit": "anim_boss_king_bloxley_hit",
+    "defeat": "anim_boss_king_bloxley_defeat",
+    "phase_change": "anim_boss_king_bloxley_phase_change",
+    "special_attack": "anim_boss_king_bloxley_special_attack"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

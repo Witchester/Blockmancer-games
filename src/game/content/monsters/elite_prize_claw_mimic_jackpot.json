@@ -1,0 +1,90 @@
+{
+  "id": "mon_elite_prize_claw_mimic_jackpot",
+  "name": "Jackpot Prize Claw Mimic",
+  "description": "Jackpot Prize Claw Mimic is an elite Starfall Arcade encounter. Warns before prize-claw preview disruption.",
+  "stageId": "stage_starfall_arcade",
+  "rank": "elite",
+  "encounterRank": "elite",
+  "rarity": "elite",
+  "tier": 5,
+  "role": "elite",
+  "wikiRole": "Preview disruption",
+  "biome": "starfall_arcade",
+  "primaryMechanic": "Warns before prize-claw preview disruption.",
+  "spriteKey": "mon_elite_prize_claw_mimic_jackpot",
+  "iconKey": "ico_mon_elite_prize_claw_mimic_jackpot",
+  "assetRefs": {
+    "idle": "mon_elite_prize_claw_mimic_jackpot__idle",
+    "attack": "mon_elite_prize_claw_mimic_jackpot__attack",
+    "hit": "mon_elite_prize_claw_mimic_jackpot__hit",
+    "defeat": "mon_elite_prize_claw_mimic_jackpot__defeat",
+    "icon": "ico_mon_elite_prize_claw_mimic_jackpot",
+    "poseSheet": "mon_elite_prize_claw_mimic_jackpot__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 108,
+    "attack": 9,
+    "armor": 1,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_screech",
+    "label": "Preview Peekaboo",
+    "description": "Warns before prize-claw preview disruption."
+  },
+  "behaviors": [
+    "basic_attack",
+    "hide_next_piece",
+    "swap_next_hold"
+  ],
+  "eliteActions": [
+    {
+      "id": "basic_attack",
+      "label": "basic attack",
+      "warningRequired": false
+    },
+    {
+      "id": "hide_next_piece",
+      "label": "hide next piece",
+      "warningRequired": true
+    },
+    {
+      "id": "swap_next_hold",
+      "label": "swap next hold",
+      "warningRequired": true
+    }
+  ],
+  "bossActions": [],
+  "resistances": [],
+  "weaknesses": [
+    "combo_damage",
+    "cascade_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.75,
+    "fallSpeedModifier": 0.01
+  },
+  "rewards": {
+    "goldMin": 40,
+    "goldMax": 65,
+    "rewardRolls": 2,
+    "lootTableId": "loot_elite_default"
+  },
+  "tags": [
+    "hazard_preview_hidden",
+    "counter_preview",
+    "stage_5",
+    "starfall_arcade",
+    "elite"
+  ],
+  "implementationStatus": "partial",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_mon_elite_prize_claw_mimic_jackpot_idle",
+    "attack": "anim_mon_elite_prize_claw_mimic_jackpot_attack",
+    "hit": "anim_mon_elite_prize_claw_mimic_jackpot_hit",
+    "defeat": "anim_mon_elite_prize_claw_mimic_jackpot_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

@@ -1,0 +1,74 @@
+{
+  "id": "mon_gear_slime",
+  "name": "Gear Slime",
+  "description": "A slime wearing a spinning gear like a festival hat.",
+  "stageId": "stage_goblin_workshop",
+  "rank": "regular",
+  "encounterRank": "regular",
+  "rarity": "common",
+  "tier": 1,
+  "role": "tank",
+  "wikiRole": "Tank / machine slime",
+  "biome": "goblin_workshop",
+  "primaryMechanic": "Adds sticky-junk pressure or uses armor.",
+  "spriteKey": "mon_gear_slime",
+  "iconKey": "ico_mon_gear_slime",
+  "assetRefs": {
+    "idle": "mon_gear_slime__idle",
+    "attack": "mon_gear_slime__attack",
+    "hit": "mon_gear_slime__hit",
+    "defeat": "mon_gear_slime__defeat",
+    "icon": "ico_mon_gear_slime",
+    "poseSheet": "mon_gear_slime__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 40,
+    "attack": 4,
+    "armor": 0,
+    "attackIntervalLocks": 5
+  },
+  "intent": {
+    "id": "intent_throw_junk",
+    "label": "Crumb Toss",
+    "description": "Adds sticky-junk pressure or uses armor."
+  },
+  "behaviors": [
+    "basic_attack",
+    "armor_up",
+    "spawn_junk"
+  ],
+  "eliteActions": [],
+  "bossActions": [],
+  "resistances": [],
+  "weaknesses": [
+    "bomb",
+    "spell_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 14,
+    "goldMax": 28,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "stage_2",
+    "large",
+    "armored",
+    "goblin_workshop",
+    "normal"
+  ],
+  "implementationStatus": "partial",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_mon_gear_slime_idle",
+    "attack": "anim_mon_gear_slime_attack",
+    "hit": "anim_mon_gear_slime_hit",
+    "defeat": "anim_mon_gear_slime_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

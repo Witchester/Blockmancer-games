@@ -8,9 +8,12 @@
   "effects": [
     {
       "type": "start_battle",
-      "enemyId": "mon_boss_falling_king"
+      "enemyId": "mon_boss_king_bloxley"
     }
   ],
-  "tags": ["boss", "final"],
+  "tags": [
+    "boss",
+    "final"
+  ],
   "enabled": true
 }

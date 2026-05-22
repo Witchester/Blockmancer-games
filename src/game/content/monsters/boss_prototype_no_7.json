@@ -1,0 +1,86 @@
+{
+  "id": "mon_boss_prototype_no_7",
+  "name": "Prototype No. 7",
+  "description": "A goblin-built machine that believes every unsafe test is totally safe and very official.",
+  "stageId": "stage_goblin_workshop",
+  "rank": "boss",
+  "encounterRank": "boss",
+  "rarity": "boss",
+  "tier": 5,
+  "role": "boss",
+  "wikiRole": "Junk + bomb blocks",
+  "biome": "goblin_workshop",
+  "primaryMechanic": "Junk + bomb blocks",
+  "spriteKey": "boss_prototype_no_7",
+  "iconKey": "ico_boss_prototype_no_7",
+  "assetRefs": {
+    "idle": "boss_prototype_no_7__idle",
+    "attack": "boss_prototype_no_7__attack",
+    "hit": "boss_prototype_no_7__hit",
+    "phaseChange": "boss_prototype_no_7__phase_change",
+    "specialAttack": "boss_prototype_no_7__special_attack",
+    "defeat": "boss_prototype_no_7__defeat",
+    "icon": "ico_boss_prototype_no_7",
+    "poseSheet": "boss_prototype_no_7__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 190,
+    "attack": 11,
+    "armor": 1,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_royal_collapse",
+    "label": "Junk + bomb blocks",
+    "description": "A goblin-built machine that believes every unsafe test is totally safe and very official."
+  },
+  "behaviors": [
+    "spawn_junk",
+    "shake_board"
+  ],
+  "eliteActions": [],
+  "bossActions": [
+    {
+      "id": "spawn_junk",
+      "label": "spawn junk",
+      "warningRequired": true
+    },
+    {
+      "id": "shake_board",
+      "label": "shake board",
+      "warningRequired": true
+    }
+  ],
+  "resistances": [],
+  "weaknesses": [
+    "combo_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 10,
+    "attackPerStage": 1,
+    "fallSpeedModifier": 0.02
+  },
+  "rewards": {
+    "goldMin": 56,
+    "goldMax": 99,
+    "rewardRolls": 2,
+    "lootTableId": "loot_boss_default"
+  },
+  "tags": [
+    "boss_phase",
+    "stage_2",
+    "goblin_workshop",
+    "boss"
+  ],
+  "implementationStatus": "partial",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_boss_prototype_no_7_idle",
+    "attack": "anim_boss_prototype_no_7_attack",
+    "hit": "anim_boss_prototype_no_7_hit",
+    "defeat": "anim_boss_prototype_no_7_defeat",
+    "phase_change": "anim_boss_prototype_no_7_phase_change",
+    "special_attack": "anim_boss_prototype_no_7_special_attack"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

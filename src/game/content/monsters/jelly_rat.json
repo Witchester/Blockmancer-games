@@ -1,0 +1,72 @@
+{
+  "id": "mon_jelly_rat",
+  "name": "Jelly Rat",
+  "description": "A wobbly little rat that darts through jelly puddles with happy squeaks.",
+  "stageId": "stage_sprinkle_sewers",
+  "rank": "regular",
+  "encounterRank": "regular",
+  "rarity": "common",
+  "tier": 1,
+  "role": "basic",
+  "wikiRole": "Fast",
+  "biome": "sprinkle_sewers",
+  "primaryMechanic": "Attacks faster than other Stage 1 monsters.",
+  "spriteKey": "mon_jelly_rat",
+  "iconKey": "ico_mon_jelly_rat",
+  "assetRefs": {
+    "idle": "mon_jelly_rat__idle",
+    "attack": "mon_jelly_rat__attack",
+    "hit": "mon_jelly_rat__hit",
+    "defeat": "mon_jelly_rat__defeat",
+    "icon": "ico_mon_jelly_rat",
+    "poseSheet": "mon_jelly_rat__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 32,
+    "attack": 3,
+    "armor": 0,
+    "attackIntervalLocks": 5
+  },
+  "intent": {
+    "id": "intent_charge",
+    "label": "Jelly Rat Attack",
+    "description": "Attacks faster than other Stage 1 monsters."
+  },
+  "behaviors": [
+    "basic_attack",
+    "increase_fall_speed"
+  ],
+  "eliteActions": [],
+  "bossActions": [],
+  "resistances": [],
+  "weaknesses": [
+    "frost"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0.02
+  },
+  "rewards": {
+    "goldMin": 11,
+    "goldMax": 23,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "stage_1",
+    "small",
+    "speed_scaler",
+    "sprinkle_sewers",
+    "normal"
+  ],
+  "implementationStatus": "partial",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_mon_jelly_rat_idle",
+    "attack": "anim_mon_jelly_rat_attack",
+    "hit": "anim_mon_jelly_rat_hit",
+    "defeat": "anim_mon_jelly_rat_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

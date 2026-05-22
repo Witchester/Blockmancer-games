@@ -98,6 +98,119 @@ for (const file of allJsonFiles) {
   }
 }
 
+
+function visitStrings(value, callback, pointer = '') {
+  if (typeof value === 'string') {
+    callback(value, pointer);
+    return;
+  }
+  if (!value || typeof value !== 'object') return;
+  if (Array.isArray(value)) {
+    value.forEach((entry, index) => visitStrings(entry, callback, `${pointer}/${index}`));
+    return;
+  }
+  for (const [key, child] of Object.entries(value)) visitStrings(child, callback, `${pointer}/${key}`);
+}
+
+const monsterEntries = [];
+const monsterIds = new Set();
+const duplicateMonsterIds = new Set();
+const validMonsterRanks = new Set(['regular', 'elite', 'elite_miniboss', 'boss']);
+const validEncounterRanks = new Set(['regular', 'elite', 'boss']);
+const monsterRoot = path.join(contentRoot, 'monsters');
+
+for (const file of allJsonFiles) {
+  const data = readJson(file);
+  visitStrings(data, (value, pointer) => {
+    if (value.includes('public/assets') || value.includes('/assets/')) {
+      errors.push(`${path.relative(root, file)}${pointer}: content JSON must use asset keys, not raw asset paths`);
+    }
+  });
+}
+
+for (const file of walkJson(monsterRoot).filter((file) => path.basename(file) !== 'metadata.json')) {
+  const data = readJson(file);
+  monsterEntries.push({ file, data });
+  if (monsterIds.has(data.id)) duplicateMonsterIds.add(data.id);
+  monsterIds.add(data.id);
+}
+for (const id of duplicateMonsterIds) errors.push(`Duplicate monster ID: ${id}`);
+
+function expectedMonsterAssetRefs(id) {
+  if (id.startsWith('mon_boss_')) {
+    const bossId = id.replace(/^mon_/, '');
+    return {
+      idle: `${bossId}__idle`,
+      attack: `${bossId}__attack`,
+      hit: `${bossId}__hit`,
+      defeat: `${bossId}__defeat`,
+      icon: `ico_${bossId}`,
+      poseSheet: `${bossId}__pose_sheet_2x2`
+    };
+  }
+  return {
+    idle: `${id}__idle`,
+    attack: `${id}__attack`,
+    hit: `${id}__hit`,
+    defeat: `${id}__defeat`,
+    icon: `ico_${id}`,
+    poseSheet: `${id}__pose_sheet_2x2`
+  };
+}
+
+for (const { file, data } of monsterEntries) {
+  const rel = path.relative(root, file);
+  if (typeof data.id !== 'string' || data.id.length === 0) errors.push(`${rel}: missing monster ID`);
+  if (!stageIds.has(data.stageId)) errors.push(`${rel}: invalid or missing stageId ${data.stageId}`);
+  if (!validMonsterRanks.has(data.rank)) errors.push(`${rel}: invalid or missing rank ${data.rank}`);
+  if (!validEncounterRanks.has(data.encounterRank)) errors.push(`${rel}: invalid or missing encounterRank ${data.encounterRank}`);
+  if (typeof data.spriteKey !== 'string' || data.spriteKey.length === 0) errors.push(`${rel}: missing spriteKey`);
+  if (typeof data.iconKey !== 'string' || data.iconKey.length === 0) errors.push(`${rel}: missing iconKey`);
+  if (!data.assetRefs || typeof data.assetRefs !== 'object') errors.push(`${rel}: missing assetRefs`);
+  const expected = expectedMonsterAssetRefs(data.id ?? '');
+  if (data.rank === 'boss') {
+    const bossId = data.id?.replace(/^mon_/, '');
+    if (data.spriteKey !== bossId) errors.push(`${rel}: boss spriteKey should be ${bossId}`);
+    if (data.iconKey !== `ico_${bossId}`) errors.push(`${rel}: boss iconKey should be ico_${bossId}`);
+  } else {
+    if (data.spriteKey !== data.id) errors.push(`${rel}: spriteKey should be ${data.id}`);
+    if (data.iconKey !== `ico_${data.id}`) errors.push(`${rel}: iconKey should be ico_${data.id}`);
+  }
+  for (const [key, expectedValue] of Object.entries(expected)) {
+    if (data.assetRefs?.[key] !== expectedValue) errors.push(`${rel}: assetRefs.${key} should be ${expectedValue}`);
+  }
+  if (data.rank === 'elite' || data.rank === 'elite_miniboss') {
+    if (data.role !== 'elite' || data.rarity !== 'elite' || data.encounterRank !== 'elite') errors.push(`${rel}: elite monster must be marked role/rarity/encounterRank elite`);
+  }
+  if (data.rank === 'regular' && (data.role === 'elite' || data.rarity === 'elite' || data.encounterRank !== 'regular')) {
+    errors.push(`${rel}: regular monster is accidentally marked elite`);
+  }
+}
+
+const monsterMetadata = readJson(path.join(monsterRoot, 'metadata.json'));
+for (const [alias, target] of Object.entries(monsterMetadata.compatibilityAliases ?? {})) {
+  if (!monsterIds.has(target)) errors.push(`src/game/content/monsters/metadata.json: compatibility alias ${alias} points to missing monster ${target}`);
+}
+
+const monsterById = new Map(monsterEntries.map(({ data }) => [data.id, data]));
+for (const file of walkJson(path.join(contentRoot, 'stages')).filter((file) => path.basename(file) !== 'metadata.json')) {
+  const stage = readJson(file);
+  const rel = path.relative(root, file);
+  for (const monsterId of stage.monsterPool ?? []) {
+    const monster = monsterById.get(monsterId);
+    if (!monster) errors.push(`${rel}: monsterPool references missing monster ${monsterId}`);
+    else if (monster.rank !== 'regular') errors.push(`${rel}: monsterPool must only contain regular monsters, found ${monsterId}`);
+  }
+  for (const monsterId of stage.eliteMonsterPool ?? []) {
+    const monster = monsterById.get(monsterId);
+    if (!monster) errors.push(`${rel}: eliteMonsterPool references missing monster ${monsterId}`);
+    else if (!(monster.rank === 'elite' || monster.rank === 'elite_miniboss')) errors.push(`${rel}: eliteMonsterPool must only contain elite monsters, found ${monsterId}`);
+  }
+  const boss = monsterById.get(stage.bossId);
+  if (!boss) errors.push(`${rel}: bossId references missing monster ${stage.bossId}`);
+  else if (boss.rank !== 'boss') errors.push(`${rel}: bossId must reference boss monster content, found ${stage.bossId}`);
+}
+
 for (const [hazardId, hazard] of knownHazards) {
   if (!hazard.warningText) errors.push(`${hazardId}: missing warning text`);
   if ((hazard.severity === 'major' || hazard.severity === 'boss') && hazard.itemCounterHints.length === 0) {

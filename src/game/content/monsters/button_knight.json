@@ -1,0 +1,73 @@
+{
+  "id": "mon_button_knight",
+  "name": "Button Knight",
+  "description": "A tiny plush knight with a shiny button shield and excellent manners.",
+  "stageId": "stage_pillow_castle",
+  "rank": "regular",
+  "encounterRank": "regular",
+  "rarity": "uncommon",
+  "tier": 2,
+  "role": "tank",
+  "wikiRole": "Shield enemy",
+  "biome": "pillow_castle",
+  "primaryMechanic": "Gains shield or guards before attack.",
+  "spriteKey": "mon_button_knight",
+  "iconKey": "ico_mon_button_knight",
+  "assetRefs": {
+    "idle": "mon_button_knight__idle",
+    "attack": "mon_button_knight__attack",
+    "hit": "mon_button_knight__hit",
+    "defeat": "mon_button_knight__defeat",
+    "icon": "ico_mon_button_knight",
+    "poseSheet": "mon_button_knight__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 56,
+    "attack": 6,
+    "armor": 1,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_guard",
+    "label": "Guard Up",
+    "description": "Gains shield or guards before attack."
+  },
+  "behaviors": [
+    "basic_attack",
+    "shield_self"
+  ],
+  "eliteActions": [],
+  "bossActions": [],
+  "resistances": [],
+  "weaknesses": [
+    "combo_damage",
+    "spell_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 20,
+    "goldMax": 38,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "stage_4",
+    "armored",
+    "friendship",
+    "pillow_castle",
+    "normal"
+  ],
+  "implementationStatus": "partial",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_mon_button_knight_idle",
+    "attack": "anim_mon_button_knight_attack",
+    "hit": "anim_mon_button_knight_hit",
+    "defeat": "anim_mon_button_knight_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

@@ -1,0 +1,73 @@
+{
+  "id": "mon_rattle_drone",
+  "name": "Rattle Drone",
+  "description": "A rattly little drone that hovers near the queue sign with important beeps.",
+  "stageId": "stage_goblin_workshop",
+  "rank": "regular",
+  "encounterRank": "regular",
+  "rarity": "common",
+  "tier": 1,
+  "role": "disruptor",
+  "wikiRole": "Queue pest",
+  "biome": "goblin_workshop",
+  "primaryMechanic": "Threatens queue or preview with a warning.",
+  "spriteKey": "mon_rattle_drone",
+  "iconKey": "ico_mon_rattle_drone",
+  "assetRefs": {
+    "idle": "mon_rattle_drone__idle",
+    "attack": "mon_rattle_drone__attack",
+    "hit": "mon_rattle_drone__hit",
+    "defeat": "mon_rattle_drone__defeat",
+    "icon": "ico_mon_rattle_drone",
+    "poseSheet": "mon_rattle_drone__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 40,
+    "attack": 4,
+    "armor": 0,
+    "attackIntervalLocks": 5
+  },
+  "intent": {
+    "id": "intent_screech",
+    "label": "Preview Peekaboo",
+    "description": "Threatens queue or preview with a warning."
+  },
+  "behaviors": [
+    "basic_attack",
+    "hide_next_piece"
+  ],
+  "eliteActions": [],
+  "bossActions": [],
+  "resistances": [],
+  "weaknesses": [
+    "lightning",
+    "line_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 14,
+    "goldMax": 28,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "stage_2",
+    "flying",
+    "preview",
+    "goblin_workshop",
+    "normal"
+  ],
+  "implementationStatus": "partial",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_mon_rattle_drone_idle",
+    "attack": "anim_mon_rattle_drone_attack",
+    "hit": "anim_mon_rattle_drone_hit",
+    "defeat": "anim_mon_rattle_drone_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

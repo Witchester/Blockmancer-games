@@ -152,8 +152,16 @@ function sourceFallbackPaths(source: ContentAssetSource, key: string, entry: Con
 }
 
 function sourcePrimaryPath(source: ContentAssetSource, key: string): string {
-  if (source.contentType === 'monster' && key.startsWith('placeholder_')) {
-    return assetPath('placeholders', key);
+  if (source.contentType === 'monster') {
+    if (key.startsWith('placeholder_')) {
+      return assetPath('placeholders', key);
+    }
+    if (key.startsWith('boss_')) {
+      return `/assets/sprites/bosses/${key}/idle/${key}__idle__f00.png`;
+    }
+    if (key.startsWith('mon_')) {
+      return `/assets/sprites/monsters/${key}/idle/${key}__idle__f00.png`;
+    }
   }
   return assetPath(source.folder, key);
 }
@@ -172,6 +180,36 @@ function normalizeFinalBoardBlockId(key: string): string {
   return aliases[key] ?? key.replace(/^spr_/, '');
 }
 
+function canonicalAssetPath(folder: string, key: string): string {
+  if (folder === 'sprites/monsters') {
+    const monsterState = key.match(/^(mon_[a-z0-9_]+)__(idle|attack|hit|defeat)$/);
+    if (monsterState) {
+      return `/assets/sprites/monsters/${monsterState[1]}/${monsterState[2]}/${key}__f00.png`;
+    }
+    const monsterSheet = key.match(/^(mon_[a-z0-9_]+)__pose_sheet_2x2$/);
+    if (monsterSheet) {
+      return `/assets/sprites/monsters/${monsterSheet[1]}/sheet/${key}.png`;
+    }
+    const monsterIcon = key.match(/^ico_(mon_[a-z0-9_]+)$/);
+    if (monsterIcon) {
+      return `/assets/sprites/monsters/${monsterIcon[1]}/icon/${key}.png`;
+    }
+    const bossState = key.match(/^(boss_[a-z0-9_]+)__(idle|attack|hit|phase_change|special_attack|defeat)$/);
+    if (bossState) {
+      return `/assets/sprites/bosses/${bossState[1]}/${bossState[2]}/${key}__f00.png`;
+    }
+    const bossSheet = key.match(/^(boss_[a-z0-9_]+)__pose_sheet_2x2$/);
+    if (bossSheet) {
+      return `/assets/sprites/bosses/${bossSheet[1]}/sheet/${key}.png`;
+    }
+    const bossIcon = key.match(/^ico_(boss_[a-z0-9_]+)$/);
+    if (bossIcon) {
+      return `/assets/portraits/bosses/${bossIcon[1]}__portrait_icon__f00.png`;
+    }
+  }
+  return assetPath(folder, key);
+}
+
 function addAsset(assets: Map<string, AssetManifestEntry>, key: string | null | undefined, folder: string, kind: AssetKind, fallbackPaths?: string[]): void {
   if (!key || assets.has(key)) {
     return;
@@ -179,7 +217,7 @@ function addAsset(assets: Map<string, AssetManifestEntry>, key: string | null | 
 
   assets.set(key, {
     key,
-    path: assetPath(folder, key),
+    path: canonicalAssetPath(folder, key),
     kind,
     ...(fallbackPaths && fallbackPaths.length > 0 ? { fallbackPaths } : {})
   });
@@ -396,8 +434,8 @@ export function createContentImageAssets(): AssetManifestEntry[] {
       addAssetPath(assets, `ico_${actorId}`, `/assets/portraits/bosses/${actorId}__portrait_icon__f00.png`, 'icon', [assetPath('icons/bosses', `ico_${actorId}`)]);
       addAssetPath(assets, `ico_${monster.id}`, `/assets/portraits/bosses/${actorId}__portrait_icon__f00.png`, 'icon', [assetPath('icons/bosses', `ico_${monster.id}`)]);
     } else {
-      addAssetPath(assets, `ico_${actorId}`, `/assets/sprites/monsters/${actorId}/icon/${actorId}__icon__f00.png`, 'icon', [assetPath('icons/monsters', `ico_${actorId}`)]);
-      addAssetPath(assets, `ico_${monster.id}`, `/assets/sprites/monsters/${actorId}/icon/${actorId}__icon__f00.png`, 'icon', [assetPath('icons/monsters', `ico_${monster.id}`)]);
+      addAssetPath(assets, `ico_${actorId}`, `/assets/sprites/monsters/${actorId}/icon/ico_${actorId}.png`, 'icon', [assetPath('icons/monsters', `ico_${actorId}`)]);
+      addAssetPath(assets, `ico_${monster.id}`, `/assets/sprites/monsters/${actorId}/icon/ico_${actorId}.png`, 'icon', [assetPath('icons/monsters', `ico_${monster.id}`)]);
     }
   }
 

@@ -1,0 +1,86 @@
+{
+  "id": "mon_boss_high_score_hydra",
+  "name": "High Score Hydra",
+  "description": "A neon arcade hydra that rewards stylish cascades and pressures low-combo play.",
+  "stageId": "stage_starfall_arcade",
+  "rank": "boss",
+  "encounterRank": "boss",
+  "rarity": "boss",
+  "tier": 5,
+  "role": "boss",
+  "wikiRole": "Combo/cascade test",
+  "biome": "starfall_arcade",
+  "primaryMechanic": "Combo/cascade test",
+  "spriteKey": "boss_high_score_hydra",
+  "iconKey": "ico_boss_high_score_hydra",
+  "assetRefs": {
+    "idle": "boss_high_score_hydra__idle",
+    "attack": "boss_high_score_hydra__attack",
+    "hit": "boss_high_score_hydra__hit",
+    "phaseChange": "boss_high_score_hydra__phase_change",
+    "specialAttack": "boss_high_score_hydra__special_attack",
+    "defeat": "boss_high_score_hydra__defeat",
+    "icon": "ico_boss_high_score_hydra",
+    "poseSheet": "boss_high_score_hydra__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 295,
+    "attack": 17,
+    "armor": 2,
+    "attackIntervalLocks": 3
+  },
+  "intent": {
+    "id": "intent_royal_collapse",
+    "label": "Combo/cascade test",
+    "description": "A neon arcade hydra that rewards stylish cascades and pressures low-combo play."
+  },
+  "behaviors": [
+    "hydra_combo_check",
+    "hide_next_piece"
+  ],
+  "eliteActions": [],
+  "bossActions": [
+    {
+      "id": "hydra_combo_check",
+      "label": "hydra combo check",
+      "warningRequired": true
+    },
+    {
+      "id": "hide_next_piece",
+      "label": "hide next piece",
+      "warningRequired": true
+    }
+  ],
+  "resistances": [],
+  "weaknesses": [
+    "combo_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 10,
+    "attackPerStage": 1,
+    "fallSpeedModifier": 0.02
+  },
+  "rewards": {
+    "goldMin": 80,
+    "goldMax": 135,
+    "rewardRolls": 2,
+    "lootTableId": "loot_boss_default"
+  },
+  "tags": [
+    "boss_phase",
+    "stage_5",
+    "starfall_arcade",
+    "boss"
+  ],
+  "implementationStatus": "partial",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_boss_high_score_hydra_idle",
+    "attack": "anim_boss_high_score_hydra_attack",
+    "hit": "anim_boss_high_score_hydra_hit",
+    "defeat": "anim_boss_high_score_hydra_defeat",
+    "phase_change": "anim_boss_high_score_hydra_phase_change",
+    "special_attack": "anim_boss_high_score_hydra_special_attack"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

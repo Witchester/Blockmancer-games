@@ -1,0 +1,73 @@
+{
+  "id": "mon_cupcake_slime",
+  "name": "Cupcake Slime",
+  "description": "A cheerful cupcake slime that bounces through frosting puddles and sprinkles festival cheer.",
+  "stageId": "stage_sprinkle_sewers",
+  "rank": "regular",
+  "encounterRank": "regular",
+  "rarity": "common",
+  "tier": 1,
+  "role": "basic",
+  "wikiRole": "Basic",
+  "biome": "sprinkle_sewers",
+  "primaryMechanic": "Basic attack; may drop or interact with sprinkle blocks.",
+  "spriteKey": "mon_cupcake_slime",
+  "iconKey": "ico_mon_cupcake_slime",
+  "assetRefs": {
+    "idle": "mon_cupcake_slime__idle",
+    "attack": "mon_cupcake_slime__attack",
+    "hit": "mon_cupcake_slime__hit",
+    "defeat": "mon_cupcake_slime__defeat",
+    "icon": "ico_mon_cupcake_slime",
+    "poseSheet": "mon_cupcake_slime__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 32,
+    "attack": 3,
+    "armor": 0,
+    "attackIntervalLocks": 5
+  },
+  "intent": {
+    "id": "intent_attack",
+    "label": "Cupcake Slime Attack",
+    "description": "Basic attack; may drop or interact with sprinkle blocks."
+  },
+  "behaviors": [
+    "basic_attack"
+  ],
+  "eliteActions": [],
+  "bossActions": [],
+  "resistances": [],
+  "weaknesses": [
+    "fire",
+    "combo_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 11,
+    "goldMax": 23,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "tutorial",
+    "stage_1",
+    "sprinkle",
+    "friendship",
+    "sprinkle_sewers",
+    "normal"
+  ],
+  "implementationStatus": "partial",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_mon_cupcake_slime_idle",
+    "attack": "anim_mon_cupcake_slime_attack",
+    "hit": "anim_mon_cupcake_slime_hit",
+    "defeat": "anim_mon_cupcake_slime_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

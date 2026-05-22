@@ -1,0 +1,73 @@
+{
+  "id": "mon_chill_slime",
+  "name": "Chill Slime",
+  "description": "A cool slime that leaves tiny ice trails while trying to help.",
+  "stageId": "stage_frosty_pantry",
+  "rank": "regular",
+  "encounterRank": "regular",
+  "rarity": "uncommon",
+  "tier": 2,
+  "role": "caster",
+  "wikiRole": "Slow hazard",
+  "biome": "frosty_pantry",
+  "primaryMechanic": "Slows, chills, or adds ice blocks.",
+  "spriteKey": "mon_chill_slime",
+  "iconKey": "ico_mon_chill_slime",
+  "assetRefs": {
+    "idle": "mon_chill_slime__idle",
+    "attack": "mon_chill_slime__attack",
+    "hit": "mon_chill_slime__hit",
+    "defeat": "mon_chill_slime__defeat",
+    "icon": "ico_mon_chill_slime",
+    "poseSheet": "mon_chill_slime__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 48,
+    "attack": 5,
+    "armor": 0,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_hex",
+    "label": "Chilly Warning",
+    "description": "Slows, chills, or adds ice blocks."
+  },
+  "behaviors": [
+    "basic_attack",
+    "freeze_piece"
+  ],
+  "eliteActions": [],
+  "bossActions": [],
+  "resistances": [],
+  "weaknesses": [
+    "fire",
+    "spell_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 17,
+    "goldMax": 33,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "stage_3",
+    "ice",
+    "magical",
+    "frosty_pantry",
+    "normal"
+  ],
+  "implementationStatus": "partial",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_mon_chill_slime_idle",
+    "attack": "anim_mon_chill_slime_attack",
+    "hit": "anim_mon_chill_slime_hit",
+    "defeat": "anim_mon_chill_slime_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

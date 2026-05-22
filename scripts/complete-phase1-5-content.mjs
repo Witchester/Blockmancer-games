@@ -108,7 +108,7 @@ for (const [file, id, name, description, theme, bossId] of stages) {
     name,
     description,
     theme,
-    monsterPool: ['mon_sprinkle_rat', 'mon_gadget_goblin', 'mon_arcade_spark'],
+    monsterPool: ['mon_jelly_rat', 'mon_button_masher', 'mon_token_sprite'],
     bossId,
     lootTableId: 'loot_battle_default',
     enabled: true

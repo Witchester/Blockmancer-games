@@ -1,1 +1,25 @@
-{"id":"friend_sugar_bat","monsterId":"mon_bubble_bat","name":"Sugar Bat","pointsRequired":5,"gainMethods":[{"type":"defeat","points":1},{"type":"spare","points":2}],"unlockReward":{"effect":[{"type":"reduce_preview_hide","value":1}]},"enabled":true}
+{
+  "id": "friend_sugar_bat",
+  "monsterId": "mon_sugar_bat",
+  "name": "Sugar Bat",
+  "pointsRequired": 5,
+  "gainMethods": [
+    {
+      "type": "defeat",
+      "points": 1
+    },
+    {
+      "type": "spare",
+      "points": 2
+    }
+  ],
+  "unlockReward": {
+    "effect": [
+      {
+        "type": "reduce_preview_hide",
+        "value": 1
+      }
+    ]
+  },
+  "enabled": true
+}

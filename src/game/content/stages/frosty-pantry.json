@@ -4,14 +4,17 @@
   "description": "A freezer aisle full of snowcones and chilly snacks.",
   "theme": "ice_cave",
   "monsterPool": [
-    "mon_frosting_fox",
-    "mon_chilly_churro",
-    "mon_gelato_blob",
-    "mon_ice_pop_mimic",
+    "mon_ice_cream_imp",
+    "mon_popsicle_bat",
+    "mon_chill_slime",
+    "mon_freezer_mimic",
     "mon_snowcone_sprite",
-    "mon_bubble_bat"
+    "mon_pudding_penguin"
   ],
-  "eliteMonsterPool": ["mon_elite_ice_cream_imp_chillmaster", "mon_elite_freezer_mimic_deluxe"],
+  "eliteMonsterPool": [
+    "mon_elite_ice_cream_imp_chillmaster",
+    "mon_elite_freezer_mimic_deluxe"
+  ],
   "bossId": "mon_boss_gelato_golem",
   "lootTableId": "loot_battle_default",
   "enabled": true

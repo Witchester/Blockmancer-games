@@ -1,0 +1,86 @@
+{
+  "id": "mon_boss_gelato_golem",
+  "name": "Gelato Golem",
+  "description": "A stacked rainbow gelato golem that tests freeze warnings, ice pressure, and speed-wave pacing.",
+  "stageId": "stage_frosty_pantry",
+  "rank": "boss",
+  "encounterRank": "boss",
+  "rarity": "boss",
+  "tier": 5,
+  "role": "boss",
+  "wikiRole": "Ice/freeze",
+  "biome": "frosty_pantry",
+  "primaryMechanic": "Ice/freeze",
+  "spriteKey": "boss_gelato_golem",
+  "iconKey": "ico_boss_gelato_golem",
+  "assetRefs": {
+    "idle": "boss_gelato_golem__idle",
+    "attack": "boss_gelato_golem__attack",
+    "hit": "boss_gelato_golem__hit",
+    "phaseChange": "boss_gelato_golem__phase_change",
+    "specialAttack": "boss_gelato_golem__special_attack",
+    "defeat": "boss_gelato_golem__defeat",
+    "icon": "ico_boss_gelato_golem",
+    "poseSheet": "boss_gelato_golem__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 225,
+    "attack": 13,
+    "armor": 1,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_royal_collapse",
+    "label": "Ice/freeze",
+    "description": "A stacked rainbow gelato golem that tests freeze warnings, ice pressure, and speed-wave pacing."
+  },
+  "behaviors": [
+    "freeze_piece",
+    "increase_fall_speed"
+  ],
+  "eliteActions": [],
+  "bossActions": [
+    {
+      "id": "freeze_piece",
+      "label": "freeze piece",
+      "warningRequired": true
+    },
+    {
+      "id": "increase_fall_speed",
+      "label": "increase fall speed",
+      "warningRequired": true
+    }
+  ],
+  "resistances": [],
+  "weaknesses": [
+    "combo_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 10,
+    "attackPerStage": 1,
+    "fallSpeedModifier": 0.02
+  },
+  "rewards": {
+    "goldMin": 64,
+    "goldMax": 111,
+    "rewardRolls": 2,
+    "lootTableId": "loot_boss_default"
+  },
+  "tags": [
+    "boss_phase",
+    "stage_3",
+    "frosty_pantry",
+    "boss"
+  ],
+  "implementationStatus": "partial",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_boss_gelato_golem_idle",
+    "attack": "anim_boss_gelato_golem_attack",
+    "hit": "anim_boss_gelato_golem_hit",
+    "defeat": "anim_boss_gelato_golem_defeat",
+    "phase_change": "anim_boss_gelato_golem_phase_change",
+    "special_attack": "anim_boss_gelato_golem_special_attack"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

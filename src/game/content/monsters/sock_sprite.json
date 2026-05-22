@@ -1,0 +1,71 @@
+{
+  "id": "mon_sock_sprite",
+  "name": "Sock Sprite",
+  "description": "A missing sock sprite that skids underfoot with a squeaky laugh.",
+  "stageId": "stage_pillow_castle",
+  "rank": "regular",
+  "encounterRank": "regular",
+  "rarity": "uncommon",
+  "tier": 2,
+  "role": "disruptor",
+  "wikiRole": "Small disruptor",
+  "biome": "pillow_castle",
+  "primaryMechanic": "Uses light Sleepy or slippery sock pranks.",
+  "spriteKey": "mon_sock_sprite",
+  "iconKey": "ico_mon_sock_sprite",
+  "assetRefs": {
+    "idle": "mon_sock_sprite__idle",
+    "attack": "mon_sock_sprite__attack",
+    "hit": "mon_sock_sprite__hit",
+    "defeat": "mon_sock_sprite__defeat",
+    "icon": "ico_mon_sock_sprite",
+    "poseSheet": "mon_sock_sprite__pose_sheet_2x2"
+  },
+  "stats": {
+    "hp": 56,
+    "attack": 6,
+    "armor": 1,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_hex",
+    "label": "Sleepy Tune",
+    "description": "Uses light Sleepy or slippery sock pranks."
+  },
+  "behaviors": [
+    "basic_attack",
+    "sleep_player"
+  ],
+  "eliteActions": [],
+  "bossActions": [],
+  "resistances": [],
+  "weaknesses": [
+    "line_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 20,
+    "goldMax": 38,
+    "rewardRolls": 1,
+    "lootTableId": "loot_battle_default"
+  },
+  "tags": [
+    "stage_4",
+    "small",
+    "pillow_castle",
+    "normal"
+  ],
+  "implementationStatus": "partial",
+  "enabled": true,
+  "animations": {
+    "idle": "anim_mon_sock_sprite_idle",
+    "attack": "anim_mon_sock_sprite_attack",
+    "hit": "anim_mon_sock_sprite_hit",
+    "defeat": "anim_mon_sock_sprite_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}
