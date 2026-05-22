@@ -712,6 +712,261 @@ Connect character route choices to reactive difficulty in a fair and testable wa
 6. Trigger Lumi Stage 5 route scene and choose Risky; verify star/fever reward and preview/fever pressure risk are safe.
 
 
+
+#### Phase R11 — Biome-Based Sequential Encounter Packs
+
+##### Goal
+
+Replace one-enemy-per-node battle generation with fair sequential encounter packs generated from the stage/biome monster pool.
+
+##### Tasks
+
+1. Add or update encounter data types:
+
+```ts
+type MonsterRole = "starter" | "pressure" | "support" | "finisher";
+
+type BiomeMonsterPool = {
+  stageId: string;
+  biomeId: string;
+  monsterRules: WeightedMonsterRule[];
+  maxDuplicatePerNode: number;
+  recentMonsterMemoryCount: number;
+  bannedPairTags?: string[];
+};
+
+type NodeEncounterPack = {
+  encounterPackId: string;
+  nodeId: string;
+  stageId: string;
+  biomeId: string;
+  nodeType: "normal" | "elite" | "boss" | "event_battle" | "royal_guard";
+  enemies: EncounterEnemyEntry[];
+  currentEnemyIndex: number;
+  totalHpBudgetMultiplier: number;
+  totalAttackBudgetMultiplier: number;
+  maxActiveHazards: number;
+  rewardsGrantedOnlyOnNodeClear: true;
+};
+```
+
+2. Add `EncounterPackSystem` or equivalent responsibility inside the current enemy/battle generation flow.
+3. Create content for biome monster pools and encounter scaling under `src/game/content/difficulty-scaling/` or the existing equivalent folder.
+4. Generate enemy count by stage, node type, node depth, and budget.
+5. Tune total HP budget so 2 enemies are about 150-165% of a single node and 3 enemies are about 190-220%.
+6. Store current encounter pack state in run save data.
+7. Advance to the next enemy after defeat without clearing the node.
+8. Grant normal node rewards, route fallback triggers, and level-up screens only after all enemies are defeated.
+9. Add compact monster stack UI using monster icons.
+
+##### Acceptance Criteria
+
+- Normal battle nodes can contain 1-3 sequential enemies.
+- Only one enemy is active at once.
+- Enemy selection is generated from biome/stage monster pools.
+- New enemy entry resets attack counter and applies entry grace.
+- Rewards are not duplicated per enemy.
+- Save/load preserves active encounter pack, active enemy index, active enemy HP, and remaining enemies.
+- Stage 1 remains gentle and beginner-readable.
+- Build and content validation pass.
+
+##### Manual Test
+
+1. Start Stage 1 and confirm early nodes are still single enemy.
+2. Reach a late Stage 1 normal node and confirm it can generate two sequential enemies from the Stage 1 pool.
+3. Confirm the next enemy enters only after the current enemy is defeated.
+4. Confirm the monster stack UI updates from `2 left` to `1 left` to node clear.
+5. Save/load mid-node and verify the same active enemy and remaining queue are restored safely.
+
+---
+
+#### Phase R12 — Enemy Entry Pressure + Player Gift
+
+##### Goal
+
+Make enemy entry effects fair and readable by pairing every pressure effect with a small player-positive gift.
+
+##### Tasks
+
+1. Add `EnemyEntryEffect` content/config:
+
+```ts
+type EnemyEntryEffect = {
+  id: string;
+  pressureEffectId?: string;
+  playerGiftEffectId?: string;
+  entryGracePieces: number;
+  warningText: string;
+  eventLogText: string;
+};
+```
+
+2. Add safe pressure effects:
+   - sticky warning
+   - incoming junk warning
+   - freeze warning
+   - shielded enemy entry
+   - combo/Fever challenge
+   - royal pattern warning
+3. Add player gifts:
+   - +2 mana
+   - +1 to +3 shield
+   - spawn one sprinkle/star helper if board space allows
+   - +1 entry grace piece
+   - temporary Fever gain bonus
+4. Ensure the entry gift cannot create immediate board overflow or invalid state.
+5. Add event log text for both the pressure and the gift.
+
+##### Acceptance Criteria
+
+- Enemy entry never causes instant damage, instant overflow, hidden freeze, or unavoidable loss.
+- Every mechanical pressure entry has a readable warning.
+- Every pressure entry has a small player-positive gift.
+- Gifts are small enough to avoid becoming a farm.
+- Stage 1 uses only gentle entry effects.
+
+---
+
+#### Phase R13 — Festival Level-Up and Stackable Build Upgrades
+
+##### Goal
+
+Add JRPG-style run progression so players can survive and specialize through longer later-stage encounters.
+
+##### Tasks
+
+1. Add `PlayerLevelState` to run state and save migration:
+
+```ts
+type PlayerLevelState = {
+  level: number;
+  currentXp: number;
+  xpToNextLevel: number;
+  pendingLevelUps: number;
+  chosenUpgrades: Record<string, number>;
+  rerollCharges: number;
+};
+```
+
+2. Add `LevelUpSystem` or equivalent responsibility.
+3. Grant XP from defeated enemies, elite enemies, bosses, objectives, no-damage bonuses, and cascade bonuses.
+4. Accumulate pending level-ups during combat, but do not show the level-up screen until the full node is cleared.
+5. Add a level-up reward scene/modal with 3 cards.
+6. Add general level-up upgrades:
+   - `upg_lvl_clear_line_damage`
+   - `upg_lvl_max_hp_percent`
+   - `upg_lvl_flat_hp`
+   - `upg_lvl_mana_gain`
+   - `upg_lvl_spell_damage`
+   - `upg_lvl_cascade_damage`
+   - `upg_lvl_starting_shield`
+   - `upg_lvl_heal_after_node`
+   - `upg_lvl_fever_gain`
+   - `upg_lvl_hazard_resist`
+   - `upg_lvl_entry_grace`
+   - `upg_lvl_reward_reroll`
+7. Add hero-specific level-up upgrades for Milo, Pippa, Zuzu, Nixie, Bruk, and Lumi as defined in the Game Design SOT.
+8. Enforce stack limits and caps.
+9. Ensure every upgrade has a real runtime effect handler or is rejected by validation.
+
+##### Acceptance Criteria
+
+- XP is earned during combat and applied after node clear.
+- Level-up choices appear only after the full encounter pack is defeated.
+- Player gets 3 upgrade cards per level-up.
+- General and hero-specific upgrades can both appear.
+- Upgrade stacks persist in save data.
+- Upgrades affect real combat/board/stat behavior.
+- No upgrade fully cancels a core stage mechanic.
+- Unsupported upgrade effect IDs fail validation or produce a clear development warning.
+
+##### Manual Test
+
+1. Defeat a multi-enemy node and verify XP accumulates from each enemy.
+2. Confirm the level-up screen appears only after node clear.
+3. Pick `upg_lvl_clear_line_damage` and verify line-clear damage increases.
+4. Pick `upg_lvl_max_hp_percent` and verify max HP updates safely.
+5. Pick a hero-specific upgrade and verify it only appears for the selected hero.
+6. Save/load after taking upgrades and confirm stack counts persist.
+
+---
+
+
+#### Phase R14 — Node Result Screen and EXP Summary
+
+##### Goal
+
+Add a clear post-node result screen that shows how much EXP the player earned from the cleared node and how much EXP remains before the next Festival Level-Up.
+
+This screen is required because sequential encounters can contain multiple enemies, objectives, cascade bonuses, route bonuses, and no-damage bonuses. The player must understand why they gained EXP and how close they are to the next upgrade choice.
+
+##### Tasks
+
+1. Add `NodeResultSummary` and `NodeResultXpBreakdown` types or equivalent fields.
+2. Add a `NodeResultScene`, `NodeResultModal`, or equivalent post-battle screen.
+3. Gate it so it appears only after the **full encounter pack** is cleared, not after each enemy.
+4. Show:
+   - node clear title,
+   - enemies defeated count,
+   - total EXP gained this node,
+   - EXP breakdown rows,
+   - current level,
+   - EXP meter before/after gain,
+   - EXP remaining to next level,
+   - `Level Up Ready!` if pending level-ups exist.
+5. Ensure this screen runs before level-up card selection and before normal node reward selection.
+6. Persist enough result state so save/load cannot duplicate EXP or rewards.
+7. Add skip/continue handling that still safely routes to pending level-up cards or node rewards.
+
+##### Data Shape
+
+```ts
+type NodeResultXpBreakdown = {
+  sourceId: string;
+  label: string;
+  amount: number;
+  sourceType: "enemy" | "elite" | "boss" | "objective" | "cascade_bonus" | "no_damage_bonus" | "route_bonus" | "other";
+};
+
+type NodeResultSummary = {
+  nodeId: string;
+  encounterPackId?: string;
+  stageId: string;
+  nodeType: "normal" | "elite" | "boss" | "event_battle" | "royal_guard";
+  enemiesDefeated: string[];
+  xpBefore: number;
+  xpGained: number;
+  xpAfter: number;
+  levelBefore: number;
+  levelAfterPreview: number;
+  xpToNextLevel: number;
+  xpRemainingToNextLevel: number;
+  pendingLevelUps: number;
+  breakdown: NodeResultXpBreakdown[];
+};
+```
+
+##### Acceptance Criteria
+
+- Result screen appears after node clear and before level-up/reward screens.
+- Result screen never appears after non-final enemy defeats.
+- Total EXP gained this node is visible.
+- EXP remaining to next level is visible when no level-up is pending.
+- `Level Up Ready!` is visible when one or more level-ups are pending.
+- EXP breakdown includes enemy EXP and at least one supported bonus type when applicable.
+- EXP is not duplicated after save/load, scene reload, or back/continue navigation.
+- Mobile portrait layout remains readable.
+
+##### Manual Test
+
+1. Clear a single-enemy Stage 1 node and verify result screen shows that node's EXP and remaining EXP.
+2. Clear a two-enemy node and verify EXP includes both enemies but appears only once after the second enemy.
+3. Trigger an objective/cascade bonus and verify the breakdown row appears.
+4. Reach enough EXP to level up and verify the result screen says `Level Up Ready!` before opening level-up cards.
+5. Save/load after node clear but before choosing an upgrade and verify EXP is not granted twice.
+
+---
+
 #### 5. Recommended File/Folder Changes
 
 Exact paths may vary depending on the current repo. Prefer updating existing files rather than creating unnecessary new ones.
@@ -740,6 +995,18 @@ src/game/content/board-blocks/hazard-blocks.json
 src/game/content/hazard-counter-windows/hazard-counter-windows.json
 src/game/content/random-gameplay-events/reactive-difficulty-events.json
 src/game/content/difficulty-scaling/reactive-difficulty-scaling.json
+
+src/game/systems/EncounterPackSystem.ts
+src/game/systems/LevelUpSystem.ts
+src/game/scenes/LevelUpRewardScene.ts
+src/game/scenes/NodeResultScene.ts
+src/game/ui/MonsterStackPreview.ts
+src/game/ui/NodeResultPanel.ts
+src/game/content/difficulty-scaling/biome-monster-pools.json
+src/game/content/difficulty-scaling/encounter-pack-scaling.json
+src/game/content/difficulty-scaling/enemy-entry-effects.json
+src/game/content/upgrades/level-up-general.json
+src/game/content/upgrades/level-up-hero.json
 ```
 
 If the project already keeps content in a different structure, follow the existing structure and update `ContentRegistry` accordingly.

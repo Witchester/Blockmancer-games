@@ -1279,7 +1279,442 @@ Cascade hint: Trigger a cascade to reduce incoming junk.
 
 Do not overload the main board area with text. Use compact icons, a warning tray, tooltip card, or event log line.
 
+
+#### 23. Sequential Encounter Packs and Festival Level-Up Progression
+
+**Added:** 2026-05-22  
+**Authority:** Canonical design rule for multi-enemy battle nodes, biome-based monster pools, enemy entry pressure/gift effects, combat-only XP gain, and stackable JRPG-style level-up upgrades.
+
+##### 23.1 Design Goal
+
+Battle nodes may contain more than one monster, but the player fights them **sequentially**, one active monster at a time. This keeps the compact JRPG battle panel readable, preserves Cascade Gravity as the board identity, and makes later stages longer and more strategic without creating unfair simultaneous enemy pressure.
+
+Core rule:
+
+```text
+One battle node may contain 1-3 enemies.
+Only one enemy is active at a time.
+The next enemy enters only after the current enemy is defeated.
+The node is clear only after the full encounter pack is defeated.
+```
+
+This system must not raise difficulty only through HP and attack inflation. It must combine readable encounter length, stage-themed hazards, counterplay, small entry gifts, and long-term character growth.
+
+##### 23.2 Biome Monster Pools
+
+Encounter packs must be generated from the current stage/biome monster pool. Do not hardcode exact node enemy lists except for tutorials, scripted story battles, royal guard/mini-boss nodes, or boss encounters.
+
+```ts
+type MonsterRole = "starter" | "pressure" | "support" | "finisher";
+
+type WeightedMonsterRule = {
+  monsterId: string;
+  weight: number;
+  roles: MonsterRole[];
+  minNodeDepthPercent?: number;
+  maxNodeDepthPercent?: number;
+  allowedNodeTypes?: ("normal" | "elite" | "event_battle")[];
+  bannedWithTags?: string[];
+};
+
+type BiomeMonsterPool = {
+  stageId: string;
+  biomeId: string;
+  monsterRules: WeightedMonsterRule[];
+  maxDuplicatePerNode: number;
+  recentMonsterMemoryCount: number;
+  bannedPairTags?: string[];
+};
+```
+
+Generator inputs:
+
+```text
+stageId + biomeId + nodeType + nodeDepthPercent + runDifficulty + recentMonsterHistory + encounterBudget
+```
+
+Generator rules:
+
+- Pull monsters only from the current stage/biome pool unless a scripted event explicitly overrides it.
+- Avoid repeated monsters inside one node unless the pool is too small or the node intentionally represents a swarm.
+- Avoid repeating the same monster across too many nearby nodes by using `recentMonsterMemoryCount`.
+- Stage 1 must favor `starter` and light `pressure` roles.
+- Elite nodes may include stronger `pressure`, `support`, and `finisher` roles.
+- Boss nodes remain boss-specific and do not use normal random packs unless the boss explicitly summons helpers in a future design.
+
+##### 23.3 Encounter Pack Data Model
+
+```ts
+type NodeEncounterPack = {
+  encounterPackId: string;
+  nodeId: string;
+  stageId: string;
+  biomeId: string;
+  nodeType: "normal" | "elite" | "boss" | "event_battle" | "royal_guard";
+  enemies: EncounterEnemyEntry[];
+  currentEnemyIndex: number;
+  totalHpBudgetMultiplier: number;
+  totalAttackBudgetMultiplier: number;
+  maxActiveHazards: number;
+  rewardsGrantedOnlyOnNodeClear: true;
+  breatherRewardPolicy: BreatherRewardPolicy;
+};
+
+type EncounterEnemyEntry = {
+  enemyId: string;
+  role: MonsterRole;
+  hpMultiplier: number;
+  attackMultiplier: number;
+  entryEffectId?: string;
+  entryGracePieces: number;
+  xpValueMultiplier: number;
+};
+```
+
+Recommended node HP budget:
+
+| Enemies in node | Total node HP budget | Per-enemy tuning direction |
+| ---: | ---: | --- |
+| 1 | 100% | Current single-enemy behavior. |
+| 2 | 150-165% | Each enemy usually 70-85% of a normal single-node enemy. |
+| 3 | 190-220% | One medium enemy plus two weaker enemies, or three carefully tuned light enemies. |
+
+Recommended enemy-count ramp:
+
+| Stage | Normal node enemy count | Elite / royal guard enemy count | Notes |
+| ---: | ---: | ---: | --- |
+| 1 | 1 early, 1-2 late | No elite | First multi-enemy node should appear late and remain gentle. |
+| 2 | 1-2 | 2 | Introduce sequencing and junk pressure. |
+| 3 | 1-2 | 2 | Higher HP with freeze/speed warning windows. |
+| 4 | 2 | 2-3 | Shield/Sleepy pressure, still readable. |
+| 5 | 2-3 | 3 | Combo/Fever pressure and stronger sustain needs. |
+| 6 | 2-3 | 3 | Royal guard and final-stage strategic pressure. |
+
+##### 23.4 Sequential Battle Rules
+
+When the active enemy is defeated:
+
+```text
+Defeat animation / poof
+-> freeze outgoing enemy intent
+-> grant capped breather reward if not final enemy
+-> reveal or partially reveal next enemy
+-> spawn next enemy
+-> reset enemy attack counter
+-> apply entry grace
+-> apply entry pressure + player gift
+-> continue battle on the same board
+```
+
+Rules:
+
+- The active board state persists between enemies in the same node.
+- Player HP, MP, shield, Fever, inventory, Oopsies, and active run modifiers persist through the full node.
+- Enemy attack counters reset on enemy entry.
+- New enemies must get a safe entry grace window before their first attack unless the node is a late elite/royal guard with explicit warning.
+- Rewards, map completion, route fallback triggers, and node-clear XP screens happen only after the full encounter pack is defeated.
+- If save/load happens mid-node, the save must preserve the encounter pack, active enemy index, active enemy HP, queued enemy entries, and active warning state.
+
+Recommended entry grace:
+
+| Stage | Normal enemy entry grace | Elite / royal guard entry grace |
+| ---: | ---: | ---: |
+| 1 | +2 piece locks | n/a |
+| 2 | +2 | +1 |
+| 3 | +1-2 | +1 |
+| 4 | +1 | +1 |
+| 5 | +1 | 0-1 |
+| 6 | +1 | 0-1 |
+
+##### 23.5 Enemy Entry Pressure + Player Gift
+
+A new enemy entry should not be only punishment. It should be a small readable pressure paired with a small player-positive gift.
+
+```ts
+type EnemyEntryEffect = {
+  id: string;
+  pressureEffectId?: string;
+  playerGiftEffectId?: string;
+  entryGracePieces: number;
+  warningText: string;
+  eventLogText: string;
+};
+```
+
+| Enemy entry type | Enemy pressure | Player-positive gift |
+| --- | --- | --- |
+| Sticky enemy enters | Sticky warning or one sticky preview marker. | Spawn one sprinkle block or grant +2 mana. |
+| Junk enemy enters | Queue 1-2 incoming junk with visible countdown. | Add one cracked junk that deals bonus damage when cleared, or grant +1 shield. |
+| Fast enemy enters | Lower starting intent countdown, still with warning. | +1 extra piece-lock grace for this enemy. |
+| Shield enemy enters | Enemy gains small shield. | Player gains +2 shield. |
+| Freeze enemy enters | Freeze warning appears, not instant freeze. | Next piece falls slower for one piece or player gains +2 mana. |
+| Arcade enemy enters | Combo challenge appears. | Fever gain +10% while that enemy is active. |
+| Royal enemy enters | Royal pattern warning appears. | One normal rune becomes a star/sprinkle helper if board space allows. |
+
+Entry effects must never cause instant HP damage, instant board overflow, unavoidable freeze, or a hidden hazard.
+
+##### 23.6 Monster Stack UI
+
+The battle UI must show how many enemies remain without overcrowding the combat section.
+
+Placement:
+
+```text
+Top 25% combat area, near the enemy side, below or beside the enemy HP/intent area.
+```
+
+Runtime icon size:
+
+| Context | Monster stack icon render size |
+| --- | ---: |
+| Compact phone | 24 px |
+| Standard portrait | 28 px |
+| Tablet / desktop preview | 32 px |
+| Absolute cap | 36 px |
+
+Display rules:
+
+- Active enemy icon is fully visible.
+- Next enemy icon is 40-55% visible and tucked behind the active icon.
+- Additional enemies use a covered mystery chip such as `+1` or `+2`.
+- Do not fully reveal all future enemies unless a special preview reward says so.
+- Use monster icon assets through `AssetSystem`; missing icons must fall back safely.
+
+##### 23.7 Breather Rewards and Sustain
+
+Because later nodes may contain multiple enemies, the player needs limited sustain without turning multi-enemy nodes into free healing farms.
+
+```ts
+type BreatherRewardPolicy = {
+  enabled: boolean;
+  trigger: "after_non_final_enemy_defeat";
+  maxHealPercentPerNode: number;
+  possibleRewards: BreatherReward[];
+};
+
+type BreatherReward =
+  | { type: "heal_percent"; amount: number }
+  | { type: "mana"; amount: number }
+  | { type: "shield"; amount: number }
+  | { type: "fever"; amount: number };
+```
+
+Recommended non-final enemy defeat reward:
+
+| Reward type | Recommended amount |
+| --- | ---: |
+| HP heal | 2-4% max HP |
+| Mana | +2 to +4 |
+| Shield | +1 to +3 |
+| Fever | +3% to +5% |
+
+Cap:
+
+```text
+Maximum mid-node healing: 10% max HP per node.
+```
+
+##### 23.8 Festival Level-Up System
+
+Festival Level-Up is a run-based JRPG-style progression system. The player earns XP during combat, but level-up rewards are only presented after the combat node is fully cleared.
+
+```ts
+type PlayerLevelState = {
+  level: number;
+  currentXp: number;
+  xpToNextLevel: number;
+  pendingLevelUps: number;
+  chosenUpgrades: Record<string, number>;
+  rerollCharges: number;
+};
+```
+
+XP source recommendations:
+
+| Source | XP |
+| --- | ---: |
+| Normal enemy defeated | 8-12 |
+| Pressure/support enemy defeated | 10-14 |
+| Elite enemy defeated | 20-25 |
+| Boss defeated | 40-60 |
+| Battle mini-objective success | +5 |
+| No HP loss bonus | +5 |
+| Cascade 3+ bonus | +3 |
+
+XP curve:
+
+```text
+Level 1 -> 2: 25 XP
+Level 2 -> 3: 35 XP
+Level 3 -> 4: 50 XP
+Level 4 -> 5: 70 XP
+Level 5+: previous threshold +25 XP
+```
+
+Rules:
+
+- XP can be earned per enemy, but reward selection happens only after the full node is clear.
+- If multiple level-ups are pending, show one choice screen at a time after node clear.
+- Level-up upgrades are run upgrades, not permanent meta progression, unless a future SOT explicitly adds meta-leveling.
+- Level-up should support builds: line damage, HP, shield, spell, cascade, Fever, hazard-control, and hero identity.
+
+
+##### 23.8A Node Result Screen
+
+After the full encounter pack is defeated, the game must show a clear **Node Result Screen** before any level-up card choice or normal reward selection.
+
+Purpose:
+
+```text
+Show what happened in this node.
+Show how much EXP was earned.
+Show how much EXP remains until the next level.
+If a level-up is ready, clearly tell the player before opening upgrade choices.
+```
+
+Recommended flow:
+
+```text
+Final enemy defeated
+-> Node Clear banner
+-> Node Result Screen shows EXP summary and progress bar
+-> If pending level-up exists, continue to Festival Level-Up card selection
+-> Then continue to normal node rewards / loot / map flow
+```
+
+Node Result Screen data shape:
+
+```ts
+type NodeResultXpBreakdown = {
+  sourceId: string;
+  label: string;
+  amount: number;
+  sourceType: "enemy" | "elite" | "boss" | "objective" | "cascade_bonus" | "no_damage_bonus" | "route_bonus" | "other";
+};
+
+type NodeResultSummary = {
+  nodeId: string;
+  encounterPackId?: string;
+  stageId: string;
+  nodeType: "normal" | "elite" | "boss" | "event_battle" | "royal_guard";
+  enemiesDefeated: string[];
+  xpBefore: number;
+  xpGained: number;
+  xpAfter: number;
+  levelBefore: number;
+  levelAfterPreview: number;
+  xpToNextLevel: number;
+  xpRemainingToNextLevel: number;
+  pendingLevelUps: number;
+  breakdown: NodeResultXpBreakdown[];
+};
+```
+
+Display requirements:
+
+- Show **Node Cleared!** or node-type-specific equivalent.
+- Show enemies defeated count, for example `2 monsters calmed`.
+- Show total EXP gained this node, for example `+34 EXP`.
+- Show a short EXP breakdown when space allows: enemy EXP, objective bonus, cascade bonus, no-damage bonus, route bonus.
+- Show current level and EXP bar.
+- Show remaining EXP clearly: `18 EXP to Level 4`.
+- If a level-up is ready, replace remaining text with: `Level Up Ready!` and show pending level-up count if more than one.
+- Keep all text short and readable on portrait mobile.
+- Do not put the result screen over the active board; it should be its own modal/scene after battle resolution.
+
+Fairness and save rules:
+
+- EXP is granted once when the node is cleared, not once when the result screen is opened.
+- Reopening or reloading the result screen must not duplicate EXP.
+- Save/load must preserve whether node EXP was already applied, the latest `NodeResultSummary`, and pending level-up count.
+- If the player closes or skips the result screen, pending level-up and normal node rewards must still resolve safely.
+- The result screen must not grant rewards again if the same node has already been marked complete.
+
+##### 23.9 Level-Up Reward Cards
+
+At each level-up, show three random upgrade cards.
+
+| Card type | Target chance |
+| --- | ---: |
+| General upgrade | 65% |
+| Hero-specific upgrade | 25% |
+| Rare upgrade | 10% |
+
+Rules:
+
+- Starting at Level 3, try to include at least one card relevant to the selected hero if valid upgrades remain.
+- Cards must clearly show current stack count, stack limit, and per-stack effect.
+- The player may choose only one card per level-up.
+- Rerolls are allowed only if the player has a reroll charge from an upgrade/relic/reward.
+- Upgrade effects must have real runtime handlers; do not add upgrade JSON that validates but does nothing.
+
+##### 23.10 General Level-Up Upgrades
+
+Use `upg_` IDs because upgrades are an existing content category.
+
+| Upgrade ID | Name | Stack limit | Effect per stack | Cap / fairness rule |
+| --- | --- | ---: | --- | --- |
+| `upg_lvl_clear_line_damage` | Cleaner Lines | 8 | Clear line damage +2. | Max +16. |
+| `upg_lvl_max_hp_percent` | Bigger Snack Bag | 5 | Max HP +10%. | Max +50%; recalculate current HP safely. |
+| `upg_lvl_flat_hp` | Sturdy Apron | 8 | Max HP +6. | Strong early, less scaling late. |
+| `upg_lvl_mana_gain` | Lemonade Flow | 5 | Mana gain from clears +1. | Max +5. |
+| `upg_lvl_spell_damage` | Sparkly Spells | 6 | Spell damage +8%. | Max +48%; avoid uncapped multiplicative stacking. |
+| `upg_lvl_cascade_damage` | Cascade Rhythm | 5 | Cascade damage +6%. | Max +30%; rewards skill. |
+| `upg_lvl_starting_shield` | Comfy Guard | 5 | Start each combat with +2 shield. | Max +10. |
+| `upg_lvl_heal_after_node` | Snack Break | 5 | Heal 3% max HP after node clear. | Node-clear only; not per enemy. |
+| `upg_lvl_fever_gain` | Festival Hype | 5 | Fever gain +8%. | Max +40%. |
+| `upg_lvl_hazard_resist` | Careful Stacking | 4 | Hazard duration/effect -5%. | Max 20%; never fully cancels stage mechanics. |
+| `upg_lvl_entry_grace` | Breathing Room | 3 | First new enemy per node gets +1 extra attack delay. | Max +3 piece locks. |
+| `upg_lvl_reward_reroll` | Lucky Pick | 2 | Gain +1 level-up reroll charge every 2 levels. | Utility only, limited. |
+
+##### 23.11 Hero-Specific Level-Up Upgrades
+
+Hero-specific upgrades should enhance the selected hero's identity, not patch basic survival problems that all heroes need.
+
+| Hero | Upgrade ID | Name | Stack limit | Effect |
+| --- | --- | --- | ---: | --- |
+| Milo | `upg_lvl_milo_plink_mana` | Plink-Plonk Practice | 4 | First cascade each combat gives +2 extra mana. |
+| Milo | `upg_lvl_milo_calm_board` | Calm Little Board | 3 | After enemy entry, 15% chance to convert one hazard block to normal if safe. |
+| Milo | `upg_lvl_milo_listener` | Listener's Rhythm | 3 | Cascade 2+ gives +1 shield. |
+| Milo | `upg_lvl_milo_gentle_finish` | Gentle Finish | 2 | Defeating an enemy heals 2 HP, max once per enemy. |
+| Pippa | `upg_lvl_pippa_preheat` | Preheat Properly | 4 | Fire spell damage +10%. |
+| Pippa | `upg_lvl_pippa_burn_sticky` | Toasty Cleanup | 3 | Fire spells clear +1 sticky or junk block. |
+| Pippa | `upg_lvl_pippa_oven_guard` | Oven Mitt Guard | 3 | Gain +2 shield after casting a fire spell. |
+| Pippa | `upg_lvl_pippa_hot_combo` | Hot Batch Combo | 2 | First spell after Cascade 2+ costs 20% less mana. |
+| Zuzu | `upg_lvl_zuzu_bomb_friend` | Bombs Are Friends | 4 | Bomb block damage +8%. |
+| Zuzu | `upg_lvl_zuzu_safety_clamp` | Safety Clamp | 3 | Bomb-related junk side effects reduced by 20%. |
+| Zuzu | `upg_lvl_zuzu_extra_fuse` | Extra Fuse | 3 | Bomb effects reduce incoming junk by +1. |
+| Zuzu | `upg_lvl_zuzu_gadget_retry` | Warranty Retry | 2 | Once per node, failed risky gadget effect gives +2 shield. |
+| Nixie | `upg_lvl_nixie_chill_timing` | Chill Timing | 4 | Freeze/speed hazards last 5% less. |
+| Nixie | `upg_lvl_nixie_soft_thaw` | Soft Thaw | 3 | Clearing ice grants +1 mana. |
+| Nixie | `upg_lvl_nixie_slow_entry` | Slow the Entrance | 3 | New enemy attack counter +1 delay, once per node. |
+| Nixie | `upg_lvl_nixie_preserve` | Preserved Flavor | 2 | If HP drops below 30%, gain +5 shield once per combat. |
+| Bruk | `upg_lvl_bruk_snack_armor` | Snack Knight Armor | 5 | Max HP +8. |
+| Bruk | `upg_lvl_bruk_table_shield` | Table Shield | 4 | Start combat with +3 shield. |
+| Bruk | `upg_lvl_bruk_no_snack_lost` | No Snack Left Behind | 2 | Overflow save restores +5 HP after triggering. |
+| Bruk | `upg_lvl_bruk_victory_plate` | Victory Plate | 3 | Defeating an enemy grants +2 shield. |
+| Lumi | `upg_lvl_lumi_star_guidance` | Star Guidance | 4 | Star block damage +8%. |
+| Lumi | `upg_lvl_lumi_cascade_wish` | Cascade Wish | 3 | Cascade 3+ grants +5% Fever. |
+| Lumi | `upg_lvl_lumi_preview_light` | Preview Light | 2 | Preview disruption duration -1 piece. |
+| Lumi | `upg_lvl_lumi_wishkeeper` | Wishkeeper Spark | 2 | First Fever trigger each node grants +1 star block if board space allows. |
+
+##### 23.12 Fairness, Save, and Validation Rules
+
+- No upgrade may fully remove a stage mechanic.
+- No single upgrade should be mandatory for a fair run.
+- Every offensive build path should have a defensive or sustain alternative.
+- General upgrades must remain useful for every hero.
+- Hero-specific upgrades must remain optional identity amplifiers.
+- Stack limits must be enforced at content validation and runtime application.
+- Upgrade cards must never offer an upgrade already at max stacks unless the card is explicitly converted into a fallback reward.
+- Save data must preserve `PlayerLevelState`, pending level-ups, chosen upgrade stacks, current encounter pack state, active enemy index, active enemy HP, and remaining enemies.
+- Missing upgrade content or handlers must fall back safely and log a development warning.
+- Content validation must check effect IDs against supported runtime handlers, not only JSON shape.
+
+
 #### Change Log
+
+- 2026-05-22: Added Sequential Encounter Packs, biome-based monster pool generation, enemy entry pressure/gift effects, monster stack UI rules, limited mid-node breather rewards, Node Result Screen EXP summary, and the Festival Level-Up system with stackable general and hero-specific upgrades.
 
 - 2026-05-18: Added character route story flow requirements: 36 unique hero-stage route scenes, route triggers, dialogue choices, route rewards, save state, boss callbacks, and hero Normal/True/Risky variant endings.
 

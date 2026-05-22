@@ -430,6 +430,190 @@ Total per boss: 45 PNG files.
 
 ---
 
+## Sequential Encounter and Festival Level-Up Asset Standard
+
+**Added:** 2026-05-22  
+**Authority:** Canonical asset, icon, UI, VFX, and fallback rules for sequential multi-enemy encounter packs, monster stack previews, enemy entry pressure/gift feedback, Node Result Screens, XP gain/remaining display, Festival Level-Up screens, XP display, and level-up upgrade cards.
+
+### Design Context
+
+The new encounter model allows one battle node to contain 1-3 enemies generated from the current stage or biome monster pool. The player fights only one active enemy at a time. Additional enemies are represented through a compact monster stack UI, not through simultaneous battle sprites.
+
+The Festival Level-Up system grants XP during combat but presents upgrade choices only after the full node is cleared. Level-up cards use existing upgrade/icon categories and must remain readable on portrait mobile.
+
+### Monster Stack UI Asset Rules
+
+Monster stack previews should reuse existing canonical monster icon assets instead of creating a separate icon family.
+
+| UI Use | Source Asset | Canonical Folder | Runtime Render Size |
+| --- | --- | --- | ---: |
+| Active enemy stack icon | `ico_{monster_id}` or monster `icon` variant | `public/assets/sprites/monsters/{monster_id}/icon/` | 28px default, 24px compact, max 36px |
+| Partly hidden next enemy icon | same monster icon variant | `public/assets/sprites/monsters/{monster_id}/icon/` | 24-28px, 40-55% tucked behind active icon |
+| Unknown later-enemy chip | `ui_monster_stack_mystery_chip` | `public/assets/ui/hud/` | 24-28px |
+| Remaining count chip | `ui_monster_stack_count_chip` | `public/assets/ui/hud/` | 20-24px |
+
+Rules:
+
+- Do not create new primary monster-stack-specific monster icons when a canonical monster icon already exists.
+- The active enemy icon may be fully visible.
+- The next enemy icon should be partly visible to preserve surprise.
+- Enemies after the next should use a generic mystery/count chip such as `+1` or `+2` rendered by UI text, not baked into the image.
+- Monster stack UI must sit in the top 25% combat area and must not cover the board, Hold, Next Queue, right stat cards, or event log.
+- Missing monster icons fall back to the monster placeholder icon and must not block battle progression.
+
+### Enemy Entry Pressure + Player Gift Feedback Assets
+
+Each new enemy entry may show both pressure and a positive player gift. These should use small readable VFX, HUD chips, and event log lines.
+
+| Asset ID | Exact Frames | Folder | Purpose |
+| --- | ---: | --- | --- |
+| `vfx_enemy_entry_poof` | 6 | `public/assets/effects/vfx_enemy_entry_poof/` | Friendly spawn transition for the next sequential enemy. |
+| `vfx_enemy_entry_pressure_warning` | 5 | `public/assets/effects/vfx_enemy_entry_pressure_warning/` | Shows safe incoming pressure, warning, or stage hazard preview. |
+| `vfx_enemy_entry_player_gift` | 5 | `public/assets/effects/vfx_enemy_entry_player_gift/` | Shows player-positive entry gift such as mana, shield, sprinkle block, slowed piece, or grace. |
+| `vfx_enemy_entry_attack_reset` | 4 | `public/assets/effects/vfx_enemy_entry_attack_reset/` | Optional countdown/intent reset feedback. |
+| `ui_entry_grace_chip` | 1 | `public/assets/ui/hud/` | Small HUD chip for entry grace pieces. |
+| `ui_entry_gift_chip` | 1 | `public/assets/ui/hud/` | Small HUD chip for entry gift notice. |
+
+Rules:
+
+- Entry pressure VFX must communicate warning, not instant punishment.
+- Entry gift VFX should be cheerful and positive, such as sparkle, snack, shield, or mana glow.
+- Do not obscure the falling-block board with entry VFX.
+- Missing entry VFX falls back to event log text and safe HUD placeholder.
+
+### Monster Stack / Reveal UI Animation Standard
+
+| UI Animation ID | Exact Frames | Folder | Notes |
+| --- | ---: | --- | --- |
+| `ui_monster_stack_slide_in` | 5 | `public/assets/ui/animations/` | Stack appears at battle start or node transition. |
+| `ui_monster_stack_next_reveal` | 6 | `public/assets/ui/animations/` | Next monster icon becomes active after current enemy defeat. |
+| `ui_monster_stack_count_pulse` | 4 | `public/assets/ui/animations/` | Remaining count updates. |
+| `ui_monster_stack_clear` | 5 | `public/assets/ui/animations/` | Node encounter fully cleared. |
+
+
+### Node Result Screen UI Asset Rules
+
+The Node Result Screen appears after a battle node is fully cleared and before Festival Level-Up card selection or normal node rewards.
+
+| UI Use | Asset Key Pattern | Folder | Runtime Render Size |
+| --- | --- | --- | ---: |
+| Node result panel | `ui_panel_node_result` | `public/assets/ui/panels/` | Modal responsive |
+| Node clear banner | `ui_node_clear_banner` | `public/assets/ui/hud/` | Combat/result header responsive |
+| EXP gained counter | `ui_xp_gained_counter` | `public/assets/ui/hud/` | Text/chip responsive |
+| EXP remaining chip | `ui_xp_remaining_chip` | `public/assets/ui/hud/` | Text/chip responsive |
+| EXP breakdown row | `ui_xp_breakdown_row` | `public/assets/ui/panels/` | Compact row |
+| Continue button | `ui_button_node_result_continue` | `public/assets/ui/buttons/` | Touch-friendly |
+| Level ready badge | `ui_level_ready_badge` | `public/assets/ui/hud/` | 32-48px |
+
+Rules:
+
+- The result panel must be readable in portrait mobile and should use short labels.
+- EXP amount and EXP remaining must be text-rendered by UI, not baked into images.
+- The EXP bar may reuse `ui_meter_xp` from the Festival Level-Up UI.
+- Result screen art must not cover active gameplay because it appears after battle resolution.
+- Missing result screen art falls back to `ui_panel_default`, `ui_meter_xp`, and simple text.
+
+### Node Result Screen Animation Standard
+
+| Asset ID | Exact Frames | Folder | Purpose |
+| --- | ---: | --- | --- |
+| `ui_node_result_panel_intro` | 6 | `public/assets/ui/animations/` | Result screen opens after node clear. |
+| `ui_node_clear_banner_pop` | 5 | `public/assets/ui/animations/` | Node clear title/badge appears. |
+| `ui_xp_meter_count_up` | 8 | `public/assets/ui/animations/` | EXP meter fills from previous value to new value. |
+| `ui_xp_breakdown_row_pop` | 4 | `public/assets/ui/animations/` | Each EXP breakdown row appears. |
+| `ui_level_ready_badge_pulse` | 6 | `public/assets/ui/animations/` | Level-up ready badge pulses when pending level-up exists. |
+| `vfx_node_clear_sparkle` | 6 | `public/assets/effects/vfx_node_clear_sparkle/` | Cheerful node-clear sparkle, optional. |
+
+Fallback rule: if these animations are missing, show the static result panel and text. Missing result animations must never block EXP application, pending level-up routing, or reward flow.
+
+### Festival Level-Up UI Asset Rules
+
+Festival Level-Up uses existing UI, upgrade icon, VFX, and HUD categories. No new top-level asset folder is required.
+
+| UI Use | Asset Key Pattern | Folder | Runtime Render Size |
+| --- | --- | --- | ---: |
+| Level-up panel | `ui_panel_level_up` | `public/assets/ui/panels/` | Section/modal responsive |
+| Level-up card frame | `ui_level_up_card_common`, `ui_level_up_card_rare`, `ui_level_up_card_hero` | `public/assets/ui/panels/` | Card responsive |
+| XP meter | `ui_meter_xp` | `public/assets/ui/meters/` | HUD/modal responsive |
+| Level badge | `ui_level_badge` | `public/assets/ui/hud/` | 32-48px |
+| Upgrade icon | `ico_{upgrade_id}` | `public/assets/icons/upgrades/` | 48px on card, 24-32px compact |
+| Reroll button | `ui_button_level_reroll` | `public/assets/ui/buttons/` | Touch-friendly |
+| Confirm button | `ui_button_level_confirm` | `public/assets/ui/buttons/` | Touch-friendly |
+
+Rules:
+
+- Level-up cards must be readable on portrait mobile.
+- Upgrade icons should be centered, no text baked into the image, and readable at 24-48px.
+- Card rarity/hero-specific styling should use frames, borders, small symbols, or color treatment from UI assets, not hardcoded raw paths.
+- Hero-specific level-up cards may use the selected hero portrait/icon as a small badge, but should not require new hero art.
+- Missing card art falls back to `ui_panel_default` and generated icon placeholders.
+
+### Festival Level-Up Animation and VFX Standard
+
+| Asset ID | Exact Frames | Folder | Purpose |
+| --- | ---: | --- | --- |
+| `ui_level_up_panel_intro` | 8 | `public/assets/ui/animations/` | Level-up screen opens after node clear. |
+| `ui_level_up_card_flip` | 6 | `public/assets/ui/animations/` | Three upgrade cards reveal. |
+| `ui_level_up_card_select` | 5 | `public/assets/ui/animations/` | Selected upgrade confirmation. |
+| `ui_xp_meter_fill` | 6 | `public/assets/ui/animations/` | XP bar fills after combat. |
+| `vfx_level_up_sparkle` | 8 | `public/assets/effects/vfx_level_up_sparkle/` | Cheerful level-up sparkle. |
+| `vfx_upgrade_apply_general` | 5 | `public/assets/effects/vfx_upgrade_apply_general/` | General upgrade applied. |
+| `vfx_upgrade_apply_hero` | 6 | `public/assets/effects/vfx_upgrade_apply_hero/` | Hero-specific upgrade applied. |
+
+### Upgrade Icon Key Rules
+
+Level-up upgrades use the existing upgrade icon category.
+
+Recommended key pattern:
+
+```text
+ico_lvl_clear_line_damage
+ico_lvl_max_hp_percent
+ico_lvl_mana_gain
+ico_lvl_spell_damage
+ico_lvl_cascade_damage
+ico_lvl_starting_shield
+ico_lvl_entry_grace
+ico_lvl_milo_plink_mana
+ico_lvl_pippa_preheat
+ico_lvl_zuzu_bomb_friend
+ico_lvl_nixie_chill_timing
+ico_lvl_bruk_snack_armor
+ico_lvl_lumi_star_guidance
+```
+
+Rules:
+
+- Use `public/assets/icons/upgrades/` for all level-up upgrade icons.
+- Keep source icon assets at `627x627` unless a future UI-specific icon rule says otherwise.
+- Runtime card display should render upgrade icons at approximately 48px.
+- Compact summary/history displays should render upgrade icons at 24-32px.
+- Do not hardcode raw icon paths in content JSON; content should use `iconKey` / `assetKey`.
+
+### Fallback Rules
+
+- Missing monster stack icon: use monster placeholder icon.
+- Missing monster mystery chip: use generic UI placeholder chip.
+- Missing entry VFX: show event log text and a simple HUD pulse.
+- Missing node result panel art: use `ui_panel_default`, `ui_meter_xp`, and generated text/chips.
+- Missing level-up panel/card art: use `ui_panel_default` and generated fallback frame.
+- Missing upgrade icon: use generic upgrade placeholder icon.
+- Missing level-up animation frames: show static panel/card state without blocking upgrade choice.
+- Missing VFX must never block encounter progression, enemy transition, XP gain, upgrade selection, save/load, or node clear.
+
+### Validation Expectations
+
+The following validation/sync systems must understand the new asset references as canonical assets, not legacy paths:
+
+```bash
+npm run validate:animations
+npm run sync:assets
+npm run audit:asset-variants
+npm run build
+```
+
+Missing final art remains warning-only unless release-lock mode is explicitly enabled. Runtime must stay fallback-safe.
+
 ## Board Block Frame Animation Integration
 
 **Source file:** `BOARD_BLOCK_FRAME_ANIMATION_INTEGRATION_WITH_STORY_FLOW.md`

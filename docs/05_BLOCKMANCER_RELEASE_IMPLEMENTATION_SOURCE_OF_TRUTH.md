@@ -42,6 +42,47 @@ Current release status: buildable and validation-clean, with remaining release r
 
 Keep the current stack: Phaser 3 + TypeScript + Vite + Capacitor remains the pragmatic path. There is enough runtime code, content, validation, and asset fallback infrastructure that an engine migration would slow Release 1 more than it helps.
 
+
+#### 1A. Feature Delta — Sequential Encounter Packs and Festival Level-Up
+
+**Added:** 2026-05-22  
+**Current status:** Design/SOT updated, implementation pending until repo code audit confirms otherwise.
+
+New Release 1 feature direction:
+
+- Battle nodes may contain 1-3 sequential enemies generated from the current stage/biome monster pool.
+- Only one enemy is active at a time.
+- Node rewards, route fallback triggers, and level-up screens happen only after the full encounter pack is defeated.
+- New enemy entry resets the enemy attack counter and applies entry grace.
+- Enemy entry effects must pair readable pressure with a small player-positive gift.
+- Compact monster stack UI shows enemies remaining with small stacked icons.
+- Festival Level-Up grants XP from combat but shows upgrade choices only after node clear.
+- Node Result Screen appears after node clear to show EXP gained this node, EXP breakdown, and EXP remaining to next level.
+- Level-up upgrades are stackable run upgrades split into general upgrades and hero-specific upgrades.
+
+Implementation risk:
+
+- This touches `EnemySystem`, `BattleScene`, save state, reward flow, route fallback timing, UI layout, upgrade handling, and content validation.
+- Existing audit already flags item/relic/upgrade effects as switch-based/partial, so every new level-up upgrade must be backed by a real handler and validation.
+- Save migration is P0 because active encounter pack state and `PlayerLevelState` become run-state fields.
+
+Required new or updated systems:
+
+```text
+EncounterPackSystem or equivalent EnemySystem responsibility
+LevelUpSystem
+NodeResultScene or result modal in RewardScene/BattleScene flow
+LevelUpRewardScene or level-up modal in RewardScene
+MonsterStackPreview UI
+NodeResultPanel UI
+Biome monster pool content
+Encounter pack scaling content
+Enemy entry effect content
+Level-up upgrade content and runtime handlers
+Save migration for encounter pack + PlayerLevelState
+```
+
+
 #### 2. Commands Run In This Audit
 
 | Command | Result | Notes |
@@ -121,6 +162,9 @@ Route content counts:
 | Board controls | Implemented | `BoardSystem`, `BattleScene`, `InputSystem`, `MobileControls`. | Mobile ergonomics need device verification. | P1 |
 | Combat loop | Implemented | `CombatSystem`, `BattleScene`, enemy defeat/reward flow. | More tests for modifiers and bosses. | P1 |
 | Enemy system | Implemented / partial behavior depth | `EnemySystem`, monster content. | Advanced behaviors remain light. | P1 |
+| Encounter pack system | New / pending | SOT design added 2026-05-22. | Implement biome-based sequential enemy packs, current enemy index, node-clear reward gating, monster stack UI, and save/load support. | P1 |
+| Festival Level-Up system | New / pending | SOT design added 2026-05-22. | Implement XP gain, post-node level-up card choices, stackable general/hero upgrades, upgrade caps, and real effect handlers. | P1 |
+| Node Result Screen | New / pending | SOT design added 2026-05-22, expanded with EXP result requirement. | Implement post-node result screen showing EXP gained, EXP breakdown, EXP remaining to next level, pending level-up state, and duplicate-safe save/load behavior. | P1 |
 | Boss system | Partial | `BossSystem`, `BossRuleSystem`, boss JSON, boss callbacks. | Some mechanics are placeholder-safe rather than fully distinct. | P1 |
 | Spell system | Partial | `SpellSystem`, spell content. | Runtime spell behavior coverage does not fully match content roster. | P1 |
 | Item system | Partial | `ItemSystem`, item content, route rewards. | Content coverage exceeds verified behavior coverage. | P1 |
@@ -242,6 +286,8 @@ Not manually tested in this pass.
 
 ##### P1 - Release 1 Core
 
+1. Implement biome-based sequential encounter packs and monster stack UI.
+2. Implement Festival Level-Up with stackable general and hero-specific upgrades.
 1. Import Priority 1 exact-frame PNG animation assets.
 2. Replace critical-path placeholder sprites/icons/portraits/ending cards.
 3. Verify all route triggers, route rewards, boss callbacks, and endings in play.
@@ -289,6 +335,82 @@ npm.cmd run build
 ```
 
 Treat missing final PNG/audio assets as release blockers for presentation, not as crash blockers.
+
+
+#### 12A. Recommended Prompt — Sequential Encounter Packs and Festival Level-Up
+
+```text
+Read docs/00_BLOCKMANCER_SOURCE_OF_TRUTH_INDEX.md first.
+Then read docs/01_BLOCKMANCER_GAME_DESIGN_SOURCE_OF_TRUTH.md, docs/03_BLOCKMANCER_GAMEPLAY_REACTIVE_DIFFICULTY_SOURCE_OF_TRUTH.md, docs/04_BLOCKMANCER_ASSET_ANIMATION_SOURCE_OF_TRUTH.md, docs/05_BLOCKMANCER_RELEASE_IMPLEMENTATION_SOURCE_OF_TRUTH.md, and docs/06_BLOCKMANCER_CANONICAL_FOLDER_STRUCTURE_SOURCE_OF_TRUTH.md.
+
+Task:
+Implement Sequential Encounter Packs and Festival Level-Up for Blockmancer Dungeon.
+
+Core rules:
+- Generate battle node enemy packs from stage/biome monster pools, not hardcoded node lists.
+- Fight enemies sequentially. Only one enemy is active at a time.
+- Node is cleared only after every enemy in the encounter pack is defeated.
+- Reset enemy attack counter when the next enemy enters.
+- Apply safe entry grace to new enemies.
+- Pair every enemy entry pressure effect with a small player-positive gift.
+- Show a compact monster stack UI using small monster icons.
+- Grant XP during combat, but show post-node result summary only after the full node is cleared.
+- Add Node Result Screen showing EXP gained this node, EXP breakdown, EXP remaining to next level, and Level Up Ready state.
+- Add 3-card level-up selection with stackable general and hero-specific upgrades after the result screen when pending level-ups exist.
+- Enforce upgrade stack limits and caps.
+- Preserve Cascade Gravity, portrait-mobile readability, cheerful festival tone, and fallback safety.
+
+Inspect first:
+- src/game/systems/EnemySystem*
+- src/game/systems/CombatSystem*
+- src/game/systems/BoardSystem*
+- src/game/systems/RewardSystem*
+- src/game/systems/UpgradeSystem*
+- src/game/systems/SaveSystem*
+- src/game/scenes/BattleScene*
+- src/game/scenes/RewardScene*
+- src/game/content/monsters/
+- src/game/content/stages/
+- src/game/content/difficulty-scaling/
+- src/game/content/upgrades/
+- src/game/ui/
+- src/game/types/
+
+Implementation order:
+1. Add run-state and save migration for current encounter pack and PlayerLevelState.
+2. Add biome monster pool content and encounter pack scaling content.
+3. Add EncounterPackSystem or equivalent EnemySystem generator.
+4. Update BattleScene/CombatSystem to advance enemies sequentially inside one node.
+5. Gate node rewards, map completion, route fallback triggers, and level-up screens until encounter pack clear.
+6. Add enemy entry pressure/gift effects with event log feedback.
+7. Add MonsterStackPreview UI with 24-36px icons and fallback-safe mystery chip.
+8. Add LevelUpSystem with XP curve and pending level-ups.
+9. Add NodeResultScene/NodeResultPanel that shows EXP gained, breakdown, EXP remaining, and level-up-ready state after node clear.
+10. Add 3-card reward generation for level-up choices after the result screen.
+11. Add general level-up upgrades and hero-specific upgrades from the Game Design SOT.
+12. Add real runtime handlers for each upgrade effect and validation for unsupported effects.
+13. Add deterministic tests or debug smoke steps for sequential encounter, save/load mid-node, XP, upgrade selection, and caps.
+
+Acceptance criteria:
+- Stage 1 early nodes stay single-enemy and late nodes can gently generate 2 enemies.
+- Stage 2+ normal/elite nodes can generate fair sequential packs from biome pools.
+- Only one enemy is active at a time.
+- Next enemy entry resets attack counter and applies entry grace.
+- Entry pressure always has a small player gift.
+- Rewards are granted once per node, not once per enemy.
+- XP accumulates during combat but Node Result Screen appears only after node clear.
+- Node Result Screen shows total EXP gained, EXP breakdown, EXP remaining, and Level Up Ready state.
+- Level-up selection appears after Node Result Screen when pending level-ups exist.
+- General and hero-specific upgrades stack within caps and persist through save/load.
+- Unsupported upgrade effect IDs fail validation or produce explicit development warnings.
+- npm run validate:content passes.
+- npm run validate:metadata passes if metadata changed.
+- npm run validate:animations passes or only reports known missing art warnings.
+- npm run build passes.
+
+Finish response with:
+Summary / Files changed / Systems changed / Content added / Save migration notes / Commands run / Manual test steps / Known limitations.
+```
 
 
 ---

@@ -267,7 +267,104 @@ Icon folders and ownership:
 - Missing final art is warning-only unless a release-lock mode explicitly changes that policy.
 - Validation must preserve fallback safety and must not require final production art to exist before gameplay can run.
 
-## 15. Update Policy
+
+## 15. Encounter Stack and Level-Up Asset Placement Rules
+
+The sequential encounter and Festival Level-Up systems do not introduce new top-level asset folders. They reuse existing canonical categories so asset packs remain simple and fallback-safe.
+
+### 15.1 Monster Stack Preview
+
+Monster stack preview uses existing monster icons:
+
+```text
+public/assets/sprites/monsters/{monster_id}/icon/
+```
+
+Rules:
+- Source icon size remains `627x627` for non-board monster icons.
+- Runtime render size is `24-36px` depending device size.
+- Active monster icon is fully visible.
+- Next monster icon is partially visible behind the active icon.
+- Additional monsters use a generic mystery chip from `public/assets/ui/hud/`.
+- Content and scenes reference asset keys, not raw paths.
+
+### 15.2 Enemy Entry Pressure/Gift Feedback
+
+Enemy entry warning and gift VFX use existing effects and UI animation folders:
+
+```text
+public/assets/effects/vfx_enemy_entry_warning/
+public/assets/effects/vfx_enemy_entry_gift/
+public/assets/ui/animations/
+```
+
+Rules:
+- VFX frames use exact-frame PNG naming.
+- VFX source size is `627x627` with transparent background.
+- Missing VFX must fall back to event log text and a simple UI pulse.
+
+
+### 15.3 Node Result Screen UI
+
+Node Result Screen assets reuse existing UI, HUD, meter, button, animation, and effects folders. No new top-level folder is required.
+
+```text
+public/assets/ui/panels/
+public/assets/ui/hud/
+public/assets/ui/meters/
+public/assets/ui/buttons/
+public/assets/ui/animations/
+public/assets/effects/vfx_node_clear_sparkle/
+```
+
+Recommended asset keys:
+
+```text
+ui_panel_node_result
+ui_node_clear_banner
+ui_xp_gained_counter
+ui_xp_remaining_chip
+ui_xp_breakdown_row
+ui_button_node_result_continue
+ui_level_ready_badge
+ui_node_result_panel_intro
+ui_node_clear_banner_pop
+ui_xp_meter_count_up
+ui_xp_breakdown_row_pop
+ui_level_ready_badge_pulse
+vfx_node_clear_sparkle
+```
+
+Rules:
+- EXP values and remaining EXP must be rendered by game text, not baked into PNGs.
+- The EXP meter may reuse `ui_meter_xp`.
+- Missing result screen assets must fall back to existing reward/panel/HUD placeholders.
+- Result screen assets are post-battle UI assets; they must not be placed in stage background folders.
+
+### 15.4 Festival Level-Up UI and Icons
+
+Level-up UI uses existing UI, HUD, and upgrade icon folders:
+
+```text
+public/assets/ui/panels/
+public/assets/ui/hud/
+public/assets/ui/animations/
+public/assets/icons/upgrades/
+public/assets/effects/vfx_level_up_sparkle/
+public/assets/effects/vfx_upgrade_pickup/
+```
+
+Rules:
+- Upgrade icons use `public/assets/icons/upgrades/`.
+- Upgrade icon source size is `627x627` transparent PNG.
+- Upgrade card icons render around `48-64px`.
+- Compact chosen-upgrade summaries render around `24-32px`.
+- Missing level-up UI art must use existing reward card or panel fallbacks.
+- Do not create raw-path references in upgrade JSON.
+- Do not add a new folder in an artist brief unless this SOT is updated first.
+
+
+## 16. Update Policy
 
 - Update this 06 SOT when canonical folder structure changes.
 - Do not change folder rules only inside prompts.
