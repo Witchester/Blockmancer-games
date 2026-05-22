@@ -1292,7 +1292,7 @@ Battle nodes may contain more than one monster, but the player fights them **seq
 Core rule:
 
 ```text
-One battle node may contain 1-3 enemies.
+One battle node may contain 1-5 enemies.
 Only one enemy is active at a time.
 The next enemy enters only after the current enemy is defeated.
 The node is clear only after the full encounter pack is defeated.
@@ -1511,7 +1511,7 @@ Recommended non-final enemy defeat reward:
 Cap:
 
 ```text
-Maximum mid-node healing: 10% max HP per node.
+Maximum mid-node healing: 15% max HP per node.
 ```
 
 ##### 23.8 Festival Level-Up System
@@ -1533,8 +1533,8 @@ XP source recommendations:
 
 | Source | XP |
 | --- | ---: |
-| Normal enemy defeated | 8-12 |
-| Pressure/support enemy defeated | 10-14 |
+| Normal enemy defeated | 6-10 |
+| Pressure/support enemy defeated | 8-12 |
 | Elite enemy defeated | 20-25 |
 | Boss defeated | 40-60 |
 | Battle mini-objective success | +5 |
