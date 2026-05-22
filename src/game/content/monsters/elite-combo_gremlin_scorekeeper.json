@@ -1,0 +1,57 @@
+{
+  "id": "mon_elite_combo_gremlin_scorekeeper",
+  "name": "Combo Gremlin Scorekeeper",
+  "description": "A hyper gremlin who keeps track of your combos and taxes you for slacking!",
+  "rarity": "elite",
+  "tier": 5,
+  "role": "elite",
+  "biome": "void",
+  "spriteKey": "placeholder_elite_gremlin",
+  "stats": {
+    "hp": 90,
+    "attack": 8,
+    "armor": 0,
+    "attackIntervalLocks": 3
+  },
+  "intent": {
+    "id": "intent_attack",
+    "label": "Combo Quota",
+    "description": "Demands a cascade or deals bonus damage."
+  },
+  "behaviors": [
+    "basic_attack",
+    "hydra_combo_check"
+  ],
+  "resistances": [],
+  "weaknesses": [
+    "combo_damage",
+    "cascade_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 25,
+    "goldMax": 42,
+    "rewardRolls": 2,
+    "lootTableId": "loot_elite_default"
+  },
+  "tags": [
+    "stage_5",
+    "elite",
+    "hazard_combo_quota",
+    "counter_cascade",
+    "starfall_arcade"
+  ],
+  "enabled": true,
+  "iconKey": "ico_mon_elite_combo_gremlin_scorekeeper",
+  "animations": {
+    "idle": "anim_mon_elite_combo_gremlin_scorekeeper_idle",
+    "attack": "anim_mon_elite_combo_gremlin_scorekeeper_attack",
+    "hit": "anim_mon_elite_combo_gremlin_scorekeeper_hit",
+    "defeat": "anim_mon_elite_combo_gremlin_scorekeeper_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

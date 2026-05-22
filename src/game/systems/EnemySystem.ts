@@ -41,6 +41,13 @@ export class EnemySystem {
     }
 
     let candidates = contentEnemies;
+    
+    // Use stage-specific elite pool for elite encounters
+    if (roomType === 'elite' && stageDef?.eliteMonsterPool) {
+      const eliteCandidates = contentEnemies.filter(e => stageDef.eliteMonsterPool.includes(e.id));
+      if (eliteCandidates.length > 0) return eliteCandidates;
+    }
+    
     if (stageDef?.monsterPool) {
       candidates = contentEnemies.filter(e => stageDef.monsterPool.includes(e.id));
     }

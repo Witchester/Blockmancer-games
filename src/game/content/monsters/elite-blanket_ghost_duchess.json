@@ -1,0 +1,60 @@
+{
+  "id": "mon_elite_blanket_ghost_duchess",
+  "name": "Blanket Ghost Duchess",
+  "description": "A sleepy duchess who haunts the Pillow Castle with drowsy blanket magic.",
+  "rarity": "elite",
+  "tier": 4,
+  "role": "elite",
+  "biome": "royal_ruins",
+  "spriteKey": "placeholder_elite_ghost",
+  "stats": {
+    "hp": 80,
+    "attack": 7,
+    "armor": 0,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_sleep_player",
+    "label": "Sleepy Warning",
+    "description": "Applies Sleepy status pressure."
+  },
+  "behaviors": [
+    "basic_attack",
+    "sleep_player",
+    "shield_self"
+  ],
+  "resistances": [
+    "spell_damage"
+  ],
+  "weaknesses": [
+    "line_damage",
+    "combo_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 22,
+    "goldMax": 38,
+    "rewardRolls": 2,
+    "lootTableId": "loot_elite_default"
+  },
+  "tags": [
+    "stage_4",
+    "elite",
+    "hazard_sleep",
+    "counter_sleep",
+    "pillow_castle"
+  ],
+  "enabled": true,
+  "iconKey": "ico_mon_elite_blanket_ghost_duchess",
+  "animations": {
+    "idle": "anim_mon_elite_blanket_ghost_duchess_idle",
+    "attack": "anim_mon_elite_blanket_ghost_duchess_attack",
+    "hit": "anim_mon_elite_blanket_ghost_duchess_hit",
+    "defeat": "anim_mon_elite_blanket_ghost_duchess_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

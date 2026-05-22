@@ -1,0 +1,58 @@
+{
+  "id": "mon_elite_button_masher_supervisor",
+  "name": "Button Masher Supervisor",
+  "description": "A goblin overseer who tests machines by smashing every button. Your board is the test subject!",
+  "rarity": "elite",
+  "tier": 2,
+  "role": "elite",
+  "biome": "goblin_workshop",
+  "spriteKey": "placeholder_elite_goblin",
+  "stats": {
+    "hp": 65,
+    "attack": 6,
+    "armor": 0,
+    "attackIntervalLocks": 4
+  },
+  "intent": {
+    "id": "intent_throw_junk",
+    "label": "Bad Piece Delivery",
+    "description": "Delivers an awkward piece to your queue."
+  },
+  "behaviors": [
+    "basic_attack",
+    "spawn_junk",
+    "bad_piece_delivery"
+  ],
+  "resistances": [],
+  "weaknesses": [
+    "combo_damage",
+    "cascade_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 20,
+    "goldMax": 35,
+    "rewardRolls": 2,
+    "lootTableId": "loot_elite_default"
+  },
+  "tags": [
+    "stage_2",
+    "elite",
+    "hazard_bad_piece",
+    "counter_piece_queue",
+    "goblin_workshop"
+  ],
+  "enabled": true,
+  "iconKey": "ico_mon_elite_button_masher_supervisor",
+  "animations": {
+    "idle": "anim_mon_elite_button_masher_supervisor_idle",
+    "attack": "anim_mon_elite_button_masher_supervisor_attack",
+    "hit": "anim_mon_elite_button_masher_supervisor_hit",
+    "defeat": "anim_mon_elite_button_masher_supervisor_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}

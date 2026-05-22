@@ -1,0 +1,60 @@
+{
+  "id": "mon_elite_square_jester_prime",
+  "name": "Square Jester Prime",
+  "description": "A royal jester who insists everything must be perfectly square and symmetrical!",
+  "rarity": "elite",
+  "tier": 6,
+  "role": "elite",
+  "biome": "royal_ruins",
+  "spriteKey": "placeholder_elite_jester",
+  "stats": {
+    "hp": 100,
+    "attack": 10,
+    "armor": 1,
+    "attackIntervalLocks": 3
+  },
+  "intent": {
+    "id": "intent_royal_collapse",
+    "label": "Royal Pattern",
+    "description": "Demands proper rectangular patterns."
+  },
+  "behaviors": [
+    "basic_attack",
+    "pattern_junk",
+    "royal_block_spawn"
+  ],
+  "resistances": [
+    "physical"
+  ],
+  "weaknesses": [
+    "bomb",
+    "combo_damage"
+  ],
+  "scaling": {
+    "hpPerStage": 8,
+    "attackPerStage": 0.5,
+    "fallSpeedModifier": 0
+  },
+  "rewards": {
+    "goldMin": 28,
+    "goldMax": 45,
+    "rewardRolls": 2,
+    "lootTableId": "loot_elite_default"
+  },
+  "tags": [
+    "stage_6",
+    "elite",
+    "hazard_royal_pattern",
+    "counter_royal",
+    "bloxley_block_palace"
+  ],
+  "enabled": true,
+  "iconKey": "ico_mon_elite_square_jester_prime",
+  "animations": {
+    "idle": "anim_mon_elite_square_jester_prime_idle",
+    "attack": "anim_mon_elite_square_jester_prime_attack",
+    "hit": "anim_mon_elite_square_jester_prime_hit",
+    "defeat": "anim_mon_elite_square_jester_prime_defeat"
+  },
+  "hitVfxKey": "anim_vfx_enemy_hit"
+}
