@@ -456,7 +456,9 @@ export class MapScene extends Phaser.Scene {
       event: 'Event',
       shop: 'Shop',
       rest: 'Rest',
-      treasure: 'Treasure'
+      treasure: 'Treasure',
+      mini_boss: 'Mini-Boss',
+      royal_guard: 'Royal Guard'
     };
     const short: Record<MapNodeDefinition['roomType'], string> = {
       start: 'STA',
@@ -466,7 +468,9 @@ export class MapScene extends Phaser.Scene {
       event: 'EVT',
       shop: 'SHP',
       rest: 'RST',
-      treasure: 'TRE'
+      treasure: 'TRE',
+      mini_boss: 'MIN',
+      royal_guard: 'GRD'
     };
     return mode === 'tiny' ? short[roomType] : full[roomType];
   }
