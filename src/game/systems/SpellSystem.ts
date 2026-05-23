@@ -1,3 +1,4 @@
+import Phaser from 'phaser';
 import type { RunState, SpellCatalystModifier, SpellId } from '../types/GameTypes';
 import { SPELLS } from '../data/spells';
 import { clamp } from '../utils/math';
@@ -24,10 +25,14 @@ export class SpellSystem {
     }
 
     const manaHexPenalty = this.state.activeEnemy?.manaHexTurns ? 10 : 0;
-    const multiplier = this.state.reactiveState.nextSpellModifiers
+    const modifierDiscount = this.state.reactiveState.nextSpellModifiers
       .filter((modifier) => this.isModifierCompatible(spellId, modifier))
       .reduce((lowest, modifier) => Math.min(lowest, modifier.costMultiplier ?? 1), 1);
-    return Math.max(0, Math.round((definition.cost - this.state.player.spellCostReduction + manaHexPenalty) * multiplier));
+    const hotComboStacks = this.getLevelUpgradeStacks('upg_lvl_pippa_hot_combo');
+    const hotComboMultiplier = hotComboStacks > 0 && this.state.lastCascadeLevel >= 2
+      ? Math.max(0.4, 1 - (hotComboStacks * 0.2))
+      : 1;
+    return Math.max(0, Math.round((definition.cost - this.state.player.spellCostReduction + manaHexPenalty) * modifierDiscount * hotComboMultiplier));
   }
 
   cast(spellId: SpellId): boolean {
@@ -55,15 +60,24 @@ export class SpellSystem {
 
     const spellPowerBonus = this.weaponSystem.getSpellDamageBonus(this.state, spellId);
 
+    const spellDamageMultiplier = 1 + Math.min(0.48, this.getLevelUpgradeStacks('upg_lvl_spell_damage') * 0.08);
+    let consumedHotCombo = false;
     switch (spellId) {
       case 'fireball': {
-        this.combat.applyDirectDamage(22 + this.getSpellBonus('fireball') + spellPowerBonus, 'Fireball');
-        const cleanupCap = this.state.hero.passiveId === 'passive_preheat_cleanup' || this.hasCleanupModifier(spellModifiers) ? 3 : 2;
+        const preheatBonusPct = Math.min(0.5, this.getLevelUpgradeStacks('upg_lvl_pippa_preheat') * 0.1);
+        const fireballDamage = Math.round((22 + this.getSpellBonus('fireball') + spellPowerBonus) * (1 + preheatBonusPct) * spellDamageMultiplier);
+        this.combat.applyDirectDamage(fireballDamage, 'Fireball');
+        const burnStickyBonus = this.getLevelUpgradeStacks('upg_lvl_pippa_burn_sticky');
+        const cleanupCap = (this.state.hero.passiveId === 'passive_preheat_cleanup' || this.hasCleanupModifier(spellModifiers) ? 3 : 2) + burnStickyBonus;
         const toasted = this.board.clearBlocksByIds(['block_sticky', 'block_crumb_junk', 'block_cloud_junk'], cleanupCap);
         const reducedIncoming = this.reduceIncomingJunk(1);
         this.combat.addLog(`Fireball toasted ${toasted} sticky or junk block${toasted === 1 ? '' : 's'}.`);
         if (reducedIncoming > 0) {
           this.combat.addLog(`Cascade cleanup reduced incoming junk by ${reducedIncoming}.`);
+        }
+        const ovenGuard = this.getLevelUpgradeStacks('upg_lvl_pippa_oven_guard');
+        if (ovenGuard > 0) {
+          this.combat.addPlayerShield(ovenGuard * 2, 'Oven Guard');
         }
         break;
       }
@@ -85,7 +99,8 @@ export class SpellSystem {
       case 'bomb-rune': {
         const zuzuBonus = this.state.hero.passiveId === 'passive_bombs_are_features' ? 8 : 0;
         const bonus = this.getSpellBonus('bomb-rune') + zuzuBonus + spellPowerBonus;
-        this.combat.applyDirectDamage(35 + bonus, 'Bomb Rune');
+        const bombDamage = Math.round((35 + bonus) * spellDamageMultiplier * (1 + Math.min(0.32, this.getLevelUpgradeStacks('upg_lvl_zuzu_bomb_friend') * 0.08)));
+        this.combat.applyDirectDamage(bombDamage, 'Bomb Rune');
         const radius = 1 + Math.max(0, ...spellModifiers.map((modifier) => modifier.bombRadiusBonus ?? 0));
         const removed = this.board.clearRandomFilledArea(radius);
         const spawn = this.board.tryAddSpecialBlocks('block_bomb', 1, 'spell', 'bomb-rune');
@@ -95,11 +110,19 @@ export class SpellSystem {
         } else {
           this.combat.addLog('Bomb cap reached: no extra Bomb Block this time.');
         }
+        const junkReduction = this.getLevelUpgradeStacks('upg_lvl_zuzu_extra_fuse');
+        if (junkReduction > 0) {
+          const blocked = this.reduceIncomingJunk(junkReduction);
+          if (blocked > 0) {
+            this.combat.addLog(`Extra Fuse blocks ${blocked} incoming junk.`);
+          }
+        }
+        this.maybeTriggerRiskyGadgetFailure(spellId);
         break;
       }
       case 'void-cut':
       case 'clean-cut': {
-        this.combat.applyDirectDamage(15 + this.getSpellBonus('clean-cut') + this.getSpellBonus('void-cut') + spellPowerBonus, 'Clean Cut');
+        this.combat.applyDirectDamage(Math.round((15 + this.getSpellBonus('clean-cut') + this.getSpellBonus('void-cut') + spellPowerBonus) * spellDamageMultiplier), 'Clean Cut');
         const cleared = this.board.clearMessiestRow();
         if (this.state.player.voidCutRefund && cleared >= 8) {
           this.state.player.mana = clamp(this.state.player.mana + 20, 0, this.state.player.maxMana);
@@ -120,21 +143,26 @@ export class SpellSystem {
       case 'sprinkle-shower': {
         const added = this.board.addSpecialBlocksForSpell('block_sprinkle', 4);
         this.state.player.mana = clamp(this.state.player.mana + 8, 0, this.state.player.maxMana);
-        this.combat.applyDirectDamage(4 + spellPowerBonus, 'Sprinkle Shower');
+        this.combat.applyDirectDamage(Math.round((4 + spellPowerBonus) * spellDamageMultiplier), 'Sprinkle Shower');
         this.combat.addLog(`Sprinkle Shower adds ${added} mana-friendly sprinkle blocks.`);
         break;
       }
       case 'cupcake-blast': {
         this.state.player.hp = clamp(this.state.player.hp + 4, 0, this.state.player.maxHp);
-        const cleared = this.board.clearBlocksByIds(['block_sticky'], 3);
-        this.combat.applyDirectDamage(12 + spellPowerBonus, 'Cupcake Blast');
+        const burnStickyBonus = this.getLevelUpgradeStacks('upg_lvl_pippa_burn_sticky');
+        const cleared = this.board.clearBlocksByIds(['block_sticky', 'block_crumb_junk', 'block_cloud_junk'], 3 + burnStickyBonus);
+        this.combat.applyDirectDamage(Math.round((12 + spellPowerBonus) * spellDamageMultiplier), 'Cupcake Blast');
         this.combat.addLog(`Cupcake Blast heals 4 HP and clears ${cleared} sticky block${cleared === 1 ? '' : 's'}.`);
+        const ovenGuard = this.getLevelUpgradeStacks('upg_lvl_pippa_oven_guard');
+        if (ovenGuard > 0) {
+          this.combat.addPlayerShield(ovenGuard * 2, 'Oven Guard');
+        }
         break;
       }
       case 'confetti-pop': {
         const added = this.board.addConfettiBlocks(3);
         const cleared = this.board.clearRandomCluster(2);
-        this.combat.applyDirectDamage(8 + spellPowerBonus, 'Confetti Pop');
+        this.combat.applyDirectDamage(Math.round((8 + spellPowerBonus) * spellDamageMultiplier), 'Confetti Pop');
         this.combat.addLog(`Confetti Pop adds ${added} confetti and pops ${cleared} blocks.`);
         break;
       }
@@ -150,7 +178,7 @@ export class SpellSystem {
       }
       case 'star-spark': {
         const spawn = this.board.tryAddSpecialBlocks('block_star', 1, 'spell', 'star-spark');
-        this.combat.applyDirectDamage(14 + spellPowerBonus, 'Star Spark');
+        this.combat.applyDirectDamage(Math.round((14 + spellPowerBonus) * spellDamageMultiplier), 'Star Spark');
         if (spawn.success) {
           this.combat.addLog('Star Spark placed a Star Block.');
         } else {
@@ -161,21 +189,22 @@ export class SpellSystem {
       case 'jelly-bounce': {
         const added = this.board.addSpecialBlocksForSpell('block_jelly', 2);
         this.state.fallSpeed = Math.max(0.7, this.state.fallSpeed - 0.04);
-        this.combat.applyDirectDamage(9 + spellPowerBonus, 'Jelly Bounce');
+        this.combat.applyDirectDamage(Math.round((9 + spellPowerBonus) * spellDamageMultiplier), 'Jelly Bounce');
         this.combat.addLog(`Jelly Bounce adds ${added} wobbly blocks and slows the room slightly.`);
         break;
       }
       case 'snowcone-burst': {
         const thawed = this.board.convertBlocksByIds(['block_ice'], TETROMINO_COLORS.I, 4);
         enemy.frozenTurns += 1;
-        this.combat.applyDirectDamage(10 + spellPowerBonus, 'Snowcone Burst');
+        this.combat.applyDirectDamage(Math.round((10 + spellPowerBonus) * spellDamageMultiplier), 'Snowcone Burst');
         this.combat.addLog(`Snowcone Burst chills the enemy and thaws ${thawed} ice block${thawed === 1 ? '' : 's'}.`);
         break;
       }
       case 'goblin-gadget': {
         const converted = this.board.convertBlocksByIds(['block_crumb_junk', 'block_cloud_junk', 'block_royal'], TETROMINO_COLORS.T, 3);
-        this.combat.applyDirectDamage(10 + spellPowerBonus, 'Goblin Gadget');
+        this.combat.applyDirectDamage(Math.round((10 + spellPowerBonus) * spellDamageMultiplier), 'Goblin Gadget');
         this.combat.addLog(`Goblin Gadget recalibrates ${converted} messy block${converted === 1 ? '' : 's'}.`);
+        this.maybeTriggerRiskyGadgetFailure(spellId);
         break;
       }
       case 'rainbow-reroll':
@@ -191,12 +220,15 @@ export class SpellSystem {
       case 'cascade-cheer':
         this.state.player.fever = clamp(this.state.player.fever + 18, 0, 100);
         this.state.player.lineDamageBonus += 1;
-        this.combat.applyDirectDamage(6 + spellPowerBonus, 'Cascade Cheer');
+        this.combat.applyDirectDamage(Math.round((6 + spellPowerBonus) * spellDamageMultiplier), 'Cascade Cheer');
         this.combat.addLog('Cascade Cheer is ready for the next chain!');
         break;
       default:
         this.combat.addLog(`${this.getSpellLabel(spellId)} is marked as a safe placeholder.`);
         break;
+    }
+    if (this.getLevelUpgradeStacks('upg_lvl_pippa_hot_combo') > 0 && this.state.lastCascadeLevel >= 2) {
+      consumedHotCombo = true;
     }
 
     this.applySharedSpellModifiers(spellModifiers);
@@ -211,6 +243,9 @@ export class SpellSystem {
     const waiting = this.state.reactiveState.nextSpellModifiers.length;
     if (waiting > 0 && spellModifiers.length === 0) {
       this.combat.addLog('Your spell catalyst waits for a compatible spell.');
+    }
+    if (consumedHotCombo) {
+      this.state.lastCascadeLevel = 0;
     }
     return true;
   }
@@ -283,6 +318,39 @@ export class SpellSystem {
         this.combat.addLog('Cascade Confetti charges fever for the next big play.');
       }
     });
+  }
+
+  private getLevelUpgradeStacks(upgradeId: string): number {
+    return Math.max(0, this.state.playerLevelState?.chosenUpgrades?.[upgradeId] ?? 0);
+  }
+
+  private maybeTriggerRiskyGadgetFailure(spellId: SpellId): void {
+    if (spellId !== 'bomb-rune' && spellId !== 'goblin-gadget') {
+      return;
+    }
+    const baseFailChance = 0.35;
+    const clampStacks = this.getLevelUpgradeStacks('upg_lvl_zuzu_safety_clamp');
+    const failChance = Math.max(0.05, baseFailChance - clampStacks * 0.2);
+    if (Math.random() >= failChance) {
+      return;
+    }
+    this.board.addJunkToColumn(Phaser.Math.Between(0, this.board.columns - 1), 'block_crumb_junk');
+    this.combat.addLog('Risky gadget backfires and adds one junk block.');
+    const retryStacks = this.getLevelUpgradeStacks('upg_lvl_zuzu_gadget_retry');
+    if (retryStacks > 0 && this.state.currentRoomProgress !== 'reward') {
+      const nodeTag = `node:${this.state.currentNodeId}:gadget_retry`;
+      const activeIds = new Set(this.state.reactiveState.activeRouteModifiers.map((entry) => entry.id));
+      if (!activeIds.has(nodeTag)) {
+        this.state.reactiveState.activeRouteModifiers.push({
+          id: nodeTag,
+          sourceRewardId: 'upg_lvl_zuzu_gadget_retry',
+          modifierId: 'once_per_node_triggered',
+          duration: 'next_battle',
+          consumed: true
+        });
+        this.combat.addPlayerShield(retryStacks * 2, 'Gadget Retry');
+      }
+    }
   }
 }
 

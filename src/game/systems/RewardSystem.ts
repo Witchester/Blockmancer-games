@@ -17,6 +17,7 @@ type RewardContentEntry = {
     stackable?: boolean;
     maxStacks?: number;
   };
+  levelUpOnly?: boolean;
 };
 
 type LootEntry = {
@@ -73,7 +74,7 @@ export class RewardSystem {
   private readonly oopsieSystem = new OopsieSystem();
 
   getRewardPool(): RewardDefinition[] {
-    const upgrades = contentRegistry.listEnabled<RewardContentEntry>('upgrade').map((entry) => ({
+    const upgrades = contentRegistry.listEnabled<RewardContentEntry>('upgrade').filter((entry) => !entry.levelUpOnly).map((entry) => ({
       id: entry.id,
       name: entry.name,
         type: 'Upgrade',

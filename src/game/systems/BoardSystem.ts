@@ -513,6 +513,10 @@ export class BoardSystem {
     return this.addSpecialBlocks('block_cloud_junk', count);
   }
 
+  spawnHelperBlock(blockId: string): boolean {
+    return this.addSpecialBlocks(blockId, 1) > 0;
+  }
+
   addSpecialBlocksForSpell(blockId: string, count: number, sourceId = 'spell'): number {
     return this.tryAddSpecialBlocks(blockId, count, 'spell', sourceId).added;
   }

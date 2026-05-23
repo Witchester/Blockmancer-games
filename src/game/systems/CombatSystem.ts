@@ -101,6 +101,8 @@ export class CombatSystem {
   }
 
   private firstLineClearMage = true;
+  private firstCascadeLevelUpManaTriggered = false;
+  private nixiePreserveTriggered = false;
 
   resolveCascadeClear(cascade: CascadeResult): CombatResolveResult {
     const enemy = this.state.activeEnemy;
@@ -126,10 +128,14 @@ export class CombatSystem {
       this.state.player.lineDamageBonus +
       lineBonus +
       comboBonus;
+    const cascadeBonusPct = Math.min(0.3, this.getLevelUpgradeStacks('upg_lvl_cascade_damage') * 0.06);
     let damage = Math.max(
       1,
       Math.round(this.getCascadeMultiplier(cascade.cascadeCount) * rawDamage - this.getMitigation(enemy))
     );
+    if (cascadeBonusPct > 0 && cascade.cascadeCount > 1) {
+      damage = Math.round(damage * (1 + cascadeBonusPct));
+    }
     damage += this.weaponSystem.getCascadeDamageBonus(this.state, cascade);
     const feverMultiplier = this.feverSystem.getDamageMultiplier(this.state);
     if (feverMultiplier > 1) {
@@ -143,7 +149,7 @@ export class CombatSystem {
 
     const baseMana = this.oopsieSystem.adjustManaGain(
       this.state,
-      this.getLineClearMana(cascade.totalLinesCleared)
+      this.getLineClearMana(cascade.totalLinesCleared) + this.getLevelUpgradeStacks('upg_lvl_mana_gain')
     );
     const bonusMana = cascade.cascadeCount > 1 ? Math.floor(baseMana * CASCADE_MANA_BONUS_MULTIPLIER) : 0;
     const feverMana = this.feverSystem.getManaBonus(this.state, baseMana + bonusMana);
@@ -162,6 +168,24 @@ export class CombatSystem {
       this.firstLineClearMage = false;
       this.state.player.mana = clamp(this.state.player.mana + 15, 0, this.state.player.maxMana);
       this.addLog('Plink-Plonk Combo grants bonus mana!');
+    }
+    if (!this.firstCascadeLevelUpManaTriggered && cascade.cascadeCount > 1) {
+      const bonusFromLevel = this.getLevelUpgradeStacks('upg_lvl_milo_plink_mana') * 2;
+      if (bonusFromLevel > 0) {
+        this.firstCascadeLevelUpManaTriggered = true;
+        this.state.player.mana = clamp(this.state.player.mana + bonusFromLevel, 0, this.state.player.maxMana);
+        this.addLog(`Festival Plink grants +${bonusFromLevel} mana.`);
+      }
+    }
+    const listenerShield = this.getLevelUpgradeStacks('upg_lvl_milo_listener');
+    if (listenerShield > 0 && cascade.cascadeCount >= 2) {
+      this.addPlayerShield(listenerShield, 'Listener Guard');
+    }
+    const lumiCascadeWishStacks = this.getLevelUpgradeStacks('upg_lvl_lumi_cascade_wish');
+    if (lumiCascadeWishStacks > 0 && cascade.cascadeCount >= 3) {
+      const feverBoost = Math.round(lumiCascadeWishStacks * 5);
+      this.state.player.fever = clamp(this.state.player.fever + feverBoost, 0, 100);
+      this.addLog(`Cascade Wish adds ${feverBoost} Fever.`);
     }
 
     if (this.state.hero.passiveId === 'passive_main_character_energy' && cascade.specialBlocksTriggered.some((trigger) => trigger.startsWith('block_star'))) {
@@ -222,13 +246,27 @@ export class CombatSystem {
         case 'gain_mana':
           this.state.player.mana = clamp(this.state.player.mana + (value ?? 5), 0, this.state.player.maxMana);
           messages.push(`${this.getBlockName(blockId)} restores mana.`);
+          if (blockId === 'block_ice') {
+            const softThaw = this.getLevelUpgradeStacks('upg_lvl_nixie_soft_thaw');
+            if (softThaw > 0) {
+              this.state.player.mana = clamp(this.state.player.mana + softThaw, 0, this.state.player.maxMana);
+              messages.push(`Soft Thaw adds ${softThaw} mana.`);
+            }
+          }
           break;
         case 'heal_player':
           this.state.player.hp = clamp(this.state.player.hp + (value ?? 1), 0, this.state.player.maxHp);
           messages.push(`${this.getBlockName(blockId)} restores ${value ?? 1} HP.`);
           break;
         case 'damage_enemy': {
-          const bonusDamage = value ?? 3;
+          const bombBonusPct = Math.min(0.32, this.getLevelUpgradeStacks('upg_lvl_zuzu_bomb_friend') * 0.08);
+          const starBonusPct = Math.min(0.32, this.getLevelUpgradeStacks('upg_lvl_lumi_star_guidance') * 0.08);
+          const baseDamage = value ?? 3;
+          const bonusDamage = blockId === 'block_bomb'
+            ? Math.round(baseDamage * (1 + bombBonusPct))
+            : blockId === 'block_star'
+              ? Math.round(baseDamage * (1 + starBonusPct))
+              : baseDamage;
           this.damageEnemy(bonusDamage);
           totalDamage += bonusDamage;
           messages.push(`${this.getBlockName(blockId)} adds ${bonusDamage} bonus damage.`);
@@ -345,6 +383,11 @@ export class CombatSystem {
       this.state.runStats.damageTaken += remainingDamage;
       this.relicSystem.applyOnDamageTaken(this.state).forEach((message) => this.addLog(message));
     }
+    const preserveStacks = this.getLevelUpgradeStacks('upg_lvl_nixie_preserve');
+    if (!this.nixiePreserveTriggered && preserveStacks > 0 && player.maxHp > 0 && player.hp > 0 && player.hp <= Math.floor(player.maxHp * 0.3)) {
+      this.nixiePreserveTriggered = true;
+      this.addPlayerShield(preserveStacks * 5, 'Preserve Ward');
+    }
     return { defeated: player.hp <= 0, hpDamage, shieldBlocked: blocked };
   }
 
@@ -365,6 +408,10 @@ export class CombatSystem {
   private getBlockName(blockId: string): string {
     const parts = blockId.split('_').filter(Boolean);
     return parts.length ? parts.map((part) => part[0].toUpperCase() + part.slice(1)).join(' ') : 'Special block';
+  }
+
+  private getLevelUpgradeStacks(upgradeId: string): number {
+    return Math.max(0, this.state.playerLevelState?.chosenUpgrades?.[upgradeId] ?? 0);
   }
 
 }

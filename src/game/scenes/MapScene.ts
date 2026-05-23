@@ -566,12 +566,9 @@ export class MapScene extends Phaser.Scene {
 
   private startBattle(roomType: RoomType): void {
     const state = this.gameState.runState;
-    const enemy = this.gameState.enemySystem.spawnEnemy(roomType, state.stage);
-    if (!enemy) {
-      return;
-    }
-
-    state.activeEnemy = enemy;
+    state.activeEnemy = null;
+    state.activeEncounterPack = null;
+    state.pendingNodeResult = null;
     state.lastBattleWasBoss = roomType === 'boss';
     const randomEvent = this.gameState.randomGameplayEventSystem.roll(state, 'battle_start');
     if (randomEvent) {
@@ -595,16 +592,12 @@ export class MapScene extends Phaser.Scene {
       if (goalMessage) {
         this.log(goalMessage);
       }
-      const card = this.gameState.bossRuleSystem.getForBoss(enemy.id);
-      state.currentBossRule = card?.id;
-      if (card) {
-        this.gameState.metaSystem.recordBossRuleDiscovered(card.id);
-      }
+      state.currentBossRule = undefined;
     }
     state.player.emergencyBarrierUsed = false;
     state.currentRoomProgress = 'entered';
     state.runStatus = 'battle';
-    this.log(`${enemy.name} emerges with ${enemy.maxHp} HP.`);
+    this.log(roomType === 'boss' ? 'The boss arena lights up for a big festival showdown.' : 'A fresh batch of festival troublemakers hops in.');
     this.gameState.saveRun();
     this.scene.start('BattleScene');
   }

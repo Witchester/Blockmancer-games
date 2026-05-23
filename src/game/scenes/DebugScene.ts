@@ -4,7 +4,7 @@ import { createDefaultBoardState } from '../data/constants';
 import { ANIMATION_DEFINITIONS, getAnimationFrameKeys, type AnimationCategory, type AnimationSequenceDefinition } from '../data/animations';
 import type { AssetDisplayCategory } from '../data/asset-display-rules';
 import { contentRegistry } from '../systems/ContentRegistry';
-import type { ActiveHazardKind, ActiveHazardState, BoardCell, EnemyInstance, RewardDefinition, RoomType } from '../types/GameTypes';
+import type { ActiveHazardKind, ActiveHazardState, BoardCell, EnemyInstance, NodeEncounterPack, NodeResultSummary, RewardDefinition, RoomType } from '../types/GameTypes';
 import { Button } from '../ui/Button';
 import { BOARD_COLS, BOARD_ROWS, COLORS, MAX_EVENT_LOG, TETROMINO_COLORS, TETROMINO_SHAPES } from '../utils/constants';
 
@@ -120,6 +120,7 @@ export class DebugScene extends Phaser.Scene {
       ['Give Reactive Item', () => this.giveReactiveItem(), 'Give Catalyst Item', () => this.giveCatalystItem()],
       ['Apply Route Reward', () => this.applyDebugRouteReward(false), 'Apply Route Risk', () => this.applyDebugRouteReward(true)],
       ['Clear Hazards', () => this.clearHazards(), 'Preview Glitter', () => this.queueDebugHazard('preview')],
+      ['Stack Preview QA', () => this.openMonsterStackQa(), 'Node Result QA', () => this.openNodeResultQa()],
       ['Clear Run Save', () => this.clearRunSave(), 'New Debug Run', () => this.newDebugRun()]
     ];
 
@@ -225,16 +226,7 @@ export class DebugScene extends Phaser.Scene {
       this.updateStatus(`No enabled ${roomType} monster content found.`);
       return;
     }
-
-    const state = this.ensureRun();
-    state.currentRoomType = roomType;
-    state.currentRoomProgress = 'entered';
-    state.activeEnemy = this.spawnById(monster.id, roomType);
-    state.lastBattleWasBoss = roomType === 'boss';
-    state.runStatus = 'battle';
-    this.pushLog(`${state.activeEnemy?.name ?? monster.id} spawned by QA debug.`);
-    this.gameState.saveRun();
-    this.scene.start('BattleScene');
+    this.startDebugBattle(roomType, [monster.id], `${monster.name} spawned by QA debug.`);
   }
 
   private triggerBoss(): void {
@@ -560,14 +552,8 @@ export class DebugScene extends Phaser.Scene {
     this.clearSelectionOverlay();
     const state = this.ensureRun();
     const selectedMonster = contentRegistry.getOptionalById<MonsterEntry>('monster', monsterId);
-    state.currentRoomType = roomType;
-    state.currentRoomProgress = 'entered';
-    state.activeEnemy = this.spawnById(monsterId, roomType);
-    state.lastBattleWasBoss = roomType === 'boss';
-    state.runStatus = 'battle';
-    this.pushLog(`${state.activeEnemy?.name ?? selectedMonster?.name ?? monsterId} spawned by QA debug.`);
-    this.gameState.saveRun();
-    this.scene.start('BattleScene');
+    void state;
+    this.startDebugBattle(roomType, [monsterId], `${selectedMonster?.name ?? monsterId} spawned by QA debug.`);
   }
 
   private forceReward(): void {
@@ -594,25 +580,52 @@ export class DebugScene extends Phaser.Scene {
     };
     state.board.activePieceType = 'O';
     state.board.nextPieceType = 'I';
-    state.currentRoomType = 'fight';
-    state.currentRoomProgress = 'entered';
-    state.activeEnemy = this.gameState.enemySystem.spawnEnemy('fight', state.stage);
-    state.runStatus = 'battle';
-    this.pushLog('QA cascade board loaded. Hard drop once to trigger a cascade.');
-    this.gameState.saveRun();
-    this.scene.start('BattleScene');
+    this.startDebugBattle('fight', ['mon_cupcake_slime'], 'QA cascade board loaded. Hard drop once to trigger a cascade.');
   }
 
   private queueDebugHazard(kind: ActiveHazardKind): void {
     const state = this.ensureRun();
-    state.currentRoomType = 'fight';
-    state.currentRoomProgress = 'entered';
-    state.activeEnemy = state.activeEnemy ?? this.gameState.enemySystem.spawnEnemy('fight', state.stage);
-    state.runStatus = 'battle';
     state.activeHazards.push(this.createDebugHazard(kind));
-    this.pushLog(`QA debug queued ${kind.replace(/_/g, ' ')}.`);
-    this.gameState.saveRun();
-    this.scene.start('BattleScene');
+    this.startDebugBattle('fight', ['mon_cupcake_slime'], `QA debug queued ${kind.replace(/_/g, ' ')}.`);
+  }
+
+  private openMonsterStackQa(): void {
+    this.showSelectionOverlay(
+      'Monster Stack QA',
+      [
+        { id: '1', label: '1 Enemy' },
+        { id: '2', label: '2 Enemies' },
+        { id: '3', label: '3 Enemies' }
+      ],
+      (value) => {
+        const count = Number(value);
+        const ids = ['mon_cupcake_slime', 'mon_sugar_bat', 'mon_frosting_blob'].slice(0, count);
+        this.clearSelectionOverlay();
+        this.startDebugBattle('fight', ids, `Monster stack QA started with ${count} enemy slot${count === 1 ? '' : 's'}.`);
+      }
+    );
+  }
+
+  private openNodeResultQa(): void {
+    this.showSelectionOverlay(
+      'Node Result QA',
+      [
+        { id: 'sample', label: 'Sample Result' },
+        { id: 'level_ready', label: 'Level Ready' },
+        { id: 'inspect', label: 'Inspect Latest' }
+      ],
+      (value) => {
+        if (value === 'inspect') {
+          this.clearSelectionOverlay();
+          const summary = this.gameState.runState.pendingNodeResult;
+          this.updateStatus(summary ? `Latest NodeResultSummary: ${JSON.stringify(summary)}` : 'No pending node result summary is stored.');
+          return;
+        }
+        const levelReady = value === 'level_ready';
+        this.clearSelectionOverlay();
+        this.forceNodeResultQa(levelReady);
+      }
+    );
   }
 
   private giveReactiveItem(): void {
@@ -706,9 +719,96 @@ export class DebugScene extends Phaser.Scene {
     state.currentRoomType = 'start';
     state.currentRoomProgress = 'idle';
     state.activeEnemy = null;
+    state.activeEncounterPack = null;
     state.pendingRewards = [];
+    state.pendingNodeResult = null;
     state.runStatus = 'map';
     this.saveAndReport(`Jumped to Stage ${state.stage}.`);
+  }
+
+  private startDebugBattle(roomType: RoomType, enemyIds: string[], logMessage: string): void {
+    const state = this.ensureRun();
+    state.currentRoomType = roomType;
+    state.currentRoomProgress = 'entered';
+    state.activeEnemy = null;
+    state.pendingNodeResult = null;
+    state.activeEncounterPack = this.createDebugEncounterPack(roomType, enemyIds);
+    state.lastBattleWasBoss = roomType === 'boss';
+    state.runStatus = 'battle';
+    this.pushLog(logMessage);
+    this.gameState.saveRun();
+    this.scene.start('BattleScene');
+  }
+
+  private createDebugEncounterPack(roomType: RoomType, enemyIds: string[]): NodeEncounterPack {
+    const state = this.gameState.runState;
+    const stageId = this.gameState.stageSystem.getStageByIndex(state.stage)?.id ?? 'stage_sprinkle_sewers';
+    const nodeType = roomType === 'boss' ? 'boss' : roomType === 'elite' ? 'elite' : 'normal';
+    return {
+      encounterPackId: `debug_pack_${roomType}_${Date.now()}`,
+      nodeId: `debug_${roomType}`,
+      stageId,
+      biomeId: `debug_biome_${state.stage}`,
+      nodeType,
+      enemies: enemyIds.map((enemyId, index) => ({
+        enemyId,
+        role: index === 0 ? 'starter' : index === enemyIds.length - 1 ? 'finisher' : 'support',
+        rank: roomType === 'boss' ? 'boss' : roomType === 'elite' ? 'elite' : 'regular',
+        hpMultiplier: 1,
+        attackMultiplier: 1,
+        armorMultiplier: 1,
+        entryGracePieces: 3,
+        entryEffectId: index === 0 ? 'entry_none_safe' : 'entry_sprinkle_gift',
+        tags: ['debug']
+      })),
+      currentEnemyIndex: 0,
+      totalHpBudgetMultiplier: 1,
+      totalAttackBudgetMultiplier: 1,
+      maxActiveHazards: 1,
+      rewardsGrantedOnlyOnNodeClear: true,
+      xpGrantedOnlyOnNodeClear: true,
+      defeatedEnemyIds: [],
+      defeatedEnemyIndexes: [],
+      remainingEnemyCount: enemyIds.length,
+      appliedEntryEffectEnemyIndexes: [],
+      entryGiftClaimedEnemyIndexes: [],
+      encounterPackCompleted: false,
+      nodeRewardsGranted: false,
+      routeFallbackTriggeredForEncounterPack: false
+    };
+  }
+
+  private forceNodeResultQa(levelReady: boolean): void {
+    const state = this.ensureRun();
+    const summary: NodeResultSummary = {
+      resultId: `debug_result_${Date.now()}`,
+      nodeId: 'debug_node_result',
+      stageId: this.gameState.stageSystem.getStageByIndex(state.stage)?.id ?? 'stage_sprinkle_sewers',
+      nodeType: 'normal',
+      encounterPackId: 'debug_pack_result',
+      enemiesDefeated: 3,
+      defeatedEnemyIds: ['mon_cupcake_slime', 'mon_sugar_bat', 'mon_frosting_blob'],
+      xpGainedTotal: levelReady ? 118 : 34,
+      xpBreakdown: {
+        enemyXp: 28,
+        eliteBonusXp: 0,
+        bossBonusXp: 0,
+        objectiveBonusXp: 5,
+        cascadeBonusXp: 3,
+        noDamageBonusXp: levelReady ? 5 : 0,
+        routeBonusXp: 0
+      },
+      currentXpBeforeGain: levelReady ? 82 : 16,
+      currentXpAfterGain: levelReady ? 0 : 50,
+      xpToNextLevel: levelReady ? 125 : 100,
+      xpRemainingToNextLevel: levelReady ? 125 : 50,
+      leveledUp: levelReady,
+      pendingLevelUps: levelReady ? 1 : 0,
+      rewardsPending: true
+    };
+    state.pendingNodeResult = summary;
+    this.gameState.saveRun();
+    this.scene.start('NodeResultScene', { summary });
   }
 
   private ensureRun() {

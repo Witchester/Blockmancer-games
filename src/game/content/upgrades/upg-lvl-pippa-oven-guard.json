@@ -1,0 +1,1 @@
+{"id":"upg_lvl_pippa_oven_guard","name":"Pippa Oven Guard","description":"After casting fire spells, gain +2 shield per stack.","category":"level_up","rarity":"hero","upgradeType":"hero_specific","cardType":"hero_specific","heroId":"hero_pippa_pyromancer","stackLimit":3,"effectId":"lvl_pippa_oven_guard","levelUpOnly":true,"iconKey":"ico_upg_lvl_pippa_oven_guard","enabled":true}

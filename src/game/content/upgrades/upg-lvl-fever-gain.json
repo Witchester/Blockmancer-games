@@ -1,0 +1,1 @@
+{"id":"upg_lvl_fever_gain","name":"Festival Hype","description":"Fever gain +8% per stack (cap +40%).","category":"level_up","rarity":"rare","upgradeType":"general","cardType":"rare","stackLimit":5,"effectId":"lvl_fever_gain","levelUpOnly":true,"iconKey":"ico_upg_lvl_fever_gain","enabled":true}

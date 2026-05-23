@@ -1,0 +1,1 @@
+{"id":"upg_lvl_hazard_resist","name":"Careful Stacking","description":"Hazard duration and severity soften by 5% per stack (cap 20%).","category":"level_up","rarity":"rare","upgradeType":"general","cardType":"rare","stackLimit":4,"effectId":"lvl_hazard_resist","levelUpOnly":true,"iconKey":"ico_upg_lvl_hazard_resist","enabled":true}

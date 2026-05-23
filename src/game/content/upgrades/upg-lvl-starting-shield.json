@@ -1,0 +1,14 @@
+{
+  "id": "upg_lvl_starting_shield",
+  "name": "Shield Confetti",
+  "description": "+2 shield at combat start per stack (cap +10).",
+  "category": "level_up",
+  "rarity": "common",
+  "upgradeType": "general",
+  "cardType": "general",
+  "stackLimit": 5,
+  "effectId": "lvl_starting_shield",
+  "levelUpOnly": true,
+  "iconKey": "upg_lvl_starting_shield",
+  "enabled": true
+}

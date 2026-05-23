@@ -1,0 +1,1 @@
+{"id":"upg_lvl_lumi_preview_light","name":"Lumi Preview Light","description":"Preview disruption duration -1 piece per stack.","category":"level_up","rarity":"hero","upgradeType":"hero_specific","cardType":"hero_specific","heroId":"hero_lumi_star_witch","stackLimit":2,"effectId":"lvl_lumi_preview_light","levelUpOnly":true,"iconKey":"ico_upg_lvl_lumi_preview_light","enabled":true}

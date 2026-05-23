@@ -1,3 +1,5 @@
+import type { MonsterRole, MonsterRank } from './GameTypes';
+
 export interface MonsterData {
   id: string;
   name: string;

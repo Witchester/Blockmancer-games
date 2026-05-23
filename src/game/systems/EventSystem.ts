@@ -193,15 +193,10 @@ export class EventSystem {
           messages: ['The encounter restores your strength.']
         };
       case 'start_elite_fight': {
-        const enemy = this.enemySystem.spawnEnemy('elite', state.stage);
-        if (!enemy) {
-          return {
-            transition: 'stay',
-            messages: ['The duel fails to take shape.']
-          };
-        }
-
-        state.activeEnemy = enemy;
+        state.activeEnemy = null;
+        state.activeEncounterPack = null;
+        state.pendingNodeResult = null;
+        state.currentRoomType = 'elite';
         state.lastBattleWasBoss = false;
         state.currentRoomProgress = 'entered';
         state.runStatus = 'battle';

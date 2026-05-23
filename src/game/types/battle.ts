@@ -1,3 +1,5 @@
+import type { MonsterRole, MonsterRank, RewardDefinition as Reward } from './GameTypes';
+
 export interface BattleState {
   player: Player;
   enemies: Enemy[];
@@ -34,9 +36,6 @@ export interface Enemy {
   entryGracePieces: number;
   tags?: string[];
 }
-
-export type MonsterRole = "starter" | "pressure" | "support" | "finisher";
-export type MonsterRank = "regular" | "elite" | "elite_miniboss" | "boss";
 
 export interface StatusEffect {
   id: string;

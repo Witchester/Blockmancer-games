@@ -1,0 +1,14 @@
+{
+  "id": "upg_lvl_entry_grace",
+  "name": "Entry Ribbon",
+  "description": "First new enemy entry grace +1 per stack (cap +3).",
+  "category": "level_up",
+  "rarity": "rare",
+  "upgradeType": "general",
+  "cardType": "rare",
+  "stackLimit": 3,
+  "effectId": "lvl_entry_grace",
+  "levelUpOnly": true,
+  "iconKey": "upg_lvl_entry_grace",
+  "enabled": true
+}

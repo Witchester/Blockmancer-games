@@ -1,0 +1,14 @@
+{
+  "id": "upg_lvl_reward_reroll",
+  "name": "Lucky Ticket",
+  "description": "Gain +1 level-up reroll charge.",
+  "category": "level_up",
+  "rarity": "common",
+  "upgradeType": "general",
+  "cardType": "general",
+  "stackLimit": 99,
+  "effectId": "lvl_reward_reroll",
+  "levelUpOnly": true,
+  "iconKey": "upg_lvl_reward_reroll",
+  "enabled": true
+}

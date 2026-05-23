@@ -1,0 +1,14 @@
+{
+  "id": "upg_lvl_max_hp_percent",
+  "name": "Festival Fortitude",
+  "description": "+10% max HP per stack (cap +50%).",
+  "category": "level_up",
+  "rarity": "rare",
+  "upgradeType": "general",
+  "cardType": "rare",
+  "stackLimit": 5,
+  "effectId": "lvl_max_hp_percent",
+  "levelUpOnly": true,
+  "iconKey": "upg_lvl_max_hp_percent",
+  "enabled": true
+}

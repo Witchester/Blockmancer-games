@@ -190,7 +190,10 @@ export function createDefaultPlayerState(): PlayerState {
     voidCutRefund: false,
     oopsies: [],
     curses: 0,
-    inventoryCapacity: 10
+    inventoryCapacity: 10,
+    level: 1,
+    experience: 0,
+    xpToNextLevel: 25
   };
 }
 

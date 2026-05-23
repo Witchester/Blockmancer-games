@@ -147,39 +147,45 @@
     "displayName": "Pillow Castle",
     "monsterRules": [
       {
-        "monsterId": "mon_cloud_goblin",
+        "monsterId": "mon_button_knight",
         "weight": 10,
-        "roles": ["pressure"],
+        "roles": ["starter"],
         "rank": "regular"
       },
       {
-        "monsterId": "mon_pillow_witch",
+        "monsterId": "mon_blanket_ghost",
         "weight": 8,
         "roles": ["pressure"],
         "rank": "regular"
       },
       {
-        "monsterId": "mon_stuffed_bear",
+        "monsterId": "mon_plush_dragon",
         "weight": 7,
-        "roles": ["starter"],
-        "rank": "regular"
-      },
-      {
-        "monsterId": "mon_dream_snake",
-        "weight": 6,
         "roles": ["finisher"],
         "rank": "regular"
       },
       {
-        "monsterId": "mon_floating_cushion",
+        "monsterId": "mon_toy_soldier",
+        "weight": 6,
+        "roles": ["pressure"],
+        "rank": "regular"
+      },
+      {
+        "monsterId": "mon_pillow_squire",
         "weight": 5,
+        "roles": ["starter"],
+        "rank": "regular"
+      },
+      {
+        "monsterId": "mon_sock_sprite",
+        "weight": 4,
         "roles": ["support"],
         "rank": "regular"
       }
     ],
     "maxDuplicatePerNode": 1,
     "recentMonsterMemoryCount": 2,
-    "fallbackMonsterId": "mon_cloud_goblin"
+    "fallbackMonsterId": "mon_button_knight"
   },
   {
     "id": "pool_starfall_arcade",

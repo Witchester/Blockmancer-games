@@ -1,0 +1,1 @@
+{"id":"upg_lvl_pippa_hot_combo","name":"Pippa Hot Combo","description":"First spell after Cascade 2+ costs 20% less per stack.","category":"level_up","rarity":"hero","upgradeType":"hero_specific","cardType":"hero_specific","heroId":"hero_pippa_pyromancer","stackLimit":2,"effectId":"lvl_pippa_hot_combo","levelUpOnly":true,"iconKey":"ico_upg_lvl_pippa_hot_combo","enabled":true}

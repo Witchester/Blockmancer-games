@@ -1,15 +1,15 @@
 # ASSET Folder Structure Standardization Audit
 
-Generated: 2026-05-22T09:06:15.632Z
+Generated: 2026-05-23T07:36:35.383Z
 
 ## Summary
-- Runtime/content asset-like keys scanned: 873
-- Expected unique keys and exact frames: 2657
+- Runtime/content asset-like keys scanned: 909
+- Expected unique keys and exact frames: 2693
 - Physical assets scanned: 581
-- Missing primary files: 2227
+- Missing primary files: 2263
 - Legacy-only files: 13
-- Fallback-safe missing production assets: 2214
-- Content keys with no physical primary or legacy file: 451
+- Fallback-safe missing production assets: 2250
+- Content keys with no physical primary or legacy file: 487
 - Physical-only orphan/legacy candidates: 141
 
 ## Missing primary files

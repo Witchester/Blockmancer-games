@@ -22,14 +22,19 @@ function walk(dir) {
 for (const file of walk(contentRoot)) {
   const base = path.basename(file);
   const data = readJson(file);
-  if (base === 'metadata.json') {
+  if (base === 'metadata.json' || base.endsWith('-metadata.json')) {
     for (const field of ['contentType', 'version', 'requiredFields']) {
       if (!(field in data)) errors.push(`${path.relative(root, file)}: missing ${field}`);
     }
     continue;
   }
-  if (!file.includes(`${path.sep}story${path.sep}routes${path.sep}`) && typeof data.id !== 'string') {
-    errors.push(`${path.relative(root, file)}: content entry missing string id`);
+  if (!file.includes(`${path.sep}story${path.sep}routes${path.sep}`)) {
+    const entries = Array.isArray(data) ? data : [data];
+    for (const entry of entries) {
+      if (typeof entry.id !== 'string') {
+        errors.push(`${path.relative(root, file)}: content entry missing string id`);
+      }
+    }
   }
 }
 
