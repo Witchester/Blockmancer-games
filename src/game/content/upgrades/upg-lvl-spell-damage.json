@@ -1,0 +1,1 @@
+{"id":"upg_lvl_spell_damage","name":"Sparkly Spells","description":"Spell damage +8% per stack (cap +48%).","category":"level_up","rarity":"rare","upgradeType":"general","cardType":"rare","stackLimit":6,"effectId":"lvl_spell_damage","levelUpOnly":true,"iconKey":"ico_upg_lvl_spell_damage","enabled":true}

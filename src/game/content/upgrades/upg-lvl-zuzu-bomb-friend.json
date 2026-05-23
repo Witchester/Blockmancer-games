@@ -1,0 +1,1 @@
+{"id":"upg_lvl_zuzu_bomb_friend","name":"Zuzu Bomb Friend","description":"Bomb damage +8% per stack.","category":"level_up","rarity":"hero","upgradeType":"hero_specific","cardType":"hero_specific","heroId":"hero_zuzu_goblin_engineer","stackLimit":4,"effectId":"lvl_zuzu_bomb_friend","levelUpOnly":true,"iconKey":"ico_upg_lvl_zuzu_bomb_friend","enabled":true}

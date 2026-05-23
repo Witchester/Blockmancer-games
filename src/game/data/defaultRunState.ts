@@ -31,7 +31,10 @@ import type {
   WeaponState,
   InventoryStack,
   IncomingJunkQueueEntry,
-  HazardSeverity
+  HazardSeverity,
+  NodeEncounterPack,
+  PlayerLevelState,
+  LevelUpScreenState
 } from '../types/GameTypes';
 import { createDefaultPlayerState } from '../utils/constants';
 import { OopsieSystem } from '../systems/OopsieSystem';
@@ -108,6 +111,178 @@ function createDefaultReactiveState(): ReactiveBattleState {
     lowCeilingCanceled: false,
     safetyNetArmed: false,
     activeRouteModifiers: []
+  };
+}
+
+export function createDefaultPlayerLevelState(): PlayerLevelState {
+  return {
+    level: 1,
+    currentXp: 0,
+    xpToNextLevel: 25,
+    pendingLevelUps: 0,
+    chosenUpgrades: {},
+    rerollCharges: 0
+  };
+}
+
+export function createDefaultLevelUpScreenState(): LevelUpScreenState {
+  return {
+    pendingLevelUpChoices: [],
+    offeredUpgradeIds: [],
+    chosenUpgradeIds: [],
+    rerollCharges: 0,
+    levelUpSelectionSeed: '',
+    levelUpScreenResolved: true
+  };
+}
+
+function normalizePlayerLevelState(value: unknown): PlayerLevelState {
+  const defaults = createDefaultPlayerLevelState();
+  const raw = value && typeof value === 'object' && !Array.isArray(value)
+    ? value as Partial<PlayerLevelState>
+    : {};
+  const chosenUpgrades = raw.chosenUpgrades && typeof raw.chosenUpgrades === 'object' && !Array.isArray(raw.chosenUpgrades)
+    ? Object.fromEntries(
+        Object.entries(raw.chosenUpgrades)
+          .filter(([key, stack]) => typeof key === 'string' && typeof stack === 'number' && Number.isFinite(stack) && stack > 0)
+          .map(([key, stack]) => [key, Math.floor(stack as number)])
+      )
+    : {};
+
+  return {
+    level: Math.max(1, Math.floor(Number(raw.level ?? defaults.level))),
+    currentXp: Math.max(0, Math.floor(Number(raw.currentXp ?? defaults.currentXp))),
+    xpToNextLevel: Math.max(1, Math.floor(Number(raw.xpToNextLevel ?? defaults.xpToNextLevel))),
+    pendingLevelUps: Math.max(0, Math.floor(Number(raw.pendingLevelUps ?? defaults.pendingLevelUps))),
+    chosenUpgrades,
+    rerollCharges: Math.max(0, Math.floor(Number(raw.rerollCharges ?? defaults.rerollCharges)))
+  };
+}
+
+function normalizeLevelUpScreenState(value: unknown, levelState: PlayerLevelState): LevelUpScreenState {
+  const defaults = createDefaultLevelUpScreenState();
+  const raw = value && typeof value === 'object' && !Array.isArray(value)
+    ? value as Partial<LevelUpScreenState>
+    : {};
+  const toStringArray = (input: unknown): string[] =>
+    Array.isArray(input)
+      ? input.filter((entry): entry is string => typeof entry === 'string')
+      : [];
+
+  const offeredUpgradeIds = toStringArray(raw.offeredUpgradeIds);
+  const pendingLevelUpChoices = toStringArray(raw.pendingLevelUpChoices);
+  const chosenUpgradeIds = toStringArray(raw.chosenUpgradeIds);
+  const rerollCharges = Math.max(0, Math.floor(Number(raw.rerollCharges ?? defaults.rerollCharges)));
+  const levelUpScreenResolved = Boolean(raw.levelUpScreenResolved ?? defaults.levelUpScreenResolved);
+
+  return {
+    pendingLevelUpChoices: pendingLevelUpChoices.length > 0 ? pendingLevelUpChoices : offeredUpgradeIds,
+    offeredUpgradeIds,
+    chosenUpgradeIds,
+    rerollCharges: Math.min(rerollCharges, Math.max(0, levelState.rerollCharges)),
+    levelUpSelectionSeed: typeof raw.levelUpSelectionSeed === 'string' ? raw.levelUpSelectionSeed : defaults.levelUpSelectionSeed,
+    levelUpScreenResolved: levelState.pendingLevelUps <= 0 ? true : levelUpScreenResolved
+  };
+}
+
+function normalizeNodeResultSummary(value: unknown): RunState['pendingNodeResult'] {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return null;
+  }
+  const raw = value as Record<string, unknown>;
+  const toNumber = (input: unknown, fallback = 0): number => {
+    const n = Number(input);
+    return Number.isFinite(n) ? n : fallback;
+  };
+  const nodeId = typeof raw.nodeId === 'string' ? raw.nodeId : 'unknown_node';
+  const stageId = typeof raw.stageId === 'string' ? raw.stageId : 'stage_sprinkle_sewers';
+  const encounterPackId = typeof raw.encounterPackId === 'string' ? raw.encounterPackId : 'unknown_pack';
+  const resultId = typeof raw.resultId === 'string' ? raw.resultId : `${stageId}:${nodeId}:${encounterPackId}`;
+  const toStringArray = (input: unknown): string[] =>
+    Array.isArray(input) ? input.filter((entry): entry is string => typeof entry === 'string') : [];
+  const xpBreakdownRaw = raw.xpBreakdown && typeof raw.xpBreakdown === 'object' && !Array.isArray(raw.xpBreakdown)
+    ? raw.xpBreakdown as Record<string, unknown>
+    : {};
+
+  return {
+    resultId,
+    nodeId,
+    stageId,
+    nodeType: typeof raw.nodeType === 'string' ? raw.nodeType : 'normal',
+    encounterPackId,
+    enemiesDefeated: Math.max(0, Math.floor(toNumber(raw.enemiesDefeated))),
+    defeatedEnemyIds: toStringArray(raw.defeatedEnemyIds),
+    xpGainedTotal: Math.max(0, Math.floor(toNumber(raw.xpGainedTotal))),
+    xpBreakdown: {
+      enemyXp: Math.max(0, Math.floor(toNumber(xpBreakdownRaw.enemyXp))),
+      eliteBonusXp: Math.max(0, Math.floor(toNumber(xpBreakdownRaw.eliteBonusXp))),
+      bossBonusXp: Math.max(0, Math.floor(toNumber(xpBreakdownRaw.bossBonusXp))),
+      objectiveBonusXp: Math.max(0, Math.floor(toNumber(xpBreakdownRaw.objectiveBonusXp))),
+      cascadeBonusXp: Math.max(0, Math.floor(toNumber(xpBreakdownRaw.cascadeBonusXp))),
+      noDamageBonusXp: Math.max(0, Math.floor(toNumber(xpBreakdownRaw.noDamageBonusXp))),
+      routeBonusXp: Math.max(0, Math.floor(toNumber(xpBreakdownRaw.routeBonusXp)))
+    },
+    currentXpBeforeGain: Math.max(0, Math.floor(toNumber(raw.currentXpBeforeGain))),
+    currentXpAfterGain: Math.max(0, Math.floor(toNumber(raw.currentXpAfterGain))),
+    xpToNextLevel: Math.max(1, Math.floor(toNumber(raw.xpToNextLevel, 25))),
+    xpRemainingToNextLevel: Math.max(0, Math.floor(toNumber(raw.xpRemainingToNextLevel))),
+    leveledUp: Boolean(raw.leveledUp),
+    pendingLevelUps: Math.max(0, Math.floor(toNumber(raw.pendingLevelUps))),
+    rewardsPending: Boolean(raw.rewardsPending)
+  };
+}
+
+function normalizeActiveEncounterPack(value: unknown): NodeEncounterPack | null {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return null;
+  }
+  const raw = value as Record<string, unknown>;
+  const enemies = Array.isArray(raw.enemies)
+    ? raw.enemies.filter((entry): entry is NodeEncounterPack['enemies'][number] => Boolean(entry) && typeof entry === 'object')
+    : [];
+  if (enemies.length <= 0) {
+    return null;
+  }
+  const boundedIndex = Math.max(0, Math.min(enemies.length - 1, Math.floor(Number(raw.currentEnemyIndex ?? 0))));
+  const toIndexArray = (input: unknown): number[] =>
+    Array.isArray(input)
+      ? input
+          .map((entry) => Math.floor(Number(entry)))
+          .filter((entry) => Number.isFinite(entry) && entry >= 0 && entry < enemies.length)
+      : [];
+  const defeatedEnemyIds = Array.isArray(raw.defeatedEnemyIds)
+    ? raw.defeatedEnemyIds.filter((entry): entry is string => typeof entry === 'string')
+    : [];
+  const defeatedEnemyIndexes = [...new Set(toIndexArray(raw.defeatedEnemyIndexes))];
+  const appliedEntryEffectEnemyIndexes = [...new Set(toIndexArray(raw.appliedEntryEffectEnemyIndexes))];
+  const entryGiftClaimedEnemyIndexes = [...new Set(toIndexArray(raw.entryGiftClaimedEnemyIndexes))];
+  const remainingEnemyCount = Math.max(0, enemies.length - defeatedEnemyIndexes.length);
+
+  return {
+    encounterPackId: typeof raw.encounterPackId === 'string' ? raw.encounterPackId : 'unknown_pack',
+    nodeId: typeof raw.nodeId === 'string' ? raw.nodeId : 'unknown_node',
+    stageId: typeof raw.stageId === 'string' ? raw.stageId : 'stage_sprinkle_sewers',
+    biomeId: typeof raw.biomeId === 'string' ? raw.biomeId : 'biome_sprinkle_sewers',
+    nodeType: typeof raw.nodeType === 'string' ? raw.nodeType as NodeEncounterPack['nodeType'] : 'normal',
+    enemies,
+    currentEnemyIndex: boundedIndex,
+    totalHpBudgetMultiplier: Math.max(0.1, Number(raw.totalHpBudgetMultiplier ?? 1)),
+    totalAttackBudgetMultiplier: Math.max(0.1, Number(raw.totalAttackBudgetMultiplier ?? 1)),
+    maxActiveHazards: Math.max(1, Math.floor(Number(raw.maxActiveHazards ?? 1))),
+    rewardsGrantedOnlyOnNodeClear: true,
+    xpGrantedOnlyOnNodeClear: true,
+    defeatedEnemyIds,
+    defeatedEnemyIndexes,
+    remainingEnemyCount,
+    appliedEntryEffectEnemyIndexes,
+    entryGiftClaimedEnemyIndexes,
+    encounterPackCompleted: Boolean(raw.encounterPackCompleted),
+    nodeRewardsGranted: Boolean(raw.nodeRewardsGranted),
+    routeFallbackTriggeredForEncounterPack: Boolean(raw.routeFallbackTriggeredForEncounterPack),
+    entryEffectAppliedToIndex: typeof raw.entryEffectAppliedToIndex === 'number' ? raw.entryEffectAppliedToIndex : undefined,
+    breatherRewardPolicy: raw.breatherRewardPolicy as NodeEncounterPack['breatherRewardPolicy'],
+    generatedFromPoolId: typeof raw.generatedFromPoolId === 'string' ? raw.generatedFromPoolId : undefined,
+    seed: typeof raw.seed === 'number' || typeof raw.seed === 'string' ? raw.seed : undefined
   };
 }
 
@@ -334,6 +509,7 @@ export function createDefaultRunState(): RunState {
     weapon: createDefaultWeaponState(),
     board: createDefaultBoardState(),
     activeEnemy: null,
+    activeEncounterPack: null,
     spells: [...DEFAULT_SPELL_IDS],
     relics: [],
     upgrades: [],
@@ -368,6 +544,10 @@ export function createDefaultRunState(): RunState {
     reactiveState: createDefaultReactiveState(),
     activeOopsies: [],
     currentBossRule: undefined,
+    pendingNodeResult: null,
+    nodeResultClaims: [],
+    playerLevelState: createDefaultPlayerLevelState(),
+    levelUpScreenState: createDefaultLevelUpScreenState(),
     boardSizeModifier: undefined,
     routeProgress: createDefaultRouteProgress(),
     festivalHubVisited: false,
@@ -382,6 +562,7 @@ export function createDefaultRunState(): RunState {
 export function normalizeRunState(input: unknown): RunState {
   const defaults = createDefaultRunState();
   const raw = (input ?? {}) as PartialRunState;
+  const fallbackNodeId = typeof raw.currentNodeId === 'string' ? raw.currentNodeId : defaults.currentNodeId;
   const player = {
     ...defaults.player,
     ...(raw.player ?? {})
@@ -451,11 +632,29 @@ export function normalizeRunState(input: unknown): RunState {
     } : undefined,
     completedBattleObjectives: raw.completedBattleObjectives ? [...raw.completedBattleObjectives] : [],
     activeRandomGameplayEvents: raw.activeRandomGameplayEvents ? [...raw.activeRandomGameplayEvents] : [],
+    activeEncounterPack: normalizeActiveEncounterPack(raw.activeEncounterPack) ?? defaults.activeEncounterPack,
     activeHazards: normalizeActiveHazards(raw.activeHazards),
     incomingJunkQueue: normalizeIncomingJunkQueue((raw as { incomingJunkQueue?: unknown }).incomingJunkQueue),
     reactiveState: normalizeReactiveState(raw.reactiveState),
     activeOopsies: raw.activeOopsies ? [...raw.activeOopsies] : [...player.oopsies],
     currentBossRule: raw.currentBossRule,
+    pendingNodeResult: normalizeNodeResultSummary(raw.pendingNodeResult) ?? defaults.pendingNodeResult,
+    nodeResultClaims: Array.isArray((raw as { nodeResultClaims?: unknown[] }).nodeResultClaims)
+      ? ((raw as { nodeResultClaims?: unknown[] }).nodeResultClaims ?? [])
+          .filter((claim): claim is Record<string, unknown> => Boolean(claim) && typeof claim === 'object')
+          .map((claim) => ({
+            nodeId: typeof claim.nodeId === 'string' ? claim.nodeId : fallbackNodeId,
+            encounterPackId: typeof claim.encounterPackId === 'string' ? claim.encounterPackId : 'unknown_pack',
+            resultId: typeof claim.resultId === 'string'
+              ? claim.resultId
+              : `${typeof claim.nodeId === 'string' ? claim.nodeId : fallbackNodeId}:${typeof claim.encounterPackId === 'string' ? claim.encounterPackId : 'unknown_pack'}`,
+            resultShown: Boolean(claim.resultShown),
+            xpApplied: Boolean(claim.xpApplied),
+            postNodeHealingApplied: Boolean(claim.postNodeHealingApplied)
+          }))
+      : [...defaults.nodeResultClaims],
+    playerLevelState: normalizePlayerLevelState((raw as { playerLevelState?: unknown }).playerLevelState),
+    levelUpScreenState: createDefaultLevelUpScreenState(),
     boardSizeModifier: raw.boardSizeModifier ? { ...raw.boardSizeModifier } : undefined,
     routeProgress: normalizeRouteProgress(raw.routeProgress, raw.hero?.id ?? defaults.hero.id),
     festivalHubVisited: Boolean(raw.festivalHubVisited),
@@ -480,6 +679,12 @@ export function normalizeRunState(input: unknown): RunState {
   }
 
   merged.gold = player.gold;
+  // Migrate legacy XP fields into playerLevelState when older saves do not have it.
+  if (!(raw as { playerLevelState?: unknown }).playerLevelState) {
+    merged.playerLevelState.level = Math.max(1, Math.floor(Number(player.level ?? 1)));
+    merged.playerLevelState.currentXp = Math.max(0, Math.floor(Number(player.experience ?? 0)));
+    merged.playerLevelState.xpToNextLevel = Math.max(1, Math.floor(Number(player.xpToNextLevel ?? 25)));
+  }
   merged.lastCascadeLevel = Math.max(0, raw.lastCascadeLevel ?? defaults.lastCascadeLevel);
   merged.lastCascadeLines = Math.max(0, raw.lastCascadeLines ?? defaults.lastCascadeLines);
   merged.currentEventId = typeof raw.currentEventId === 'string' ? raw.currentEventId : null;
@@ -487,6 +692,11 @@ export function normalizeRunState(input: unknown): RunState {
   oopsieSystem.normalizeState(merged);
   merged.activeOopsies = [...merged.player.oopsies];
   merged.routeProgress = normalizeRouteProgress(merged.routeProgress, merged.hero.id);
+  merged.playerLevelState.pendingLevelUps = Math.max(0, Math.floor(merged.playerLevelState.pendingLevelUps));
+  merged.levelUpScreenState = normalizeLevelUpScreenState(
+    (raw as { levelUpScreenState?: unknown }).levelUpScreenState,
+    merged.playerLevelState
+  );
   merged.routeProgress.activeHeroId = merged.hero.id;
   if (!merged.routeProgress.heroes[merged.hero.id]) {
     merged.routeProgress.heroes[merged.hero.id] = createDefaultHeroRouteProgress(merged.hero.id);

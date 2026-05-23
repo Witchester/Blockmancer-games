@@ -1,0 +1,1 @@
+{"id":"upg_lvl_nixie_soft_thaw","name":"Nixie Soft Thaw","description":"Clearing ice grants +1 mana per stack.","category":"level_up","rarity":"hero","upgradeType":"hero_specific","cardType":"hero_specific","heroId":"hero_nixie_frostbinder","stackLimit":3,"effectId":"lvl_nixie_soft_thaw","levelUpOnly":true,"iconKey":"ico_upg_lvl_nixie_soft_thaw","enabled":true}

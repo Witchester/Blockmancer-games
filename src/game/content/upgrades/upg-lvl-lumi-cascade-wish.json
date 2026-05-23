@@ -1,0 +1,1 @@
+{"id":"upg_lvl_lumi_cascade_wish","name":"Lumi Cascade Wish","description":"Cascade 3+ grants +5% Fever per stack.","category":"level_up","rarity":"hero","upgradeType":"hero_specific","cardType":"hero_specific","heroId":"hero_lumi_star_witch","stackLimit":3,"effectId":"lvl_lumi_cascade_wish","levelUpOnly":true,"iconKey":"ico_upg_lvl_lumi_cascade_wish","enabled":true}

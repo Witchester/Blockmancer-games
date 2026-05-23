@@ -9,9 +9,26 @@ import { InputSystem } from '../systems/InputSystem';
 import { OopsieSystem } from '../systems/OopsieSystem';
 import { SpellSystem } from '../systems/SpellSystem';
 import { contentRegistry } from '../systems/ContentRegistry';
-import type { ActiveHazardKind, ActiveHazardState, BoardCell, BoardTickResult, CascadeAnimationFrame, CascadeResult, CounterTag, EnemyInstance, IncomingJunkQueueEntry, RunState, SpellId, TetrominoType } from '../types/GameTypes';
+import type {
+  ActiveHazardKind,
+  ActiveHazardState,
+  BoardCell,
+  BoardTickResult,
+  CascadeAnimationFrame,
+  CascadeResult,
+  CounterTag,
+  EnemyInstance,
+  IncomingJunkQueueEntry,
+  RunState,
+  SpellId,
+  TetrominoType,
+  EncounterNodeType,
+  NodeEncounterPack,
+  EncounterEnemyEntry
+} from '../types/GameTypes';
 import { MobileControls } from '../ui/MobileControls';
 import { ProgressBar } from '../ui/ProgressBar';
+import { MonsterStackPreview } from '../ui/MonsterStackPreview';
 import { Button } from '../ui/Button';
 import { getPortraitLayout, isCompactLayout } from '../utils/layout';
 import {
@@ -272,6 +289,7 @@ export class BattleScene extends Phaser.Scene {
   private playerMpBar?: ProgressBar;
   private playerShieldBar?: ProgressBar;
   private upgradesText?: Phaser.GameObjects.Text;
+  private monsterStackPreview?: MonsterStackPreview;
   private enemyHpBar?: ProgressBar;
   private previewTiles: Phaser.GameObjects.Rectangle[] = [];
   private holdPreviewTiles: Phaser.GameObjects.Rectangle[] = [];
@@ -329,6 +347,7 @@ export class BattleScene extends Phaser.Scene {
   private readonly visualEventQueue: CombatVisualEvent[] = [];
   private visualEventActive = false;
   private battleLayout?: BattleSceneLayout;
+  private lumiWishkeeperTriggered = false;
 
   constructor() {
     super('BattleScene');
@@ -341,14 +360,57 @@ export class BattleScene extends Phaser.Scene {
     this.compactLayout = isCompactLayout(this);
     this.cameras.main.setBackgroundColor(COLORS.background);
 
-    if (!state.activeEnemy) {
-      const enemy = game.enemySystem.spawnEnemy(state.currentRoomType, state.stage);
+    if (!state.activeEncounterPack) {
+      const stageId = game.stageSystem.getStageByIndex(state.stage)?.id ?? 'stage_sprinkle_sewers';
+      
+      // Calculate node depth for monster scaling
+      const nodeIndex = state.map.findIndex(n => n.id === state.currentNodeId);
+      const totalNodes = state.map.length;
+      const nodeDepthPercent = totalNodes > 0 ? Math.floor((nodeIndex / totalNodes) * 100) : 0;
+
+      const nodeTypeMap: Record<string, EncounterNodeType> = {
+        fight: 'normal',
+        elite: 'elite',
+        boss: 'boss',
+        event: 'event_battle',
+        mini_boss: 'elite',
+        royal_guard: 'royal_guard'
+      };
+
+      state.activeEncounterPack = game.encounterPackSystem.generateEncounterPack({
+        stageId,
+        stageNumber: state.stage,
+        nodeId: state.currentNodeId,
+        nodeType: nodeTypeMap[state.currentRoomType] ?? 'normal',
+        nodeDepthPercent: Math.min(100, Math.max(0, nodeDepthPercent)),
+        seed: (state as any).seed ?? state.currentNodeId
+      });
+
+      if (import.meta.env.DEV) {
+        console.log('[BattleScene] Generated Encounter Pack:', state.activeEncounterPack);
+      }
+    }
+
+    if (!state.activeEnemy && state.activeEncounterPack) {
+      const entry = state.activeEncounterPack.enemies[state.activeEncounterPack.currentEnemyIndex];
+      const enemy = game.encounterPackSystem.spawnEncounterEnemy(entry, state.stage, 0, state);
       if (!enemy) {
+        state.eventLog.unshift('A missing enemy entry was safely skipped.');
+        state.activeEnemy = null;
+        state.activeEncounterPack = null;
+        game.saveRun();
         this.scene.start('MapScene');
         return;
       }
       state.activeEnemy = enemy;
       state.activeEnemy.attackCounter = game.oopsieSystem.adjustEnemyAttackInterval(state, enemy.attackIntervalLocks);
+      if (enemy.roomType === 'boss') {
+        const card = game.bossRuleSystem.getForBoss(enemy.id);
+        state.currentBossRule = card?.id;
+        if (card) {
+          game.metaSystem.recordBossRuleDiscovered(card.id);
+        }
+      }
     }
 
     this.boardCells = [];
@@ -378,6 +440,13 @@ export class BattleScene extends Phaser.Scene {
     this.boardColumns = this.board.columns;
     this.boardRows = this.board.rows;
     this.combat = new CombatSystem(state);
+    const generalStartingShield = (state.playerLevelState?.chosenUpgrades?.['upg_lvl_starting_shield'] ?? 0) * 2;
+    const brukTableShield = (state.playerLevelState?.chosenUpgrades?.['upg_lvl_bruk_table_shield'] ?? 0) * 3;
+    const startingShield = Math.min(22, generalStartingShield + brukTableShield);
+    if (startingShield > 0) {
+      state.player.shield = Math.min(99, state.player.shield + startingShield);
+      this.combat.addLog(`Festival shield grants +${startingShield} shield at battle start.`);
+    }
     this.fever = new FeverSystem();
     this.spells = new SpellSystem(state, this.board, this.combat);
 
@@ -423,7 +492,7 @@ export class BattleScene extends Phaser.Scene {
     this.createInventoryOverlay();
     this.createInputSystem();
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.handleShutdown, this);
-    this.combat.addLog(`Battle started against ${state.activeEnemy.name}.`);
+    this.combat.addLog(`Battle started against ${state.activeEnemy?.name ?? 'Unknown'}.`);
     this.sharedGame.weaponSystem.applyBattleStart(state, this.combat, this.board);
     if (this.sharedGame.bossSystem.isBoss(state.activeEnemy)) {
       const fallbackIntro = this.sharedGame.bossSystem.getIntro(state.activeEnemy);
@@ -820,6 +889,13 @@ export class BattleScene extends Phaser.Scene {
       width: enemyBarWidth,
       height: 12,
       fillColor: COLORS.danger
+    });
+
+    this.monsterStackPreview = new MonsterStackPreview(this, enemySpriteX + 60, statsBaseY + 16, {
+      activeEncounterPack: this.sharedGame.runState.activeEncounterPack,
+      currentEnemyIndex: this.sharedGame.runState.activeEncounterPack?.currentEnemyIndex ?? 0,
+      getMonsterIconKey: (id) => this.sharedGame.assetSystem.getMonsterTexture(this, id, 'icon'),
+      compact: layout.scaleMode !== 'full'
     });
 
     this.heroPortrait = this.sharedGame.assetSystem.createHeroPoseSprite(
@@ -1494,6 +1570,11 @@ export class BattleScene extends Phaser.Scene {
       ) {
         state.player.emergencyBarrierUsed = true;
         state.player.shield += 10;
+        const snackRestore = this.getLevelUpgradeStacks('upg_lvl_bruk_no_snack_lost') * 5;
+        if (snackRestore > 0) {
+          state.player.hp = Math.min(state.player.maxHp, state.player.hp + snackRestore);
+          this.combat.addLog(`No Snack Lost restores ${snackRestore} HP.`);
+        }
         this.playVfx('anim_vfx_shield_gain', this.heroPortrait?.x ?? 112, this.heroPortrait?.y ?? 94, COMBAT_HIT_VFX_BOX_SIZE, 126);
         state.board.topOut = false;
         this.board.clearMessiestRow();
@@ -1584,6 +1665,18 @@ export class BattleScene extends Phaser.Scene {
     if (result.feverTriggered) {
       state.runStats.feverTriggers += 1;
       this.sharedGame.battleObjectiveSystem.recordFeverTriggered(state);
+      const wishkeeperStacks = this.getLevelUpgradeStacks('upg_lvl_lumi_wishkeeper');
+      if (!this.lumiWishkeeperTriggered && wishkeeperStacks > 0) {
+        this.lumiWishkeeperTriggered = true;
+        const placed = this.board.tryAddSpecialBlocks('block_star', wishkeeperStacks, 'upgrade', 'upg_lvl_lumi_wishkeeper');
+        if (placed.added > 0) {
+          this.combat.addLog(`Wishkeeper places ${placed.added} Star Block${placed.added === 1 ? '' : 's'}.`);
+        } else {
+          this.combat.addPlayerShield(wishkeeperStacks, 'Wishkeeper Fallback');
+          state.player.mana = Math.min(state.player.maxMana, state.player.mana + wishkeeperStacks);
+          this.combat.addLog(`Wishkeeper has no space, so it grants +${wishkeeperStacks} shield and mana.`);
+        }
+      }
     }
     state.runStats.piecesLocked += 1;
     state.runStats.linesCleared += cascade.totalLinesCleared;
@@ -1603,7 +1696,7 @@ export class BattleScene extends Phaser.Scene {
       this.cascadeResolving = false;
       this.syncBoardState();
       this.sharedGame.saveRun();
-      this.handleVictory();
+      await this.handleVictory();
       return;
     }
 
@@ -2160,7 +2253,13 @@ export class BattleScene extends Phaser.Scene {
     row?: number;
     delayPieces?: number;
   }): ActiveHazardState {
-    const delay = options.delayPieces ?? this.getDefaultHazardWindow(kind);
+    const baseDelay = options.delayPieces ?? this.getDefaultHazardWindow(kind);
+    const hazardResistStacks = this.getLevelUpgradeStacks('upg_lvl_hazard_resist');
+    const chillTimingStacks = (kind === 'freeze' || kind === 'speed_wave') ? this.getLevelUpgradeStacks('upg_lvl_nixie_chill_timing') : 0;
+    const hazardResist = Math.min(0.2, (hazardResistStacks + chillTimingStacks) * 0.05);
+    const previewLight = this.getLevelUpgradeStacks('upg_lvl_lumi_preview_light');
+    const previewReduction = kind === 'preview' ? previewLight : 0;
+    const delay = Math.max(1, Math.round(baseDelay * (1 - hazardResist)) - previewReduction);
     const base = HAZARD_WINDOWS[kind];
     return {
       ...base,
@@ -2618,7 +2717,7 @@ export class BattleScene extends Phaser.Scene {
     if (state.activeEnemy?.currentHp === 0) {
       this.syncBoardState();
       await this.wait(280);
-      this.handleVictory();
+      await this.handleVictory();
       return;
     }
 
@@ -2652,7 +2751,7 @@ export class BattleScene extends Phaser.Scene {
     }
   }
 
-  private handleVictory(): void {
+  private async handleVictory(): Promise<void> {
     const state = this.sharedGame.runState;
     if (!state.activeEnemy) {
       return;
@@ -2660,18 +2759,76 @@ export class BattleScene extends Phaser.Scene {
 
     const enemyName = state.activeEnemy.name;
     const enemyId = state.activeEnemy.id;
+
+    // Record defeat in pack
+    if (state.activeEncounterPack) {
+      if (!state.activeEncounterPack.defeatedEnemyIds.includes(enemyId)) {
+        state.activeEncounterPack.defeatedEnemyIds.push(enemyId);
+      }
+      if (!state.activeEncounterPack.defeatedEnemyIndexes.includes(state.activeEncounterPack.currentEnemyIndex)) {
+        state.activeEncounterPack.defeatedEnemyIndexes.push(state.activeEncounterPack.currentEnemyIndex);
+      }
+      state.activeEncounterPack.remainingEnemyCount = Math.max(
+        0,
+        state.activeEncounterPack.enemies.length - state.activeEncounterPack.defeatedEnemyIndexes.length
+      );
+    }
+
     this.enqueueVisualEvent({ type: 'enemy_defeat', sourceId: state.hero.id, targetId: enemyId });
     this.setEnemyPose('defeat');
     if (state.activeEnemy) {
       this.fitEnemyBattleSprite(state.activeEnemy);
     }
     this.playVfx('anim_vfx_enemy_defeat_poof', this.enemySprite?.x ?? this.screenWidth - 78, this.enemySprite?.y ?? 92, COMBAT_HIT_VFX_BOX_SIZE, 126);
+    state.enemiesDefeated += 1;
+    const gentleFinishHeal = this.getLevelUpgradeStacks('upg_lvl_milo_gentle_finish') * 2;
+    if (gentleFinishHeal > 0) {
+      state.player.hp = Math.min(state.player.maxHp, state.player.hp + gentleFinishHeal);
+      this.combat.addLog(`Gentle Finish heals ${gentleFinishHeal} HP.`);
+    }
+    const brukVictoryShield = this.getLevelUpgradeStacks('upg_lvl_bruk_victory_plate') * 2;
+    if (brukVictoryShield > 0) {
+      this.combat.addPlayerShield(brukVictoryShield, 'Victory Plate');
+    }
+
+    // Check for next enemy
+    if (this.sharedGame.encounterPackSystem.hasRemainingEncounterEnemies(state.activeEncounterPack)) {
+      this.combat.addLog(`${enemyName} tumbles out of the way. Another festival troublemaker hops in!`);
+
+      // Advance pack
+      this.sharedGame.encounterPackSystem.advanceEncounterEnemy(state.activeEncounterPack!);
+      const nextEntry = this.sharedGame.encounterPackSystem.getCurrentEncounterEnemy(state.activeEncounterPack);
+
+      if (nextEntry) {
+        await this.wait(600);
+
+        // Spawn next enemy
+        const nextEnemy = this.sharedGame.encounterPackSystem.spawnEncounterEnemy(nextEntry, state.stage, 0, state);
+        if (nextEnemy) {
+          state.activeEnemy = nextEnemy;
+          state.activeEnemy.attackCounter = this.sharedGame.oopsieSystem.adjustEnemyAttackInterval(state, nextEnemy.attackIntervalLocks);
+
+          // Re-render enemy
+          this.fitEnemyBattleSprite(nextEnemy);
+          this.setEnemyPoseTemporary('idle', 360);
+
+          // Update Monster Stack
+          this.monsterStackPreview?.refresh(state.activeEncounterPack!.currentEnemyIndex, state.activeEncounterPack);
+
+          // Apply entry effects (Step 6)
+          await this.applyEntryEffectsForEnemy(nextEntry);
+
+          this.renderCombatUi();
+          this.sharedGame.saveRun();
+          return;
+        }
+      }
+    }
+
     if (this.heroPortrait) {
       this.sharedGame.assetSystem.setHeroPose(this, this.heroPortrait, state.hero.id, 'victory');
     }
     this.fitHeroBattleSprite();
-    state.enemiesDefeated += 1;
-    state.runStats.roomsCleared += 1;
     this.combat.addLog(`${enemyName} tumbles out of the way.`);
     const objectiveMessage = this.sharedGame.battleObjectiveSystem.evaluateVictory(state);
     if (objectiveMessage) {
@@ -2694,71 +2851,181 @@ export class BattleScene extends Phaser.Scene {
     }
     this.sharedGame.chaosRuleSystem.clear(state);
     this.sharedGame.randomGameplayEventSystem.clearRoomEvents(state);
+    state.runStats.roomsCleared += 1;
+
+    const fullEncounterClear = Boolean(
+      state.activeEncounterPack && !this.sharedGame.encounterPackSystem.hasRemainingEncounterEnemies(state.activeEncounterPack)
+    );
+    if (!fullEncounterClear) {
+      state.activeEnemy = null;
+      this.sharedGame.saveRun();
+      return;
+    }
+    if (state.activeEncounterPack) {
+      state.activeEncounterPack.encounterPackCompleted = true;
+      state.activeEncounterPack.remainingEnemyCount = 0;
+    }
 
     if (state.lastBattleWasBoss) {
       if (!state.runStats.bossesDefeated.includes(enemyId)) {
         state.runStats.bossesDefeated.push(enemyId);
       }
       this.sharedGame.metaSystem.recordBossDefeated(enemyId, state.stage);
-      if (this.sharedGame.stageSystem.isFinalStage(state.stage)) {
-        this.sharedGame.mapSystem.advanceAfterBoss(state, this.sharedGame.stageSystem);
-        state.victory = true;
-        const routeEnding = this.sharedGame.routeStorySystem.resolveHeroEnding(state.hero.id, state.routeProgress);
-        const endingKind = routeEnding.endingKind;
-        const heroRouteProgress = state.routeProgress.heroes[state.hero.id];
-        if (heroRouteProgress) {
-          this.sharedGame.routeStorySystem.recordEndingUnlock(heroRouteProgress, routeEnding.ending, routeEnding.variant);
+      if (!this.sharedGame.stageSystem.isFinalStage(state.stage)) {
+        if (!state.activeEncounterPack?.nodeRewardsGranted) {
+          this.sharedGame.bossSystem.grantBossRewards(state, this.sharedGame.rewardSystem);
+          if (state.activeEncounterPack) {
+            state.activeEncounterPack.nodeRewardsGranted = true;
+          }
         }
-        const beforeUnlocks = [...this.sharedGame.metaSystem.state.unlockedHeroes];
-        this.sharedGame.metaSystem.recordRunEnd(state, true);
-        if (endingKind === 'true') {
-          this.sharedGame.metaSystem.unlockTrueEnding();
-        }
-        this.sharedGame.metaSystem.unlockRouteEnding(routeEnding.ending.id);
-        if (routeEnding.variant) {
-          this.sharedGame.metaSystem.unlockRouteVariantEnding(routeEnding.variant.id);
-        }
-        const heroUnlocks = this.sharedGame.storySystem.getHeroUnlockMessages(beforeUnlocks, this.sharedGame.metaSystem.state.unlockedHeroes);
-        this.sharedGame.audioSystem.play('victory', this);
-        this.sharedGame.clearSave();
-        this.scene.start('VictoryScene', {
-          endingKind,
-          heroUnlocks,
-          routeEndingId: routeEnding.ending.id,
-          routeVariantEndingId: routeEnding.variant?.id
-        });
-        return;
+        state.pendingStageAdvance = true;
+        state.currentRoomProgress = 'reward';
+        state.runStatus = 'reward';
+      } else {
+        state.currentRoomProgress = 'cleared';
+        state.runStatus = 'victory';
       }
-
-      this.sharedGame.bossSystem.grantBossRewards(state, this.sharedGame.rewardSystem);
-      state.pendingStageAdvance = true;
+    } else {
+      if (!state.activeEncounterPack?.nodeRewardsGranted) {
+        state.pendingRewardSource = state.currentRoomType === 'elite' ? 'elite' : 'battle';
+        state.pendingRewards = this.sharedGame.rewardSystem.getRandomRewards(3, state, state.pendingRewardSource);
+        if (state.activeEncounterPack) {
+          state.activeEncounterPack.nodeRewardsGranted = true;
+        }
+      }
       state.currentRoomProgress = 'reward';
       state.runStatus = 'reward';
-      this.sharedGame.saveRun();
-      this.scene.start('RewardScene');
+    }
+
+    const nodeResult = this.sharedGame.encounterPackSystem.buildNodeResultSummary(state, state.activeEncounterPack!);
+    this.sharedGame.encounterPackSystem.applyNodeResultXpIfNeeded(state, nodeResult);
+    state.pendingNodeResult = nodeResult;
+    this.sharedGame.saveRun();
+    this.scene.start('NodeResultScene', { summary: nodeResult });
+  }
+
+  private async applyEntryEffectsForEnemy(entry: EncounterEnemyEntry): Promise<void> {
+    const state = this.sharedGame.runState;
+    if (
+      state.activeEncounterPack?.appliedEntryEffectEnemyIndexes.includes(state.activeEncounterPack.currentEnemyIndex) ||
+      state.activeEncounterPack?.entryEffectAppliedToIndex === state.activeEncounterPack?.currentEnemyIndex
+    ) {
       return;
     }
 
-    state.pendingRewardSource = state.currentRoomType === 'elite' ? 'elite' : 'battle';
-    state.pendingRewards = this.sharedGame.rewardSystem.getRandomRewards(3, state, state.pendingRewardSource);
-    state.currentRoomProgress = 'reward';
-    state.runStatus = 'reward';
-    this.sharedGame.saveRun();
-    const stageId = this.sharedGame.stageSystem.getStageByIndex(state.stage)?.id ?? 'stage_sprinkle_sewers';
-    const routeScene = this.sharedGame.routeStorySystem.shouldTriggerRouteScene(
-      state,
-      state.hero.id,
-      stageId,
-      'after_first_combat_victory'
-    );
-    if (routeScene) {
-      this.scene.start('RouteDialogueScene', {
-        sceneId: routeScene.id,
-        returnScene: 'RewardScene'
-      });
-      return;
+    const result = this.sharedGame.encounterPackSystem.applyEnemyEntryEffect(state, entry, (msg) => this.combat.addLog(msg));
+
+    if (result.pressureEffectId) {
+      this.applyEntryPressure(result.pressureEffectId);
     }
-    this.scene.start('RewardScene');
+
+    if (result.playerGiftEffectId && state.activeEncounterPack && !state.activeEncounterPack.entryGiftClaimedEnemyIndexes.includes(state.activeEncounterPack.currentEnemyIndex)) {
+      this.applyPlayerGift(result.playerGiftEffectId);
+      state.activeEncounterPack.entryGiftClaimedEnemyIndexes.push(state.activeEncounterPack.currentEnemyIndex);
+    }
+    const nixieSlowStacks = this.getLevelUpgradeStacks('upg_lvl_nixie_slow_entry');
+    if (nixieSlowStacks > 0 && state.activeEnemy && state.activeEncounterPack?.currentEnemyIndex === 1) {
+      state.activeEnemy.attackCounter += nixieSlowStacks;
+      this.combat.addLog(`Slow Entry adds +${nixieSlowStacks} attack delay.`);
+    }
+    const calmBoardStacks = this.getLevelUpgradeStacks('upg_lvl_milo_calm_board');
+    if (calmBoardStacks > 0 && Math.random() < Math.min(0.9, calmBoardStacks * 0.15)) {
+      const converted = this.board.convertBlocksByIds(['block_sticky', 'block_crumb_junk', 'block_cloud_junk', 'block_ice', 'block_royal'], 0x56d3ff, 1);
+      if (converted > 0) {
+        this.combat.addLog('Calm Board converts one hazard block into a normal rune.');
+      }
+    }
+
+    if (state.activeEncounterPack) {
+      state.activeEncounterPack.entryEffectAppliedToIndex = state.activeEncounterPack.currentEnemyIndex;
+      if (!state.activeEncounterPack.appliedEntryEffectEnemyIndexes.includes(state.activeEncounterPack.currentEnemyIndex)) {
+        state.activeEncounterPack.appliedEntryEffectEnemyIndexes.push(state.activeEncounterPack.currentEnemyIndex);
+      }
+    }
+  }
+
+  private applyEntryPressure(effectId: string): void {
+    const state = this.sharedGame.runState;
+    const enemy = state.activeEnemy;
+    if (!enemy) return;
+
+    switch (effectId) {
+      case 'warn_sticky_tile':
+        this.combat.addLog('The guest prepares some sticky treats...');
+        break;
+      case 'warn_incoming_junk':
+        state.incomingJunkQueue.push({
+          id: `entry_junk_${Date.now()}`,
+          sourceId: enemy.id,
+          sourceName: enemy.name,
+          amount: 3,
+          remainingAmount: 3,
+          delayPieces: 4,
+          junkBlockId: 'block_crumb_junk',
+          severity: 'minor',
+          createdAtPieceCount: state.runStats.piecesLocked
+        });
+        this.syncIncomingJunkHazardFromQueue();
+        this.combat.addLog('A messy pile of crumbs is headed your way!');
+        break;
+      case 'warn_freeze':
+        this.combat.addLog('A chilly breeze covers the next piece.');
+        break;
+      case 'enemy_shield_entry':
+        enemy.shield += 5;
+        this.combat.addLog(`${enemy.name} braces for the festival!`);
+        break;
+      case 'warn_speed_wave':
+        this.combat.addLog('The festive floor begins to wobble faster!');
+        break;
+      case 'warn_royal_pattern':
+        this.combat.addLog('A royal pattern challenge is being set up.');
+        break;
+    }
+  }
+
+  private applyPlayerGift(giftId: string): void {
+    const state = this.sharedGame.runState;
+    switch (giftId) {
+      case 'gift_plus_2_mana':
+        state.player.mana = Math.min(state.player.mana + 2, state.player.maxMana);
+        this.combat.addLog('Festive energy restores +2 mana!');
+        break;
+      case 'gift_plus_1_shield':
+        state.player.shield += 1;
+        this.combat.addLog('A protective bubble forms! +1 shield.');
+        break;
+      case 'gift_plus_2_shield':
+        state.player.shield += 2;
+        this.combat.addLog('A strong festive barrier! +2 shield.');
+        break;
+      case 'gift_plus_3_shield':
+        state.player.shield += 3;
+        this.combat.addLog('A magnificent royal shield! +3 shield.');
+        break;
+      case 'gift_spawn_sprinkle_block':
+        this.board.spawnHelperBlock('block_sprinkle');
+        this.combat.addLog('A helpful sprinkle block drops in!');
+        break;
+      case 'gift_spawn_star_helper':
+        this.board.spawnHelperBlock('block_star');
+        this.combat.addLog('A star helper appears to assist you!');
+        break;
+      case 'gift_plus_1_entry_grace':
+        if (state.activeEnemy) {
+          state.activeEnemy.attackCounter += 1;
+          this.combat.addLog('You gain a moment of grace! +1 beat.');
+        }
+        break;
+      case 'gift_small_fever_bonus':
+        state.player.fever = Math.min(state.player.fever + 10, 100);
+        this.combat.addLog('The festival spirit rises! +10 fever.');
+        break;
+    }
+  }
+
+  private getLevelUpgradeStacks(upgradeId: string): number {
+    return Math.max(0, this.sharedGame.runState.playerLevelState?.chosenUpgrades?.[upgradeId] ?? 0);
   }
 
   private finishRun(victory: boolean): void {

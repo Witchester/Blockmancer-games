@@ -46,7 +46,7 @@ const CONTENT_FOLDERS: ContentFolderConfig[] = [
   { category: 'friendship', folder: 'friendship', fallbackId: 'friend_cupcake_slime' },
   { category: 'biomeMonsterPool', folder: 'difficulty-scaling', fallbackId: 'pool_sprinkle_sewers' },
   { category: 'encounterPackScaling', folder: 'difficulty-scaling', fallbackId: 'scale_encounter_stage1_normal' },
-  { category: 'enemyEntryEffect', folder: 'difficulty-scaling', fallbackId: 'entry_none' }
+  { category: 'enemyEntryEffect', folder: 'difficulty-scaling', fallbackId: 'entry_none_safe' }
 ];
 
 const jsonModules = (import.meta as unknown as {
@@ -62,7 +62,7 @@ function createCollection(config: ContentFolderConfig): RegistryCollection {
   const metadata = jsonModules[`${folderPrefix}metadata.json`] as ContentMetadataDescriptor | undefined;
   const entries = Object.entries(jsonModules)
     .filter(([path]) => normalizePath(path).startsWith(folderPrefix) && !path.endsWith('/metadata.json'))
-    .map(([, entry]) => entry as RegistryEntry)
+    .flatMap(([, entry]) => (Array.isArray(entry) ? entry : [entry]) as RegistryEntry[])
     .filter((entry) => typeof entry.id === 'string')
     .sort((left, right) => left.id.localeCompare(right.id));
 

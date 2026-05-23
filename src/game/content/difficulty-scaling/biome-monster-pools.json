@@ -1,55 +1,278 @@
-{
-  "id": "pool_sprinkle_sewers",
-  "stageId": "stage_sprinkle_sewers",
-  "biomeId": "biome_sprinkle_sewers",
-  "displayName": "Sprinkle Sewers Monster Pool",
-  "maxDuplicatePerNode": 1,
-  "recentMonsterMemoryCount": 2,
-  "fallbackMonsterId": "mon_cupcake_slime",
-  "bannedPairTags": ["heavy_hazard", "double_sticky"],
-  "monsterRules": [
-    {
-      "monsterId": "mon_cupcake_slime",
-      "weight": 35,
-      "roles": ["starter"],
-      "rank": "regular",
-      "tags": ["stage_1", "sprinkle_sewers", "tutorial"]
-    },
-    {
-      "monsterId": "mon_sugar_bat",
-      "weight": 20,
-      "roles": ["pressure"],
-      "rank": "regular",
-      "tags": ["stage_1", "sprinkle_sewers", "preview_disrupt"]
-    },
-    {
-      "monsterId": "mon_crumb_goblin",
-      "weight": 20,
-      "roles": ["pressure"],
-      "rank": "regular",
-      "tags": ["stage_1", "sprinkle_sewers", "junk"]
-    },
-    {
-      "monsterId": "mon_jelly_rat",
-      "weight": 15,
-      "roles": ["finisher"],
-      "rank": "regular",
-      "tags": ["stage_1", "sprinkle_sewers", "fast"]
-    },
-    {
-      "monsterId": "mon_sprinkle_snail",
-      "weight": 10,
-      "roles": ["support"],
-      "rank": "regular",
-      "tags": ["stage_1", "sprinkle_sewers", "sticky"]
-    },
-    {
-      "monsterId": "mon_frosting_blob",
-      "weight": 10,
-      "roles": ["support"],
-      "rank": "regular",
-      "tags": ["stage_1", "sprinkle_sewers", "tank"]
-    }
-  ],
-  "enabled": true
-}
+[
+  {
+    "id": "pool_sprinkle_sewers",
+    "stageId": "stage_sprinkle_sewers",
+    "biomeId": "biome_sprinkle_sewers",
+    "displayName": "Sprinkle Sewers",
+    "monsterRules": [
+      {
+        "monsterId": "mon_cupcake_slime",
+        "weight": 10,
+        "roles": ["starter"],
+        "rank": "regular"
+      },
+      {
+        "monsterId": "mon_sugar_bat",
+        "weight": 8,
+        "roles": ["pressure"],
+        "rank": "regular"
+      },
+      {
+        "monsterId": "mon_crumb_goblin",
+        "weight": 7,
+        "roles": ["pressure"],
+        "rank": "regular"
+      },
+      {
+        "monsterId": "mon_jelly_rat",
+        "weight": 6,
+        "roles": ["finisher"],
+        "rank": "regular"
+      },
+      {
+        "monsterId": "mon_sprinkle_snail",
+        "weight": 5,
+        "roles": ["support"],
+        "rank": "regular"
+      },
+      {
+        "monsterId": "mon_frosting_blob",
+        "weight": 4,
+        "roles": ["support"],
+        "rank": "regular"
+      }
+    ],
+    "maxDuplicatePerNode": 1,
+    "recentMonsterMemoryCount": 2,
+    "fallbackMonsterId": "mon_cupcake_slime"
+  },
+  {
+    "id": "pool_goblin_workshop",
+    "stageId": "stage_goblin_workshop",
+    "biomeId": "biome_goblin_workshop",
+    "displayName": "Goblin Workshop",
+    "monsterRules": [
+      {
+        "monsterId": "mon_wrench_goblin",
+        "weight": 10,
+        "roles": ["pressure"],
+        "rank": "regular"
+      },
+      {
+        "monsterId": "mon_button_masher",
+        "weight": 8,
+        "roles": ["pressure"],
+        "rank": "regular"
+      },
+      {
+        "monsterId": "mon_spring_bot",
+        "weight": 7,
+        "roles": ["starter"],
+        "rank": "regular"
+      },
+      {
+        "monsterId": "mon_spark_gremlin",
+        "weight": 6,
+        "roles": ["finisher"],
+        "rank": "regular"
+      },
+      {
+        "monsterId": "mon_gear_slime",
+        "weight": 5,
+        "roles": ["support"],
+        "rank": "regular"
+      },
+      {
+        "monsterId": "mon_rattle_drone",
+        "weight": 4,
+        "roles": ["support"],
+        "rank": "regular"
+      }
+    ],
+    "maxDuplicatePerNode": 1,
+    "recentMonsterMemoryCount": 2,
+    "fallbackMonsterId": "mon_wrench_goblin"
+  },
+  {
+    "id": "pool_frosty_pantry",
+    "stageId": "stage_frosty_pantry",
+    "biomeId": "biome_frosty_pantry",
+    "displayName": "Frosty Pantry",
+    "monsterRules": [
+      {
+        "monsterId": "mon_ice_cream_imp",
+        "weight": 10,
+        "roles": ["pressure"],
+        "rank": "regular"
+      },
+      {
+        "monsterId": "mon_popsicle_bat",
+        "weight": 8,
+        "roles": ["pressure"],
+        "rank": "regular"
+      },
+      {
+        "monsterId": "mon_chill_slime",
+        "weight": 7,
+        "roles": ["starter"],
+        "rank": "regular"
+      },
+      {
+        "monsterId": "mon_freezer_mimic",
+        "weight": 6,
+        "roles": ["finisher"],
+        "rank": "regular"
+      },
+      {
+        "monsterId": "mon_snowcone_sprite",
+        "weight": 5,
+        "roles": ["support"],
+        "rank": "regular"
+      },
+      {
+        "monsterId": "mon_pudding_penguin",
+        "weight": 4,
+        "roles": ["support"],
+        "rank": "regular"
+      }
+    ],
+    "maxDuplicatePerNode": 1,
+    "recentMonsterMemoryCount": 2,
+    "fallbackMonsterId": "mon_ice_cream_imp"
+  },
+  {
+    "id": "pool_pillow_castle",
+    "stageId": "stage_pillow_castle",
+    "biomeId": "biome_pillow_castle",
+    "displayName": "Pillow Castle",
+    "monsterRules": [
+      {
+        "monsterId": "mon_button_knight",
+        "weight": 10,
+        "roles": ["starter"],
+        "rank": "regular"
+      },
+      {
+        "monsterId": "mon_blanket_ghost",
+        "weight": 8,
+        "roles": ["pressure"],
+        "rank": "regular"
+      },
+      {
+        "monsterId": "mon_plush_dragon",
+        "weight": 7,
+        "roles": ["finisher"],
+        "rank": "regular"
+      },
+      {
+        "monsterId": "mon_toy_soldier",
+        "weight": 6,
+        "roles": ["pressure"],
+        "rank": "regular"
+      },
+      {
+        "monsterId": "mon_pillow_squire",
+        "weight": 5,
+        "roles": ["starter"],
+        "rank": "regular"
+      },
+      {
+        "monsterId": "mon_sock_sprite",
+        "weight": 4,
+        "roles": ["support"],
+        "rank": "regular"
+      }
+    ],
+    "maxDuplicatePerNode": 1,
+    "recentMonsterMemoryCount": 2,
+    "fallbackMonsterId": "mon_button_knight"
+  },
+  {
+    "id": "pool_starfall_arcade",
+    "stageId": "stage_starfall_arcade",
+    "biomeId": "biome_starfall_arcade",
+    "displayName": "Starfall Arcade",
+    "monsterRules": [
+      {
+        "monsterId": "mon_combo_gremlin",
+        "weight": 10,
+        "roles": ["pressure"],
+        "rank": "regular"
+      },
+      {
+        "monsterId": "mon_neon_bat",
+        "weight": 8,
+        "roles": ["pressure"],
+        "rank": "regular"
+      },
+      {
+        "monsterId": "mon_prize_claw_mimic",
+        "weight": 7,
+        "roles": ["starter"],
+        "rank": "regular"
+      },
+      {
+        "monsterId": "mon_pixel_blob",
+        "weight": 6,
+        "roles": ["finisher"],
+        "rank": "regular"
+      },
+      {
+        "monsterId": "mon_joystick_jester",
+        "weight": 5,
+        "roles": ["support"],
+        "rank": "regular"
+      }
+    ],
+    "maxDuplicatePerNode": 1,
+    "recentMonsterMemoryCount": 2,
+    "fallbackMonsterId": "mon_combo_gremlin"
+  },
+  {
+    "id": "pool_bloxley_block_palace",
+    "stageId": "stage_bloxley_block_palace",
+    "biomeId": "biome_bloxley_block_palace",
+    "displayName": "Bloxley's Block Palace",
+    "monsterRules": [
+      {
+        "monsterId": "mon_royal_block_guard",
+        "weight": 10,
+        "roles": ["pressure"],
+        "rank": "regular"
+      },
+      {
+        "monsterId": "mon_square_jester",
+        "weight": 8,
+        "roles": ["pressure"],
+        "rank": "regular"
+      },
+      {
+        "monsterId": "mon_crown_bat",
+        "weight": 7,
+        "roles": ["starter"],
+        "rank": "regular"
+      },
+      {
+        "monsterId": "mon_parade_golem",
+        "weight": 6,
+        "roles": ["finisher"],
+        "rank": "regular"
+      },
+      {
+        "monsterId": "mon_confetti_mage",
+        "weight": 5,
+        "roles": ["support"],
+        "rank": "regular"
+      },
+      {
+        "monsterId": "mon_banner_bug",
+        "weight": 4,
+        "roles": ["support"],
+        "rank": "regular"
+      }
+    ],
+    "maxDuplicatePerNode": 1,
+    "recentMonsterMemoryCount": 2,
+    "fallbackMonsterId": "mon_royal_block_guard"
+  }
+]

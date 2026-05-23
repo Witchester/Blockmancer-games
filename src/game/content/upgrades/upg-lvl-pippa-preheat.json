@@ -1,0 +1,15 @@
+{
+  "id": "upg_lvl_pippa_preheat",
+  "name": "Pippa Preheat",
+  "description": "Fire spell damage +10% per stack.",
+  "category": "level_up",
+  "rarity": "hero",
+  "upgradeType": "hero_specific",
+  "cardType": "hero",
+  "heroId": "hero_pippa_pyromancer",
+  "stackLimit": 5,
+  "effectId": "lvl_pippa_preheat",
+  "levelUpOnly": true,
+  "iconKey": "upg_lvl_pippa_preheat",
+  "enabled": true
+}

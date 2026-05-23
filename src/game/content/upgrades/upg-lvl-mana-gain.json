@@ -1,0 +1,14 @@
+{
+  "id": "upg_lvl_mana_gain",
+  "name": "Mana Parade",
+  "description": "+1 mana from clears per stack.",
+  "category": "level_up",
+  "rarity": "common",
+  "upgradeType": "general",
+  "cardType": "general",
+  "stackLimit": 5,
+  "effectId": "lvl_mana_gain",
+  "levelUpOnly": true,
+  "iconKey": "upg_lvl_mana_gain",
+  "enabled": true
+}

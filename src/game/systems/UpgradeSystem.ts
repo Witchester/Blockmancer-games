@@ -18,6 +18,45 @@ export const SUPPORTED_UPGRADE_EFFECT_IDS = [
   'upg_spell_focus'
 ];
 
+const SUPPORTED_LEVEL_UP_EFFECT_IDS = [
+  'upg_lvl_clear_line_damage',
+  'upg_lvl_max_hp_percent',
+  'upg_lvl_flat_hp',
+  'upg_lvl_mana_gain',
+  'upg_lvl_spell_damage',
+  'upg_lvl_cascade_damage',
+  'upg_lvl_starting_shield',
+  'upg_lvl_heal_after_node',
+  'upg_lvl_fever_gain',
+  'upg_lvl_hazard_resist',
+  'upg_lvl_entry_grace',
+  'upg_lvl_reward_reroll',
+  'upg_lvl_milo_plink_mana',
+  'upg_lvl_milo_calm_board',
+  'upg_lvl_milo_listener',
+  'upg_lvl_milo_gentle_finish',
+  'upg_lvl_pippa_preheat',
+  'upg_lvl_pippa_burn_sticky',
+  'upg_lvl_pippa_oven_guard',
+  'upg_lvl_pippa_hot_combo',
+  'upg_lvl_zuzu_bomb_friend',
+  'upg_lvl_zuzu_safety_clamp',
+  'upg_lvl_zuzu_extra_fuse',
+  'upg_lvl_zuzu_gadget_retry',
+  'upg_lvl_nixie_chill_timing',
+  'upg_lvl_nixie_soft_thaw',
+  'upg_lvl_nixie_slow_entry',
+  'upg_lvl_nixie_preserve',
+  'upg_lvl_bruk_snack_armor',
+  'upg_lvl_bruk_table_shield',
+  'upg_lvl_bruk_no_snack_lost',
+  'upg_lvl_bruk_victory_plate',
+  'upg_lvl_lumi_star_guidance',
+  'upg_lvl_lumi_cascade_wish',
+  'upg_lvl_lumi_preview_light',
+  'upg_lvl_lumi_wishkeeper'
+];
+
 export class UpgradeSystem {
   applyUpgrade(state: RunState, rewardId: RewardId, level = 1): string {
     const player = state.player;
@@ -97,5 +136,88 @@ export class UpgradeSystem {
       default:
         return 'Arcane sparks fade without effect.';
     }
+  }
+
+  applyLevelUpUpgrade(state: RunState, upgradeId: RewardId): string {
+    const stack = Math.max(1, state.playerLevelState.chosenUpgrades[upgradeId] ?? 1);
+    const p = state.player;
+    switch (upgradeId) {
+      case 'upg_lvl_clear_line_damage':
+        p.lineDamageBonus += 2;
+        return `Line-clear damage rises (+2).`;
+      case 'upg_lvl_max_hp_percent': {
+        const bonusPct = Math.min(0.5, stack * 0.1);
+        const baseHp = 30;
+        const targetMaxHp = Math.round(baseHp * (1 + bonusPct));
+        if (targetMaxHp > p.maxHp) {
+          const diff = targetMaxHp - p.maxHp;
+          p.maxHp = targetMaxHp;
+          p.hp = Math.min(p.maxHp, p.hp + diff);
+        }
+        return `Max HP scales with festival spirit.`;
+      }
+      case 'upg_lvl_flat_hp':
+        p.maxHp += 6;
+        p.hp = Math.min(p.maxHp, p.hp + 6);
+        return `Max HP +6.`;
+      case 'upg_lvl_bruk_snack_armor':
+        p.maxHp += 8;
+        p.hp = Math.min(p.maxHp, p.hp + 8);
+        return `Snack Armor adds +8 max HP.`;
+      case 'upg_lvl_reward_reroll':
+        state.playerLevelState.rerollCharges += 1;
+        return `Level-up reroll charge gained.`;
+      case 'upg_lvl_bruk_no_snack_lost':
+      case 'upg_lvl_milo_plink_mana':
+      case 'upg_lvl_milo_calm_board':
+      case 'upg_lvl_milo_listener':
+      case 'upg_lvl_milo_gentle_finish':
+      case 'upg_lvl_mana_gain':
+      case 'upg_lvl_spell_damage':
+      case 'upg_lvl_cascade_damage':
+      case 'upg_lvl_starting_shield':
+      case 'upg_lvl_heal_after_node':
+      case 'upg_lvl_fever_gain':
+      case 'upg_lvl_hazard_resist':
+      case 'upg_lvl_entry_grace':
+      case 'upg_lvl_pippa_preheat':
+      case 'upg_lvl_pippa_burn_sticky':
+      case 'upg_lvl_pippa_oven_guard':
+      case 'upg_lvl_pippa_hot_combo':
+      case 'upg_lvl_zuzu_bomb_friend':
+      case 'upg_lvl_zuzu_safety_clamp':
+      case 'upg_lvl_zuzu_extra_fuse':
+      case 'upg_lvl_zuzu_gadget_retry':
+      case 'upg_lvl_nixie_chill_timing':
+      case 'upg_lvl_nixie_soft_thaw':
+      case 'upg_lvl_nixie_slow_entry':
+      case 'upg_lvl_nixie_preserve':
+      case 'upg_lvl_bruk_table_shield':
+      case 'upg_lvl_bruk_victory_plate':
+      case 'upg_lvl_lumi_star_guidance':
+      case 'upg_lvl_lumi_cascade_wish':
+      case 'upg_lvl_lumi_preview_light':
+      case 'upg_lvl_lumi_wishkeeper':
+        return `Festival upgrade applied.`;
+      default:
+        if (SUPPORTED_LEVEL_UP_EFFECT_IDS.includes(upgradeId)) {
+          return 'Festival upgrade applied.';
+        }
+        console.warn(`[Blockmancer] Unsupported level-up upgrade effect "${upgradeId}".`);
+        return 'That card sparkles, but no handler is wired yet.';
+    }
+  }
+
+  recalculateLevelUpDerivedStats(state: RunState): void {
+    const p = state.player;
+    const stacks = (id: string): number => Math.max(0, state.playerLevelState.chosenUpgrades[id] ?? 0);
+    const maxHpBase = 30;
+    const flatHp = stacks('upg_lvl_flat_hp') * 6;
+    const brukHp = stacks('upg_lvl_bruk_snack_armor') * 8;
+    const hpPct = Math.min(0.5, stacks('upg_lvl_max_hp_percent') * 0.1);
+    p.maxHp = Math.round((maxHpBase + flatHp + brukHp) * (1 + hpPct));
+    p.hp = Math.min(p.hp, p.maxHp);
+    p.lineDamageBonus = stacks('upg_lvl_clear_line_damage') * 2;
+    state.playerLevelState.rerollCharges = Math.min(2, stacks('upg_lvl_reward_reroll'));
   }
 }

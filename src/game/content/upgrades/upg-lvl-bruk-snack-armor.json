@@ -1,0 +1,1 @@
+{"id":"upg_lvl_bruk_snack_armor","name":"Bruk Snack Armor","description":"Max HP +8 per stack.","category":"level_up","rarity":"hero","upgradeType":"hero_specific","cardType":"hero_specific","heroId":"hero_bruk_snack_knight","stackLimit":5,"effectId":"lvl_bruk_snack_armor","levelUpOnly":true,"iconKey":"ico_upg_lvl_bruk_snack_armor","enabled":true}

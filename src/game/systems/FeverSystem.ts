@@ -24,7 +24,9 @@ export class FeverSystem {
     const comboBonus = state.combo >= 4 ? 10 : state.combo >= 3 ? 6 : state.combo >= 2 ? 3 : 0;
     const choirBonus = state.ownedRewards.includes('upg_cascade_choir') && cascade.cascadeCount > 1 ? 6 : 0;
 
-    return cascadeBonus + lineBonus + dropBonus + comboBonus + choirBonus;
+    const baseGain = cascadeBonus + lineBonus + dropBonus + comboBonus + choirBonus;
+    const levelBonusPct = Math.min(0.4, ((state.playerLevelState?.chosenUpgrades?.['upg_lvl_fever_gain'] ?? 0) * 0.08));
+    return Math.round(baseGain * (1 + levelBonusPct));
   }
 
   gainFromCascade(state: RunState, cascade: CascadeResult): FeverGainResult {

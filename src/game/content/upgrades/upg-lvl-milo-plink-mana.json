@@ -1,0 +1,15 @@
+{
+  "id": "upg_lvl_milo_plink_mana",
+  "name": "Milo Plink Encore",
+  "description": "First cascade each combat grants +2 mana per stack.",
+  "category": "level_up",
+  "rarity": "hero",
+  "upgradeType": "hero_specific",
+  "cardType": "hero",
+  "heroId": "hero_milo_blockmancer",
+  "stackLimit": 5,
+  "effectId": "lvl_milo_plink_mana",
+  "levelUpOnly": true,
+  "iconKey": "upg_lvl_milo_plink_mana",
+  "enabled": true
+}

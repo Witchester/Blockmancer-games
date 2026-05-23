@@ -1,0 +1,15 @@
+{
+  "id": "upg_lvl_clear_line_damage",
+  "name": "Sparkline Cutter",
+  "description": "+2 line-clear damage per stack.",
+  "flavorText": "Every clean row sings louder.",
+  "category": "level_up",
+  "rarity": "common",
+  "upgradeType": "general",
+  "cardType": "general",
+  "stackLimit": 8,
+  "effectId": "lvl_clear_line_damage",
+  "levelUpOnly": true,
+  "iconKey": "upg_lvl_clear_line_damage",
+  "enabled": true
+}

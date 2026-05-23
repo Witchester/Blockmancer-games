@@ -36,6 +36,11 @@ export class StageSystem {
     return this.listStages().length || RELEASE_STAGE_ORDER.length;
   }
 
+  getStageIndex(stageId: string): number {
+    const order = RELEASE_STAGE_ORDER.indexOf(stageId);
+    return order === -1 ? 1 : order + 1;
+  }
+
   isFinalStage(index: number): boolean {
     return index >= this.getStageCount();
   }

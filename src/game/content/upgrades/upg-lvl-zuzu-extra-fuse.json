@@ -1,0 +1,1 @@
+{"id":"upg_lvl_zuzu_extra_fuse","name":"Zuzu Extra Fuse","description":"Bomb effects reduce incoming junk by +1 per stack.","category":"level_up","rarity":"hero","upgradeType":"hero_specific","cardType":"hero_specific","heroId":"hero_zuzu_goblin_engineer","stackLimit":3,"effectId":"lvl_zuzu_extra_fuse","levelUpOnly":true,"iconKey":"ico_upg_lvl_zuzu_extra_fuse","enabled":true}

@@ -1,77 +1,76 @@
 [
   {
-    "id": "entry_none",
+    "id": "entry_none_safe",
     "name": "No Entry Effect",
     "description": "Standard enemy entry with no special effects.",
-    "entryGracePieces": 3,
+    "entryGracePieces": 2,
     "warningText": "",
     "eventLogText": "The enemy enters the battle.",
-    "tags": ["standard"]
+    "tags": ["standard", "safe"]
   },
   {
-    "id": "entry_junk_pressure",
-    "name": "Junk Delivery",
-    "description": "Enemy enters with a small junk pressure gift for the player to counter.",
-    "pressureEffectId": "hazard_incoming_junk_queue",
-    "playerGiftEffectId": "counter_window_3_pieces",
+    "id": "entry_sprinkle_gift",
+    "name": "Sprinkle Gift",
+    "description": "A gentle first entry effect with a mana gift.",
+    "playerGiftEffectId": "gift_plus_2_mana",
     "entryGracePieces": 3,
-    "warningText": "Incoming junk queued!",
-    "eventLogText": "The enemy arrives with a snack tray full of junk!",
-    "tags": ["junk", "pressure", "counterable"]
+    "warningText": "A sprinkle of mana!",
+    "eventLogText": "The enemy arrives with a sweet mana gift!",
+    "tags": ["gift", "stage_1"]
   },
   {
-    "id": "entry_preview_block",
-    "name": "Preview Glitter",
-    "description": "Enemy blocks preview but gives a small grace period.",
-    "pressureEffectId": "hazard_preview_hidden",
-    "playerGiftEffectId": "grace_3_pieces",
-    "entryGracePieces": 3,
-    "warningText": "Preview blocked!",
-    "eventLogText": "The enemy sparkles, hiding your preview!",
-    "tags": ["preview", "disrupt"]
-  },
-  {
-    "id": "entry_freeze_nudge",
-    "name": "Frost Warning",
-    "description": "Enemy brings frost but warns you first.",
-    "pressureEffectId": "hazard_freeze_warning",
-    "playerGiftEffectId": "counter_window_2_pieces",
+    "id": "entry_junk_warning_gift",
+    "name": "Junk Warning Gift",
+    "description": "Enemy enters with a small junk pressure but gives a mana gift.",
+    "pressureEffectId": "warn_incoming_junk",
+    "playerGiftEffectId": "gift_plus_2_mana",
     "entryGracePieces": 2,
-    "warningText": "Frost is gathering!",
-    "eventLogText": "The enemy chills the air around your block!",
-    "tags": ["freeze", "speed"]
+    "warningText": "Incoming junk but mana restored!",
+    "eventLogText": "The enemy brings junk but drops some mana too!",
+    "tags": ["junk", "pressure", "gift"]
   },
   {
-    "id": "entry_low_ceiling",
-    "name": "Ceiling Dip",
-    "description": "Enemy makes the ceiling lower but gives time to react.",
-    "pressureEffectId": "hazard_low_ceiling",
-    "playerGiftEffectId": "counter_window_6_pieces",
-    "entryGracePieces": 4,
-    "warningText": "The ceiling is getting lower!",
-    "eventLogText": "The enemy squeezes into the room, lowering the ceiling!",
-    "tags": ["board_size", "pressure"]
+    "id": "entry_shield_trade",
+    "name": "Shield Trade",
+    "description": "Enemy enters with shield but gives the player shield too.",
+    "pressureEffectId": "enemy_shield_entry",
+    "playerGiftEffectId": "gift_plus_1_shield",
+    "entryGracePieces": 2,
+    "warningText": "Shields up for everyone!",
+    "eventLogText": "The enemy trades defensive energy with you!",
+    "tags": ["shield", "trade"]
   },
   {
-    "id": "entry_speed_wave",
-    "name": "Floor Wobble",
-    "description": "Enemy speeds up the floor slightly with warning.",
-    "pressureEffectId": "hazard_speed_wave",
-    "playerGiftEffectId": "counter_window_4_pieces",
+    "id": "entry_speed_warning_grace",
+    "name": "Speed Grace",
+    "description": "Enemy speeds up the floor but gives extra grace pieces.",
+    "pressureEffectId": "warn_speed_wave",
+    "playerGiftEffectId": "gift_plus_1_entry_grace",
     "entryGracePieces": 3,
-    "warningText": "The floor wobbles faster!",
-    "eventLogText": "The enemy's energy makes the floor speed up!",
-    "tags": ["speed", "pressure"]
+    "warningText": "Fast floor but extra time!",
+    "eventLogText": "The floor wobbles faster, but you feel more focused!",
+    "tags": ["speed", "grace"]
   },
   {
-    "id": "entry_royal_pattern",
-    "name": "Royal Demand",
-    "description": "Boss or elite demands a proper pattern with generous warning.",
-    "pressureEffectId": "hazard_royal_pattern",
-    "playerGiftEffectId": "counter_window_3_pieces",
-    "entryGracePieces": 4,
-    "warningText": "Bloxley demands a rectangle!",
-    "eventLogText": "The royal enemy demands proper block etiquette!",
-    "tags": ["pattern", "boss", "elite"]
+    "id": "entry_freeze_warning_slowfall",
+    "name": "Frost Slowfall",
+    "description": "Enemy brings frost but gives shield instead of slowfall (unsupported).",
+    "pressureEffectId": "warn_freeze",
+    "playerGiftEffectId": "gift_plus_2_shield",
+    "entryGracePieces": 2,
+    "warningText": "Frost is here, but you are protected!",
+    "eventLogText": "The chilled air is harsh, but a festive shield forms!",
+    "tags": ["freeze", "gift"]
+  },
+  {
+    "id": "entry_royal_warning_gift",
+    "name": "Royal Warning Gift",
+    "description": "Boss or elite demands a pattern but gives a significant mana gift.",
+    "pressureEffectId": "warn_royal_pattern",
+    "playerGiftEffectId": "gift_plus_3_shield",
+    "entryGracePieces": 3,
+    "warningText": "Royal demand with a royal gift!",
+    "eventLogText": "Bloxley demands a pattern but offers a bounty of protection!",
+    "tags": ["pattern", "boss", "elite", "gift"]
   }
 ]

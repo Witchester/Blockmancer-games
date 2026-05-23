@@ -1,0 +1,1 @@
+{"id":"upg_lvl_milo_gentle_finish","name":"Milo Gentle Finish","description":"Defeating an enemy heals 2 HP per stack.","category":"level_up","rarity":"hero","upgradeType":"hero_specific","cardType":"hero_specific","heroId":"hero_milo_blockmancer","stackLimit":2,"effectId":"lvl_milo_gentle_finish","levelUpOnly":true,"iconKey":"ico_upg_lvl_milo_gentle_finish","enabled":true}

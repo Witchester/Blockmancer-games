@@ -1,0 +1,1 @@
+{"id":"upg_lvl_bruk_table_shield","name":"Bruk Table Shield","description":"Start combat with +3 shield per stack.","category":"level_up","rarity":"hero","upgradeType":"hero_specific","cardType":"hero_specific","heroId":"hero_bruk_snack_knight","stackLimit":4,"effectId":"lvl_bruk_table_shield","levelUpOnly":true,"iconKey":"ico_upg_lvl_bruk_table_shield","enabled":true}

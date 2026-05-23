@@ -1,0 +1,14 @@
+{
+  "id": "upg_lvl_flat_hp",
+  "name": "Snack Armor",
+  "description": "+6 max HP per stack.",
+  "category": "level_up",
+  "rarity": "common",
+  "upgradeType": "general",
+  "cardType": "general",
+  "stackLimit": 5,
+  "effectId": "lvl_flat_hp",
+  "levelUpOnly": true,
+  "iconKey": "upg_lvl_flat_hp",
+  "enabled": true
+}

@@ -35,3 +35,9 @@ export function weightedChoice<T>(items: T[], getWeight: (item: T) => number): T
 
   return items[items.length - 1];
 }
+
+export function seededRandom(seed: number, min: number = 0, max: number = 1): number {
+  const x = Math.sin(seed) * 10000;
+  const rand = x - Math.floor(x);
+  return min + rand * (max - min);
+}

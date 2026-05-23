@@ -17,7 +17,16 @@ export class RewardScene extends Phaser.Scene {
     const game = this.game as BlockmancerGame;
     const state = game.runState;
     state.runStatus = 'reward';
+    if (game.levelUpSystem.hasPendingLevelUp(state)) {
+      state.levelUpScreenState.levelUpScreenResolved = false;
+      this.scene.start('LevelUpRewardScene');
+      return;
+    }
     if (state.pendingRewards.length === 0) {
+      if (state.pendingStageAdvance) {
+        game.mapSystem.advanceAfterBoss(state, game.stageSystem);
+        game.saveRun();
+      }
       this.scene.start('MapScene');
       return;
     }
@@ -183,6 +192,9 @@ export class RewardScene extends Phaser.Scene {
       state.eventLog.unshift(effectMessage);
     });
     state.eventLog = state.eventLog.slice(0, MAX_EVENT_LOG);
+    state.levelUpScreenState.levelUpScreenResolved = true;
+    state.levelUpScreenState.offeredUpgradeIds = [];
+    state.levelUpScreenState.pendingLevelUpChoices = [];
     game.audioSystem.play('reward_pick', this);
     game.saveRun();
     this.scene.start('MapScene');

@@ -10,6 +10,8 @@ import { CollectionScene } from './scenes/CollectionScene';
 import { MapScene } from './scenes/MapScene';
 import { BattleScene } from './scenes/BattleScene';
 import { RewardScene } from './scenes/RewardScene';
+import { NodeResultScene } from './scenes/NodeResultScene';
+import { LevelUpRewardScene } from './scenes/LevelUpRewardScene';
 import { RouteDialogueScene } from './scenes/RouteDialogueScene';
 import { EventScene } from './scenes/EventScene';
 import { ShopScene } from './scenes/ShopScene';
@@ -50,6 +52,8 @@ import { StorySystem } from './systems/StorySystem';
 import { TutorialSystem } from './systems/TutorialSystem';
 import { WeaponSystem } from './systems/WeaponSystem';
 import { EncounterPackSystem } from './systems/EncounterPackSystem';
+import { LevelUpSystem } from './systems/LevelUpSystem';
+import { UpgradeSystem } from './systems/UpgradeSystem';
 import type { RunState } from './types/GameTypes';
 import type { GameSettings } from './types/SettingsTypes';
 import { createDefaultRunState, normalizeRunState } from './data/defaultRunState';
@@ -85,7 +89,9 @@ export class BlockmancerGame extends Phaser.Game {
   readonly tutorialSystem = new TutorialSystem();
   readonly settingsSystem = new SettingsSystem();
   readonly stageGoalSystem = new StageGoalSystem();
-  readonly encounterPackSystem = new EncounterPackSystem(this);
+  readonly encounterPackSystem: EncounterPackSystem = new EncounterPackSystem(this.difficultySystem, this.stageSystem);
+  readonly levelUpSystem: LevelUpSystem = new LevelUpSystem();
+  readonly upgradeSystem: UpgradeSystem = new UpgradeSystem();
   runState: RunState;
 
   constructor(parent: HTMLElement) {
@@ -113,6 +119,8 @@ export class BlockmancerGame extends Phaser.Game {
         MapScene,
         BattleScene,
         RewardScene,
+        NodeResultScene,
+        LevelUpRewardScene,
         RouteDialogueScene,
         EventScene,
         ShopScene,
@@ -131,6 +139,7 @@ export class BlockmancerGame extends Phaser.Game {
   newRun(heroId: string = 'hero_milo_blockmancer'): RunState {
     this.runState = createDefaultRunState();
     this.heroSystem.applyHeroToRun(this.runState, heroId);
+    this.upgradeSystem.recalculateLevelUpDerivedStats(this.runState);
     this.runState.map = this.mapSystem.createMap(this.runState.stage);
     this.stageGoalSystem.ensureGoal(this.runState);
     this.boardSizeModifierSystem.applyEncounterBoardSize(this.runState);
@@ -147,6 +156,7 @@ export class BlockmancerGame extends Phaser.Game {
 
     try {
       this.runState = normalizeRunState(save);
+      this.upgradeSystem.recalculateLevelUpDerivedStats(this.runState);
     } catch {
       this.saveSystem.clearRun();
       this.runState = createDefaultRunState();

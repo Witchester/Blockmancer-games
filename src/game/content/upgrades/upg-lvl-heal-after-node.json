@@ -1,0 +1,14 @@
+{
+  "id": "upg_lvl_heal_after_node",
+  "name": "Breather Picnic",
+  "description": "Heal 3% max HP after full node clear per stack.",
+  "category": "level_up",
+  "rarity": "common",
+  "upgradeType": "general",
+  "cardType": "general",
+  "stackLimit": 5,
+  "effectId": "lvl_heal_after_node",
+  "levelUpOnly": true,
+  "iconKey": "upg_lvl_heal_after_node",
+  "enabled": true
+}

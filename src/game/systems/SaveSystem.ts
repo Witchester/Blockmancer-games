@@ -199,6 +199,59 @@ export class SaveSystem {
       };
     }
 
+    if (version < 7 || !isObject(migrated.playerLevelState)) {
+      const player = isObject(migrated.player) ? migrated.player : {};
+      migrated.playerLevelState = {
+        level: typeof player.level === 'number' ? Math.max(1, Math.floor(player.level)) : 1,
+        currentXp: typeof player.experience === 'number' ? Math.max(0, Math.floor(player.experience)) : 0,
+        xpToNextLevel: typeof player.xpToNextLevel === 'number' ? Math.max(1, Math.floor(player.xpToNextLevel)) : 25,
+        pendingLevelUps: 0,
+        chosenUpgrades: {},
+        rerollCharges: 0
+      };
+    }
+
+    if (version < 8) {
+      if (!isObject(migrated.levelUpScreenState)) {
+        migrated.levelUpScreenState = {
+          pendingLevelUpChoices: [],
+          offeredUpgradeIds: [],
+          chosenUpgradeIds: [],
+          rerollCharges: 0,
+          levelUpSelectionSeed: '',
+          levelUpScreenResolved: true
+        };
+      }
+      if (isObject(migrated.activeEncounterPack)) {
+        const pack = migrated.activeEncounterPack as StorageObject;
+        const enemies = Array.isArray(pack.enemies) ? pack.enemies : [];
+        const currentEnemyIndex = typeof pack.currentEnemyIndex === 'number' ? Math.floor(pack.currentEnemyIndex) : 0;
+        pack.currentEnemyIndex = Math.max(0, Math.min(Math.max(0, enemies.length - 1), currentEnemyIndex));
+        if (!Array.isArray(pack.defeatedEnemyIndexes)) {
+          pack.defeatedEnemyIndexes = [];
+        }
+        if (!Array.isArray(pack.appliedEntryEffectEnemyIndexes)) {
+          pack.appliedEntryEffectEnemyIndexes = [];
+        }
+        if (!Array.isArray(pack.entryGiftClaimedEnemyIndexes)) {
+          pack.entryGiftClaimedEnemyIndexes = [];
+        }
+        if (typeof pack.remainingEnemyCount !== 'number') {
+          const defeated = Array.isArray(pack.defeatedEnemyIndexes) ? pack.defeatedEnemyIndexes.length : 0;
+          pack.remainingEnemyCount = Math.max(0, enemies.length - defeated);
+        }
+        if (typeof pack.encounterPackCompleted !== 'boolean') {
+          pack.encounterPackCompleted = false;
+        }
+        if (typeof pack.nodeRewardsGranted !== 'boolean') {
+          pack.nodeRewardsGranted = false;
+        }
+        if (typeof pack.routeFallbackTriggeredForEncounterPack !== 'boolean') {
+          pack.routeFallbackTriggeredForEncounterPack = false;
+        }
+      }
+    }
+
     return migrated;
   }
 

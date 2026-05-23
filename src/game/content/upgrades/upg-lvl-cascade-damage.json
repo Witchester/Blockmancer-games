@@ -1,0 +1,14 @@
+{
+  "id": "upg_lvl_cascade_damage",
+  "name": "Cascade Cheer",
+  "description": "+6% cascade damage per stack (cap +30%).",
+  "category": "level_up",
+  "rarity": "rare",
+  "upgradeType": "general",
+  "cardType": "rare",
+  "stackLimit": 5,
+  "effectId": "lvl_cascade_damage",
+  "levelUpOnly": true,
+  "iconKey": "upg_lvl_cascade_damage",
+  "enabled": true
+}

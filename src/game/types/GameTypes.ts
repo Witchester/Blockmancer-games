@@ -1,5 +1,5 @@
 export type RoomType = 'start' | 'fight' | 'event' | 'shop' | 'elite' | 'rest' | 'treasure' | 'boss' | 'mini_boss' | 'royal_guard';
-export type EncounterNodeType = 'normal' | 'hard_normal' | 'elite' | 'boss' | 'event' | 'shop' | 'rest' | 'treasure' | 'mini_boss' | 'royal_guard';
+export type EncounterNodeType = 'normal' | 'hard_normal' | 'elite' | 'boss' | 'event' | 'event_battle' | 'shop' | 'rest' | 'treasure' | 'mini_boss' | 'royal_guard';
 export type TetrominoType = 'I' | 'O' | 'T' | 'S' | 'Z' | 'J' | 'L';
 export type SpellId = string;
 export type RunStatus = 'menu' | 'map' | 'battle' | 'reward' | 'game-over' | 'victory';
@@ -113,6 +113,15 @@ export type NodeEncounterPack = {
   maxActiveHazards: number;
   rewardsGrantedOnlyOnNodeClear: true;
   xpGrantedOnlyOnNodeClear: true;
+  defeatedEnemyIds: string[];
+  defeatedEnemyIndexes: number[];
+  remainingEnemyCount: number;
+  appliedEntryEffectEnemyIndexes: number[];
+  entryGiftClaimedEnemyIndexes: number[];
+  encounterPackCompleted: boolean;
+  nodeRewardsGranted: boolean;
+  routeFallbackTriggeredForEncounterPack: boolean;
+  entryEffectAppliedToIndex?: number;
   breatherRewardPolicy?: BreatherRewardPolicy;
   generatedFromPoolId?: string;
   seed?: string | number;
@@ -145,6 +154,72 @@ export type EnemyEntryEffectContent = {
   tags?: string[];
 };
 
+export type EncounterPackCompletionResult = {
+  encounterPackId: string;
+  nodeId: string;
+  stageId: string;
+  nodeType: string;
+  defeatedEnemyIds: string[];
+  totalEnemiesDefeated: number;
+  isFullNodeClear: boolean;
+};
+
+export type NodeResultXpBreakdown = {
+  enemyXp: number;
+  eliteBonusXp: number;
+  bossBonusXp: number;
+  objectiveBonusXp: number;
+  cascadeBonusXp: number;
+  noDamageBonusXp: number;
+  routeBonusXp: number;
+};
+
+export type NodeResultSummary = {
+  resultId: string;
+  nodeId: string;
+  stageId: string;
+  nodeType: string;
+  encounterPackId?: string;
+  enemiesDefeated: number;
+  defeatedEnemyIds: string[];
+  xpGainedTotal: number;
+  xpBreakdown: NodeResultXpBreakdown;
+  currentXpBeforeGain?: number;
+  currentXpAfterGain?: number;
+  xpToNextLevel?: number;
+  xpRemainingToNextLevel?: number;
+  leveledUp: boolean;
+  pendingLevelUps: number;
+  rewardsPending: boolean;
+};
+
+export type NodeResultClaimState = {
+  nodeId: string;
+  encounterPackId: string;
+  resultId: string;
+  resultShown: boolean;
+  xpApplied: boolean;
+  postNodeHealingApplied?: boolean;
+};
+
+export type PlayerLevelState = {
+  level: number;
+  currentXp: number;
+  xpToNextLevel: number;
+  pendingLevelUps: number;
+  chosenUpgrades: Record<string, number>;
+  rerollCharges: number;
+};
+
+export type LevelUpScreenState = {
+  pendingLevelUpChoices: string[];
+  offeredUpgradeIds: string[];
+  chosenUpgradeIds: string[];
+  rerollCharges: number;
+  levelUpSelectionSeed: string;
+  levelUpScreenResolved: boolean;
+};
+
 export interface PlayerState {
   maxHp: number;
   hp: number;
@@ -170,6 +245,9 @@ export interface PlayerState {
   /** @deprecated migrated to named oopsies */
   curses: number;
   inventoryCapacity: number;
+  level: number;
+  experience: number;
+  xpToNextLevel: number;
 }
 
 export interface HeroState {
@@ -681,6 +759,10 @@ export interface RunState {
   reactiveState: ReactiveBattleState;
   activeOopsies: string[];
   currentBossRule?: string;
+  pendingNodeResult?: NodeResultSummary | null;
+  nodeResultClaims: NodeResultClaimState[];
+  playerLevelState: PlayerLevelState;
+  levelUpScreenState: LevelUpScreenState;
   boardSizeModifier?: BoardSizeModifier;
   routeProgress: RouteProgressState;
   festivalHubVisited: boolean;

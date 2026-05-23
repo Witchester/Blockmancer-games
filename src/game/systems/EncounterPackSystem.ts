@@ -1,66 +1,40 @@
 import type {
   NodeEncounterPack,
+  NodeResultSummary,
+  NodeResultClaimState,
   EncounterEnemyEntry,
   EnemyInstance,
   RoomType,
-  RunState
+  RunState,
+  MonsterRole,
+  MonsterRank,
+  EncounterNodeType,
+  BiomeMonsterPool,
+  WeightedMonsterRule,
+  EncounterPackScalingRule,
+  EnemyEntryEffectContent as EnemyEntryEffect,
+  EncounterPackCompletionResult
 } from '../types/GameTypes';
 import { contentRegistry } from './ContentRegistry';
 import { DifficultySystem } from './DifficultySystem';
 import { StageSystem } from './StageSystem';
+import { LevelUpSystem } from './LevelUpSystem';
 import { choice, seededRandom } from '../utils/random';
 
-type BiomeMonsterPool = {
-  id: string;
+export type GenerateEncounterPackInput = {
   stageId: string;
-  biomeId: string;
-  displayName: string;
-  maxDuplicatePerNode: number;
-  recentMonsterMemoryCount: number;
-  fallbackMonsterId: string;
-  bannedPairTags: string[];
-  monsterRules: Array<{
-    monsterId: string;
-    weight: number;
-    roles: string[];
-    rank: string;
-    tags: string[];
-    allowedNodeTypes?: string[];
-    bannedWithTags?: string[];
-  }>;
-  enabled?: boolean;
-};
-
-type EncounterPackScalingRule = {
-  id: string;
   stageNumber: number;
-  stageId: string;
-  nodeType: string;
-  minEnemies: number;
-  maxEnemies: number;
-  earlyNodeEnemyCap?: number;
-  lateNodeEnemyCap?: number;
-  totalHpBudgetMultiplierRange: [number, number];
-  totalAttackBudgetMultiplierRange: [number, number];
-  entryGracePieces: number;
-  maxActiveHazards: number;
-  enabled?: boolean;
-};
-
-type EnemyEntryEffect = {
-  id: string;
-  name: string;
-  description: string;
-  pressureEffectId?: string;
-  playerGiftEffectId?: string;
-  entryGracePieces: number;
-  warningText: string;
-  eventLogText: string;
-  tags: string[];
+  biomeId?: string;
+  nodeId: string;
+  nodeType: EncounterNodeType;
+  nodeDepthPercent: number;
+  seed?: string | number;
+  recentMonsterIds?: string[];
 };
 
 export class EncounterPackSystem {
   private readonly recentMonsterMemory: Map<string, string[]> = new Map();
+  private readonly levelUpSystem = new LevelUpSystem();
 
   constructor(
     private readonly difficultySystem: DifficultySystem = new DifficultySystem(),
@@ -68,37 +42,23 @@ export class EncounterPackSystem {
   ) {}
 
   /**
-   * Main API used by current runtime code.
+   * Main API for encounter pack generation.
    */
-  generatePack(
-    stageId: string,
-    nodeType: RoomType,
-    nodeId: string,
-    isEarlyNode: boolean,
-    recentMonsterIds: string[] = [],
-    seed?: number
-  ): NodeEncounterPack | null {
-    const activeSeed = seed ?? Date.now();
-    const stageIndex = this.stageSystem.getStageIndex(stageId);
-
-    if (stageIndex === -1) {
-      console.warn(`[EncounterPackSystem] Unknown stageId: ${stageId}`);
-      return null;
-    }
+  generateEncounterPack(input: GenerateEncounterPackInput): NodeEncounterPack {
+    const { stageId, nodeId, nodeType, nodeDepthPercent, recentMonsterIds = [] } = input;
+    const activeSeed = typeof input.seed === 'number' ? input.seed : this.hashSeed(input.seed ?? nodeId);
 
     const scalingRules = contentRegistry
-      .listEnabled<EncounterPackScalingRule>('difficultyScaling')
-      .filter(rule => rule.id.startsWith('scale_encounter_'));
+      .listEnabled<EncounterPackScalingRule>('encounterPackScaling');
 
     const matchingRule = scalingRules.find(
       rule =>
         rule.stageId === stageId &&
-        rule.nodeType === nodeType &&
-        rule.enabled !== false
+        rule.nodeType === nodeType
     );
 
     if (!matchingRule) {
-      console.warn(`[EncounterPackSystem] No scaling rule for ${stageId}/${nodeType}`);
+      console.warn(`[EncounterPackSystem] No scaling rule for ${stageId}/${nodeType}. Using fallback.`);
       return this.createFallbackPack(stageId, nodeType, nodeId);
     }
 
@@ -109,24 +69,26 @@ export class EncounterPackSystem {
         matchingRule.maxEnemies + 1
       )
     );
-
-    if (isEarlyNode && matchingRule.earlyNodeEnemyCap) {
-      enemyCount = Math.min(enemyCount, matchingRule.earlyNodeEnemyCap);
-    } else if (!isEarlyNode && matchingRule.lateNodeEnemyCap) {
-      enemyCount = Math.min(enemyCount, matchingRule.lateNodeEnemyCap);
+    if (typeof matchingRule.earlyNodeEnemyCap === 'number' && nodeDepthPercent <= 40) {
+      enemyCount = Math.min(enemyCount, Math.max(1, Math.floor(matchingRule.earlyNodeEnemyCap)));
+    }
+    if (typeof matchingRule.lateNodeEnemyCap === 'number' && nodeDepthPercent >= 60) {
+      enemyCount = Math.min(enemyCount, Math.max(1, Math.floor(matchingRule.lateNodeEnemyCap)));
     }
 
-    if (nodeType === 'boss' || nodeType === 'elite') {
+    // Release 1 Clamp: Max 3 enemies for generated packs
+    enemyCount = Math.max(1, Math.min(enemyCount, matchingRule.maxEnemies, 3));
+
+    // Bosses are always 1 in Release 1 unless scripted helpers added
+    if (nodeType === 'boss') {
       enemyCount = 1;
     }
 
-    enemyCount = Math.max(1, Math.min(enemyCount, matchingRule.maxEnemies));
-
-    const biomeId = `biome_${stageId.replace('stage_', '')}`;
+    const biomeId = input.biomeId ?? `biome_${stageId.replace('stage_', '')}`;
     const pool = this.getBiomePool(stageId, biomeId);
 
     if (!pool) {
-      console.warn(`[EncounterPackSystem] No biome pool for ${stageId}`);
+      console.warn(`[EncounterPackSystem] No biome pool for ${stageId}. Using fallback.`);
       return this.createFallbackPack(stageId, nodeType, nodeId);
     }
 
@@ -136,14 +98,17 @@ export class EncounterPackSystem {
         : this.recentMonsterMemory.get(nodeId) ?? [];
 
     const enemies: EncounterEnemyEntry[] = [];
-    const usedMonsterIds = new Set<string>();
+    const usedMonsterIds: string[] = [];
+    const activeTags: string[] = [];
 
     for (let i = 0; i < enemyCount; i += 1) {
       const enemy = this.generateEnemyEntry(
         pool,
         nodeType,
         matchingRule,
+        nodeDepthPercent,
         usedMonsterIds,
+        activeTags,
         effectiveRecentMonsterIds,
         i === 0,
         activeSeed + i * 7919
@@ -151,15 +116,17 @@ export class EncounterPackSystem {
 
       if (enemy) {
         enemies.push(enemy);
-        usedMonsterIds.add(enemy.enemyId);
+        usedMonsterIds.push(enemy.enemyId);
+        if (enemy.tags) activeTags.push(...enemy.tags);
       }
     }
 
     if (enemies.length === 0) {
-      console.error('[EncounterPackSystem] Failed to generate any enemies');
+      console.error('[EncounterPackSystem] Failed to generate any enemies. Using fallback.');
       return this.createFallbackPack(stageId, nodeType, nodeId);
     }
 
+    // Budget distribution based on enemy count
     const hpRange = matchingRule.totalHpBudgetMultiplierRange;
     const atkRange = matchingRule.totalAttackBudgetMultiplierRange;
 
@@ -172,12 +139,16 @@ export class EncounterPackSystem {
     const totalAttackBudgetMultiplier =
       atkRange[0] + atkRand * (atkRange[1] - atkRange[0]);
 
-    const perEnemyHpBase = totalHpBudgetMultiplier / enemies.length;
-    const perEnemyAttackBase = totalAttackBudgetMultiplier / enemies.length;
-
+    // Distribute budget
     enemies.forEach((enemy, index) => {
-      enemy.hpMultiplier = perEnemyHpBase * (1 + index * 0.1);
-      enemy.attackMultiplier = perEnemyAttackBase * (1 + index * 0.05);
+      // Simple distribution: equal base, slight ramp for later enemies
+      const baseHp = totalHpBudgetMultiplier / enemies.length;
+      const baseAtk = totalAttackBudgetMultiplier / enemies.length;
+      
+      // First enemy slightly weaker if multiple? Or just equal?
+      // Design recommendation: 2 enemies -> ~1.5x total. 3 enemies -> ~2.1x total.
+      enemy.hpMultiplier = baseHp;
+      enemy.attackMultiplier = baseAtk;
       enemy.entryGracePieces = matchingRule.entryGracePieces;
     });
 
@@ -192,7 +163,7 @@ export class EncounterPackSystem {
       nodeId,
       stageId,
       biomeId: pool.biomeId,
-      nodeType: nodeType as any,
+      nodeType,
       enemies,
       currentEnemyIndex: 0,
       totalHpBudgetMultiplier,
@@ -200,8 +171,16 @@ export class EncounterPackSystem {
       maxActiveHazards: matchingRule.maxActiveHazards,
       rewardsGrantedOnlyOnNodeClear: true,
       xpGrantedOnlyOnNodeClear: true,
+      defeatedEnemyIds: [],
+      defeatedEnemyIndexes: [],
+      remainingEnemyCount: enemies.length,
+      appliedEntryEffectEnemyIndexes: [],
+      entryGiftClaimedEnemyIndexes: [],
+      encounterPackCompleted: false,
+      nodeRewardsGranted: false,
+      routeFallbackTriggeredForEncounterPack: false,
       breatherRewardPolicy:
-        enemyCount > 1
+        enemies.length > 1
           ? {
               enabled: true,
               maxHealPercentPerNode: 5,
@@ -214,186 +193,121 @@ export class EncounterPackSystem {
   }
 
   /**
-   * Compatibility API for prompts/older integration code that call generateEncounterPack.
+   * Compatibility method for existing calls.
    */
-  generateEncounterPack(
-    state: RunState,
+  generatePack(
+    stageId: string,
+    nodeType: RoomType,
     nodeId: string,
-    nodeType: string
+    isEarlyNode: boolean,
+    recentMonsterIds: string[] = [],
+    seed?: number
   ): NodeEncounterPack | null {
-    const stageId = this.getStageIdFromRunState(state);
-    const isEarlyNode = this.isEarlyNodeFromRunState(state);
-    return this.generatePack(stageId, nodeType as RoomType, nodeId, isEarlyNode);
-  }
-
-  private getStageIdFromRunState(state: RunState): string {
-    const looseState = state as any;
-
-    if (typeof looseState.stageId === 'string') {
-      return looseState.stageId;
-    }
-
-    if (typeof looseState.currentStageId === 'string') {
-      return looseState.currentStageId;
-    }
-
-    const stageNumber = Number(looseState.stage ?? looseState.stageNumber ?? 1);
-
-    const stageIdByNumber: Record<number, string> = {
-      1: 'stage_sprinkle_sewers',
-      2: 'stage_goblin_workshop',
-      3: 'stage_frosty_pantry',
-      4: 'stage_pillow_castle',
-      5: 'stage_starfall_arcade',
-      6: 'stage_bloxleys_block_palace'
+    const nodeTypeMap: Record<string, EncounterNodeType> = {
+      fight: 'normal',
+      elite: 'elite',
+      boss: 'boss',
+      event: 'event_battle',
+      royal_guard: 'royal_guard'
     };
 
-    return stageIdByNumber[stageNumber] ?? 'stage_sprinkle_sewers';
+    return this.generateEncounterPack({
+      stageId,
+      stageNumber: this.stageSystem.getStageIndex(stageId),
+      nodeId,
+      nodeType: nodeTypeMap[nodeType] ?? 'normal',
+      nodeDepthPercent: isEarlyNode ? 20 : 70,
+      seed,
+      recentMonsterIds
+    });
   }
 
-  private isEarlyNodeFromRunState(state: RunState): boolean {
-    const looseState = state as any;
-    const nodeIndex =
-      looseState.currentNodeIndex ??
-      looseState.mapProgress?.currentNodeIndex ??
-      looseState.currentMapNodeIndex;
-
-    if (typeof nodeIndex !== 'number') {
-      return true;
+  private hashSeed(seed: string | number): number {
+    if (typeof seed === 'number') return seed;
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) {
+      const char = seed.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash |= 0;
     }
-
-    return nodeIndex < 3;
+    return Math.abs(hash);
   }
 
-  private getBiomePool(stageId: string, biomeId: string): BiomeMonsterPool | null {
-    const allDifficulty = contentRegistry.listEnabled<any>('difficultyScaling');
-    const pool = allDifficulty.find(
-      entry => entry.stageId === stageId && entry.biomeId === biomeId
-    );
-
-    if (pool && pool.monsterRules) {
-      return pool as BiomeMonsterPool;
-    }
-
-    if (stageId === 'stage_sprinkle_sewers') {
-      return {
-        id: 'pool_sprinkle_sewers',
-        stageId: 'stage_sprinkle_sewers',
-        biomeId: 'biome_sprinkle_sewers',
-        displayName: 'Sprinkle Sewers Monster Pool',
-        maxDuplicatePerNode: 1,
-        recentMonsterMemoryCount: 2,
-        fallbackMonsterId: 'mon_cupcake_slime',
-        bannedPairTags: ['heavy_hazard', 'double_sticky'],
-        monsterRules: [
-          {
-            monsterId: 'mon_cupcake_slime',
-            weight: 35,
-            roles: ['starter'],
-            rank: 'regular',
-            tags: ['stage_1']
-          },
-          {
-            monsterId: 'mon_sugar_bat',
-            weight: 20,
-            roles: ['pressure'],
-            rank: 'regular',
-            tags: ['stage_1']
-          },
-          {
-            monsterId: 'mon_crumb_goblin',
-            weight: 20,
-            roles: ['pressure'],
-            rank: 'regular',
-            tags: ['stage_1']
-          },
-          {
-            monsterId: 'mon_jelly_rat',
-            weight: 15,
-            roles: ['finisher'],
-            rank: 'regular',
-            tags: ['stage_1']
-          },
-          {
-            monsterId: 'mon_sprinkle_snail',
-            weight: 10,
-            roles: ['support'],
-            rank: 'regular',
-            tags: ['stage_1']
-          },
-          {
-            monsterId: 'mon_frosting_blob',
-            weight: 10,
-            roles: ['support'],
-            rank: 'regular',
-            tags: ['stage_1']
-          }
-        ],
-        enabled: true
-      };
-    }
-
-    return null;
+  private getBiomePool(stageId: string, _biomeId: string): BiomeMonsterPool | null {
+    const pools = contentRegistry.listEnabled<BiomeMonsterPool>('biomeMonsterPool');
+    return pools.find(p => p.stageId === stageId || p.id === `pool_${stageId.replace('stage_', '')}`) || null;
   }
 
   private generateEnemyEntry(
     pool: BiomeMonsterPool,
-    nodeType: RoomType,
+    nodeType: EncounterNodeType,
     scalingRule: EncounterPackScalingRule,
-    usedMonsterIds: Set<string>,
+    nodeDepthPercent: number,
+    usedMonsterIds: string[],
+    activeTags: string[],
     recentMonsterIds: string[],
     isFirstEnemy: boolean,
     seed: number
   ): EncounterEnemyEntry | null {
-    const allowedRoles = this.getAllowedRolesForNodeType(nodeType);
+    const allowedRoles = this.getAllowedRolesForNodeType(nodeType, isFirstEnemy);
 
     let candidates = pool.monsterRules.filter(rule => {
-      if (usedMonsterIds.has(rule.monsterId)) {
-        return false;
+      // Respect maxDuplicatePerNode
+      const count = usedMonsterIds.filter(id => id === rule.monsterId).length;
+      if (count >= pool.maxDuplicatePerNode) return false;
+
+      // Respect nodeDepthPercent
+      if (rule.minNodeDepthPercent && nodeDepthPercent < rule.minNodeDepthPercent) return false;
+      if (rule.maxNodeDepthPercent && nodeDepthPercent > rule.maxNodeDepthPercent) return false;
+
+      // Respect allowedNodeTypes
+      if (rule.allowedNodeTypes && !rule.allowedNodeTypes.includes(nodeType)) return false;
+
+      // Respect roles
+      if (rule.roles.length > 0 && !rule.roles.some(role => allowedRoles.includes(role))) return false;
+
+      // Rank matching
+      if (nodeType === 'elite' && rule.rank !== 'elite' && rule.rank !== 'elite_miniboss') return false;
+      if (nodeType === 'royal_guard' && rule.rank !== 'elite_miniboss') return false;
+
+      // Avoid banned pair tags
+      if (pool.bannedPairTags && rule.tags) {
+        if (rule.tags.some(tag => activeTags.includes(tag) && pool.bannedPairTags?.includes(tag))) return false;
       }
 
-      if (
-        rule.allowedNodeTypes &&
-        !rule.allowedNodeTypes.includes(nodeType as string)
-      ) {
-        return false;
-      }
-
-      if (
-        rule.roles.length > 0 &&
-        !rule.roles.some(role => allowedRoles.includes(role))
-      ) {
-        return false;
-      }
-
+      // Filter recent (will fallback if empty)
       return !recentMonsterIds.includes(rule.monsterId);
     });
 
+    // Fallback if recent filter killed all candidates
     if (candidates.length === 0) {
-      candidates = pool.monsterRules.filter(rule => !usedMonsterIds.has(rule.monsterId));
+      candidates = pool.monsterRules.filter(rule => {
+        const count = usedMonsterIds.filter(id => id === rule.monsterId).length;
+        if (count >= pool.maxDuplicatePerNode) return false;
+        if (rule.minNodeDepthPercent && nodeDepthPercent < rule.minNodeDepthPercent) return false;
+        if (rule.maxNodeDepthPercent && nodeDepthPercent > rule.maxNodeDepthPercent) return false;
+        if (rule.allowedNodeTypes && !rule.allowedNodeTypes.includes(nodeType)) return false;
+        if (rule.roles.length > 0 && !rule.roles.some(role => allowedRoles.includes(role))) return false;
+        return true;
+      });
     }
 
     if (candidates.length === 0) {
-      const fallback = contentRegistry.getMonster(pool.fallbackMonsterId);
-      if (!fallback) {
-        return null;
-      }
-
       return {
         enemyId: pool.fallbackMonsterId,
-        role: 'starter' as any,
-        rank: 'regular' as any,
+        role: 'starter',
+        rank: 'regular',
         hpMultiplier: 1.0,
         attackMultiplier: 1.0,
         armorMultiplier: 1.0,
         entryGracePieces: scalingRule.entryGracePieces,
-        entryEffectId: isFirstEnemy ? undefined : 'entry_junk_pressure',
+      entryEffectId: 'entry_none_safe',
         tags: ['fallback']
       };
     }
 
     const totalWeight = candidates.reduce((sum, candidate) => {
-      const recentPenalty = recentMonsterIds.includes(candidate.monsterId) ? 0.5 : 1;
+      const recentPenalty = recentMonsterIds.includes(candidate.monsterId) ? 0.2 : 1;
       return sum + candidate.weight * recentPenalty;
     }, 0);
 
@@ -401,7 +315,7 @@ export class EncounterPackSystem {
     let selected = candidates[0];
 
     for (const candidate of candidates) {
-      const recentPenalty = recentMonsterIds.includes(candidate.monsterId) ? 0.5 : 1;
+      const recentPenalty = recentMonsterIds.includes(candidate.monsterId) ? 0.2 : 1;
       randomWeight -= candidate.weight * recentPenalty;
 
       if (randomWeight <= 0) {
@@ -410,20 +324,14 @@ export class EncounterPackSystem {
       }
     }
 
-    const monster = contentRegistry.getMonster(selected.monsterId);
-    if (!monster) {
-      console.warn(`[EncounterPackSystem] Monster not found: ${selected.monsterId}`);
-      return null;
-    }
-
     const entryEffectId = isFirstEnemy
-      ? undefined
-      : this.selectEntryEffect(nodeType);
+      ? 'entry_none_safe'
+      : this.selectEntryEffect(nodeType, scalingRule.stageNumber);
 
     return {
       enemyId: selected.monsterId,
-      role: (selected.roles[0] || 'starter') as any,
-      rank: (selected.rank || 'regular') as any,
+      role: selected.roles[0] || 'starter',
+      rank: selected.rank || 'regular',
       hpMultiplier: 1.0,
       attackMultiplier: 1.0,
       armorMultiplier: 1.0,
@@ -433,39 +341,54 @@ export class EncounterPackSystem {
     };
   }
 
-  private getAllowedRolesForNodeType(nodeType: RoomType): string[] {
+  private getAllowedRolesForNodeType(nodeType: EncounterNodeType, isFirstEnemy: boolean): MonsterRole[] {
+    if (isFirstEnemy) {
+      return ['starter', 'support'];
+    }
+
     switch (nodeType) {
       case 'normal':
-        return ['starter', 'pressure', 'support', 'finisher'];
+      case 'event_battle':
+        return ['pressure', 'support', 'finisher'];
       case 'elite':
-        return ['pressure', 'support', 'finisher', 'elite'];
+        return ['pressure', 'support', 'finisher'];
+      case 'royal_guard':
+        return ['pressure', 'finisher'];
       case 'boss':
-        return ['finisher', 'boss'];
+        return ['finisher'];
       default:
         return ['starter', 'pressure', 'support', 'finisher'];
     }
   }
 
-  private selectEntryEffect(nodeType: RoomType): string {
+  private selectEntryEffect(nodeType: EncounterNodeType, stageNumber: number): string {
     const effects = contentRegistry
-      .listEnabled<EnemyEntryEffect>('difficultyScaling')
-      .filter(effect => effect.id.startsWith('entry_') && effect.id !== 'entry_none');
+      .listEnabled<EnemyEntryEffect>('enemyEntryEffect')
+      .filter(effect => effect.id !== 'entry_none_safe');
 
     if (effects.length === 0) {
       return 'entry_none_safe';
     }
 
-    const safeEffects = effects.filter(
-      effect => !effect.tags.includes('boss') || nodeType === 'boss'
+    let filtered = effects.filter(
+      effect => !effect.tags?.includes('boss') || nodeType === 'boss'
     );
+    if (nodeType === 'boss') {
+      filtered = filtered.filter((effect) => effect.tags?.includes('boss') || effect.id === 'entry_royal_warning_gift');
+    } else if (stageNumber <= 2) {
+      filtered = filtered.filter((effect) => !effect.tags?.includes('boss'));
+    }
+    if (stageNumber === 1) {
+      filtered = filtered.filter((effect) => ['entry_none_safe', 'entry_sprinkle_gift', 'entry_shield_trade'].includes(effect.id));
+    }
 
-    const selected = choice(safeEffects.length > 0 ? safeEffects : effects);
+    const selected = choice(filtered.length > 0 ? filtered : effects);
     return selected.id;
   }
 
   private createFallbackPack(
     stageId: string,
-    nodeType: RoomType,
+    nodeType: EncounterNodeType,
     nodeId: string
   ): NodeEncounterPack {
     return {
@@ -473,17 +396,17 @@ export class EncounterPackSystem {
       nodeId,
       stageId,
       biomeId: 'biome_sprinkle_sewers',
-      nodeType: nodeType as any,
+      nodeType,
       enemies: [
         {
           enemyId: 'mon_cupcake_slime',
-          role: 'starter' as any,
-          rank: 'regular' as any,
+          role: 'starter',
+          rank: 'regular',
           hpMultiplier: 1.0,
           attackMultiplier: 1.0,
           armorMultiplier: 1.0,
           entryGracePieces: 3,
-          entryEffectId: nodeType === 'boss' ? undefined : 'entry_junk_pressure',
+          entryEffectId: 'entry_none_safe',
           tags: ['fallback']
         }
       ],
@@ -493,68 +416,26 @@ export class EncounterPackSystem {
       maxActiveHazards: 1,
       rewardsGrantedOnlyOnNodeClear: true,
       xpGrantedOnlyOnNodeClear: true,
-      generatedFromPoolId: 'pool_sprinkle_sewers',
+      defeatedEnemyIds: [],
+      defeatedEnemyIndexes: [],
+      remainingEnemyCount: 1,
+      appliedEntryEffectEnemyIndexes: [],
+      entryGiftClaimedEnemyIndexes: [],
+      encounterPackCompleted: false,
+      nodeRewardsGranted: false,
+      routeFallbackTriggeredForEncounterPack: false,
       seed: Date.now()
     };
   }
 
-  hasRemainingEncounterEnemies(pack: NodeEncounterPack | null): boolean {
-    if (!pack) {
-      return false;
-    }
-
-    return pack.currentEnemyIndex < pack.enemies.length - 1;
-  }
-
-  getCurrentEncounterEnemy(pack: NodeEncounterPack | null): EncounterEnemyEntry | null {
-    if (!pack || pack.currentEnemyIndex >= pack.enemies.length) {
-      return null;
-    }
-
-    return pack.enemies[pack.currentEnemyIndex];
-  }
-
-  getCurrentEnemy(pack: NodeEncounterPack): EncounterEnemyEntry | null {
-    return this.getCurrentEncounterEnemy(pack);
-  }
-
-  getNextEncounterEnemy(pack: NodeEncounterPack | null): EncounterEnemyEntry | null {
-    if (!pack || pack.currentEnemyIndex >= pack.enemies.length - 1) {
-      return null;
-    }
-
-    return pack.enemies[pack.currentEnemyIndex + 1];
-  }
-
-  advanceEncounterEnemy(pack: NodeEncounterPack): NodeEncounterPack {
-    if (this.hasRemainingEncounterEnemies(pack)) {
-      pack.currentEnemyIndex += 1;
-    }
-
-    return pack;
-  }
-
-  advanceToNextEnemy(pack: NodeEncounterPack): boolean {
-    this.advanceEncounterEnemy(pack);
-    return this.hasRemainingEncounterEnemies(pack) || !this.isPackCleared(pack);
-  }
-
-  isPackCleared(pack: NodeEncounterPack): boolean {
-    return pack.currentEnemyIndex >= pack.enemies.length - 1;
-  }
-
-  getRemainingEnemyCount(pack: NodeEncounterPack): number {
-    return Math.max(0, pack.enemies.length - pack.currentEnemyIndex - 1);
-  }
-
-  getTotalEnemyCount(pack: NodeEncounterPack): number {
-    return pack.enemies.length;
-  }
-
+  /**
+   * Spawns an enemy instance from an entry.
+   */
   spawnEncounterEnemy(
     entry: EncounterEnemyEntry,
     stageIndex: number,
-    baseGracePieces: number = 0
+    baseGracePieces: number = 0,
+    state?: RunState
   ): EnemyInstance | null {
     const monster = contentRegistry.getMonster(entry.enemyId);
 
@@ -581,18 +462,19 @@ export class EncounterPackSystem {
 
     const entryEffect = entry.entryEffectId
       ? contentRegistry.getById<EnemyEntryEffect>(
-          'difficultyScaling',
+          'enemyEntryEffect',
           entry.entryEffectId
         )
       : null;
 
     const effectGrace = entryEffect?.entryGracePieces || 0;
-    const totalGrace = baseGracePieces + effectGrace;
+    const entryGraceBonus = Math.min(3, Math.max(0, state?.playerLevelState?.chosenUpgrades?.['upg_lvl_entry_grace'] ?? 0));
+    const totalGrace = baseGracePieces + effectGrace + entryGraceBonus;
     const attackCounter = Math.max(1, baseAttackInterval + totalGrace);
 
     return {
       id: entry.enemyId,
-      name: monster.name,
+      name: (monster as any).name || 'Unknown Monster',
       maxHp,
       currentHp: maxHp,
       attack,
@@ -628,20 +510,18 @@ export class EncounterPackSystem {
     state: RunState,
     entry: EncounterEnemyEntry,
     logCallback: (message: string) => void
-  ): { pressureApplied: boolean; giftApplied: boolean; messages: string[] } {
+  ): { pressureEffectId?: string; playerGiftEffectId?: string; messages: string[] } {
     const messages: string[] = [];
-    let pressureApplied = false;
-    let giftApplied = false;
 
-    if (!entry.entryEffectId || entry.entryEffectId === 'entry_none') {
+    if (!entry.entryEffectId || entry.entryEffectId === 'entry_none_safe') {
       const message = 'A new festival troublemaker hops in!';
       messages.push(message);
       logCallback(message);
-      return { pressureApplied, giftApplied, messages };
+      return { messages };
     }
 
     const effect = contentRegistry.getById<EnemyEntryEffect>(
-      'difficultyScaling',
+      'enemyEntryEffect',
       entry.entryEffectId
     );
 
@@ -649,7 +529,7 @@ export class EncounterPackSystem {
       const message = 'Another guest arrives!';
       messages.push(message);
       logCallback(message);
-      return { pressureApplied, giftApplied, messages };
+      return { messages };
     }
 
     if (effect.warningText) {
@@ -662,56 +542,178 @@ export class EncounterPackSystem {
       logCallback(effect.eventLogText);
     }
 
-    if (effect.pressureEffectId) {
-      pressureApplied = true;
-      messages.push(`Pressure: ${effect.pressureEffectId} is queued.`);
-    }
-
-    if (effect.playerGiftEffectId) {
-      const looseState = state as any;
-
-      if (
-        typeof looseState.mana === 'number' &&
-        typeof looseState.maxMana === 'number'
-      ) {
-        looseState.mana = Math.min(looseState.mana + 2, looseState.maxMana);
-        giftApplied = true;
-
-        const giftMessage = 'You gain +2 mana from the festive chaos!';
-        messages.push(giftMessage);
-        logCallback(giftMessage);
-      }
-    }
-
-    return { pressureApplied, giftApplied, messages };
+    return {
+      pressureEffectId: effect.pressureEffectId,
+      playerGiftEffectId: effect.playerGiftEffectId,
+      messages
+    };
   }
 
-  completeEncounterPack(pack: NodeEncounterPack): {
-    encounterPackId: string;
-    nodeId: string;
-    stageId: string;
-    nodeType: string;
-    defeatedEnemyIds: string[];
-    totalEnemiesDefeated: number;
-    isFullNodeClear: boolean;
-  } {
-    const defeatedEnemyIds = pack.enemies
-      .slice(0, pack.currentEnemyIndex + 1)
-      .map(enemy => enemy.enemyId);
+  hasRemainingEncounterEnemies(pack: NodeEncounterPack | null): boolean {
+    if (!pack) return false;
+    return pack.currentEnemyIndex < pack.enemies.length - 1;
+  }
 
+  getCurrentEncounterEnemy(pack: NodeEncounterPack | null): EncounterEnemyEntry | null {
+    if (!pack) return null;
+    return pack.enemies[pack.currentEnemyIndex];
+  }
+
+  getNextEncounterEnemy(pack: NodeEncounterPack | null): EncounterEnemyEntry | null {
+    if (!this.hasRemainingEncounterEnemies(pack)) return null;
+    return pack!.enemies[pack!.currentEnemyIndex + 1];
+  }
+
+  advanceEncounterEnemy(pack: NodeEncounterPack): NodeEncounterPack {
+    if (this.hasRemainingEncounterEnemies(pack)) {
+      pack.currentEnemyIndex += 1;
+    }
+    pack.remainingEnemyCount = Math.max(0, pack.enemies.length - pack.defeatedEnemyIndexes.length);
+    return pack;
+  }
+
+  completeEncounterPack(pack: NodeEncounterPack): EncounterPackCompletionResult {
+    pack.encounterPackCompleted = true;
+    pack.remainingEnemyCount = 0;
     return {
       encounterPackId: pack.encounterPackId,
       nodeId: pack.nodeId,
       stageId: pack.stageId,
       nodeType: pack.nodeType,
-      defeatedEnemyIds,
+      defeatedEnemyIds: pack.enemies.slice(0, pack.currentEnemyIndex + 1).map(e => e.enemyId),
       totalEnemiesDefeated: pack.currentEnemyIndex + 1,
       isFullNodeClear: pack.currentEnemyIndex >= pack.enemies.length - 1
     };
   }
 
+  buildNodeResultSummary(state: RunState, pack: NodeEncounterPack): NodeResultSummary {
+    const defeatedCount = pack.defeatedEnemyIds.length;
+    let enemyXp = 0;
+    let eliteBonusXp = 0;
+    let bossBonusXp = 0;
+
+    pack.enemies.forEach(enemy => {
+      if (pack.defeatedEnemyIds.includes(enemy.enemyId)) {
+        let base = 8;
+        if (enemy.role === 'pressure' || enemy.role === 'support') base = 10;
+        if (enemy.role === 'finisher') base = 12;
+
+        enemyXp += base;
+
+        if (enemy.rank === 'elite') eliteBonusXp += 20;
+        if (enemy.rank === 'elite_miniboss') eliteBonusXp += 25;
+        if (enemy.rank === 'boss') bossBonusXp += 50;
+      }
+    });
+
+    const objectiveCompleted = state.completedBattleObjectives.includes(state.activeBattleObjective ?? '');
+    const objectiveBonusXp = objectiveCompleted ? 5 : 0;
+    const cascadeBonusXp = state.runStats.maxCascade >= 3 ? 3 : 0;
+    const noDamageBonusXp = state.runStats.damageTaken <= 0 ? 5 : 0;
+    const routeBonusXp = 0;
+    const xpGainedTotal = enemyXp + eliteBonusXp + bossBonusXp + objectiveBonusXp + cascadeBonusXp + noDamageBonusXp + routeBonusXp;
+    const xpProjection = this.projectPlayerXp(state, xpGainedTotal);
+    const resultId = `${pack.stageId}:${pack.nodeId}:${pack.encounterPackId}`;
+
+    return {
+      resultId,
+      nodeId: pack.nodeId,
+      stageId: pack.stageId,
+      nodeType: pack.nodeType,
+      encounterPackId: pack.encounterPackId,
+      enemiesDefeated: defeatedCount,
+      defeatedEnemyIds: [...pack.defeatedEnemyIds],
+      xpGainedTotal,
+      xpBreakdown: {
+        enemyXp,
+        eliteBonusXp,
+        bossBonusXp,
+        objectiveBonusXp,
+        cascadeBonusXp,
+        noDamageBonusXp,
+        routeBonusXp
+      },
+      currentXpBeforeGain: state.playerLevelState.currentXp,
+      currentXpAfterGain: xpProjection.experience,
+      xpToNextLevel: xpProjection.xpToNextLevel,
+      xpRemainingToNextLevel: xpProjection.xpRemainingToNextLevel,
+      leveledUp: xpProjection.pendingLevelUps > 0,
+      pendingLevelUps: xpProjection.pendingLevelUps,
+      rewardsPending: true
+    };
+  }
+
+  getOrCreateNodeResultClaim(state: RunState, summary: NodeResultSummary): NodeResultClaimState {
+    const encounterPackId = summary.encounterPackId ?? 'unknown_pack';
+    const existing = state.nodeResultClaims.find(
+      (claim) => claim.resultId === summary.resultId || (claim.nodeId === summary.nodeId && claim.encounterPackId === encounterPackId)
+    );
+    if (existing) {
+      return existing;
+    }
+
+    const created: NodeResultClaimState = {
+      nodeId: summary.nodeId,
+      encounterPackId,
+      resultId: summary.resultId,
+      resultShown: false,
+      xpApplied: false,
+      postNodeHealingApplied: false
+    };
+    state.nodeResultClaims.push(created);
+    return created;
+  }
+
+  applyNodeResultXpIfNeeded(state: RunState, summary: NodeResultSummary): NodeResultClaimState {
+    const claim = this.getOrCreateNodeResultClaim(state, summary);
+    if (claim.xpApplied) {
+      return claim;
+    }
+
+    this.levelUpSystem.applyNodeXpOnce(state, summary);
+    claim.xpApplied = true;
+    return claim;
+  }
+
+  markNodeResultShown(state: RunState, summary: NodeResultSummary): NodeResultClaimState {
+    const claim = this.getOrCreateNodeResultClaim(state, summary);
+    claim.resultShown = true;
+    return claim;
+  }
+
   clearRuntimeState(): void {
     this.recentMonsterMemory.clear();
+  }
+
+  private projectPlayerXp(
+    state: RunState,
+    xpGain: number
+  ): {
+    level: number;
+    experience: number;
+    xpToNextLevel: number;
+    xpRemainingToNextLevel: number;
+    pendingLevelUps: number;
+  } {
+    let level = Math.max(1, state.playerLevelState.level);
+    let experience = Math.max(0, state.playerLevelState.currentXp + Math.max(0, xpGain));
+    let xpToNextLevel = Math.max(1, state.playerLevelState.xpToNextLevel);
+    let pendingLevelUps = Math.max(0, state.playerLevelState.pendingLevelUps);
+
+    while (experience >= xpToNextLevel) {
+      experience -= xpToNextLevel;
+      level += 1;
+      pendingLevelUps += 1;
+      xpToNextLevel = this.levelUpSystem.getXpToNextLevel(level);
+    }
+
+    return {
+      level,
+      experience,
+      xpToNextLevel,
+      xpRemainingToNextLevel: Math.max(0, xpToNextLevel - experience),
+      pendingLevelUps
+    };
   }
 
   private updateRecentMonsterMemory(

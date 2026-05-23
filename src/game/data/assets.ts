@@ -101,7 +101,11 @@ export const CORE_IMAGE_ASSETS: AssetManifestEntry[] = [
   { key: 'ui_hold_panel', type: 'ui', path: '/assets/ui/panels/ui_hold_panel.png', primaryPath: '/assets/ui/panels/ui_hold_panel.png', kind: 'ui' },
   { key: 'ui_next_queue_panel', type: 'ui', path: '/assets/ui/panels/ui_next_queue_panel.png', primaryPath: '/assets/ui/panels/ui_next_queue_panel.png', kind: 'ui' },
   { key: 'ui_stat_card', type: 'ui', path: '/assets/ui/panels/ui_stat_card.png', primaryPath: '/assets/ui/panels/ui_stat_card.png', kind: 'ui' },
-  { key: 'ui_inventory_compact', type: 'ui', path: '/assets/ui/panels/ui_inventory_compact.png', primaryPath: '/assets/ui/panels/ui_inventory_compact.png', kind: 'ui' }
+  { key: 'ui_inventory_compact', type: 'ui', path: '/assets/ui/panels/ui_inventory_compact.png', primaryPath: '/assets/ui/panels/ui_inventory_compact.png', kind: 'ui' },
+  { key: 'ico_mystery_monster', type: 'icon', path: '/assets/ui/icons/ico_mystery_monster.png', primaryPath: '/assets/ui/icons/ico_mystery_monster.png', kind: 'icon' },
+  { key: 'ui_panel_node_result', type: 'ui', path: '/assets/ui/panels/ui_panel_node_result.png', primaryPath: '/assets/ui/panels/ui_panel_node_result.png', kind: 'ui' },
+  { key: 'ui_node_clear_banner', type: 'ui', path: '/assets/ui/hud/ui_node_clear_banner.png', primaryPath: '/assets/ui/hud/ui_node_clear_banner.png', kind: 'ui' },
+  { key: 'ui_level_ready_badge', type: 'ui', path: '/assets/ui/hud/ui_level_ready_badge.png', primaryPath: '/assets/ui/hud/ui_level_ready_badge.png', kind: 'ui' }
 ];
 
 export const AUDIO_ASSETS: AssetManifestEntry[] = [
