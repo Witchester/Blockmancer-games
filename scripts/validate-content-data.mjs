@@ -21,6 +21,16 @@ const stageIds = new Set([
   'stage_starfall_arcade',
   'stage_bloxley_block_palace'
 ]);
+const stageAliases = new Map([
+  ['stage_1_sprinkle_sewers', 'stage_sprinkle_sewers'],
+  ['stage_2_goblin_workshop', 'stage_goblin_workshop'],
+  ['stage_3_frosty_pantry', 'stage_frosty_pantry'],
+  ['stage_4_pillow_castle', 'stage_pillow_castle'],
+  ['stage_5_starfall_arcade', 'stage_starfall_arcade'],
+  ['stage_6_bloxley_block_palace', 'stage_bloxley_block_palace'],
+  ['stage_6_bloxleys_block_palace', 'stage_bloxley_block_palace'],
+  ['stage_bloxleys_block_palace', 'stage_bloxley_block_palace']
+]);
 const counterTags = new Set([
   'counter_junk',
   'counter_sticky',
@@ -100,8 +110,36 @@ function walkJson(dir) {
   });
 }
 
+function walkFiles(dir, predicate) {
+  if (!fs.existsSync(dir)) return [];
+  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) return walkFiles(full, predicate);
+    return entry.isFile() && predicate(full) ? [full] : [];
+  });
+}
+
 function readJson(file) {
   return JSON.parse(fs.readFileSync(file, 'utf8'));
+}
+
+function canonicalStageId(stageId) {
+  if (typeof stageId !== 'string') return null;
+  const normalized = stageId.trim().toLowerCase();
+  if (stageIds.has(normalized)) return normalized;
+  return stageAliases.get(normalized) ?? null;
+}
+
+function validateStageId(value, location) {
+  const canonical = canonicalStageId(value);
+  if (!canonical) {
+    errors.push(`${location}: invalid or missing stageId ${value}`);
+    return null;
+  }
+  if (value !== canonical) {
+    errors.push(`${location}: stageId alias ${value} must use canonical runtime ID ${canonical}`);
+  }
+  return canonical;
 }
 
 const errors = [];
@@ -218,7 +256,7 @@ function expectedMonsterAssetRefs(id) {
 for (const { file, data } of monsterEntries) {
   const rel = path.relative(root, file);
   if (typeof data.id !== 'string' || data.id.length === 0) errors.push(`${rel}: missing monster ID`);
-  if (!stageIds.has(data.stageId)) errors.push(`${rel}: invalid or missing stageId ${data.stageId}`);
+  validateStageId(data.stageId, rel);
   if (!validMonsterRanks.has(data.rank)) errors.push(`${rel}: invalid or missing rank ${data.rank}`);
   if (!validEncounterRanks.has(data.encounterRank)) errors.push(`${rel}: invalid or missing encounterRank ${data.encounterRank}`);
   if (typeof data.spriteKey !== 'string' || data.spriteKey.length === 0) errors.push(`${rel}: missing spriteKey`);
@@ -291,7 +329,7 @@ for (const file of walkJson(routeRoot).filter((file) => path.basename(file).star
     if (triggerIds.has(scene.triggerId)) errors.push(`Duplicate route trigger id: ${scene.triggerId}`);
     triggerIds.add(scene.triggerId);
     if (!heroIds.has(scene.heroId)) errors.push(`${scene.id}: invalid heroId ${scene.heroId}`);
-    if (!stageIds.has(scene.stageId)) errors.push(`${scene.id}: invalid stageId ${scene.stageId}`);
+    validateStageId(scene.stageId, scene.id);
     if (scene.triggerCondition?.oncePerRun !== true) errors.push(`${scene.id}: triggerCondition.oncePerRun must be true`);
     if (!Array.isArray(scene.choices) || scene.choices.length !== 3) errors.push(`${scene.id}: must have exactly 3 choices`);
     const trueChoices = (scene.choices ?? []).filter((choice) => choice.lane === 'true');
@@ -330,7 +368,7 @@ if (fs.existsSync(biomePoolFile)) {
   const pools = readJson(biomePoolFile);
   for (const pool of pools) {
     const rel = 'src/game/content/difficulty-scaling/biome-monster-pools.json';
-    if (!stageIds.has(pool.stageId)) errors.push(`${rel}: pool ${pool.id} has invalid stageId ${pool.stageId}`);
+    validateStageId(pool.stageId, `${rel}: pool ${pool.id}`);
     if (!monsterIds.has(pool.fallbackMonsterId)) errors.push(`${rel}: pool ${pool.id} has invalid fallbackMonsterId ${pool.fallbackMonsterId}`);
     if (pool.maxDuplicatePerNode < 1) errors.push(`${rel}: pool ${pool.id} maxDuplicatePerNode must be >= 1`);
     
@@ -347,7 +385,7 @@ if (fs.existsSync(scalingFile)) {
   const rules = readJson(scalingFile);
   for (const rule of rules) {
     const rel = 'src/game/content/difficulty-scaling/encounter-pack-scaling.json';
-    if (!stageIds.has(rule.stageId)) errors.push(`${rel}: rule ${rule.id} has invalid stageId ${rule.stageId}`);
+    validateStageId(rule.stageId, `${rel}: rule ${rule.id}`);
     if (rule.minEnemies > rule.maxEnemies) errors.push(`${rel}: rule ${rule.id} minEnemies > maxEnemies`);
     if (rule.maxEnemies > 5) errors.push(`${rel}: rule ${rule.id} maxEnemies exceeds schema limit of 5`);
     if (rule.stageNumber === 1 && rule.maxEnemies > 2) errors.push(`${rel}: stage 1 rule ${rule.id} maxEnemies > 2 (Release 1 safety)`);
@@ -367,6 +405,21 @@ if (fs.existsSync(entryEffectsFile)) {
     if (!effect.eventLogText) errors.push(`${rel}: effect ${effect.id} missing eventLogText`);
     if (effect.pressureEffectId && !effect.playerGiftEffectId) {
       errors.push(`${rel}: pressure effect ${effect.id} must include a playerGiftEffectId for fairness`);
+    }
+  }
+}
+
+const docsRoot = path.join(root, 'docs');
+const docsStagePattern = /\bstage_[a-z0-9_]+\b/g;
+for (const file of walkFiles(docsRoot, (file) => file.endsWith('.md'))) {
+  const rel = path.relative(root, file);
+  const text = fs.readFileSync(file, 'utf8');
+  const matches = new Set(text.match(docsStagePattern) ?? []);
+  for (const token of matches) {
+    const canonical = canonicalStageId(token);
+    if (!canonical) continue;
+    if (token !== canonical) {
+      errors.push(`${rel}: stage ID alias ${token} must be canonicalized to ${canonical}`);
     }
   }
 }
