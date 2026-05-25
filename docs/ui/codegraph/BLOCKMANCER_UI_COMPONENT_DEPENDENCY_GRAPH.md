@@ -29,10 +29,17 @@ flowchart LR
   MonsterStackPreview --> StackChip[UiChip]
   Battle --> BoardPanel[ui_panel_board]
   Battle --> Controls[ui_panel_controls]
+  Controls --> BattleControlsSectionUi[BattleControlsSectionUi]
+  BattleControlsSectionUi --> ControlsInput[BattleControlsInputAdapter]
+  BattleControlsSectionUi --> Button[Button]
   Battle --> SpellButton[ui_button_spell_slot]
   NodeResult --> NodePanel[ui_panel_node_result]
   NodeResult --> XpMeter[ui_meter_xp]
   LevelUp --> LevelPanel[ui_panel_level_up]
+  LevelUp --> LevelAdapter[LevelUpDataAdapter]
+  LevelUp --> LevelRouter[LevelUpFlowRouter]
+  LevelUp --> LevelMeter[UiMeter]
+  LevelUp --> LevelButton[UiButton]
   LevelUp --> LevelCard[ui_level_up_card_common / rare / hero]
   Reward --> RewardCard[ui_reward_card_common / rare]
   RouteDialogue --> DialoguePanel[ui_panel_dialogue]
@@ -58,3 +65,7 @@ Changing a shared component requires checking every screen listed in layout JSON
 
 ## Status / known gaps
 This is a manual Mermaid graph based on CodeGraph scene/file evidence and the new layout specs.
+
+## UI-9 Festival Level-Up Status Notes
+
+`LevelUpRewardScene` now uses shared UI primitives for panel, meter, icon slot, and button rendering. `LevelUpDataAdapter` maps upgrade content into card view models with icon, name, rarity, stack count, stack limit, and effect text. `LevelUpFlowRouter` owns one-selection application, pending level-up consumption, reroll reset, and reward/map routing.

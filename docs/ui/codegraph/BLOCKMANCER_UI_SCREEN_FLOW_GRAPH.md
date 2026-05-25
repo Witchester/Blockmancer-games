@@ -31,6 +31,7 @@ flowchart TD
   NodeResult --> LevelUp[screen_level_up Festival Level-Up]
   NodeResult --> Reward[screen_reward Reward]
   LevelUp --> Reward
+  LevelUp --> Map
   Reward --> Map
   Battle --> Defeat[screen_defeat_summary Defeat Summary]
   Reward --> Victory[screen_victory_ending Victory Ending]
@@ -49,4 +50,8 @@ Rest, Treasure, Help, Tutorial, Hub, and Collection have runtime scenes but are 
 
 ## UI-4 Battle Shell Note
 
-`screen_battle` now has a runtime structural shell matching the canonical 1080x1920 portrait layout and exact 25/55/20 combat, puzzle, and controls split. Detailed combat HUD, event log content, board rails, Hold/Next Queue, right stat cards, inventory indicator, and mobile controls remain phased work for UI-5, UI-6, and UI-7.
+`screen_battle` now has a runtime structural shell matching the canonical 1080x1920 portrait layout and exact 25/55/20 combat, puzzle, and controls split. Detailed combat HUD and event log content are implemented through UI-5. Board rails, Hold/Next Queue, right stat cards, and inventory indicator are UI-6 work. Mobile controls are implemented through UI-7 with battle-local bag and pause shortcuts only; full inventory/settings screens remain separate flow nodes.
+
+## UI-9 Festival Level-Up Note
+
+`screen_level_up` now resolves after `screen_node_result` when `pendingLevelUps > 0`. Selection applies one upgrade, consumes one pending level-up, loops back to `LevelUpRewardScene` while more pending level-ups remain, then routes to `RewardScene` when rewards/stage advance are pending or directly to `MapScene` when no rewards remain.

@@ -108,3 +108,35 @@ All mandatory screens are now documented as specs. Runtime implementation may st
 | Asset-drop-in readiness | Yes | `UiAssetSlotResolver`, UI-2 primitives, UI-5 components | Uses asset keys and fallbacks; missing final PNGs are nonfatal. |
 | UI-6 remaining work | Pending | Puzzle layer still uses existing BattleScene rendering | Hold/Next rails, board panel, right stat rail, and inventory compact indicator remain for UI-6. |
 | UI-7 remaining work | Pending | Controls layer still uses existing BattleScene rendering | Controls buttons and spell/action row remain for UI-7. |
+
+## UI-7 Controls Section Status Notes
+
+| Area | Status | Evidence | Notes |
+|---|---|---|---|
+| Controls section UI implemented | Yes | `src/game/ui/battle/BattleControlsSectionUi.ts`, `src/game/scenes/BattleScene.ts` | Movement, soft drop, rotate, hold, hard drop, spell slots, locked skill/special slots, bag, and pause shortcut render inside Section 3. |
+| Input adapter implemented | Yes | `src/game/ui/battle/BattleControlsInputAdapter.ts` | Touch controls dispatch through existing BattleScene handlers and guard against locked battle state. |
+| Section bounds status | Yes | `BattleScreenShell.controlsSection`, `screen_battle.layout.json` | Controls remain inside canonical `x0 y1536 w1080 h384` shell coordinates. |
+| Touch target status | Yes | `BattleControlsSectionUi` constants | Primary controls are 96x96; action slots are 128x96. |
+| Asset fallback status | Yes | `Button` + `AssetSystem` icon resolution | Runtime references asset keys such as `ico_control_left`, `ico_control_rotate`, `ui_inventory_compact`, and `ico_settings`; missing textures remain fallback-safe. |
+| Gameplay rewrite status | Not attempted | Existing `moveHorizontal`, `rotatePiece`, `softDrop`, `hardDrop`, `handleHold`, `tryCast`, and `toggleInventory` callbacks are reused | Movement rules, lock delay, Cascade Gravity, spell cost, and combat formulas are unchanged. |
+
+## UI-8 Node Result Status Notes
+
+| Area | Status | Evidence | Notes |
+|---|---|---|---|
+| Node Result screen implemented | Yes | `src/game/scenes/NodeResultScene.ts`, `src/game/ui/node-result/NodeResultDataAdapter.ts` | Renders Node Clear banner, stage/node labels, defeated enemies, total EXP, breakdown rows, current level, before/after XP meter, remaining EXP, and Level Up Ready badge. |
+| Battle clear integration | Yes | `src/game/scenes/BattleScene.ts` | Full node clear builds a `NodeResultSummary`, applies node EXP through the idempotent claim path, saves `pendingNodeResult`, then starts `NodeResultScene`. |
+| Continue routing | Yes | `src/game/ui/node-result/NodeResultFlowRouter.ts` | Continue routes to Festival Level-Up first when pending, then Reward when rewards/stage advance are pending, otherwise completes the node and returns to Map. |
+| Asset fallback status | Yes | `src/game/data/assets.ts`, `src/game/scenes/NodeResultScene.ts` | Uses node-result asset keys and manifest fallbacks; missing final panel, meter, button, icon, badge, or sparkle assets remain nonfatal. |
+| Gameplay rewrite status | Not attempted | `LevelUpSystem.applyNodeXpOnce`, `EncounterPackSystem.applyNodeResultXpIfNeeded` | EXP/reward balance, combat formulas, and save schema are unchanged; duplicate EXP application remains guarded by `nodeResultClaims`. |
+
+## UI-9 Festival Level-Up Status Notes
+
+| Area | Status | Evidence | Notes |
+|---|---|---|---|
+| Festival Level-Up screen implemented | Yes | `src/game/scenes/LevelUpRewardScene.ts`, `src/game/ui/level-up/LevelUpDataAdapter.ts` | Renders title/banner, current/new level, XP summary, three upgrade choices, rarity, stack count/limit, and effect text. |
+| Selection/apply flow | Yes | `src/game/ui/level-up/LevelUpFlowRouter.ts` | Confirm applies the selected upgrade once, consumes exactly one pending level-up, clears the offer, and locks duplicate taps. |
+| Multiple pending level-ups | Yes | `resolveLevelUpNextScene`, `continueFromLevelUp` | Remaining pending level-ups restart the Level-Up screen one at a time before reward/map routing. |
+| Reroll handling | Yes | `rerollLevelUpChoices` | Reroll button is rendered only when `playerLevelState.rerollCharges > 0`; reroll consumes one charge and creates a fresh offer. |
+| Asset fallback status | Yes | `src/game/data/assets.ts`, `src/game/scenes/LevelUpRewardScene.ts` | Uses level-up asset keys and manifest fallbacks; missing final panel, card, button, meter, background, icon, or sparkle art remains nonfatal. |
+| Gameplay rewrite status | Not attempted | `LevelUpSystem`, `UpgradeSystem` | EXP balance, upgrade balance, reward grants, and save schema are unchanged. |

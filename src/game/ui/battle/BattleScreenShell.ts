@@ -4,7 +4,6 @@ import { COLORS, FONT_FAMILY } from '../../utils/constants';
 import { computePortraitFrame, PORTRAIT_FRAME_HEIGHT, PORTRAIT_FRAME_WIDTH, type PortraitFrame } from '../PortraitFrame';
 import { roundPixel, type UiRect } from '../PixelPerfect';
 import { resolveAssetSlot, type UiResolvedAssetSlot } from '../UiAssetSlotResolver';
-import { BattleControlsSectionUi } from './BattleControlsSectionUi';
 
 import { validateUiLayoutSpec } from '../UiLayoutValidator';
 
@@ -148,8 +147,7 @@ export class BattleScreenShell {
     this.root.add([this.combatSection, this.puzzleSection, this.controlsSection, this.modalLayer, this.debugLayer]);
     this.combatSection.add([this.combatBackgroundLayer, this.combatUiLayer, this.combatVfxLayer, this.eventLogLayer]);
     this.puzzleSection.add([this.puzzleBackgroundLayer, this.boardLayer, this.leftRailLayer, this.rightRailLayer]);
-    // Instantiate Controls UI
-    new BattleControlsSectionUi(this.scene, this).create();
+    this.controlsSection.add([this.controlsBackgroundLayer, this.controlsButtonLayer]);
 
     this.createSectionBackgrounds();
     this.createSectionFallbackPanels();

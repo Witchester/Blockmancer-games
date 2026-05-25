@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { BlockmancerGame } from '../../BlockmancerGame';
+import type { TetrominoType } from '../../types/GameTypes';
 import type { UiComponentSpec } from '../../types/ui-layout';
 import { COLORS, FONT_FAMILY, TETROMINO_SHAPES } from '../../utils/constants';
 import { getTetrominoBlockId } from '../../systems/BoardSystem';
@@ -56,6 +57,10 @@ function spec(
   };
 }
 
+function isTetrominoType(value: string | null | undefined): value is TetrominoType {
+  return Boolean(value && Object.prototype.hasOwnProperty.call(TETROMINO_SHAPES, value));
+}
+
 export type PuzzleSectionStats = {
   gold: number;
   relics: number;
@@ -91,6 +96,7 @@ export class BattlePuzzleSectionUi {
   holdPanel!: UiPanel;
   nextQueuePanel!: UiPanel;
   boardPanel!: UiPanel;
+  boardGridPanel!: UiPanel;
   rightStatCards!: UiPanel;
   inventoryButton!: UiButton;
 
@@ -265,8 +271,26 @@ export class BattlePuzzleSectionUi {
     });
     this.shell.boardLayer.add(this.boardPanel.root);
 
+    this.boardGridPanel = new UiPanel(
+      this.scene,
+      spec('puzzle_board_grid_slot', 'panel', PUZZLE_SECTION_LOCAL_BOUNDS.boardGrid, 'ui_board_grid_10x20', 'ui_board_grid_default', 40, {
+        canonicalFolder: 'public/assets/ui/board/',
+        fitMode: 'exact',
+        scaleMode: 'none',
+        safePadding: 0,
+        dynamicTextAllowed: false
+      }),
+      {
+        fillColor: COLORS.boardEmpty,
+        fillAlpha: 0.34,
+        strokeColor: COLORS.accent,
+        strokeAlpha: 0.52
+      }
+    );
+    this.shell.boardLayer.add(this.boardGridPanel.root);
+
     // 4. Right Stat Rail Panel (on Right Rail Layer)
-    this.rightStatCards = new UiPanel(this.scene, spec('puzzle_right_stat_cards', 'panel', PUZZLE_SECTION_LOCAL_BOUNDS.right, 'ui_stat_card', 'ui_panel_default', 55), {
+    this.rightStatCards = new UiPanel(this.scene, spec('puzzle_right_stat_cards', 'panel', PUZZLE_SECTION_LOCAL_BOUNDS.rightRail, 'ui_stat_card', 'ui_panel_default', 55), {
       fillColor: COLORS.panelAlt,
       fillAlpha: 0.96
     });
@@ -352,7 +376,10 @@ export class BattlePuzzleSectionUi {
     // 5. Inventory Compact Button (on Right Rail Layer)
     this.inventoryButton = new UiButton(
       this.scene,
-      spec('inventory_compact_button', 'button', PUZZLE_SECTION_LOCAL_BOUNDS.inventory, 'ui_inventory_compact', 'ui_button_default', 90, { anchor: 'center' }),
+      spec('inventory_compact_button', 'button', PUZZLE_SECTION_LOCAL_BOUNDS.inventory, 'ui_inventory_compact', 'ui_button_default', 90, {
+        anchor: 'center',
+        canonicalFolder: 'public/assets/ui/buttons/'
+      }),
       {
         label: 'Bag',
         onClick: () => {
@@ -372,6 +399,7 @@ export class BattlePuzzleSectionUi {
     this.holdPanel.destroy();
     this.nextQueuePanel.destroy();
     this.boardPanel.destroy();
+    this.boardGridPanel.destroy();
     this.rightStatCards.destroy();
     this.inventoryButton.destroy();
 
@@ -431,7 +459,8 @@ export class BattlePuzzleSectionUi {
     this.nextTitle.setText(hidden ? 'HEXED' : 'NEXT');
 
     for (let slot = 0; slot < 4; slot += 1) {
-      const type = queue[slot] ?? null;
+      const rawType = queue[slot] ?? null;
+      const type = isTetrominoType(rawType) ? rawType : null;
       const matrix = type ? TETROMINO_SHAPES[type] : [];
       this.nextPreviewSlotLabels[slot]?.setText('#' + (slot + 1));
       
@@ -495,6 +524,7 @@ export class BattlePuzzleSectionUi {
     this.holdPanel.setVisible(visible);
     this.nextQueuePanel.setVisible(visible);
     this.boardPanel.setVisible(visible);
+    this.boardGridPanel.setVisible(visible);
     this.rightStatCards.setVisible(visible);
     this.inventoryButton.setVisible(visible);
   }
@@ -503,6 +533,7 @@ export class BattlePuzzleSectionUi {
     this.holdPanel.setDebugVisible(enabled);
     this.nextQueuePanel.setDebugVisible(enabled);
     this.boardPanel.setDebugVisible(enabled);
+    this.boardGridPanel.setDebugVisible(enabled);
     this.rightStatCards.setDebugVisible(enabled);
     this.inventoryButton.setDebugVisible(enabled);
   }
@@ -521,8 +552,10 @@ export class BattlePuzzleSectionUi {
       holdLocal: { ...PUZZLE_SECTION_LOCAL_BOUNDS.hold },
       nextLocal: { ...PUZZLE_SECTION_LOCAL_BOUNDS.next },
       boardLocal: { ...PUZZLE_SECTION_LOCAL_BOUNDS.board },
-      rightRailLocal: { ...PUZZLE_SECTION_LOCAL_BOUNDS.right },
-      inventoryLocal: { ...PUZZLE_SECTION_LOCAL_BOUNDS.inventory }
+      boardGridLocal: { ...PUZZLE_SECTION_LOCAL_BOUNDS.boardGrid },
+      rightRailLocal: { ...PUZZLE_SECTION_LOCAL_BOUNDS.rightRail },
+      inventoryLocal: { ...PUZZLE_SECTION_LOCAL_BOUNDS.inventory },
+      puzzleSectionAbsolute: { x: 0, y: 480, w: 1080, h: 1056 }
     };
   }
 
@@ -535,21 +568,22 @@ export class BattlePuzzleSectionUi {
   ): void {
     const game = this.scene.game as BlockmancerGame;
     const settings = game.getSettings();
-    const matrix = type ? TETROMINO_SHAPES[type] : [];
+    const previewType = isTetrominoType(type) ? type : null;
+    const matrix = previewType ? TETROMINO_SHAPES[previewType] : [];
 
     for (let index = 0; index < 16; index += 1) {
       const col = index % 4;
       const row = Math.floor(index / 4);
-      const value = hidden || !type ? 0 : matrix[row]?.[col] ?? 0;
+      const value = hidden || !previewType ? 0 : matrix[row]?.[col] ?? 0;
       
       const tile = tiles[index];
       tile?.setFillStyle(COLORS.boardEmpty, 1);
 
       const sprite = sprites[index];
       if (sprite) {
-        if (value && type) {
+        if (value && previewType) {
           sprite
-            .setTexture(game.assetSystem.getBoardBlockTexture(this.scene, getTetrominoBlockId(type), 'base'))
+            .setTexture(game.assetSystem.getBoardBlockTexture(this.scene, getTetrominoBlockId(previewType), 'base'))
             .setVisible(true);
         } else {
           sprite.setVisible(false);
@@ -557,8 +591,8 @@ export class BattlePuzzleSectionUi {
       }
 
       const symbol = symbols[index];
-      symbol?.setText(value && settings.colorblindSymbols && type ? type : '');
-      symbol?.setVisible(Boolean(value && settings.colorblindSymbols && type));
+      symbol?.setText(value && settings.colorblindSymbols && previewType ? previewType : '');
+      symbol?.setVisible(Boolean(value && settings.colorblindSymbols && previewType));
     }
   }
 }

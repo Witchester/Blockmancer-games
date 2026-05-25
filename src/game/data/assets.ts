@@ -89,6 +89,7 @@ const CONTENT_ASSET_SOURCES: ContentAssetSource[] = [
 export const CORE_IMAGE_ASSETS: AssetManifestEntry[] = [
   { key: 'asset_missing', type: 'placeholder', path: '/assets/ui/placeholders/fallback-missing.png', primaryPath: '/assets/ui/placeholders/fallback-missing.png', fallbackPaths: ['/assets/ui/fallback-missing.png'], kind: 'sprite' },
   { key: 'asset_missing_icon', type: 'placeholder', path: '/assets/ui/placeholders/fallback-icon.png', primaryPath: '/assets/ui/placeholders/fallback-icon.png', fallbackPaths: ['/assets/ui/fallback-icon.png'], kind: 'icon' },
+  { key: 'placeholder_icon', type: 'placeholder', path: '/assets/ui/placeholders/fallback-icon.png', primaryPath: '/assets/ui/placeholders/fallback-icon.png', fallbackPaths: ['/assets/ui/fallback-icon.png'], kind: 'icon' },
   { key: 'asset_missing_block', type: 'placeholder', path: '/assets/placeholders/fallback-block.png', primaryPath: '/assets/placeholders/fallback-block.png', fallbackPaths: ['/assets/board-blocks/fallback-block.png'], kind: 'sprite' },
   { key: 'asset_missing_background', type: 'placeholder', path: '/assets/placeholders/fallback-background.png', primaryPath: '/assets/placeholders/fallback-background.png', fallbackPaths: ['/assets/stages/fallback-background.png', '/assets/backgrounds/legacy/fallback-background.png'], kind: 'background' },
   { key: 'ui_button_default', type: 'ui', path: '/assets/ui/buttons/ui_button_default.png', primaryPath: '/assets/ui/buttons/ui_button_default.png', fallbackPaths: ['/assets/ui/button-default.png'], kind: 'ui' },
@@ -105,7 +106,27 @@ export const CORE_IMAGE_ASSETS: AssetManifestEntry[] = [
   { key: 'ico_mystery_monster', type: 'icon', path: '/assets/ui/icons/ico_mystery_monster.png', primaryPath: '/assets/ui/icons/ico_mystery_monster.png', kind: 'icon' },
   { key: 'ui_panel_node_result', type: 'ui', path: '/assets/ui/panels/ui_panel_node_result.png', primaryPath: '/assets/ui/panels/ui_panel_node_result.png', kind: 'ui' },
   { key: 'ui_node_clear_banner', type: 'ui', path: '/assets/ui/hud/ui_node_clear_banner.png', primaryPath: '/assets/ui/hud/ui_node_clear_banner.png', kind: 'ui' },
-  { key: 'ui_level_ready_badge', type: 'ui', path: '/assets/ui/hud/ui_level_ready_badge.png', primaryPath: '/assets/ui/hud/ui_level_ready_badge.png', kind: 'ui' }
+  { key: 'ui_xp_gained_counter', type: 'ui', path: '/assets/ui/hud/ui_xp_gained_counter.png', primaryPath: '/assets/ui/hud/ui_xp_gained_counter.png', kind: 'ui' },
+  { key: 'ui_xp_remaining_chip', type: 'ui', path: '/assets/ui/hud/ui_xp_remaining_chip.png', primaryPath: '/assets/ui/hud/ui_xp_remaining_chip.png', kind: 'ui' },
+  { key: 'ui_xp_breakdown_row', type: 'ui', path: '/assets/ui/panels/ui_xp_breakdown_row.png', primaryPath: '/assets/ui/panels/ui_xp_breakdown_row.png', fallbackPaths: ['/assets/ui/panels/ui_panel_default.png'], kind: 'ui' },
+  { key: 'ui_button_node_result_continue', type: 'ui', path: '/assets/ui/buttons/ui_button_node_result_continue.png', primaryPath: '/assets/ui/buttons/ui_button_node_result_continue.png', fallbackPaths: ['/assets/ui/buttons/ui_button_default.png'], kind: 'ui' },
+  { key: 'ui_level_ready_badge', type: 'ui', path: '/assets/ui/hud/ui_level_ready_badge.png', primaryPath: '/assets/ui/hud/ui_level_ready_badge.png', kind: 'ui' },
+  { key: 'ui_meter_xp', type: 'ui', path: '/assets/ui/meters/ui_meter_xp.png', primaryPath: '/assets/ui/meters/ui_meter_xp.png', fallbackPaths: ['/assets/ui/panels/ui_panel_default.png'], kind: 'ui' },
+  { key: 'ui_meter_fallback', type: 'ui', path: '/assets/ui/meters/ui_meter_fallback.png', primaryPath: '/assets/ui/meters/ui_meter_fallback.png', fallbackPaths: ['/assets/ui/panels/ui_panel_default.png'], kind: 'ui' },
+  { key: 'vfx_node_clear_sparkle', type: 'effect', path: '/assets/effects/vfx_node_clear_sparkle/vfx_node_clear_sparkle__play__f00.png', primaryPath: '/assets/effects/vfx_node_clear_sparkle/vfx_node_clear_sparkle__play__f00.png', kind: 'sprite' },
+  { key: 'bg_scene_level_up', type: 'stage_background', path: '/assets/stages/global-scenes/bg_scene_level_up.png', primaryPath: '/assets/stages/global-scenes/bg_scene_level_up.png', fallbackPaths: ['/assets/placeholders/fallback-background.png'], kind: 'background' },
+  { key: 'ui_panel_level_up', type: 'ui', path: '/assets/ui/panels/ui_panel_level_up.png', primaryPath: '/assets/ui/panels/ui_panel_level_up.png', fallbackPaths: ['/assets/ui/panels/ui_panel_default.png'], kind: 'ui' },
+  { key: 'ui_level_up_card_common', type: 'ui', path: '/assets/ui/panels/ui_level_up_card_common.png', primaryPath: '/assets/ui/panels/ui_level_up_card_common.png', fallbackPaths: ['/assets/ui/panels/ui_panel_default.png'], kind: 'ui' },
+  { key: 'ui_level_up_card_rare', type: 'ui', path: '/assets/ui/panels/ui_level_up_card_rare.png', primaryPath: '/assets/ui/panels/ui_level_up_card_rare.png', fallbackPaths: ['/assets/ui/panels/ui_panel_default.png'], kind: 'ui' },
+  { key: 'ui_level_up_card_hero', type: 'ui', path: '/assets/ui/panels/ui_level_up_card_hero.png', primaryPath: '/assets/ui/panels/ui_level_up_card_hero.png', fallbackPaths: ['/assets/ui/panels/ui_panel_default.png'], kind: 'ui' },
+  { key: 'ui_level_badge', type: 'ui', path: '/assets/ui/hud/ui_level_badge.png', primaryPath: '/assets/ui/hud/ui_level_badge.png', fallbackPaths: ['/assets/ui/panels/ui_panel_default.png'], kind: 'ui' },
+  { key: 'ui_button_level_reroll', type: 'ui', path: '/assets/ui/buttons/ui_button_level_reroll.png', primaryPath: '/assets/ui/buttons/ui_button_level_reroll.png', fallbackPaths: ['/assets/ui/buttons/ui_button_default.png'], kind: 'ui' },
+  { key: 'ui_button_level_confirm', type: 'ui', path: '/assets/ui/buttons/ui_button_level_confirm.png', primaryPath: '/assets/ui/buttons/ui_button_level_confirm.png', fallbackPaths: ['/assets/ui/buttons/ui_button_default.png'], kind: 'ui' },
+  { key: 'ui_level_up_panel_intro', type: 'ui', path: '/assets/ui/panels/ui_level_up_panel_intro.png', primaryPath: '/assets/ui/panels/ui_level_up_panel_intro.png', fallbackPaths: ['/assets/ui/panels/ui_panel_default.png'], kind: 'ui' },
+  { key: 'ui_level_up_card_flip', type: 'ui', path: '/assets/ui/panels/ui_level_up_card_flip.png', primaryPath: '/assets/ui/panels/ui_level_up_card_flip.png', fallbackPaths: ['/assets/ui/panels/ui_panel_default.png'], kind: 'ui' },
+  { key: 'ui_level_up_card_select', type: 'ui', path: '/assets/ui/panels/ui_level_up_card_select.png', primaryPath: '/assets/ui/panels/ui_level_up_card_select.png', fallbackPaths: ['/assets/ui/panels/ui_panel_default.png'], kind: 'ui' },
+  { key: 'ui_xp_meter_fill', type: 'ui', path: '/assets/ui/meters/ui_xp_meter_fill.png', primaryPath: '/assets/ui/meters/ui_xp_meter_fill.png', fallbackPaths: ['/assets/ui/meters/ui_meter_fallback.png'], kind: 'ui' },
+  { key: 'vfx_level_up_sparkle', type: 'effect', path: '/assets/effects/vfx_level_up_sparkle/vfx_level_up_sparkle__play__f00.png', primaryPath: '/assets/effects/vfx_level_up_sparkle/vfx_level_up_sparkle__play__f00.png', fallbackPaths: ['/assets/effects/vfx_node_clear_sparkle/vfx_node_clear_sparkle__play__f00.png'], kind: 'sprite' }
 ];
 
 export const AUDIO_ASSETS: AssetManifestEntry[] = [

@@ -50,6 +50,10 @@ Manual fallback would inspect src/game/scenes, src/game/ui, src/game/systems/Ass
 ## Recommended future use of CodeGraph before UI implementation prompts
 Before UI implementation prompts, query CodeGraph for the target scene and AssetSystem impact, then compare against docs/ui/layouts and this traceability matrix.
 
+## UI-9 CodeGraph Findings
+
+For UI-9, CodeGraph MCP status reported an initialized index with 183 files, 3444 nodes, and 8307 edges. `codegraph_context` identified `LevelUpRewardScene`, `NodeResultScene`, `LevelUpSystem`, `UpgradeSystem`, `RewardScene`, and `src/game/data/assets.ts` as the key implementation surface. `codegraph_impact LevelUpRewardScene` showed a narrow impact radius limited to the scene itself, while file/layout inspection tied the work to `screen_level_up.layout.json`, `screen_node_result.layout.json`, `screen_reward.layout.json`, and the shared UI primitive layer.
+
 ## Relevant screen/component/layout content
 See SCREEN_FLOW_GRAPH, COMPONENT_DEPENDENCY_GRAPH, ASSET_KEY_GRAPH, and SCENE_TO_SPEC_TRACEABILITY.
 

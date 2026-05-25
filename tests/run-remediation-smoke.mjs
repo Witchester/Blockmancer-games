@@ -30,6 +30,24 @@ assert(battleSceneText.includes('playableSpells.push(null)'), 'BattleScene empty
 assert(battleSceneText.includes('No spell in that slot yet.'), 'BattleScene missing safe no-op feedback for empty spell slots.');
 assert(battleSceneText.includes('this.sharedGame.runState.spells'), 'BattleScene spell slots are not ordered from active run spell loadout.');
 assert(battleSceneText.includes('applyBossPhaseBoardSize'), 'Boss phase board-size modifier is not wired in BattleScene.');
+assert(battleSceneText.includes("this.scene.start('NodeResultScene'"), 'BattleScene victory flow does not open NodeResultScene before reward/map routing.');
+
+const nodeResultSceneText = readText('src/game/scenes/NodeResultScene.ts');
+const nodeResultRouterText = readText('src/game/ui/node-result/NodeResultFlowRouter.ts');
+const levelUpSceneText = readText('src/game/scenes/LevelUpRewardScene.ts');
+const levelUpAdapterText = readText('src/game/ui/level-up/LevelUpDataAdapter.ts');
+const levelUpRouterText = readText('src/game/ui/level-up/LevelUpFlowRouter.ts');
+assert(nodeResultSceneText.includes('buildNodeResultViewModel'), 'NodeResultScene does not use the node result display adapter.');
+assert(nodeResultSceneText.includes('continueFromNodeResult'), 'NodeResultScene does not use the node result flow router.');
+assert(nodeResultRouterText.indexOf("'LevelUpRewardScene'") < nodeResultRouterText.indexOf("'RewardScene'"), 'Node result flow should prefer pending level-up before reward routing.');
+assert(nodeResultRouterText.includes('state.pendingNodeResult = null'), 'Node result flow does not clear pendingNodeResult after continue.');
+assert(levelUpSceneText.includes('buildLevelUpViewModel'), 'LevelUpRewardScene does not use the level-up display adapter.');
+assert(levelUpSceneText.includes('applyLevelUpSelection'), 'LevelUpRewardScene does not use the level-up selection router.');
+assert(levelUpSceneText.includes('selectionLocked'), 'LevelUpRewardScene does not guard against duplicate selection application.');
+assert(levelUpAdapterText.includes('stackCount') && levelUpAdapterText.includes('stackLimit'), 'Level-up adapter does not expose stack count and limit.');
+assert(levelUpRouterText.includes('consumePendingLevelUp'), 'Level-up selection does not consume one pending level-up.');
+assert(levelUpRouterText.indexOf("'LevelUpRewardScene'") < levelUpRouterText.indexOf("'RewardScene'"), 'Level-up flow should resolve multiple pending level-ups before reward routing.');
+assert(levelUpRouterText.includes('game.mapSystem.completeNode'), 'Level-up flow does not return directly to map when no rewards remain.');
 
 const spellSystemText = readText('src/game/systems/SpellSystem.ts');
 const spellsDataText = readText('src/game/data/spells.ts');

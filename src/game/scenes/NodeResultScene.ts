@@ -1,14 +1,12 @@
 import Phaser from 'phaser';
 import { BlockmancerGame } from '../BlockmancerGame';
-import { Button } from '../ui/Button';
 import { COLORS, FONT_FAMILY } from '../utils/constants';
 import { getPortraitLayout } from '../utils/layout';
 import type { NodeResultSummary } from '../types/GameTypes';
-
-type XpRow = {
-  label: string;
-  value: number;
-};
+import type { UiComponentSpec } from '../types/ui-layout';
+import { UiButton, UiIconSlot, UiMeter, UiPanel } from '../ui/components';
+import { buildNodeResultViewModel } from '../ui/node-result/NodeResultDataAdapter';
+import { continueFromNodeResult } from '../ui/node-result/NodeResultFlowRouter';
 
 export class NodeResultScene extends Phaser.Scene {
   private summary!: NodeResultSummary;
@@ -24,28 +22,37 @@ export class NodeResultScene extends Phaser.Scene {
 
   create(): void {
     if (!this.summary) {
-      this.scene.start('RewardScene');
+      continueFromNodeResult(this, null);
       return;
     }
 
     const layout = getPortraitLayout(this);
     const game = this.game as BlockmancerGame;
     const state = game.runState;
+    const model = buildNodeResultViewModel(state, this.summary);
     const panelWidth = Math.min(layout.contentWidth, 620);
     const panelHeight = Math.min(layout.height - 84, 820);
     const panelTop = layout.centerY - panelHeight / 2;
+    const panelLeft = layout.centerX - panelWidth / 2;
 
     this.cameras.main.setBackgroundColor(COLORS.background);
     this.add.rectangle(layout.centerX, layout.centerY, layout.width, layout.height, 0x050814, 0.82);
 
-    game.assetSystem.createImageByAssetKey(this, 'ui_panel_node_result', 'uiIcon', layout.centerX, layout.centerY, { kind: 'ui', alpha: 0.95 })
-      .setDisplaySize(panelWidth, panelHeight);
-    this.add.rectangle(layout.centerX, layout.centerY, panelWidth, panelHeight, COLORS.panel, 0.92).setStrokeStyle(3, COLORS.gold, 0.4);
+    new UiPanel(this, this.uiSpec('node_result_panel', 'panel', 'ui_panel_node_result', 'ui_panel_default', panelLeft, panelTop, panelWidth, panelHeight, 'topLeft', 30), {
+      fillColor: COLORS.panel,
+      fillAlpha: 0.92,
+      strokeColor: COLORS.gold,
+      strokeAlpha: 0.4
+    });
 
-    game.assetSystem.createImageByAssetKey(this, 'ui_node_clear_banner', 'uiIcon', layout.centerX, panelTop + 54, { kind: 'ui', alpha: 0.95 })
-      .setDisplaySize(Math.min(280, panelWidth - 48), 46);
+    new UiPanel(this, this.uiSpec('node_clear_banner', 'panel', 'ui_node_clear_banner', 'ui_panel_default', layout.centerX - Math.min(360, panelWidth - 48) / 2, panelTop + 30, Math.min(360, panelWidth - 48), 54, 'topLeft', 50), {
+      fillColor: COLORS.panelAlt,
+      fillAlpha: 0.45,
+      strokeColor: COLORS.gold,
+      strokeAlpha: 0.35
+    });
 
-    this.add.text(layout.centerX, panelTop + 50, 'Node Clear!', {
+    this.add.text(layout.centerX, panelTop + 56, model.title, {
       fontFamily: FONT_FAMILY,
       fontSize: '34px',
       fontStyle: 'bold',
@@ -53,20 +60,41 @@ export class NodeResultScene extends Phaser.Scene {
       stroke: '#090b13',
       strokeThickness: 5
     }).setOrigin(0.5);
+    const sparkle = game.assetSystem.createImageByAssetKey(this, 'vfx_node_clear_sparkle', 'vfxCombatSmall', layout.centerX + 168, panelTop + 54, { kind: 'sprite', alpha: 0.8 });
+    sparkle.setDisplaySize(42, 42);
+    this.tweens.add({
+      targets: sparkle,
+      angle: 360,
+      scaleX: 1.18,
+      scaleY: 1.18,
+      duration: 900,
+      repeat: -1,
+      yoyo: true
+    });
 
-    this.add.text(layout.centerX, panelTop + 92, 'Festival trouble cleaned up!', {
+    this.add.text(layout.centerX, panelTop + 100, model.stageLine, {
       fontFamily: FONT_FAMILY,
       fontSize: '18px',
       color: '#d8deff'
     }).setOrigin(0.5);
 
-    this.add.text(layout.centerX, panelTop + 134, `${this.summary.enemiesDefeated} enemy${this.summary.enemiesDefeated === 1 ? '' : 'ies'} defeated`, {
+    this.add.text(layout.centerX, panelTop + 126, model.nodeLine, {
       fontFamily: FONT_FAMILY,
-      fontSize: '18px',
+      fontSize: '16px',
       color: '#98a0c7'
     }).setOrigin(0.5);
 
-    this.add.text(layout.centerX, panelTop + 182, 'EXP gained this node', {
+    if (model.enemiesLine) {
+      this.add.text(layout.centerX, panelTop + 154, model.enemiesLine, {
+        fontFamily: FONT_FAMILY,
+        fontSize: '16px',
+        color: '#98a0c7'
+      }).setOrigin(0.5);
+    }
+
+    new UiIconSlot(this, this.uiSpec('xp_gained_counter_icon', 'iconSlot', 'ui_xp_gained_counter', 'asset_missing_icon', layout.centerX - 102, panelTop + 192, 44, 44, 'center', 55));
+
+    this.add.text(layout.centerX, panelTop + 188, 'EXP gained this node', {
       fontFamily: FONT_FAMILY,
       fontSize: '20px',
       color: '#98a0c7'
@@ -82,56 +110,57 @@ export class NodeResultScene extends Phaser.Scene {
     }).setOrigin(0.5);
 
     const xpMeterY = panelTop + 276;
-    if (typeof this.summary.currentXpBeforeGain === 'number' && typeof this.summary.currentXpAfterGain === 'number' && typeof this.summary.xpToNextLevel === 'number') {
-      this.add.text(layout.centerX - panelWidth / 2 + 34, xpMeterY - 18, `Level ${state.playerLevelState.level}`, {
-        fontFamily: FONT_FAMILY,
-        fontSize: '17px',
-        color: '#f6f7ff'
-      }).setOrigin(0, 0.5);
+    this.add.text(layout.centerX - panelWidth / 2 + 34, xpMeterY - 28, `Level ${model.currentLevel}`, {
+      fontFamily: FONT_FAMILY,
+      fontSize: '17px',
+      color: '#f6f7ff'
+    }).setOrigin(0, 0.5);
 
-      this.add.rectangle(layout.centerX, xpMeterY, panelWidth - 68, 18, 0x1b2342, 1).setStrokeStyle(2, COLORS.accentSoft, 0.45);
-      const fillMaxWidth = panelWidth - 76;
-      const beforeRatio = this.summary.xpToNextLevel > 0 ? Phaser.Math.Clamp(this.summary.currentXpBeforeGain / this.summary.xpToNextLevel, 0, 1) : 0;
-      const afterRatio = this.summary.xpToNextLevel > 0 ? Phaser.Math.Clamp(this.summary.currentXpAfterGain / this.summary.xpToNextLevel, 0, 1) : beforeRatio;
-      const meterFill = this.add.rectangle(layout.centerX - fillMaxWidth / 2, xpMeterY, Math.max(8, fillMaxWidth * beforeRatio), 10, COLORS.success, 1).setOrigin(0, 0.5);
-      this.tweens.add({
-        targets: meterFill,
-        width: Math.max(8, fillMaxWidth * afterRatio),
-        duration: 520,
-        ease: 'Quad.easeOut'
-      });
+    const meter = new UiMeter(
+      this,
+      this.uiSpec('xp_meter_before_after', 'meter', 'ui_meter_xp', 'ui_meter_fallback', layout.centerX - (panelWidth - 68) / 2, xpMeterY - 14, panelWidth - 68, 28, 'topLeft', 70),
+      { current: model.xpBefore, max: model.xpMeterMax, fillInset: 5, showValueText: false }
+    );
+    this.tweens.addCounter({
+      from: model.xpBefore,
+      to: model.xpAfter,
+      duration: 520,
+      ease: 'Quad.easeOut',
+      onUpdate: (tween) => meter.setValue(Math.round(tween.getValue() ?? model.xpAfter), model.xpMeterMax)
+    });
 
-      if (typeof this.summary.xpRemainingToNextLevel === 'number') {
-        this.add.text(layout.centerX, xpMeterY + 26, `Remaining to next level: ${this.summary.xpRemainingToNextLevel} EXP`, {
-          fontFamily: FONT_FAMILY,
-          fontSize: '16px',
-          color: '#d8deff'
-        }).setOrigin(0.5);
-      }
-    } else {
-      this.add.text(layout.centerX, xpMeterY, 'EXP meter will light up once level tracking is fully wired.', {
+    this.add.text(layout.centerX, xpMeterY + 30, `${model.xpBefore}/${model.xpMeterMax} -> ${model.xpAfter}/${model.xpMeterMax} EXP`, {
+      fontFamily: FONT_FAMILY,
+      fontSize: '15px',
+      color: '#d8deff'
+    }).setOrigin(0.5);
+
+    if (!model.levelUpReady) {
+      new UiIconSlot(this, this.uiSpec('xp_remaining_chip_icon', 'iconSlot', 'ui_xp_remaining_chip', 'asset_missing_icon', layout.centerX - 138, xpMeterY + 58, 24, 24, 'center', 55));
+      this.add.text(layout.centerX, xpMeterY + 58, `Remaining to next level: ${model.xpRemaining} EXP`, {
         fontFamily: FONT_FAMILY,
         fontSize: '16px',
-        color: '#d8deff',
-        align: 'center',
-        wordWrap: { width: panelWidth - 80 }
+        color: '#d8deff'
       }).setOrigin(0.5);
     }
 
-    const rows: XpRow[] = [
-      { label: 'Enemies', value: this.summary.xpBreakdown.enemyXp },
-      { label: 'Elite bonus', value: this.summary.xpBreakdown.eliteBonusXp },
-      { label: 'Boss bonus', value: this.summary.xpBreakdown.bossBonusXp },
-      { label: 'Objective bonus', value: this.summary.xpBreakdown.objectiveBonusXp },
-      { label: 'Cascade 3+ bonus', value: this.summary.xpBreakdown.cascadeBonusXp },
-      { label: 'No damage bonus', value: this.summary.xpBreakdown.noDamageBonusXp },
-      { label: 'Route bonus', value: this.summary.xpBreakdown.routeBonusXp }
-    ].filter((row) => row.value > 0);
-
     const rowsStartY = panelTop + 332;
+    const rows = model.xpRows;
+    if (rows.length === 0) {
+      this.add.text(layout.centerX, rowsStartY, 'No detailed EXP breakdown available.', {
+        fontFamily: FONT_FAMILY,
+        fontSize: '16px',
+        color: '#98a0c7'
+      }).setOrigin(0.5);
+    }
     rows.forEach((row, index) => {
       const y = rowsStartY + index * 34;
-      this.add.rectangle(layout.centerX, y, panelWidth - 68, 28, COLORS.panelAlt, 0.88).setStrokeStyle(1, COLORS.accent, 0.22);
+      new UiPanel(this, this.uiSpec(`xp_breakdown_row_${index}`, 'panel', 'ui_xp_breakdown_row', 'ui_panel_default', layout.centerX - (panelWidth - 68) / 2, y - 14, panelWidth - 68, 28, 'topLeft', 55), {
+        fillColor: COLORS.panelAlt,
+        fillAlpha: 0.72,
+        strokeColor: COLORS.accent,
+        strokeAlpha: 0.22
+      });
       this.add.text(layout.centerX - panelWidth / 2 + 34, y, row.label, {
         fontFamily: FONT_FAMILY,
         fontSize: '16px',
@@ -146,9 +175,13 @@ export class NodeResultScene extends Phaser.Scene {
     });
 
     const badgeY = rowsStartY + Math.max(1, rows.length) * 34 + 34;
-    if (this.summary.pendingLevelUps > 0) {
-      game.assetSystem.createImageByAssetKey(this, 'ui_level_ready_badge', 'uiIcon', layout.centerX, badgeY, { kind: 'ui', alpha: 0.96 })
-        .setDisplaySize(Math.min(220, panelWidth - 120), 42);
+    if (model.levelUpReady) {
+      new UiPanel(this, this.uiSpec('level_ready_badge', 'panel', 'ui_level_ready_badge', 'asset_missing_icon', layout.centerX - Math.min(240, panelWidth - 120) / 2, badgeY - 22, Math.min(240, panelWidth - 120), 44, 'topLeft', 55), {
+        fillColor: COLORS.danger,
+        fillAlpha: 0.36,
+        strokeColor: COLORS.gold,
+        strokeAlpha: 0.45
+      });
       const badge = this.add.text(layout.centerX, badgeY, 'Level Up Ready!', {
         fontFamily: FONT_FAMILY,
         fontSize: '22px',
@@ -167,13 +200,16 @@ export class NodeResultScene extends Phaser.Scene {
       });
     }
 
-    new Button(this, layout.centerX, panelTop + panelHeight - 56, Math.min(230, panelWidth - 80), 56, 'Continue', () => {
-      this.handleContinue();
+    new UiButton(this, this.uiSpec('node_result_continue_button', 'button', 'ui_button_node_result_continue', 'ui_button_default', layout.centerX - Math.min(250, panelWidth - 80) / 2, panelTop + panelHeight - 86, Math.min(250, panelWidth - 80), 62, 'topLeft', 90), {
+      label: 'Continue',
+      onClick: () => {
+        this.handleContinue();
+      }
     });
 
     this.tweens.addCounter({
       from: 0,
-      to: this.summary.xpGainedTotal,
+      to: model.xpTotal,
       duration: 440,
       ease: 'Quad.easeOut',
       onUpdate: (tween) => {
@@ -188,7 +224,7 @@ export class NodeResultScene extends Phaser.Scene {
     const summary = state.pendingNodeResult ?? this.summary;
 
     if (!summary) {
-      this.scene.start('MapScene');
+      continueFromNodeResult(this, null);
       return;
     }
 
@@ -209,45 +245,47 @@ export class NodeResultScene extends Phaser.Scene {
       return;
     }
 
-    game.saveRun();
+    continueFromNodeResult(this, summary);
+  }
 
-    const stageId = game.stageSystem.getStageByIndex(state.stage)?.id ?? 'stage_sprinkle_sewers';
-    let routeScene = null;
-    if (!state.activeEncounterPack?.routeFallbackTriggeredForEncounterPack) {
-      routeScene = game.routeStorySystem.shouldTriggerRouteScene(
-        state,
-        state.hero.id,
-        stageId,
-        'after_first_combat_victory'
-      );
-    }
-    if (routeScene) {
-      if (state.activeEncounterPack) {
-        state.activeEncounterPack.routeFallbackTriggeredForEncounterPack = true;
+  private uiSpec(
+    id: string,
+    type: string,
+    assetKey: string,
+    fallbackAssetKey: string,
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    anchor: UiComponentSpec['anchor'],
+    zIndex: number
+  ): UiComponentSpec {
+    return {
+      id,
+      type,
+      assetKey,
+      fallbackAssetKey,
+      canonicalFolder: 'public/assets/ui/',
+      expectedSourceSize: { w: Math.max(1, Math.round(w)), h: Math.max(1, Math.round(h)) },
+      runtimeRenderSize: { w: Math.max(1, Math.round(w)), h: Math.max(1, Math.round(h)) },
+      x: Math.round(x),
+      y: Math.round(y),
+      w: Math.max(1, Math.round(w)),
+      h: Math.max(1, Math.round(h)),
+      anchor,
+      fitMode: type === 'iconSlot' ? 'iconCenter' : type === 'meter' || type === 'button' || type === 'panel' ? 'nineSlice' : 'exact',
+      scaleMode: type === 'iconSlot' ? 'fitInteger' : type === 'meter' || type === 'button' || type === 'panel' ? 'uiStretchNineSlice' : 'none',
+      safePadding: type === 'iconSlot' ? 0 : 12,
+      zIndex,
+      dynamicTextAllowed: type !== 'iconSlot',
+      pixelPerfect: {
+        integerCoordinates: true,
+        allowFractionalScale: false,
+        filtering: 'nearest',
+        antiAliasing: false,
+        roundPixels: true
       }
-      this.scene.start('RouteDialogueScene', {
-        sceneId: routeScene.id,
-        returnScene: 'RewardScene'
-      });
-      return;
-    }
-
-    if (game.levelUpSystem.hasPendingLevelUp(state)) {
-      state.levelUpScreenState.levelUpScreenResolved = false;
-      this.scene.start('LevelUpRewardScene');
-      return;
-    }
-
-    state.activeEncounterPack = null;
-    if (state.pendingRewards.length > 0 || state.pendingStageAdvance) {
-      this.scene.start('RewardScene');
-      return;
-    }
-
-    game.mapSystem.completeNode(state, state.currentNodeId);
-    state.runStatus = 'map';
-    game.saveRun();
-    this.scene.start('MapScene');
+    };
   }
 
   private finishFinalBossVictory(): void {

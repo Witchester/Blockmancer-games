@@ -146,6 +146,13 @@ export class UiBaseComponent {
     return this;
   }
 
+  setDebugVisible(visible: boolean): this {
+    this.debugObjects.forEach((object) => {
+      (object as Phaser.GameObjects.GameObject & Phaser.GameObjects.Components.Visible).setVisible(visible);
+    });
+    return this;
+  }
+
   setState(state: UiComponentState): this {
     this.state = state;
     const style = UI_STATE_STYLES[state];

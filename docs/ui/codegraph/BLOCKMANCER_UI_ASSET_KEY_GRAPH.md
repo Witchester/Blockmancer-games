@@ -159,6 +159,10 @@ Validate source size before import and check nearest/pixelated runtime rendering
 ## Status / known gaps
 Disk availability is not exhaustively verified here; this graph is a contract map and should be paired with asset audit tooling.
 
+## UI-9 Festival Level-Up Asset Coverage
+
+Runtime manifest coverage now includes `bg_scene_level_up`, `ui_panel_level_up`, `ui_level_up_card_common`, `ui_level_up_card_rare`, `ui_level_up_card_hero`, `ui_meter_xp`, `ui_level_badge`, `ui_button_level_reroll`, `ui_button_level_confirm`, `ui_level_up_panel_intro`, `ui_level_up_card_flip`, `ui_level_up_card_select`, `ui_xp_meter_fill`, `vfx_level_up_sparkle`, and `placeholder_icon`. Each new key has a fallback path to an existing UI, background, icon, meter, or VFX placeholder so missing final assets remain nonfatal.
+
 ## UI-3 Asset Resolver Coverage
 
 - Primary `assetKey` handling: implemented through `UiAssetSlotResolver.resolveAssetSlot` and `resolveTextureKey`, using runtime texture keys instead of raw `public/assets` paths.

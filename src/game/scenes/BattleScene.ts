@@ -28,7 +28,15 @@ import type {
 } from '../types/GameTypes';
 import { MobileControls } from '../ui/MobileControls';
 import { Button } from '../ui/Button';
-import { BattleCombatHud, BattleEventLog, BattleScreenShell, MonsterStackPreview, BattlePuzzleSectionUi } from '../ui/battle';
+import {
+  BattleCombatHud,
+  BattleControlsInputAdapter,
+  BattleControlsSectionUi,
+  BattleEventLog,
+  BattleScreenShell,
+  MonsterStackPreview,
+  BattlePuzzleSectionUi
+} from '../ui/battle';
 import { getPortraitLayout, isCompactLayout } from '../utils/layout';
 import {
   BOARD_CELL_SIZE,
@@ -338,6 +346,7 @@ export class BattleScene extends Phaser.Scene {
   private visualEventActive = false;
   private battleLayout?: BattleSceneLayout;
   private battleShell?: BattleScreenShell;
+  private battleControlsSectionUi?: BattleControlsSectionUi;
   private lumiWishkeeperTriggered = false;
 
   constructor() {
@@ -459,17 +468,9 @@ export class BattleScene extends Phaser.Scene {
     this.logY = this.battleLayout.combatLogRect.y;
     this.logWidth = this.battleLayout.combatLogRect.width;
     this.logHeight = this.battleLayout.combatLogRect.height;
-    this.boardCellSize = Math.max(
-      18,
-      Math.floor(
-        Math.min(
-          this.battleLayout.boardRect.width / this.boardColumns,
-          this.battleLayout.boardRect.height / this.boardRows
-        )
-      )
-    );
-    this.boardOffsetX = Math.round(this.battleLayout.boardRect.x + (this.battleLayout.boardRect.width - this.boardColumns * this.boardCellSize) / 2);
-    this.boardOffsetY = Math.round(this.battleLayout.boardRect.y + (this.battleLayout.boardRect.height - this.boardRows * this.boardCellSize) / 2);
+    this.boardCellSize = Math.max(18, Math.floor(Math.min(240 / this.boardColumns, 480 / this.boardRows)));
+    this.boardOffsetX = Math.round(420 + (240 - this.boardColumns * this.boardCellSize) / 2);
+    this.boardOffsetY = Math.round(624 + (480 - this.boardRows * this.boardCellSize) / 2);
     this.previewCenterX = this.battleLayout.leftRailRect.x + Math.round(this.battleLayout.leftRailRect.width / 2);
     this.previewCenterY = this.battleLayout.leftRailRect.y + Math.round(this.battleLayout.leftRailRect.height * 0.58);
     this.controlsCenterX = this.screenWidth / 2;
@@ -482,6 +483,7 @@ export class BattleScene extends Phaser.Scene {
     this.battlePuzzleSectionUi.onInventoryClicked = () => {
       this.toggleInventory();
     };
+    this.alignBoardToPuzzleSection();
     const shellValidation = this.battleShell.validateShell();
     if (!shellValidation.isValid && import.meta.env.DEV) {
       console.warn('[BattleScene] Battle shell validation failed:', shellValidation.errors);
@@ -491,8 +493,7 @@ export class BattleScene extends Phaser.Scene {
     this.createBattleCombatUi();
     this.createRenderBuffers();
     this.buildBoard();
-    this.createPreviewPanel();
-    this.createMobileControls();
+    this.createBattleControlsUi();
     this.createInventoryOverlay();
     this.createInputSystem();
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, this.handleShutdown, this);
@@ -528,6 +529,16 @@ export class BattleScene extends Phaser.Scene {
 
   private get sharedGame(): BlockmancerGame {
     return this.game as BlockmancerGame;
+  }
+
+  private alignBoardToPuzzleSection(): void {
+    const boardBounds = this.battlePuzzleSectionUi?.getBoardBounds() ?? { x: 420, y: 624, w: 240, h: 480 };
+    this.boardCellSize = Math.max(
+      1,
+      Math.floor(Math.min(boardBounds.w / this.boardColumns, boardBounds.h / this.boardRows))
+    );
+    this.boardOffsetX = Math.round(boardBounds.x + (boardBounds.w - this.boardColumns * this.boardCellSize) / 2);
+    this.boardOffsetY = Math.round(boardBounds.y + (boardBounds.h - this.boardRows * this.boardCellSize) / 2);
   }
 
   private calculateBattleLayout(width: number, height: number): BattleSceneLayout {
@@ -882,6 +893,71 @@ export class BattleScene extends Phaser.Scene {
     this.updateBattleCombatHud();
   }
 
+  private createBattleControlsUi(): void {
+    if (!this.battleShell) {
+      return;
+    }
+
+    const inputAdapter = new BattleControlsInputAdapter({
+      getState: () => {
+        const spellSlots = this.getPlayableSpellSlots().slice(0, 3).map((spell, index) => {
+          if (!spell) {
+            return {
+              label: `Spell ${index + 1}`,
+              disabled: true,
+              empty: true
+            };
+          }
+
+          const spellContent = contentRegistry.getSpell('spl_' + spell.id.replace(/-/g, '_')) as { iconKey?: string } | null;
+          const cost = this.spells.getCost(spell.id);
+          return {
+            label: spell.key,
+            cost,
+            iconKey: this.sharedGame.assetSystem.getIcon(this, 'spell', 'spl_' + spell.id.replace(/-/g, '_'), spellContent?.iconKey),
+            disabled: this.sharedGame.runState.player.mana < cost
+          };
+        });
+
+        return {
+          inputLocked: this.sharedGame.runState.runStatus !== 'battle' || this.cascadeResolving || this.visualEventActive,
+          leftHanded: this.sharedGame.getSettings().leftHandedControls,
+          inventoryCount: this.sharedGame.runState.inventory.length,
+          spellSlots,
+          skillSlots: [
+            { label: 'Skill 1', disabled: true, empty: true },
+            { label: 'Special', disabled: true, empty: true }
+          ]
+        };
+      },
+      handlers: {
+        moveLeft: () => this.moveHorizontal(-1),
+        moveRight: () => this.moveHorizontal(1),
+        softDrop: () => this.softDrop(),
+        hardDrop: () => this.hardDrop(),
+        rotateClockwise: () => this.rotatePiece(),
+        hold: () => this.handleHold(),
+        castSpell: (slot) => {
+          const spell = this.getPlayableSpellSlots()[slot];
+          if (spell) {
+            void this.tryCast(spell.id);
+          } else {
+            this.combat.addLog('No spell in that slot yet.');
+            this.renderAll();
+          }
+        },
+        useSkill: (slot) => {
+          this.combat.addLog(slot === 0 ? 'Skill slot is locked.' : 'Special slot is locked.');
+          this.renderAll();
+        },
+        openBag: () => this.toggleInventory(),
+        openSettings: this.handlePause
+      }
+    });
+
+    this.battleControlsSectionUi = new BattleControlsSectionUi(this, this.battleShell, inputAdapter).create();
+  }
+
   private updateBattleCombatHud(): void {
     const state = this.sharedGame.runState;
     this.battleCombatHud?.updateHeader({
@@ -960,14 +1036,31 @@ export class BattleScene extends Phaser.Scene {
 
   private buildBoard(): void {
     for (let row = 0; row < this.boardRows; row += 1) {
+      const cellRow: Phaser.GameObjects.Rectangle[] = [];
+      const spriteRow: Phaser.GameObjects.Sprite[] = [];
+      const symbolRow: Phaser.GameObjects.Text[] = [];
+      for (let col = 0; col < this.boardColumns; col += 1) {
+        const x = this.boardOffsetX + col * this.boardCellSize + this.boardCellSize / 2;
+        const y = this.boardOffsetY + row * this.boardCellSize + this.boardCellSize / 2;
+        const cell = this.add.rectangle(x, y, this.boardCellSize, this.boardCellSize, COLORS.boardEmpty, 1)
+          .setStrokeStyle(1, COLORS.boardGrid, this.sharedGame.getSettings().showGrid ? 0.62 : 0);
+        cell.setDepth(10);
+        cellRow.push(cell);
+
+        const sprite = this.add
+          .sprite(
+            x,
+            y,
             this.sharedGame.assetSystem.getTextureKey(this, null, 'block')
           )
           .setVisible(false);
         setBoardBlockDisplaySize(sprite);
+        sprite.setDisplaySize(this.boardCellSize, this.boardCellSize);
+        sprite.setDepth(11);
         spriteRow.push(sprite);
         const symbol = this.add.text(
-          this.boardOffsetX + col * this.boardCellSize + this.boardCellSize / 2,
-          this.boardOffsetY + row * this.boardCellSize + this.boardCellSize / 2 + 1,
+          x,
+          y + 1,
           '',
           {
             color: '#f6f7ff',
@@ -978,6 +1071,7 @@ export class BattleScene extends Phaser.Scene {
             strokeThickness: 2
           }
         ).setOrigin(0.5).setVisible(false);
+        symbol.setDepth(12);
         symbolRow.push(symbol);
       }
       this.boardCells.push(cellRow);
@@ -1353,6 +1447,7 @@ export class BattleScene extends Phaser.Scene {
   private handleShutdown(): void {
     this.battleShell?.destroy();
     this.battleShell = undefined;
+    this.battleControlsSectionUi = undefined;
     this.inputSystem?.destroy();
     this.inputSystem = undefined;
     this.tweens.killAll();
@@ -3066,6 +3161,7 @@ export class BattleScene extends Phaser.Scene {
       : 'base';
     if (state === 'glow' && this.playBoardBlockGlowAnimation(sprite, cell.blockId, row, col)) {
       setBoardBlockDisplaySize(sprite);
+      sprite.setDisplaySize(this.boardCellSize, this.boardCellSize);
       if (!sprite.visible) {
         sprite.setVisible(true);
       }
@@ -3077,6 +3173,7 @@ export class BattleScene extends Phaser.Scene {
     if (this.renderedTextureKeys[row][col] !== textureKey) {
       sprite.setTexture(textureKey);
       setBoardBlockDisplaySize(sprite);
+      sprite.setDisplaySize(this.boardCellSize, this.boardCellSize);
       this.renderedTextureKeys[row][col] = textureKey;
     }
     if (!sprite.visible) {
@@ -3099,6 +3196,7 @@ export class BattleScene extends Phaser.Scene {
     this.createBoardBlockAnimationIfMissing(animationKey, frames, BLOCK_ANIM.GLOW_FRAME_MS, -1);
     if (this.renderedAnimationKeys[row][col] !== animationKey || !sprite.anims.isPlaying) {
       setBoardBlockDisplaySize(sprite);
+      sprite.setDisplaySize(this.boardCellSize, this.boardCellSize);
       sprite.play(animationKey);
       this.renderedAnimationKeys[row][col] = animationKey;
       this.renderedTextureKeys[row][col] = '';
@@ -3603,6 +3701,7 @@ export class BattleScene extends Phaser.Scene {
     const previewProtected = this.sharedGame.runState.reactiveState.previewRevealPieces > 0;
     const hidden = !previewProtected && (enemy.previewHiddenTurns > 0 || this.sharedGame.oopsieSystem.shouldHidePreview(this.sharedGame.runState));
     const queue = this.board.getNextQueueTypes(4);
+    this.battlePuzzleSectionUi?.updateNextQueue({ queue, hidden });
     this.previewLabel?.setText(hidden ? 'Preview Hexed' : 'Next Queue');
 
     for (let slot = 0; slot < 4; slot += 1) {
@@ -3693,6 +3792,10 @@ export class BattleScene extends Phaser.Scene {
     const middleRect = this.battleLayout?.middleBoardRect ?? { x: 12, y: this.topSectionHeight, width: this.screenWidth - 24, height: this.middleSectionHeight };
     const enemy = state.activeEnemy;
     const holdHidden = Boolean(enemy?.holdHiddenTurns);
+    this.battlePuzzleSectionUi?.updateHoldPiece({
+      pieceType: this.board.holdPieceType,
+      hidden: holdHidden
+    });
     this.holdText?.setText(
       holdHidden
         ? 'Hold\nHidden'
@@ -3714,6 +3817,22 @@ export class BattleScene extends Phaser.Scene {
     const chaos = this.sharedGame.chaosRuleSystem.getActive(state);
     const objective = this.sharedGame.battleObjectiveSystem.getActive(state);
     const objectiveSummary = this.sharedGame.battleObjectiveSystem.getSummary(state);
+    const totalInventoryCount = state.inventory.reduce((sum, stack) => sum + stack.count, 0);
+    this.battlePuzzleSectionUi?.updateRightRail({
+      gold: state.player.gold,
+      relics: state.ownedRewards.length,
+      oopsies: state.player.oopsies.length,
+      lines: state.runStats.linesCleared,
+      combo: state.combo,
+      feverProgress: state.player.fever,
+      feverMax: 100,
+      objective: objective ? objectiveSummary.replace(/^Objective: /, '') : undefined,
+      chaos: chaos?.name
+    });
+    this.battlePuzzleSectionUi?.updateInventoryIndicator({
+      count: totalInventoryCount,
+      active: true
+    });
     const battleStatusText = [
       `Relics ${state.ownedRewards.length}  Oops ${state.player.oopsies.length}`,
       chaos ? `Chaos: ${chaos.name}` : '',
@@ -3852,6 +3971,7 @@ export class BattleScene extends Phaser.Scene {
         button.setText(`${spell.key}\n${this.spells.getCost(spellId)}`);
       }
     });
+    this.battleControlsSectionUi?.refresh();
   }
 
   private getInventoryRenderKey(state: RunState): string {
