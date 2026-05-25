@@ -1,0 +1,420 @@
+{
+  "screenId": "screen_route_dialogue",
+  "screenName": "Route Dialogue / Story Choice",
+  "canvas": {
+    "width": 1080,
+    "height": 1920,
+    "orientation": "portrait"
+  },
+  "entryFrom": [
+    "screen_map",
+    "screen_stage_intro",
+    "screen_reward"
+  ],
+  "exitTo": [
+    "screen_map",
+    "screen_battle",
+    "screen_reward"
+  ],
+  "purpose": "Present short story beats and practical/true/risky choices with portrait-safe text.",
+  "style": {
+    "tone": "cheerful festival fantasy",
+    "pixelArt": true,
+    "safeAreaPadding": 32,
+    "desktopPreview": "centered portrait frame"
+  },
+  "codegraph": {
+    "nodeId": "screen_route_dialogue",
+    "relatedSceneFiles": [
+      "src/game/scenes/RouteDialogueScene.ts"
+    ],
+    "relatedComponents": [
+      "route_background",
+      "speaker_portrait",
+      "dialogue_panel",
+      "nameplate_panel",
+      "choice_practical",
+      "choice_true",
+      "choice_risky"
+    ],
+    "relatedAssetKeys": [
+      "bg_route_milo_sprinkle_sewers",
+      "portrait_hero_milo_blockmancer",
+      "ui_panel_dialogue",
+      "ui_dialogue_nameplate",
+      "ui_choice_card_practical",
+      "ui_choice_card_true",
+      "ui_choice_card_risky"
+    ],
+    "relatedSotDocs": [
+      "docs/00_BLOCKMANCER_SOURCE_OF_TRUTH_INDEX.md",
+      "docs/01_BLOCKMANCER_GAME_DESIGN_SOURCE_OF_TRUTH.md",
+      "docs/04_BLOCKMANCER_ASSET_ANIMATION_SOURCE_OF_TRUTH.md",
+      "docs/05_BLOCKMANCER_RELEASE_IMPLEMENTATION_SOURCE_OF_TRUTH.md",
+      "docs/06_BLOCKMANCER_CANONICAL_FOLDER_STRUCTURE_SOURCE_OF_TRUTH.md",
+      "docs/07_BLOCKMANCER_MONSTER_WIKIPEDIA_SOURCE_OF_TRUTH.md"
+    ]
+  },
+  "fonts": {
+    "title": {
+      "fontKey": "font_pixel_header",
+      "sizePx": 56
+    },
+    "body": {
+      "fontKey": "font_pixel_body",
+      "sizePx": 30
+    },
+    "number": {
+      "fontKey": "font_pixel_number",
+      "sizePx": 34
+    },
+    "small": {
+      "fontKey": "font_pixel_small",
+      "sizePx": 22
+    }
+  },
+  "sections": [
+    {
+      "id": "full_frame",
+      "x": 0,
+      "y": 0,
+      "w": 1080,
+      "h": 1920,
+      "role": "Full portrait scene canvas",
+      "components": [
+        "route_background"
+      ]
+    },
+    {
+      "id": "safe_content",
+      "x": 32,
+      "y": 32,
+      "w": 1016,
+      "h": 1856,
+      "role": "32px safe content area",
+      "components": [
+        "speaker_portrait",
+        "dialogue_panel",
+        "nameplate_panel",
+        "choice_practical",
+        "choice_true",
+        "choice_risky"
+      ]
+    }
+  ],
+  "components": [
+    {
+      "id": "route_background",
+      "type": "backgroundLayer",
+      "assetKey": "bg_route_milo_sprinkle_sewers",
+      "fallbackAssetKey": "placeholder_background",
+      "canonicalFolder": "public/assets/stages/stage_sprinkle_sewers/route-scenes/",
+      "expectedSourceSize": {
+        "w": 1080,
+        "h": 1920
+      },
+      "runtimeRenderSize": {
+        "w": 1080,
+        "h": 1920
+      },
+      "x": 0,
+      "y": 0,
+      "w": 1080,
+      "h": 1920,
+      "anchor": "topLeft",
+      "fitMode": "exact",
+      "scaleMode": "backgroundExact",
+      "safePadding": 0,
+      "zIndex": 0,
+      "dynamicTextAllowed": false,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Full portrait background. Export exactly 1080x1920 and preserve the 32px full-screen safe area."
+    },
+    {
+      "id": "speaker_portrait",
+      "type": "portraitSlot",
+      "assetKey": "portrait_hero_milo_blockmancer",
+      "fallbackAssetKey": "placeholder_portrait",
+      "canonicalFolder": "public/assets/portraits/heroes/",
+      "expectedSourceSize": {
+        "w": 627,
+        "h": 627
+      },
+      "runtimeRenderSize": {
+        "w": 220,
+        "h": 220
+      },
+      "x": 156,
+      "y": 980,
+      "w": 220,
+      "h": 220,
+      "anchor": "center",
+      "fitMode": "contain",
+      "scaleMode": "fitInteger",
+      "safePadding": 0,
+      "zIndex": 45,
+      "dynamicTextAllowed": false,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Portrait source is 627x627. Nameplates and dialogue text are dynamic."
+    },
+    {
+      "id": "dialogue_panel",
+      "type": "panel",
+      "assetKey": "ui_panel_dialogue",
+      "fallbackAssetKey": "ui_panel_default",
+      "canonicalFolder": "public/assets/ui/panels/",
+      "expectedSourceSize": {
+        "w": 920,
+        "h": 360
+      },
+      "runtimeRenderSize": {
+        "w": 920,
+        "h": 360
+      },
+      "x": 80,
+      "y": 1120,
+      "w": 920,
+      "h": 360,
+      "anchor": "topLeft",
+      "fitMode": "nineSlice",
+      "scaleMode": "uiStretchNineSlice",
+      "safePadding": 24,
+      "zIndex": 30,
+      "dynamicTextAllowed": true,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Panel or frame art only. Dynamic labels and values are rendered by game text."
+    },
+    {
+      "id": "nameplate_panel",
+      "type": "panel",
+      "assetKey": "ui_dialogue_nameplate",
+      "fallbackAssetKey": "ui_panel_default",
+      "canonicalFolder": "public/assets/ui/panels/",
+      "expectedSourceSize": {
+        "w": 360,
+        "h": 72
+      },
+      "runtimeRenderSize": {
+        "w": 360,
+        "h": 72
+      },
+      "x": 120,
+      "y": 1060,
+      "w": 360,
+      "h": 72,
+      "anchor": "topLeft",
+      "fitMode": "nineSlice",
+      "scaleMode": "uiStretchNineSlice",
+      "safePadding": 24,
+      "zIndex": 30,
+      "dynamicTextAllowed": true,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Panel or frame art only. Dynamic labels and values are rendered by game text."
+    },
+    {
+      "id": "choice_practical",
+      "type": "button",
+      "assetKey": "ui_choice_card_practical",
+      "fallbackAssetKey": "ui_button_default",
+      "canonicalFolder": "public/assets/ui/buttons/",
+      "expectedSourceSize": {
+        "w": 860,
+        "h": 104
+      },
+      "runtimeRenderSize": {
+        "w": 860,
+        "h": 104
+      },
+      "x": 540,
+      "y": 1520,
+      "w": 860,
+      "h": 104,
+      "anchor": "center",
+      "fitMode": "nineSlice",
+      "scaleMode": "uiStretchNineSlice",
+      "safePadding": 24,
+      "zIndex": 90,
+      "dynamicTextAllowed": true,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Button art only. Labels, disabled state text, counts, costs, and localization are game text."
+    },
+    {
+      "id": "choice_true",
+      "type": "button",
+      "assetKey": "ui_choice_card_true",
+      "fallbackAssetKey": "ui_button_default",
+      "canonicalFolder": "public/assets/ui/buttons/",
+      "expectedSourceSize": {
+        "w": 860,
+        "h": 104
+      },
+      "runtimeRenderSize": {
+        "w": 860,
+        "h": 104
+      },
+      "x": 540,
+      "y": 1650,
+      "w": 860,
+      "h": 104,
+      "anchor": "center",
+      "fitMode": "nineSlice",
+      "scaleMode": "uiStretchNineSlice",
+      "safePadding": 24,
+      "zIndex": 90,
+      "dynamicTextAllowed": true,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Button art only. Labels, disabled state text, counts, costs, and localization are game text."
+    },
+    {
+      "id": "choice_risky",
+      "type": "button",
+      "assetKey": "ui_choice_card_risky",
+      "fallbackAssetKey": "ui_button_default",
+      "canonicalFolder": "public/assets/ui/buttons/",
+      "expectedSourceSize": {
+        "w": 860,
+        "h": 104
+      },
+      "runtimeRenderSize": {
+        "w": 860,
+        "h": 104
+      },
+      "x": 540,
+      "y": 1780,
+      "w": 860,
+      "h": 104,
+      "anchor": "center",
+      "fitMode": "nineSlice",
+      "scaleMode": "uiStretchNineSlice",
+      "safePadding": 24,
+      "zIndex": 90,
+      "dynamicTextAllowed": true,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Button art only. Labels, disabled state text, counts, costs, and localization are game text."
+    }
+  ],
+  "assetPlaceholders": [
+    {
+      "assetKey": "bg_route_milo_sprinkle_sewers",
+      "fallbackAssetKey": "placeholder_background",
+      "canonicalFolder": "public/assets/stages/stage_sprinkle_sewers/route-scenes/",
+      "expectedSourceSize": {
+        "w": 1080,
+        "h": 1920
+      }
+    },
+    {
+      "assetKey": "portrait_hero_milo_blockmancer",
+      "fallbackAssetKey": "placeholder_portrait",
+      "canonicalFolder": "public/assets/portraits/heroes/",
+      "expectedSourceSize": {
+        "w": 627,
+        "h": 627
+      }
+    },
+    {
+      "assetKey": "ui_panel_dialogue",
+      "fallbackAssetKey": "ui_panel_default",
+      "canonicalFolder": "public/assets/ui/panels/",
+      "expectedSourceSize": {
+        "w": 920,
+        "h": 360
+      }
+    },
+    {
+      "assetKey": "ui_dialogue_nameplate",
+      "fallbackAssetKey": "ui_panel_default",
+      "canonicalFolder": "public/assets/ui/panels/",
+      "expectedSourceSize": {
+        "w": 360,
+        "h": 72
+      }
+    },
+    {
+      "assetKey": "ui_choice_card_practical",
+      "fallbackAssetKey": "ui_button_default",
+      "canonicalFolder": "public/assets/ui/buttons/",
+      "expectedSourceSize": {
+        "w": 860,
+        "h": 104
+      }
+    },
+    {
+      "assetKey": "ui_choice_card_true",
+      "fallbackAssetKey": "ui_button_default",
+      "canonicalFolder": "public/assets/ui/buttons/",
+      "expectedSourceSize": {
+        "w": 860,
+        "h": 104
+      }
+    },
+    {
+      "assetKey": "ui_choice_card_risky",
+      "fallbackAssetKey": "ui_button_default",
+      "canonicalFolder": "public/assets/ui/buttons/",
+      "expectedSourceSize": {
+        "w": 860,
+        "h": 104
+      }
+    }
+  ],
+  "interactions": [
+    "All button labels, counts, prices, HP, MP, EXP, level, score, combo, cascade, stack, quantity, and damage values are game text, never baked into PNG assets.",
+    "Touch targets for primary controls are at least 88x88px; battle primary controls target 96x96px.",
+    "Runtime positions are rounded to whole pixels before render."
+  ],
+  "fallbackRules": [
+    "If assetKey is missing, use fallbackAssetKey without changing component bounds.",
+    "If final PNG has wrong source size, reject it in asset QC and keep placeholder/fallback.",
+    "If localized text overflows, resize or wrap game text only; do not edit PNG layout."
+  ],
+  "acceptanceCriteria": [
+    "Canvas is 1080x1920 portrait.",
+    "Every component uses integer x/y/w/h coordinates.",
+    "Every visual component has assetKey, fallbackAssetKey, canonicalFolder, expectedSourceSize, runtimeRenderSize, anchor, fitMode, scaleMode, safePadding, zIndex, dynamicTextAllowed, and pixelPerfect fields.",
+    "No dynamic text is baked into PNG assets.",
+    "Final assets can replace placeholders without changing layout JSON."
+  ]
+}

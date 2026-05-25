@@ -1,0 +1,326 @@
+{
+  "screenId": "screen_splash",
+  "screenName": "Splash / Loading",
+  "canvas": {
+    "width": 1080,
+    "height": 1920,
+    "orientation": "portrait"
+  },
+  "entryFrom": [
+    "App launch"
+  ],
+  "exitTo": [
+    "screen_main_menu"
+  ],
+  "purpose": "Load fonts, generated placeholders, manifests, and show a cheerful festival loading frame.",
+  "style": {
+    "tone": "cheerful festival fantasy",
+    "pixelArt": true,
+    "safeAreaPadding": 32,
+    "desktopPreview": "centered portrait frame"
+  },
+  "codegraph": {
+    "nodeId": "screen_splash",
+    "relatedSceneFiles": [
+      "src/game/scenes/BootScene.ts"
+    ],
+    "relatedComponents": [
+      "splash_background",
+      "splash_logo_panel",
+      "blockomatic_loading_icon",
+      "loading_meter",
+      "tap_to_start_button"
+    ],
+    "relatedAssetKeys": [
+      "bg_scene_splash",
+      "ui_panel_default",
+      "placeholder_icon",
+      "ui_meter_xp",
+      "ui_button_primary"
+    ],
+    "relatedSotDocs": [
+      "docs/00_BLOCKMANCER_SOURCE_OF_TRUTH_INDEX.md",
+      "docs/01_BLOCKMANCER_GAME_DESIGN_SOURCE_OF_TRUTH.md",
+      "docs/04_BLOCKMANCER_ASSET_ANIMATION_SOURCE_OF_TRUTH.md",
+      "docs/05_BLOCKMANCER_RELEASE_IMPLEMENTATION_SOURCE_OF_TRUTH.md",
+      "docs/06_BLOCKMANCER_CANONICAL_FOLDER_STRUCTURE_SOURCE_OF_TRUTH.md",
+      "docs/07_BLOCKMANCER_MONSTER_WIKIPEDIA_SOURCE_OF_TRUTH.md"
+    ]
+  },
+  "fonts": {
+    "title": {
+      "fontKey": "font_pixel_header",
+      "sizePx": 56
+    },
+    "body": {
+      "fontKey": "font_pixel_body",
+      "sizePx": 30
+    },
+    "number": {
+      "fontKey": "font_pixel_number",
+      "sizePx": 34
+    },
+    "small": {
+      "fontKey": "font_pixel_small",
+      "sizePx": 22
+    }
+  },
+  "sections": [
+    {
+      "id": "full_frame",
+      "x": 0,
+      "y": 0,
+      "w": 1080,
+      "h": 1920,
+      "role": "Full portrait scene canvas",
+      "components": [
+        "splash_background"
+      ]
+    },
+    {
+      "id": "safe_content",
+      "x": 32,
+      "y": 32,
+      "w": 1016,
+      "h": 1856,
+      "role": "32px safe content area",
+      "components": [
+        "splash_logo_panel",
+        "blockomatic_loading_icon",
+        "loading_meter",
+        "tap_to_start_button"
+      ]
+    }
+  ],
+  "components": [
+    {
+      "id": "splash_background",
+      "type": "backgroundLayer",
+      "assetKey": "bg_scene_splash",
+      "fallbackAssetKey": "placeholder_background",
+      "canonicalFolder": "public/assets/stages/global-scenes/",
+      "expectedSourceSize": {
+        "w": 1080,
+        "h": 1920
+      },
+      "runtimeRenderSize": {
+        "w": 1080,
+        "h": 1920
+      },
+      "x": 0,
+      "y": 0,
+      "w": 1080,
+      "h": 1920,
+      "anchor": "topLeft",
+      "fitMode": "exact",
+      "scaleMode": "backgroundExact",
+      "safePadding": 0,
+      "zIndex": 0,
+      "dynamicTextAllowed": false,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Full portrait background. Export exactly 1080x1920 and preserve the 32px full-screen safe area."
+    },
+    {
+      "id": "splash_logo_panel",
+      "type": "panel",
+      "assetKey": "ui_panel_default",
+      "fallbackAssetKey": "ui_panel_default",
+      "canonicalFolder": "public/assets/ui/panels/",
+      "expectedSourceSize": {
+        "w": 760,
+        "h": 220
+      },
+      "runtimeRenderSize": {
+        "w": 760,
+        "h": 220
+      },
+      "x": 160,
+      "y": 220,
+      "w": 760,
+      "h": 220,
+      "anchor": "topLeft",
+      "fitMode": "nineSlice",
+      "scaleMode": "uiStretchNineSlice",
+      "safePadding": 24,
+      "zIndex": 30,
+      "dynamicTextAllowed": true,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Panel or frame art only. Dynamic labels and values are rendered by game text."
+    },
+    {
+      "id": "blockomatic_loading_icon",
+      "type": "iconSlot",
+      "assetKey": "placeholder_icon",
+      "fallbackAssetKey": "placeholder_icon",
+      "canonicalFolder": "public/assets/ui/placeholders/",
+      "expectedSourceSize": {
+        "w": 627,
+        "h": 627
+      },
+      "runtimeRenderSize": {
+        "w": 96,
+        "h": 96
+      },
+      "x": 492,
+      "y": 560,
+      "w": 96,
+      "h": 96,
+      "anchor": "center",
+      "fitMode": "iconCenter",
+      "scaleMode": "fitInteger",
+      "safePadding": 0,
+      "zIndex": 55,
+      "dynamicTextAllowed": false,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Icon centered in slot. No baked counts, labels, costs, or dynamic values."
+    },
+    {
+      "id": "loading_meter",
+      "type": "meter",
+      "assetKey": "ui_meter_xp",
+      "fallbackAssetKey": "ui_meter_fallback",
+      "canonicalFolder": "public/assets/ui/meters/",
+      "expectedSourceSize": {
+        "w": 600,
+        "h": 48
+      },
+      "runtimeRenderSize": {
+        "w": 600,
+        "h": 48
+      },
+      "x": 240,
+      "y": 1180,
+      "w": 600,
+      "h": 48,
+      "anchor": "topLeft",
+      "fitMode": "nineSlice",
+      "scaleMode": "uiStretchNineSlice",
+      "safePadding": 12,
+      "zIndex": 70,
+      "dynamicTextAllowed": true,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Meter frame/fill art only. Values and labels are dynamic game text."
+    },
+    {
+      "id": "tap_to_start_button",
+      "type": "button",
+      "assetKey": "ui_button_primary",
+      "fallbackAssetKey": "ui_button_default",
+      "canonicalFolder": "public/assets/ui/buttons/",
+      "expectedSourceSize": {
+        "w": 360,
+        "h": 96
+      },
+      "runtimeRenderSize": {
+        "w": 360,
+        "h": 96
+      },
+      "x": 540,
+      "y": 1540,
+      "w": 360,
+      "h": 96,
+      "anchor": "center",
+      "fitMode": "nineSlice",
+      "scaleMode": "uiStretchNineSlice",
+      "safePadding": 24,
+      "zIndex": 90,
+      "dynamicTextAllowed": true,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Button art only. Labels, disabled state text, counts, costs, and localization are game text."
+    }
+  ],
+  "assetPlaceholders": [
+    {
+      "assetKey": "bg_scene_splash",
+      "fallbackAssetKey": "placeholder_background",
+      "canonicalFolder": "public/assets/stages/global-scenes/",
+      "expectedSourceSize": {
+        "w": 1080,
+        "h": 1920
+      }
+    },
+    {
+      "assetKey": "ui_panel_default",
+      "fallbackAssetKey": "ui_panel_default",
+      "canonicalFolder": "public/assets/ui/panels/",
+      "expectedSourceSize": {
+        "w": 760,
+        "h": 220
+      }
+    },
+    {
+      "assetKey": "placeholder_icon",
+      "fallbackAssetKey": "placeholder_icon",
+      "canonicalFolder": "public/assets/ui/placeholders/",
+      "expectedSourceSize": {
+        "w": 627,
+        "h": 627
+      }
+    },
+    {
+      "assetKey": "ui_meter_xp",
+      "fallbackAssetKey": "ui_meter_fallback",
+      "canonicalFolder": "public/assets/ui/meters/",
+      "expectedSourceSize": {
+        "w": 600,
+        "h": 48
+      }
+    },
+    {
+      "assetKey": "ui_button_primary",
+      "fallbackAssetKey": "ui_button_default",
+      "canonicalFolder": "public/assets/ui/buttons/",
+      "expectedSourceSize": {
+        "w": 360,
+        "h": 96
+      }
+    }
+  ],
+  "interactions": [
+    "All button labels, counts, prices, HP, MP, EXP, level, score, combo, cascade, stack, quantity, and damage values are game text, never baked into PNG assets.",
+    "Touch targets for primary controls are at least 88x88px; battle primary controls target 96x96px.",
+    "Runtime positions are rounded to whole pixels before render."
+  ],
+  "fallbackRules": [
+    "If assetKey is missing, use fallbackAssetKey without changing component bounds.",
+    "If final PNG has wrong source size, reject it in asset QC and keep placeholder/fallback.",
+    "If localized text overflows, resize or wrap game text only; do not edit PNG layout."
+  ],
+  "acceptanceCriteria": [
+    "Canvas is 1080x1920 portrait.",
+    "Every component uses integer x/y/w/h coordinates.",
+    "Every visual component has assetKey, fallbackAssetKey, canonicalFolder, expectedSourceSize, runtimeRenderSize, anchor, fitMode, scaleMode, safePadding, zIndex, dynamicTextAllowed, and pixelPerfect fields.",
+    "No dynamic text is baked into PNG assets.",
+    "Final assets can replace placeholders without changing layout JSON."
+  ]
+}

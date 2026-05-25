@@ -1,0 +1,373 @@
+{
+  "screenId": "screen_inventory_modal",
+  "screenName": "Inventory / Bag Modal",
+  "canvas": {
+    "width": 1080,
+    "height": 1920,
+    "orientation": "portrait"
+  },
+  "entryFrom": [
+    "screen_battle",
+    "screen_shop",
+    "screen_map"
+  ],
+  "exitTo": [
+    "previous_screen"
+  ],
+  "purpose": "Paused modal for bag items without hiding resume/close controls.",
+  "style": {
+    "tone": "cheerful festival fantasy",
+    "pixelArt": true,
+    "safeAreaPadding": 32,
+    "desktopPreview": "centered portrait frame"
+  },
+  "codegraph": {
+    "nodeId": "screen_inventory_modal",
+    "relatedSceneFiles": [
+      "src/game/scenes/BattleScene.ts"
+    ],
+    "relatedComponents": [
+      "inventory_modal_backdrop",
+      "inventory_modal_panel",
+      "inventory_item_slot_one",
+      "inventory_item_slot_two",
+      "inventory_item_slot_three",
+      "inventory_close_button"
+    ],
+    "relatedAssetKeys": [
+      "ui_modal_backdrop",
+      "ui_panel_default",
+      "ico_item_mana_lemonade",
+      "ico_item_safety_net",
+      "ico_item_alarm_cookie",
+      "ui_button_secondary"
+    ],
+    "relatedSotDocs": [
+      "docs/00_BLOCKMANCER_SOURCE_OF_TRUTH_INDEX.md",
+      "docs/01_BLOCKMANCER_GAME_DESIGN_SOURCE_OF_TRUTH.md",
+      "docs/04_BLOCKMANCER_ASSET_ANIMATION_SOURCE_OF_TRUTH.md",
+      "docs/05_BLOCKMANCER_RELEASE_IMPLEMENTATION_SOURCE_OF_TRUTH.md",
+      "docs/06_BLOCKMANCER_CANONICAL_FOLDER_STRUCTURE_SOURCE_OF_TRUTH.md",
+      "docs/07_BLOCKMANCER_MONSTER_WIKIPEDIA_SOURCE_OF_TRUTH.md"
+    ]
+  },
+  "fonts": {
+    "title": {
+      "fontKey": "font_pixel_header",
+      "sizePx": 56
+    },
+    "body": {
+      "fontKey": "font_pixel_body",
+      "sizePx": 30
+    },
+    "number": {
+      "fontKey": "font_pixel_number",
+      "sizePx": 34
+    },
+    "small": {
+      "fontKey": "font_pixel_small",
+      "sizePx": 22
+    }
+  },
+  "sections": [
+    {
+      "id": "full_frame",
+      "x": 0,
+      "y": 0,
+      "w": 1080,
+      "h": 1920,
+      "role": "Full portrait scene canvas",
+      "components": [
+        "inventory_modal_backdrop"
+      ]
+    },
+    {
+      "id": "safe_content",
+      "x": 32,
+      "y": 32,
+      "w": 1016,
+      "h": 1856,
+      "role": "32px safe content area",
+      "components": [
+        "inventory_modal_panel",
+        "inventory_item_slot_one",
+        "inventory_item_slot_two",
+        "inventory_item_slot_three",
+        "inventory_close_button"
+      ]
+    }
+  ],
+  "components": [
+    {
+      "id": "inventory_modal_backdrop",
+      "type": "backgroundLayer",
+      "assetKey": "ui_modal_backdrop",
+      "fallbackAssetKey": "placeholder_background",
+      "canonicalFolder": "public/assets/ui/panels/",
+      "expectedSourceSize": {
+        "w": 1080,
+        "h": 1920
+      },
+      "runtimeRenderSize": {
+        "w": 1080,
+        "h": 1920
+      },
+      "x": 0,
+      "y": 0,
+      "w": 1080,
+      "h": 1920,
+      "anchor": "topLeft",
+      "fitMode": "exact",
+      "scaleMode": "backgroundExact",
+      "safePadding": 0,
+      "zIndex": 0,
+      "dynamicTextAllowed": false,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Full portrait background. Export exactly 1080x1920 and preserve the 32px full-screen safe area."
+    },
+    {
+      "id": "inventory_modal_panel",
+      "type": "panel",
+      "assetKey": "ui_panel_default",
+      "fallbackAssetKey": "ui_panel_default",
+      "canonicalFolder": "public/assets/ui/panels/",
+      "expectedSourceSize": {
+        "w": 920,
+        "h": 1120
+      },
+      "runtimeRenderSize": {
+        "w": 920,
+        "h": 1120
+      },
+      "x": 80,
+      "y": 360,
+      "w": 920,
+      "h": 1120,
+      "anchor": "topLeft",
+      "fitMode": "nineSlice",
+      "scaleMode": "uiStretchNineSlice",
+      "safePadding": 24,
+      "zIndex": 80,
+      "dynamicTextAllowed": true,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Panel or frame art only. Dynamic labels and values are rendered by game text."
+    },
+    {
+      "id": "inventory_item_slot_one",
+      "type": "iconSlot",
+      "assetKey": "ico_item_mana_lemonade",
+      "fallbackAssetKey": "placeholder_icon",
+      "canonicalFolder": "public/assets/icons/items/",
+      "expectedSourceSize": {
+        "w": 627,
+        "h": 627
+      },
+      "runtimeRenderSize": {
+        "w": 112,
+        "h": 112
+      },
+      "x": 220,
+      "y": 560,
+      "w": 112,
+      "h": 112,
+      "anchor": "center",
+      "fitMode": "iconCenter",
+      "scaleMode": "fitInteger",
+      "safePadding": 0,
+      "zIndex": 55,
+      "dynamicTextAllowed": false,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Icon centered in slot. No baked counts, labels, costs, or dynamic values."
+    },
+    {
+      "id": "inventory_item_slot_two",
+      "type": "iconSlot",
+      "assetKey": "ico_item_safety_net",
+      "fallbackAssetKey": "placeholder_icon",
+      "canonicalFolder": "public/assets/icons/items/",
+      "expectedSourceSize": {
+        "w": 627,
+        "h": 627
+      },
+      "runtimeRenderSize": {
+        "w": 112,
+        "h": 112
+      },
+      "x": 420,
+      "y": 560,
+      "w": 112,
+      "h": 112,
+      "anchor": "center",
+      "fitMode": "iconCenter",
+      "scaleMode": "fitInteger",
+      "safePadding": 0,
+      "zIndex": 55,
+      "dynamicTextAllowed": false,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Icon centered in slot. No baked counts, labels, costs, or dynamic values."
+    },
+    {
+      "id": "inventory_item_slot_three",
+      "type": "iconSlot",
+      "assetKey": "ico_item_alarm_cookie",
+      "fallbackAssetKey": "placeholder_icon",
+      "canonicalFolder": "public/assets/icons/items/",
+      "expectedSourceSize": {
+        "w": 627,
+        "h": 627
+      },
+      "runtimeRenderSize": {
+        "w": 112,
+        "h": 112
+      },
+      "x": 620,
+      "y": 560,
+      "w": 112,
+      "h": 112,
+      "anchor": "center",
+      "fitMode": "iconCenter",
+      "scaleMode": "fitInteger",
+      "safePadding": 0,
+      "zIndex": 55,
+      "dynamicTextAllowed": false,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Icon centered in slot. No baked counts, labels, costs, or dynamic values."
+    },
+    {
+      "id": "inventory_close_button",
+      "type": "button",
+      "assetKey": "ui_button_secondary",
+      "fallbackAssetKey": "ui_button_default",
+      "canonicalFolder": "public/assets/ui/buttons/",
+      "expectedSourceSize": {
+        "w": 320,
+        "h": 96
+      },
+      "runtimeRenderSize": {
+        "w": 320,
+        "h": 96
+      },
+      "x": 540,
+      "y": 1360,
+      "w": 320,
+      "h": 96,
+      "anchor": "center",
+      "fitMode": "nineSlice",
+      "scaleMode": "uiStretchNineSlice",
+      "safePadding": 24,
+      "zIndex": 90,
+      "dynamicTextAllowed": true,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Button art only. Labels, disabled state text, counts, costs, and localization are game text."
+    }
+  ],
+  "assetPlaceholders": [
+    {
+      "assetKey": "ui_modal_backdrop",
+      "fallbackAssetKey": "placeholder_background",
+      "canonicalFolder": "public/assets/ui/panels/",
+      "expectedSourceSize": {
+        "w": 1080,
+        "h": 1920
+      }
+    },
+    {
+      "assetKey": "ui_panel_default",
+      "fallbackAssetKey": "ui_panel_default",
+      "canonicalFolder": "public/assets/ui/panels/",
+      "expectedSourceSize": {
+        "w": 920,
+        "h": 1120
+      }
+    },
+    {
+      "assetKey": "ico_item_mana_lemonade",
+      "fallbackAssetKey": "placeholder_icon",
+      "canonicalFolder": "public/assets/icons/items/",
+      "expectedSourceSize": {
+        "w": 627,
+        "h": 627
+      }
+    },
+    {
+      "assetKey": "ico_item_safety_net",
+      "fallbackAssetKey": "placeholder_icon",
+      "canonicalFolder": "public/assets/icons/items/",
+      "expectedSourceSize": {
+        "w": 627,
+        "h": 627
+      }
+    },
+    {
+      "assetKey": "ico_item_alarm_cookie",
+      "fallbackAssetKey": "placeholder_icon",
+      "canonicalFolder": "public/assets/icons/items/",
+      "expectedSourceSize": {
+        "w": 627,
+        "h": 627
+      }
+    },
+    {
+      "assetKey": "ui_button_secondary",
+      "fallbackAssetKey": "ui_button_default",
+      "canonicalFolder": "public/assets/ui/buttons/",
+      "expectedSourceSize": {
+        "w": 320,
+        "h": 96
+      }
+    }
+  ],
+  "interactions": [
+    "All button labels, counts, prices, HP, MP, EXP, level, score, combo, cascade, stack, quantity, and damage values are game text, never baked into PNG assets.",
+    "Touch targets for primary controls are at least 88x88px; battle primary controls target 96x96px.",
+    "Runtime positions are rounded to whole pixels before render."
+  ],
+  "fallbackRules": [
+    "If assetKey is missing, use fallbackAssetKey without changing component bounds.",
+    "If final PNG has wrong source size, reject it in asset QC and keep placeholder/fallback.",
+    "If localized text overflows, resize or wrap game text only; do not edit PNG layout."
+  ],
+  "acceptanceCriteria": [
+    "Canvas is 1080x1920 portrait.",
+    "Every component uses integer x/y/w/h coordinates.",
+    "Every visual component has assetKey, fallbackAssetKey, canonicalFolder, expectedSourceSize, runtimeRenderSize, anchor, fitMode, scaleMode, safePadding, zIndex, dynamicTextAllowed, and pixelPerfect fields.",
+    "No dynamic text is baked into PNG assets.",
+    "Final assets can replace placeholders without changing layout JSON."
+  ]
+}

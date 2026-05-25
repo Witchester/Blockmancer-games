@@ -1,0 +1,327 @@
+{
+  "screenId": "screen_stage_intro",
+  "screenName": "Stage Intro / Stage Goal",
+  "canvas": {
+    "width": 1080,
+    "height": 1920,
+    "orientation": "portrait"
+  },
+  "entryFrom": [
+    "screen_map"
+  ],
+  "exitTo": [
+    "screen_battle",
+    "screen_map"
+  ],
+  "purpose": "Introduce current stage, stage goal, and cheerful hazard preview before gameplay.",
+  "style": {
+    "tone": "cheerful festival fantasy",
+    "pixelArt": true,
+    "safeAreaPadding": 32,
+    "desktopPreview": "centered portrait frame"
+  },
+  "codegraph": {
+    "nodeId": "screen_stage_intro",
+    "relatedSceneFiles": [
+      "src/game/scenes/StoryScene.ts"
+    ],
+    "relatedComponents": [
+      "stage_intro_background",
+      "stage_title_panel",
+      "stage_goal_panel",
+      "stage_goal_icon",
+      "start_stage_button"
+    ],
+    "relatedAssetKeys": [
+      "bg_stage_sprinkle_sewers_intro",
+      "ui_panel_default",
+      "ui_panel_battle",
+      "ico_stage_goal_sprinkles",
+      "ui_button_primary"
+    ],
+    "relatedSotDocs": [
+      "docs/00_BLOCKMANCER_SOURCE_OF_TRUTH_INDEX.md",
+      "docs/01_BLOCKMANCER_GAME_DESIGN_SOURCE_OF_TRUTH.md",
+      "docs/04_BLOCKMANCER_ASSET_ANIMATION_SOURCE_OF_TRUTH.md",
+      "docs/05_BLOCKMANCER_RELEASE_IMPLEMENTATION_SOURCE_OF_TRUTH.md",
+      "docs/06_BLOCKMANCER_CANONICAL_FOLDER_STRUCTURE_SOURCE_OF_TRUTH.md",
+      "docs/07_BLOCKMANCER_MONSTER_WIKIPEDIA_SOURCE_OF_TRUTH.md"
+    ]
+  },
+  "fonts": {
+    "title": {
+      "fontKey": "font_pixel_header",
+      "sizePx": 56
+    },
+    "body": {
+      "fontKey": "font_pixel_body",
+      "sizePx": 30
+    },
+    "number": {
+      "fontKey": "font_pixel_number",
+      "sizePx": 34
+    },
+    "small": {
+      "fontKey": "font_pixel_small",
+      "sizePx": 22
+    }
+  },
+  "sections": [
+    {
+      "id": "full_frame",
+      "x": 0,
+      "y": 0,
+      "w": 1080,
+      "h": 1920,
+      "role": "Full portrait scene canvas",
+      "components": [
+        "stage_intro_background"
+      ]
+    },
+    {
+      "id": "safe_content",
+      "x": 32,
+      "y": 32,
+      "w": 1016,
+      "h": 1856,
+      "role": "32px safe content area",
+      "components": [
+        "stage_title_panel",
+        "stage_goal_panel",
+        "stage_goal_icon",
+        "start_stage_button"
+      ]
+    }
+  ],
+  "components": [
+    {
+      "id": "stage_intro_background",
+      "type": "backgroundLayer",
+      "assetKey": "bg_stage_sprinkle_sewers_intro",
+      "fallbackAssetKey": "placeholder_background",
+      "canonicalFolder": "public/assets/stages/stage_sprinkle_sewers/route-scenes/",
+      "expectedSourceSize": {
+        "w": 1080,
+        "h": 1920
+      },
+      "runtimeRenderSize": {
+        "w": 1080,
+        "h": 1920
+      },
+      "x": 0,
+      "y": 0,
+      "w": 1080,
+      "h": 1920,
+      "anchor": "topLeft",
+      "fitMode": "exact",
+      "scaleMode": "backgroundExact",
+      "safePadding": 0,
+      "zIndex": 0,
+      "dynamicTextAllowed": false,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Full portrait background. Export exactly 1080x1920 and preserve the 32px full-screen safe area."
+    },
+    {
+      "id": "stage_title_panel",
+      "type": "panel",
+      "assetKey": "ui_panel_default",
+      "fallbackAssetKey": "ui_panel_default",
+      "canonicalFolder": "public/assets/ui/panels/",
+      "expectedSourceSize": {
+        "w": 888,
+        "h": 220
+      },
+      "runtimeRenderSize": {
+        "w": 888,
+        "h": 220
+      },
+      "x": 96,
+      "y": 180,
+      "w": 888,
+      "h": 220,
+      "anchor": "topLeft",
+      "fitMode": "nineSlice",
+      "scaleMode": "uiStretchNineSlice",
+      "safePadding": 24,
+      "zIndex": 30,
+      "dynamicTextAllowed": true,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Panel or frame art only. Dynamic labels and values are rendered by game text."
+    },
+    {
+      "id": "stage_goal_panel",
+      "type": "panel",
+      "assetKey": "ui_panel_battle",
+      "fallbackAssetKey": "ui_panel_default",
+      "canonicalFolder": "public/assets/ui/panels/",
+      "expectedSourceSize": {
+        "w": 888,
+        "h": 480
+      },
+      "runtimeRenderSize": {
+        "w": 888,
+        "h": 480
+      },
+      "x": 96,
+      "y": 520,
+      "w": 888,
+      "h": 480,
+      "anchor": "topLeft",
+      "fitMode": "nineSlice",
+      "scaleMode": "uiStretchNineSlice",
+      "safePadding": 24,
+      "zIndex": 30,
+      "dynamicTextAllowed": true,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Panel or frame art only. Dynamic labels and values are rendered by game text."
+    },
+    {
+      "id": "stage_goal_icon",
+      "type": "iconSlot",
+      "assetKey": "ico_stage_goal_sprinkles",
+      "fallbackAssetKey": "placeholder_icon",
+      "canonicalFolder": "public/assets/icons/stage-goals/",
+      "expectedSourceSize": {
+        "w": 627,
+        "h": 627
+      },
+      "runtimeRenderSize": {
+        "w": 128,
+        "h": 128
+      },
+      "x": 540,
+      "y": 650,
+      "w": 128,
+      "h": 128,
+      "anchor": "center",
+      "fitMode": "iconCenter",
+      "scaleMode": "fitInteger",
+      "safePadding": 0,
+      "zIndex": 55,
+      "dynamicTextAllowed": false,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Icon centered in slot. No baked counts, labels, costs, or dynamic values."
+    },
+    {
+      "id": "start_stage_button",
+      "type": "button",
+      "assetKey": "ui_button_primary",
+      "fallbackAssetKey": "ui_button_default",
+      "canonicalFolder": "public/assets/ui/buttons/",
+      "expectedSourceSize": {
+        "w": 420,
+        "h": 104
+      },
+      "runtimeRenderSize": {
+        "w": 420,
+        "h": 104
+      },
+      "x": 540,
+      "y": 1620,
+      "w": 420,
+      "h": 104,
+      "anchor": "center",
+      "fitMode": "nineSlice",
+      "scaleMode": "uiStretchNineSlice",
+      "safePadding": 24,
+      "zIndex": 90,
+      "dynamicTextAllowed": true,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Button art only. Labels, disabled state text, counts, costs, and localization are game text."
+    }
+  ],
+  "assetPlaceholders": [
+    {
+      "assetKey": "bg_stage_sprinkle_sewers_intro",
+      "fallbackAssetKey": "placeholder_background",
+      "canonicalFolder": "public/assets/stages/stage_sprinkle_sewers/route-scenes/",
+      "expectedSourceSize": {
+        "w": 1080,
+        "h": 1920
+      }
+    },
+    {
+      "assetKey": "ui_panel_default",
+      "fallbackAssetKey": "ui_panel_default",
+      "canonicalFolder": "public/assets/ui/panels/",
+      "expectedSourceSize": {
+        "w": 888,
+        "h": 220
+      }
+    },
+    {
+      "assetKey": "ui_panel_battle",
+      "fallbackAssetKey": "ui_panel_default",
+      "canonicalFolder": "public/assets/ui/panels/",
+      "expectedSourceSize": {
+        "w": 888,
+        "h": 480
+      }
+    },
+    {
+      "assetKey": "ico_stage_goal_sprinkles",
+      "fallbackAssetKey": "placeholder_icon",
+      "canonicalFolder": "public/assets/icons/stage-goals/",
+      "expectedSourceSize": {
+        "w": 627,
+        "h": 627
+      }
+    },
+    {
+      "assetKey": "ui_button_primary",
+      "fallbackAssetKey": "ui_button_default",
+      "canonicalFolder": "public/assets/ui/buttons/",
+      "expectedSourceSize": {
+        "w": 420,
+        "h": 104
+      }
+    }
+  ],
+  "interactions": [
+    "All button labels, counts, prices, HP, MP, EXP, level, score, combo, cascade, stack, quantity, and damage values are game text, never baked into PNG assets.",
+    "Touch targets for primary controls are at least 88x88px; battle primary controls target 96x96px.",
+    "Runtime positions are rounded to whole pixels before render."
+  ],
+  "fallbackRules": [
+    "If assetKey is missing, use fallbackAssetKey without changing component bounds.",
+    "If final PNG has wrong source size, reject it in asset QC and keep placeholder/fallback.",
+    "If localized text overflows, resize or wrap game text only; do not edit PNG layout."
+  ],
+  "acceptanceCriteria": [
+    "Canvas is 1080x1920 portrait.",
+    "Every component uses integer x/y/w/h coordinates.",
+    "Every visual component has assetKey, fallbackAssetKey, canonicalFolder, expectedSourceSize, runtimeRenderSize, anchor, fitMode, scaleMode, safePadding, zIndex, dynamicTextAllowed, and pixelPerfect fields.",
+    "No dynamic text is baked into PNG assets.",
+    "Final assets can replace placeholders without changing layout JSON."
+  ]
+}

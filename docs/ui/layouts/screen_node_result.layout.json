@@ -1,0 +1,463 @@
+{
+  "screenId": "screen_node_result",
+  "screenName": "Node Result Screen",
+  "canvas": {
+    "width": 1080,
+    "height": 1920,
+    "orientation": "portrait"
+  },
+  "entryFrom": [
+    "screen_battle"
+  ],
+  "exitTo": [
+    "screen_level_up",
+    "screen_reward",
+    "screen_map"
+  ],
+  "purpose": "Summarize cleared node EXP and progression after battle; no active board behind result.",
+  "style": {
+    "tone": "cheerful festival fantasy",
+    "pixelArt": true,
+    "safeAreaPadding": 32,
+    "desktopPreview": "centered portrait frame"
+  },
+  "codegraph": {
+    "nodeId": "screen_node_result",
+    "relatedSceneFiles": [
+      "src/game/scenes/NodeResultScene.ts"
+    ],
+    "relatedComponents": [
+      "node_result_background",
+      "node_result_panel",
+      "node_clear_banner",
+      "xp_meter_before_after",
+      "xp_breakdown_rows",
+      "xp_gained_counter_icon",
+      "level_ready_badge",
+      "node_result_continue_button"
+    ],
+    "relatedAssetKeys": [
+      "bg_scene_node_result",
+      "ui_panel_node_result",
+      "ui_node_clear_banner",
+      "ui_meter_xp",
+      "ui_xp_breakdown_row",
+      "ui_xp_gained_counter",
+      "ui_level_ready_badge",
+      "ui_button_node_result_continue"
+    ],
+    "relatedSotDocs": [
+      "docs/00_BLOCKMANCER_SOURCE_OF_TRUTH_INDEX.md",
+      "docs/01_BLOCKMANCER_GAME_DESIGN_SOURCE_OF_TRUTH.md",
+      "docs/04_BLOCKMANCER_ASSET_ANIMATION_SOURCE_OF_TRUTH.md",
+      "docs/05_BLOCKMANCER_RELEASE_IMPLEMENTATION_SOURCE_OF_TRUTH.md",
+      "docs/06_BLOCKMANCER_CANONICAL_FOLDER_STRUCTURE_SOURCE_OF_TRUTH.md",
+      "docs/07_BLOCKMANCER_MONSTER_WIKIPEDIA_SOURCE_OF_TRUTH.md"
+    ]
+  },
+  "fonts": {
+    "title": {
+      "fontKey": "font_pixel_header",
+      "sizePx": 56
+    },
+    "body": {
+      "fontKey": "font_pixel_body",
+      "sizePx": 30
+    },
+    "number": {
+      "fontKey": "font_pixel_number",
+      "sizePx": 34
+    },
+    "small": {
+      "fontKey": "font_pixel_small",
+      "sizePx": 22
+    }
+  },
+  "sections": [
+    {
+      "id": "full_frame",
+      "x": 0,
+      "y": 0,
+      "w": 1080,
+      "h": 1920,
+      "role": "Full portrait scene canvas",
+      "components": [
+        "node_result_background"
+      ]
+    },
+    {
+      "id": "safe_content",
+      "x": 32,
+      "y": 32,
+      "w": 1016,
+      "h": 1856,
+      "role": "32px safe content area",
+      "components": [
+        "node_result_panel",
+        "node_clear_banner",
+        "xp_meter_before_after",
+        "xp_breakdown_rows",
+        "xp_gained_counter_icon",
+        "level_ready_badge",
+        "node_result_continue_button"
+      ]
+    }
+  ],
+  "components": [
+    {
+      "id": "node_result_background",
+      "type": "backgroundLayer",
+      "assetKey": "bg_scene_node_result",
+      "fallbackAssetKey": "placeholder_background",
+      "canonicalFolder": "public/assets/stages/global-scenes/",
+      "expectedSourceSize": {
+        "w": 1080,
+        "h": 1920
+      },
+      "runtimeRenderSize": {
+        "w": 1080,
+        "h": 1920
+      },
+      "x": 0,
+      "y": 0,
+      "w": 1080,
+      "h": 1920,
+      "anchor": "topLeft",
+      "fitMode": "exact",
+      "scaleMode": "backgroundExact",
+      "safePadding": 0,
+      "zIndex": 0,
+      "dynamicTextAllowed": false,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Full portrait background. Export exactly 1080x1920 and preserve the 32px full-screen safe area."
+    },
+    {
+      "id": "node_result_panel",
+      "type": "panel",
+      "assetKey": "ui_panel_node_result",
+      "fallbackAssetKey": "ui_panel_default",
+      "canonicalFolder": "public/assets/ui/panels/",
+      "expectedSourceSize": {
+        "w": 936,
+        "h": 1360
+      },
+      "runtimeRenderSize": {
+        "w": 936,
+        "h": 1360
+      },
+      "x": 72,
+      "y": 180,
+      "w": 936,
+      "h": 1360,
+      "anchor": "topLeft",
+      "fitMode": "nineSlice",
+      "scaleMode": "uiStretchNineSlice",
+      "safePadding": 24,
+      "zIndex": 30,
+      "dynamicTextAllowed": true,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Panel or frame art only. Dynamic labels and values are rendered by game text."
+    },
+    {
+      "id": "node_clear_banner",
+      "type": "panel",
+      "assetKey": "ui_node_clear_banner",
+      "fallbackAssetKey": "ui_panel_default",
+      "canonicalFolder": "public/assets/ui/panels/",
+      "expectedSourceSize": {
+        "w": 760,
+        "h": 140
+      },
+      "runtimeRenderSize": {
+        "w": 760,
+        "h": 140
+      },
+      "x": 160,
+      "y": 260,
+      "w": 760,
+      "h": 140,
+      "anchor": "topLeft",
+      "fitMode": "nineSlice",
+      "scaleMode": "uiStretchNineSlice",
+      "safePadding": 24,
+      "zIndex": 50,
+      "dynamicTextAllowed": true,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Panel or frame art only. Dynamic labels and values are rendered by game text."
+    },
+    {
+      "id": "xp_meter_before_after",
+      "type": "meter",
+      "assetKey": "ui_meter_xp",
+      "fallbackAssetKey": "ui_meter_fallback",
+      "canonicalFolder": "public/assets/ui/meters/",
+      "expectedSourceSize": {
+        "w": 680,
+        "h": 64
+      },
+      "runtimeRenderSize": {
+        "w": 680,
+        "h": 64
+      },
+      "x": 200,
+      "y": 760,
+      "w": 680,
+      "h": 64,
+      "anchor": "topLeft",
+      "fitMode": "nineSlice",
+      "scaleMode": "uiStretchNineSlice",
+      "safePadding": 12,
+      "zIndex": 70,
+      "dynamicTextAllowed": true,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Meter frame/fill art only. Values and labels are dynamic game text."
+    },
+    {
+      "id": "xp_breakdown_rows",
+      "type": "panel",
+      "assetKey": "ui_xp_breakdown_row",
+      "fallbackAssetKey": "ui_panel_default",
+      "canonicalFolder": "public/assets/ui/panels/",
+      "expectedSourceSize": {
+        "w": 720,
+        "h": 320
+      },
+      "runtimeRenderSize": {
+        "w": 720,
+        "h": 320
+      },
+      "x": 180,
+      "y": 880,
+      "w": 720,
+      "h": 320,
+      "anchor": "topLeft",
+      "fitMode": "nineSlice",
+      "scaleMode": "uiStretchNineSlice",
+      "safePadding": 24,
+      "zIndex": 55,
+      "dynamicTextAllowed": true,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Panel or frame art only. Dynamic labels and values are rendered by game text."
+    },
+    {
+      "id": "xp_gained_counter_icon",
+      "type": "iconSlot",
+      "assetKey": "ui_xp_gained_counter",
+      "fallbackAssetKey": "placeholder_icon",
+      "canonicalFolder": "public/assets/ui/hud/",
+      "expectedSourceSize": {
+        "w": 627,
+        "h": 627
+      },
+      "runtimeRenderSize": {
+        "w": 96,
+        "h": 96
+      },
+      "x": 260,
+      "y": 620,
+      "w": 96,
+      "h": 96,
+      "anchor": "center",
+      "fitMode": "iconCenter",
+      "scaleMode": "fitInteger",
+      "safePadding": 0,
+      "zIndex": 55,
+      "dynamicTextAllowed": false,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Icon centered in slot. No baked counts, labels, costs, or dynamic values."
+    },
+    {
+      "id": "level_ready_badge",
+      "type": "iconSlot",
+      "assetKey": "ui_level_ready_badge",
+      "fallbackAssetKey": "placeholder_icon",
+      "canonicalFolder": "public/assets/ui/hud/",
+      "expectedSourceSize": {
+        "w": 627,
+        "h": 627
+      },
+      "runtimeRenderSize": {
+        "w": 128,
+        "h": 128
+      },
+      "x": 820,
+      "y": 620,
+      "w": 128,
+      "h": 128,
+      "anchor": "center",
+      "fitMode": "iconCenter",
+      "scaleMode": "fitInteger",
+      "safePadding": 0,
+      "zIndex": 55,
+      "dynamicTextAllowed": false,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Icon centered in slot. No baked counts, labels, costs, or dynamic values."
+    },
+    {
+      "id": "node_result_continue_button",
+      "type": "button",
+      "assetKey": "ui_button_node_result_continue",
+      "fallbackAssetKey": "ui_button_default",
+      "canonicalFolder": "public/assets/ui/buttons/",
+      "expectedSourceSize": {
+        "w": 420,
+        "h": 104
+      },
+      "runtimeRenderSize": {
+        "w": 420,
+        "h": 104
+      },
+      "x": 540,
+      "y": 1660,
+      "w": 420,
+      "h": 104,
+      "anchor": "center",
+      "fitMode": "nineSlice",
+      "scaleMode": "uiStretchNineSlice",
+      "safePadding": 24,
+      "zIndex": 90,
+      "dynamicTextAllowed": true,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Button art only. Labels, disabled state text, counts, costs, and localization are game text."
+    }
+  ],
+  "assetPlaceholders": [
+    {
+      "assetKey": "bg_scene_node_result",
+      "fallbackAssetKey": "placeholder_background",
+      "canonicalFolder": "public/assets/stages/global-scenes/",
+      "expectedSourceSize": {
+        "w": 1080,
+        "h": 1920
+      }
+    },
+    {
+      "assetKey": "ui_panel_node_result",
+      "fallbackAssetKey": "ui_panel_default",
+      "canonicalFolder": "public/assets/ui/panels/",
+      "expectedSourceSize": {
+        "w": 936,
+        "h": 1360
+      }
+    },
+    {
+      "assetKey": "ui_node_clear_banner",
+      "fallbackAssetKey": "ui_panel_default",
+      "canonicalFolder": "public/assets/ui/panels/",
+      "expectedSourceSize": {
+        "w": 760,
+        "h": 140
+      }
+    },
+    {
+      "assetKey": "ui_meter_xp",
+      "fallbackAssetKey": "ui_meter_fallback",
+      "canonicalFolder": "public/assets/ui/meters/",
+      "expectedSourceSize": {
+        "w": 680,
+        "h": 64
+      }
+    },
+    {
+      "assetKey": "ui_xp_breakdown_row",
+      "fallbackAssetKey": "ui_panel_default",
+      "canonicalFolder": "public/assets/ui/panels/",
+      "expectedSourceSize": {
+        "w": 720,
+        "h": 320
+      }
+    },
+    {
+      "assetKey": "ui_xp_gained_counter",
+      "fallbackAssetKey": "placeholder_icon",
+      "canonicalFolder": "public/assets/ui/hud/",
+      "expectedSourceSize": {
+        "w": 627,
+        "h": 627
+      }
+    },
+    {
+      "assetKey": "ui_level_ready_badge",
+      "fallbackAssetKey": "placeholder_icon",
+      "canonicalFolder": "public/assets/ui/hud/",
+      "expectedSourceSize": {
+        "w": 627,
+        "h": 627
+      }
+    },
+    {
+      "assetKey": "ui_button_node_result_continue",
+      "fallbackAssetKey": "ui_button_default",
+      "canonicalFolder": "public/assets/ui/buttons/",
+      "expectedSourceSize": {
+        "w": 420,
+        "h": 104
+      }
+    }
+  ],
+  "interactions": [
+    "All button labels, counts, prices, HP, MP, EXP, level, score, combo, cascade, stack, quantity, and damage values are game text, never baked into PNG assets.",
+    "Touch targets for primary controls are at least 88x88px; battle primary controls target 96x96px.",
+    "Runtime positions are rounded to whole pixels before render."
+  ],
+  "fallbackRules": [
+    "If assetKey is missing, use fallbackAssetKey without changing component bounds.",
+    "If final PNG has wrong source size, reject it in asset QC and keep placeholder/fallback.",
+    "If localized text overflows, resize or wrap game text only; do not edit PNG layout."
+  ],
+  "acceptanceCriteria": [
+    "Canvas is 1080x1920 portrait.",
+    "Every component uses integer x/y/w/h coordinates.",
+    "Every visual component has assetKey, fallbackAssetKey, canonicalFolder, expectedSourceSize, runtimeRenderSize, anchor, fitMode, scaleMode, safePadding, zIndex, dynamicTextAllowed, and pixelPerfect fields.",
+    "No dynamic text is baked into PNG assets.",
+    "Final assets can replace placeholders without changing layout JSON."
+  ]
+}

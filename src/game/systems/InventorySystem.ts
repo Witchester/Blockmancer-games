@@ -37,4 +37,26 @@ export class InventorySystem {
       state.inventory.splice(existingIndex, 1);
     }
   }
+  /**
+ * Returns total count of all items in the inventory.
+ */
+getItemCount(state: RunState): number {
+  return state.inventory.reduce((total, stack) => total + stack.count, 0);
+}
+
+/**
+ * Returns the total number of items (sum of counts) in the bag.
+ */
+getBagItemCount(state: RunState): number {
+  return state.inventory.reduce((total, stack) => total + stack.count, 0);
+}
+
+/**
+ * Temporary getter used by the UI to display the remaining item count in the bag button.
+ * Returns the same value as `getItemCount` for now.
+ */
+getRemainingItemCount(state: RunState): number {
+  return this.getItemCount(state);
+}  }
+
 }

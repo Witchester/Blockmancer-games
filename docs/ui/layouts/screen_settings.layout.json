@@ -1,0 +1,507 @@
+{
+  "screenId": "screen_settings",
+  "screenName": "Settings / Accessibility",
+  "canvas": {
+    "width": 1080,
+    "height": 1920,
+    "orientation": "portrait"
+  },
+  "entryFrom": [
+    "screen_main_menu",
+    "screen_battle"
+  ],
+  "exitTo": [
+    "previous_screen"
+  ],
+  "purpose": "Configure audio, accessibility, controls, and reset options with large touch targets.",
+  "style": {
+    "tone": "cheerful festival fantasy",
+    "pixelArt": true,
+    "safeAreaPadding": 32,
+    "desktopPreview": "centered portrait frame"
+  },
+  "codegraph": {
+    "nodeId": "screen_settings",
+    "relatedSceneFiles": [
+      "src/game/scenes/SettingsScene.ts"
+    ],
+    "relatedComponents": [
+      "settings_background",
+      "settings_panel",
+      "tab_audio",
+      "tab_accessibility",
+      "tab_controls",
+      "volume_slider",
+      "toggle_reduced_flash",
+      "settings_apply_button",
+      "settings_back_button"
+    ],
+    "relatedAssetKeys": [
+      "bg_scene_settings",
+      "ui_panel_settings",
+      "ui_tab_audio",
+      "ui_tab_accessibility",
+      "ui_tab_controls",
+      "ui_slider_default",
+      "ui_toggle_on",
+      "ui_button_apply",
+      "ui_button_back"
+    ],
+    "relatedSotDocs": [
+      "docs/00_BLOCKMANCER_SOURCE_OF_TRUTH_INDEX.md",
+      "docs/01_BLOCKMANCER_GAME_DESIGN_SOURCE_OF_TRUTH.md",
+      "docs/04_BLOCKMANCER_ASSET_ANIMATION_SOURCE_OF_TRUTH.md",
+      "docs/05_BLOCKMANCER_RELEASE_IMPLEMENTATION_SOURCE_OF_TRUTH.md",
+      "docs/06_BLOCKMANCER_CANONICAL_FOLDER_STRUCTURE_SOURCE_OF_TRUTH.md",
+      "docs/07_BLOCKMANCER_MONSTER_WIKIPEDIA_SOURCE_OF_TRUTH.md"
+    ]
+  },
+  "fonts": {
+    "title": {
+      "fontKey": "font_pixel_header",
+      "sizePx": 56
+    },
+    "body": {
+      "fontKey": "font_pixel_body",
+      "sizePx": 30
+    },
+    "number": {
+      "fontKey": "font_pixel_number",
+      "sizePx": 34
+    },
+    "small": {
+      "fontKey": "font_pixel_small",
+      "sizePx": 22
+    }
+  },
+  "sections": [
+    {
+      "id": "full_frame",
+      "x": 0,
+      "y": 0,
+      "w": 1080,
+      "h": 1920,
+      "role": "Full portrait scene canvas",
+      "components": [
+        "settings_background"
+      ]
+    },
+    {
+      "id": "safe_content",
+      "x": 32,
+      "y": 32,
+      "w": 1016,
+      "h": 1856,
+      "role": "32px safe content area",
+      "components": [
+        "settings_panel",
+        "tab_audio",
+        "tab_accessibility",
+        "tab_controls",
+        "volume_slider",
+        "toggle_reduced_flash",
+        "settings_apply_button",
+        "settings_back_button"
+      ]
+    }
+  ],
+  "components": [
+    {
+      "id": "settings_background",
+      "type": "backgroundLayer",
+      "assetKey": "bg_scene_settings",
+      "fallbackAssetKey": "placeholder_background",
+      "canonicalFolder": "public/assets/stages/global-scenes/",
+      "expectedSourceSize": {
+        "w": 1080,
+        "h": 1920
+      },
+      "runtimeRenderSize": {
+        "w": 1080,
+        "h": 1920
+      },
+      "x": 0,
+      "y": 0,
+      "w": 1080,
+      "h": 1920,
+      "anchor": "topLeft",
+      "fitMode": "exact",
+      "scaleMode": "backgroundExact",
+      "safePadding": 0,
+      "zIndex": 0,
+      "dynamicTextAllowed": false,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Full portrait background. Export exactly 1080x1920 and preserve the 32px full-screen safe area."
+    },
+    {
+      "id": "settings_panel",
+      "type": "panel",
+      "assetKey": "ui_panel_settings",
+      "fallbackAssetKey": "ui_panel_default",
+      "canonicalFolder": "public/assets/ui/panels/",
+      "expectedSourceSize": {
+        "w": 952,
+        "h": 1500
+      },
+      "runtimeRenderSize": {
+        "w": 952,
+        "h": 1500
+      },
+      "x": 64,
+      "y": 120,
+      "w": 952,
+      "h": 1500,
+      "anchor": "topLeft",
+      "fitMode": "nineSlice",
+      "scaleMode": "uiStretchNineSlice",
+      "safePadding": 24,
+      "zIndex": 30,
+      "dynamicTextAllowed": true,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Panel or frame art only. Dynamic labels and values are rendered by game text."
+    },
+    {
+      "id": "tab_audio",
+      "type": "button",
+      "assetKey": "ui_tab_audio",
+      "fallbackAssetKey": "ui_button_default",
+      "canonicalFolder": "public/assets/ui/buttons/",
+      "expectedSourceSize": {
+        "w": 220,
+        "h": 88
+      },
+      "runtimeRenderSize": {
+        "w": 220,
+        "h": 88
+      },
+      "x": 220,
+      "y": 260,
+      "w": 220,
+      "h": 88,
+      "anchor": "center",
+      "fitMode": "nineSlice",
+      "scaleMode": "uiStretchNineSlice",
+      "safePadding": 24,
+      "zIndex": 50,
+      "dynamicTextAllowed": true,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Button art only. Labels, disabled state text, counts, costs, and localization are game text."
+    },
+    {
+      "id": "tab_accessibility",
+      "type": "button",
+      "assetKey": "ui_tab_accessibility",
+      "fallbackAssetKey": "ui_button_default",
+      "canonicalFolder": "public/assets/ui/buttons/",
+      "expectedSourceSize": {
+        "w": 260,
+        "h": 88
+      },
+      "runtimeRenderSize": {
+        "w": 260,
+        "h": 88
+      },
+      "x": 540,
+      "y": 260,
+      "w": 260,
+      "h": 88,
+      "anchor": "center",
+      "fitMode": "nineSlice",
+      "scaleMode": "uiStretchNineSlice",
+      "safePadding": 24,
+      "zIndex": 50,
+      "dynamicTextAllowed": true,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Button art only. Labels, disabled state text, counts, costs, and localization are game text."
+    },
+    {
+      "id": "tab_controls",
+      "type": "button",
+      "assetKey": "ui_tab_controls",
+      "fallbackAssetKey": "ui_button_default",
+      "canonicalFolder": "public/assets/ui/buttons/",
+      "expectedSourceSize": {
+        "w": 220,
+        "h": 88
+      },
+      "runtimeRenderSize": {
+        "w": 220,
+        "h": 88
+      },
+      "x": 860,
+      "y": 260,
+      "w": 220,
+      "h": 88,
+      "anchor": "center",
+      "fitMode": "nineSlice",
+      "scaleMode": "uiStretchNineSlice",
+      "safePadding": 24,
+      "zIndex": 50,
+      "dynamicTextAllowed": true,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Button art only. Labels, disabled state text, counts, costs, and localization are game text."
+    },
+    {
+      "id": "volume_slider",
+      "type": "meter",
+      "assetKey": "ui_slider_default",
+      "fallbackAssetKey": "ui_meter_fallback",
+      "canonicalFolder": "public/assets/ui/meters/",
+      "expectedSourceSize": {
+        "w": 640,
+        "h": 64
+      },
+      "runtimeRenderSize": {
+        "w": 640,
+        "h": 64
+      },
+      "x": 220,
+      "y": 520,
+      "w": 640,
+      "h": 64,
+      "anchor": "topLeft",
+      "fitMode": "nineSlice",
+      "scaleMode": "uiStretchNineSlice",
+      "safePadding": 12,
+      "zIndex": 70,
+      "dynamicTextAllowed": true,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Meter frame/fill art only. Values and labels are dynamic game text."
+    },
+    {
+      "id": "toggle_reduced_flash",
+      "type": "iconSlot",
+      "assetKey": "ui_toggle_on",
+      "fallbackAssetKey": "placeholder_icon",
+      "canonicalFolder": "public/assets/ui/buttons/",
+      "expectedSourceSize": {
+        "w": 627,
+        "h": 627
+      },
+      "runtimeRenderSize": {
+        "w": 96,
+        "h": 96
+      },
+      "x": 780,
+      "y": 700,
+      "w": 96,
+      "h": 96,
+      "anchor": "center",
+      "fitMode": "iconCenter",
+      "scaleMode": "fitInteger",
+      "safePadding": 0,
+      "zIndex": 55,
+      "dynamicTextAllowed": false,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Icon centered in slot. No baked counts, labels, costs, or dynamic values."
+    },
+    {
+      "id": "settings_apply_button",
+      "type": "button",
+      "assetKey": "ui_button_apply",
+      "fallbackAssetKey": "ui_button_default",
+      "canonicalFolder": "public/assets/ui/buttons/",
+      "expectedSourceSize": {
+        "w": 360,
+        "h": 96
+      },
+      "runtimeRenderSize": {
+        "w": 360,
+        "h": 96
+      },
+      "x": 540,
+      "y": 1480,
+      "w": 360,
+      "h": 96,
+      "anchor": "center",
+      "fitMode": "nineSlice",
+      "scaleMode": "uiStretchNineSlice",
+      "safePadding": 24,
+      "zIndex": 90,
+      "dynamicTextAllowed": true,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Button art only. Labels, disabled state text, counts, costs, and localization are game text."
+    },
+    {
+      "id": "settings_back_button",
+      "type": "button",
+      "assetKey": "ui_button_back",
+      "fallbackAssetKey": "ui_button_default",
+      "canonicalFolder": "public/assets/ui/buttons/",
+      "expectedSourceSize": {
+        "w": 360,
+        "h": 96
+      },
+      "runtimeRenderSize": {
+        "w": 360,
+        "h": 96
+      },
+      "x": 540,
+      "y": 1620,
+      "w": 360,
+      "h": 96,
+      "anchor": "center",
+      "fitMode": "nineSlice",
+      "scaleMode": "uiStretchNineSlice",
+      "safePadding": 24,
+      "zIndex": 90,
+      "dynamicTextAllowed": true,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Button art only. Labels, disabled state text, counts, costs, and localization are game text."
+    }
+  ],
+  "assetPlaceholders": [
+    {
+      "assetKey": "bg_scene_settings",
+      "fallbackAssetKey": "placeholder_background",
+      "canonicalFolder": "public/assets/stages/global-scenes/",
+      "expectedSourceSize": {
+        "w": 1080,
+        "h": 1920
+      }
+    },
+    {
+      "assetKey": "ui_panel_settings",
+      "fallbackAssetKey": "ui_panel_default",
+      "canonicalFolder": "public/assets/ui/panels/",
+      "expectedSourceSize": {
+        "w": 952,
+        "h": 1500
+      }
+    },
+    {
+      "assetKey": "ui_tab_audio",
+      "fallbackAssetKey": "ui_button_default",
+      "canonicalFolder": "public/assets/ui/buttons/",
+      "expectedSourceSize": {
+        "w": 220,
+        "h": 88
+      }
+    },
+    {
+      "assetKey": "ui_tab_accessibility",
+      "fallbackAssetKey": "ui_button_default",
+      "canonicalFolder": "public/assets/ui/buttons/",
+      "expectedSourceSize": {
+        "w": 260,
+        "h": 88
+      }
+    },
+    {
+      "assetKey": "ui_tab_controls",
+      "fallbackAssetKey": "ui_button_default",
+      "canonicalFolder": "public/assets/ui/buttons/",
+      "expectedSourceSize": {
+        "w": 220,
+        "h": 88
+      }
+    },
+    {
+      "assetKey": "ui_slider_default",
+      "fallbackAssetKey": "ui_meter_fallback",
+      "canonicalFolder": "public/assets/ui/meters/",
+      "expectedSourceSize": {
+        "w": 640,
+        "h": 64
+      }
+    },
+    {
+      "assetKey": "ui_toggle_on",
+      "fallbackAssetKey": "placeholder_icon",
+      "canonicalFolder": "public/assets/ui/buttons/",
+      "expectedSourceSize": {
+        "w": 627,
+        "h": 627
+      }
+    },
+    {
+      "assetKey": "ui_button_apply",
+      "fallbackAssetKey": "ui_button_default",
+      "canonicalFolder": "public/assets/ui/buttons/",
+      "expectedSourceSize": {
+        "w": 360,
+        "h": 96
+      }
+    },
+    {
+      "assetKey": "ui_button_back",
+      "fallbackAssetKey": "ui_button_default",
+      "canonicalFolder": "public/assets/ui/buttons/",
+      "expectedSourceSize": {
+        "w": 360,
+        "h": 96
+      }
+    }
+  ],
+  "interactions": [
+    "All button labels, counts, prices, HP, MP, EXP, level, score, combo, cascade, stack, quantity, and damage values are game text, never baked into PNG assets.",
+    "Touch targets for primary controls are at least 88x88px; battle primary controls target 96x96px.",
+    "Runtime positions are rounded to whole pixels before render."
+  ],
+  "fallbackRules": [
+    "If assetKey is missing, use fallbackAssetKey without changing component bounds.",
+    "If final PNG has wrong source size, reject it in asset QC and keep placeholder/fallback.",
+    "If localized text overflows, resize or wrap game text only; do not edit PNG layout."
+  ],
+  "acceptanceCriteria": [
+    "Canvas is 1080x1920 portrait.",
+    "Every component uses integer x/y/w/h coordinates.",
+    "Every visual component has assetKey, fallbackAssetKey, canonicalFolder, expectedSourceSize, runtimeRenderSize, anchor, fitMode, scaleMode, safePadding, zIndex, dynamicTextAllowed, and pixelPerfect fields.",
+    "No dynamic text is baked into PNG assets.",
+    "Final assets can replace placeholders without changing layout JSON."
+  ]
+}

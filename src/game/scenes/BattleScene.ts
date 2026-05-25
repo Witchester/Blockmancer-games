@@ -27,9 +27,8 @@ import type {
   EncounterEnemyEntry
 } from '../types/GameTypes';
 import { MobileControls } from '../ui/MobileControls';
-import { ProgressBar } from '../ui/ProgressBar';
-import { MonsterStackPreview } from '../ui/MonsterStackPreview';
 import { Button } from '../ui/Button';
+import { BattleCombatHud, BattleEventLog, BattleScreenShell, MonsterStackPreview, BattlePuzzleSectionUi } from '../ui/battle';
 import { getPortraitLayout, isCompactLayout } from '../utils/layout';
 import {
   BOARD_CELL_SIZE,
@@ -277,20 +276,11 @@ export class BattleScene extends Phaser.Scene {
   private holdPreviewSprites: Phaser.GameObjects.Sprite[] = [];
   private heroPortrait?: Phaser.GameObjects.Sprite;
   private enemySprite?: Phaser.GameObjects.Sprite;
-  private enemyNameText?: Phaser.GameObjects.Text;
-  private enemyStatsText?: Phaser.GameObjects.Text;
-  private enemyIntentText?: Phaser.GameObjects.Text;
-  private enemyCountdownText?: Phaser.GameObjects.Text;
-  private playerNameText?: Phaser.GameObjects.Text;
-  private playerStatsText?: Phaser.GameObjects.Text;
-  private playerOopsieText?: Phaser.GameObjects.Text;
-  private topCombatLogText?: Phaser.GameObjects.Text;
-  private playerHpBar?: ProgressBar;
-  private playerMpBar?: ProgressBar;
-  private playerShieldBar?: ProgressBar;
   private upgradesText?: Phaser.GameObjects.Text;
+  private battleCombatHud?: BattleCombatHud;
+  private battleEventLog?: BattleEventLog;
   private monsterStackPreview?: MonsterStackPreview;
-  private enemyHpBar?: ProgressBar;
+  private battlePuzzleSectionUi?: BattlePuzzleSectionUi;
   private previewTiles: Phaser.GameObjects.Rectangle[] = [];
   private holdPreviewTiles: Phaser.GameObjects.Rectangle[] = [];
   private previewLabel?: Phaser.GameObjects.Text;
@@ -347,6 +337,7 @@ export class BattleScene extends Phaser.Scene {
   private readonly visualEventQueue: CombatVisualEvent[] = [];
   private visualEventActive = false;
   private battleLayout?: BattleSceneLayout;
+  private battleShell?: BattleScreenShell;
   private lumiWishkeeperTriggered = false;
 
   constructor() {
@@ -484,7 +475,20 @@ export class BattleScene extends Phaser.Scene {
     this.controlsCenterX = this.screenWidth / 2;
     this.controlsY = this.battleLayout.bottomControlsRect.y + Math.round(this.battleLayout.bottomControlsRect.height / 2);
 
+    this.battleShell = new BattleScreenShell(this, {
+      debug: this.registry.get('uiDebug') === true || this.registry.get('uiDebug') === 'true'
+    }).create();
+    this.battlePuzzleSectionUi = new BattlePuzzleSectionUi(this, this.battleShell).create();
+    this.battlePuzzleSectionUi.onInventoryClicked = () => {
+      this.toggleInventory();
+    };
+    const shellValidation = this.battleShell.validateShell();
+    if (!shellValidation.isValid && import.meta.env.DEV) {
+      console.warn('[BattleScene] Battle shell validation failed:', shellValidation.errors);
+    }
+
     this.drawLayout();
+    this.createBattleCombatUi();
     this.createRenderBuffers();
     this.buildBoard();
     this.createPreviewPanel();
@@ -787,169 +791,20 @@ export class BattleScene extends Phaser.Scene {
       return;
     }
 
-    const topPanelWidth = layout.topCombatRect.width - 8;
-    const topPanelHeight = layout.topCombatRect.height - 8;
-    const topPanelCenterY = layout.topCombatRect.y + Math.round(layout.topCombatRect.height / 2);
-
-    this.add.rectangle(this.screenWidth / 2, topPanelCenterY, topPanelWidth, topPanelHeight, COLORS.panel, 0.58).setStrokeStyle(2, COLORS.accent, 0.25);
-    this.add.text(layout.topCombatRect.x + 18, layout.topCombatRect.y + 8, 'Side-View Battle (SVB)', {
-      color: '#f6f7ff',
-      fontFamily: FONT_FAMILY,
-      fontSize: '16px',
-      fontStyle: 'bold'
-    });
-
-    this.add.text(layout.topCombatRect.x + layout.topCombatRect.width - 16, layout.topCombatRect.y + 8, `Stage ${this.sharedGame.runState.stage} · ${this.sharedGame.runState.currentRoomType}`, {
-      color: '#ffca6b',
-      fontFamily: FONT_FAMILY,
-      fontSize: '15px',
-      fontStyle: 'bold'
-    }).setOrigin(0.5, 0);
-
+    /*
     const middleCenterY = layout.middleBoardRect.y + layout.middleBoardRect.height / 2;
     this.add.rectangle(this.screenWidth / 2, middleCenterY, layout.middleBoardRect.width, layout.middleBoardRect.height, COLORS.panel, 0.72).setStrokeStyle(2, COLORS.accentSoft, 0.25);
     this.add.rectangle(layout.leftRailRect.x + layout.leftRailRect.width / 2, middleCenterY, layout.leftRailRect.width, layout.leftRailRect.height, COLORS.panelAlt, 0.9).setStrokeStyle(2, COLORS.accentSoft, 0.4);
     this.add.rectangle(layout.rightRailRect.x + layout.rightRailRect.width / 2, middleCenterY, layout.rightRailRect.width, layout.rightRailRect.height, COLORS.panelAlt, 0.9).setStrokeStyle(2, COLORS.accentSoft, 0.4);
+    */
 
     const controlsCenterY = layout.bottomControlsRect.y + layout.bottomControlsRect.height / 2;
     this.add.rectangle(this.screenWidth / 2, controlsCenterY, layout.bottomControlsRect.width, layout.bottomControlsRect.height, COLORS.panel, 0.92).setStrokeStyle(2, COLORS.accent, 0.22);
     this.add.rectangle(this.screenWidth / 2, layout.controlsRow1Rect.y + layout.controlsRow1Rect.height / 2, layout.controlsRow1Rect.width, layout.controlsRow1Rect.height, COLORS.panelAlt, 0.28).setStrokeStyle(1, COLORS.accent, 0.18);
     this.add.rectangle(this.screenWidth / 2, layout.controlsRow2Rect.y + layout.controlsRow2Rect.height / 2, layout.controlsRow2Rect.width, layout.controlsRow2Rect.height, COLORS.panelAlt, 0.28).setStrokeStyle(1, COLORS.accent, 0.18);
 
-    const heroSpriteX = layout.heroPanel.x + Math.round(layout.heroPanel.width * 0.5);
-    const enemySpriteX = layout.enemyPanel.x + Math.round(layout.enemyPanel.width * 0.5);
-    const spriteY = layout.combatArena.y + Math.round(layout.combatArena.height * 0.46);
-    const statsBaseY = spriteY + 10;
-
-    this.playerNameText = this.add.text(heroSpriteX, spriteY + 36, this.sharedGame.runState.hero.name, {
-      color: '#ffca6b',
-      fontFamily: FONT_FAMILY,
-      fontSize: '16px',
-      fontStyle: 'bold'
-    }).setOrigin(0.5, 0);
-
-    this.playerStatsText = this.add.text(heroSpriteX - 74, statsBaseY + 16, '', {
-      color: '#d8deff',
-      fontFamily: FONT_FAMILY,
-      fontSize: '16px',
-      fontStyle: 'bold'
-    });
-    this.playerOopsieText = this.add.text(heroSpriteX - 74, statsBaseY + 38, '', {
-      color: '#98a0c7',
-      fontFamily: FONT_FAMILY,
-      fontSize: '15px'
-    });
-    this.playerHpBar = new ProgressBar(this, heroSpriteX - 90, statsBaseY + 62, {
-      label: 'HP',
-      width: 180,
-      height: 12,
-      fillColor: COLORS.danger
-    });
-    this.playerMpBar = new ProgressBar(this, heroSpriteX - 90, statsBaseY + 84, {
-      label: 'MP',
-      width: 180,
-      height: 12,
-      fillColor: COLORS.accent
-    });
-    this.playerShieldBar = new ProgressBar(this, heroSpriteX - 90, statsBaseY + 106, {
-      label: 'SH',
-      width: 180,
-      height: 12,
-      fillColor: COLORS.success
-    });
-
-    this.enemyNameText = this.add.text(enemySpriteX, spriteY + 36, '', {
-      color: '#ffca6b',
-      fontFamily: FONT_FAMILY,
-      fontSize: '18px',
-      fontStyle: 'bold'
-    }).setOrigin(0.5, 0);
-    this.enemyStatsText = this.add.text(enemySpriteX, statsBaseY + 34, '', {
-      color: '#d8deff',
-      fontFamily: FONT_FAMILY,
-      fontSize: '14px',
-      fontStyle: 'bold'
-    }).setOrigin(0.5, 0);
-    this.enemyIntentText = this.add.text(enemySpriteX, statsBaseY + 54, '', {
-      color: '#98a0c7',
-      fontFamily: FONT_FAMILY,
-      fontSize: layout.scaleMode === 'tiny' ? '12px' : '13px',
-      align: 'center',
-      wordWrap: { width: 210 }
-    }).setOrigin(0.5, 0);
-    this.enemyCountdownText = this.add.text(enemySpriteX, statsBaseY + 90, '', {
-      color: '#ff6673',
-      fontFamily: FONT_FAMILY,
-      fontSize: '14px',
-      fontStyle: 'bold'
-    }).setOrigin(0.5, 0);
-    const enemyBarWidth = 180;
-    this.enemyHpBar = new ProgressBar(this, enemySpriteX - enemyBarWidth / 2, statsBaseY + 108, {
-      label: 'Enemy HP',
-      width: enemyBarWidth,
-      height: 12,
-      fillColor: COLORS.danger
-    });
-
-    this.monsterStackPreview = new MonsterStackPreview(this, enemySpriteX + 60, statsBaseY + 16, {
-      activeEncounterPack: this.sharedGame.runState.activeEncounterPack,
-      currentEnemyIndex: this.sharedGame.runState.activeEncounterPack?.currentEnemyIndex ?? 0,
-      getMonsterIconKey: (id) => this.sharedGame.assetSystem.getMonsterTexture(this, id, 'icon'),
-      compact: layout.scaleMode !== 'full'
-    });
-
-    this.heroPortrait = this.sharedGame.assetSystem.createHeroPoseSprite(
-      this,
-      this.sharedGame.runState.hero.id,
-      'idle',
-      heroSpriteX,
-      spriteY,
-      { alpha: 0.95 }
-    );
-    this.sharedGame.assetSystem.fitSpriteToBox(this.heroPortrait, HERO_BATTLE_BOX_SIZE, HERO_BATTLE_BOX_SIZE);
-
-    const enemyBaselineY = spriteY;
-    this.enemySprite = this.sharedGame.runState.activeEnemy?.roomType === 'boss'
-      ? this.sharedGame.assetSystem.createBossPoseSprite(this, this.sharedGame.runState.activeEnemy.id, 'idle', enemySpriteX, enemyBaselineY, { alpha: 0.95 })
-      : this.sharedGame.assetSystem.createMonsterPoseSprite(
-          this,
-          this.sharedGame.runState.activeEnemy?.id ?? null,
-          'idle',
-          enemySpriteX,
-          enemyBaselineY,
-          { elite: this.sharedGame.runState.activeEnemy?.roomType === 'elite', alpha: 0.95 }
-        );
-    this.setEnemyPose('idle');
-    if (this.sharedGame.runState.activeEnemy) {
-      this.fitEnemyBattleSprite(this.sharedGame.runState.activeEnemy);
-    }
-    this.topCombatLogText = this.add.text(layout.combatLogRect.x + 10, layout.combatLogRect.y + 8, '', {
-      color: '#f6f7ff',
-      fontFamily: FONT_FAMILY,
-      fontSize: '13px',
-      align: 'left',
-      wordWrap: { width: layout.combatLogRect.width - 20 }
-    }).setOrigin(0, 0);
-
+    /*
     const sideCenterX = layout.leftRailRect.x + Math.round(layout.leftRailRect.width / 2);
-    const sidePanelWidth = this.screenWidth <= 520 ? 82 : 124;
-    const sidePanelHeight = this.screenWidth <= 520 ? 72 : 82;
-    this.add.text(sideCenterX, this.boardOffsetY - 24, 'Hold', {
-      color: '#ffca6b',
-      fontFamily: FONT_FAMILY,
-      fontSize: '17px',
-      fontStyle: 'bold'
-    }).setOrigin(0.5, 0);
-    this.add.rectangle(sideCenterX, this.boardOffsetY + 34, sidePanelWidth, sidePanelHeight, COLORS.panelAlt, 0.98).setStrokeStyle(2, COLORS.accent, 0.45);
-    this.holdText = this.add.text(sideCenterX, this.boardOffsetY + 34, 'Empty', {
-      color: '#d8deff',
-      fontFamily: FONT_FAMILY,
-      fontSize: this.screenWidth <= 520 ? '15px' : '18px',
-      align: 'center',
-      wordWrap: { width: sidePanelWidth - 14 }
-    }).setOrigin(0.5);
-    this.createTetrominoPreviewTiles(
-      sideCenterX,
       this.boardOffsetY + 34,
       this.holdPreviewTiles,
       this.holdPreviewSprites,
@@ -995,6 +850,7 @@ export class BattleScene extends Phaser.Scene {
       wordWrap: { width: layout.rightRailRect.width - 18 },
       lineSpacing: 4
     }).setOrigin(0.5, 0).setVisible(true);
+    */
 
     this.hazardTrayBg = this.add.rectangle(this.screenWidth / 2, layout.combatLogRect.y + layout.combatLogRect.height / 2, layout.combatLogRect.width, layout.combatLogRect.height, COLORS.panelAlt, 0.96)
       .setStrokeStyle(2, COLORS.gold, 0.35)
@@ -1006,6 +862,46 @@ export class BattleScene extends Phaser.Scene {
       align: 'center',
       wordWrap: { width: this.screenWidth - 72 }
     }).setOrigin(0.5).setVisible(false);
+  }
+
+  private createBattleCombatUi(): void {
+    if (!this.battleShell) {
+      return;
+    }
+    const state = this.sharedGame.runState;
+    const debug = this.registry.get('uiDebug') === true || this.registry.get('uiDebug') === 'true';
+    this.battleCombatHud = new BattleCombatHud(this, this.battleShell).create(state);
+    this.battleCombatHud.setDebugVisible(debug);
+    this.battleEventLog = new BattleEventLog(this, this.battleShell, { maxVisibleMessages: 3 }).create();
+    this.monsterStackPreview = new MonsterStackPreview(this, this.battleShell, {
+      getMonsterIconKey: (id) => this.sharedGame.assetSystem.getMonsterTexture(this, id, 'icon')
+    }).create();
+    this.monsterStackPreview.setDebugVisible(debug);
+    this.heroPortrait = this.battleCombatHud.heroSprite;
+    this.enemySprite = this.battleCombatHud.enemySprite;
+    this.updateBattleCombatHud();
+  }
+
+  private updateBattleCombatHud(): void {
+    const state = this.sharedGame.runState;
+    this.battleCombatHud?.updateHeader({
+      stage: state.stage,
+      nodeCurrent: Math.max(1, state.runStats.roomsCleared + 1),
+      nodeTotal: Math.max(1, state.map.length || 1)
+    });
+    this.battleCombatHud?.updateHeroHud({
+      hero: state.hero,
+      player: state.player,
+      statuses: state.statusEffects
+    });
+    this.battleCombatHud?.updateEnemyHud({
+      enemy: state.activeEnemy,
+      statuses: state.statusEffects
+    });
+    this.heroPortrait = this.battleCombatHud?.heroSprite;
+    this.enemySprite = this.battleCombatHud?.enemySprite;
+    this.battleEventLog?.setMessages(state.eventLog.slice(0, 3));
+    this.monsterStackPreview?.updateQueue(state.activeEncounterPack);
   }
 
   private addStageBackgroundLayers(): void {
@@ -1064,26 +960,6 @@ export class BattleScene extends Phaser.Scene {
 
   private buildBoard(): void {
     for (let row = 0; row < this.boardRows; row += 1) {
-      const cellRow: Phaser.GameObjects.Rectangle[] = [];
-      const spriteRow: Phaser.GameObjects.Sprite[] = [];
-      const symbolRow: Phaser.GameObjects.Text[] = [];
-      for (let col = 0; col < this.boardColumns; col += 1) {
-        const settings = this.sharedGame.getSettings();
-        const cell = this.add
-          .rectangle(
-            this.boardOffsetX + col * this.boardCellSize + this.boardCellSize / 2,
-            this.boardOffsetY + row * this.boardCellSize + this.boardCellSize / 2,
-            BOARD_CELL_SIZE,
-            BOARD_CELL_SIZE,
-            COLORS.boardEmpty,
-            1
-          )
-          .setStrokeStyle(1, COLORS.boardGrid, settings.showGrid ? 0.9 : 0);
-        cellRow.push(cell);
-        const sprite = this.add
-          .sprite(
-            this.boardOffsetX + col * this.boardCellSize + this.boardCellSize / 2,
-            this.boardOffsetY + row * this.boardCellSize + this.boardCellSize / 2,
             this.sharedGame.assetSystem.getTextureKey(this, null, 'block')
           )
           .setVisible(false);
@@ -1475,6 +1351,8 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private handleShutdown(): void {
+    this.battleShell?.destroy();
+    this.battleShell = undefined;
     this.inputSystem?.destroy();
     this.inputSystem = undefined;
     this.tweens.killAll();
@@ -3385,6 +3263,7 @@ export class BattleScene extends Phaser.Scene {
   private renderEnemy(): void {
     const enemy = this.sharedGame.runState.activeEnemy;
     if (!enemy) {
+      this.updateBattleCombatHud();
       return;
     }
 
@@ -3393,29 +3272,14 @@ export class BattleScene extends Phaser.Scene {
     this.enemySprite?.setVisible(true);
     this.fitEnemyBattleSprite(enemy);
 
-    const player = this.sharedGame.runState.player;
-    this.playerStatsText?.setText(`HP ${player.hp}/${player.maxHp}   MP ${player.mana}/${player.maxMana}`);
-    this.playerOopsieText?.setText(`Shield ${player.shield}   Oopsies ${player.oopsies.length}`);
-    this.playerHpBar?.setValue(player.hp, player.maxHp);
-    this.playerMpBar?.setValue(player.mana, player.maxMana);
-    this.playerShieldBar?.setValue(player.shield, 99);
-
-    this.enemyNameText?.setText(enemy.name);
-    this.enemyStatsText?.setText(`HP ${enemy.currentHp}/${enemy.maxHp}   SH ${enemy.shield}   ATK ${enemy.attack}`);
-    this.enemyIntentText?.setText(
-      `${enemy.roomType === 'boss' ? `Phase ${enemy.phase}  ` : ''}${enemy.intent}\n${this.getBehaviorLabel(enemy.behavior)}`
-    );
-    this.enemyCountdownText?.setText(
-      `Attack in ${enemy.attackCounter} block${enemy.attackCounter === 1 ? '' : 's'}`
-    );
-    this.enemyHpBar?.setValue(enemy.currentHp, enemy.maxHp);
+    this.updateBattleCombatHud();
   }
 
   private updateTopCombatLog(): void {
     const mode = this.battleLayout?.scaleMode ?? 'compact';
     const maxLines = mode === 'full' ? 3 : mode === 'compact' ? 2 : 1;
     const lines = this.sharedGame.runState.eventLog.slice(0, maxLines).map((entry) => entry.trim()).filter(Boolean);
-    this.topCombatLogText?.setText(lines.join('\n'));
+    this.battleEventLog?.setMessages(lines);
   }
 
   private enqueueVisualEvent(event: CombatVisualEvent): void {
@@ -3511,8 +3375,11 @@ export class BattleScene extends Phaser.Scene {
 
   private fitHeroBattleSprite(): void {
     if (this.heroPortrait) {
-      this.sharedGame.assetSystem.setSpriteDisplaySizeByCategory(this.heroPortrait, 'heroPoseSheet');
-      this.sharedGame.assetSystem.fitSpriteToBox(this.heroPortrait, HERO_BATTLE_BOX_SIZE, HERO_BATTLE_BOX_SIZE);
+      if (!this.battleCombatHud) {
+        this.sharedGame.assetSystem.setSpriteDisplaySizeByCategory(this.heroPortrait, 'heroPoseSheet');
+      }
+      const size = this.battleCombatHud ? 190 : HERO_BATTLE_BOX_SIZE;
+      this.sharedGame.assetSystem.fitSpriteToBox(this.heroPortrait, size, size);
       this.heroPortrait.setOrigin(0.5, 1);
     }
   }
@@ -3587,13 +3454,17 @@ export class BattleScene extends Phaser.Scene {
 
   private fitEnemyBattleSprite(enemy: EnemyInstance): void {
     if (this.enemySprite) {
-      if (enemy.roomType === 'boss') {
-        this.sharedGame.assetSystem.setSpriteDisplaySizeByCategory(this.enemySprite, 'bossPoseSheet');
-      } else if (enemy.roomType === 'elite') {
-        this.sharedGame.assetSystem.setSpriteDisplaySizeByCategory(this.enemySprite, 'eliteMonsterPoseSheet');
-      } else {
-        this.sharedGame.assetSystem.setSpriteDisplaySizeByCategory(this.enemySprite, 'monsterPoseSheet');
+      if (!this.battleCombatHud) {
+        if (enemy.roomType === 'boss') {
+          this.sharedGame.assetSystem.setSpriteDisplaySizeByCategory(this.enemySprite, 'bossPoseSheet');
+        } else if (enemy.roomType === 'elite') {
+          this.sharedGame.assetSystem.setSpriteDisplaySizeByCategory(this.enemySprite, 'eliteMonsterPoseSheet');
+        } else {
+          this.sharedGame.assetSystem.setSpriteDisplaySizeByCategory(this.enemySprite, 'monsterPoseSheet');
+        }
       }
+      const size = this.battleCombatHud ? (enemy.roomType === 'boss' ? 220 : 196) : Math.max(this.enemySprite.displayWidth, this.enemySprite.displayHeight);
+      this.sharedGame.assetSystem.fitSpriteToBox(this.enemySprite, size, size);
       this.enemySprite.setOrigin(0.5, 1);
     }
   }

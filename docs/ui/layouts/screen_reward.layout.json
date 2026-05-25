@@ -1,0 +1,509 @@
+{
+  "screenId": "screen_reward",
+  "screenName": "Reward Screen",
+  "canvas": {
+    "width": 1080,
+    "height": 1920,
+    "orientation": "portrait"
+  },
+  "entryFrom": [
+    "screen_node_result",
+    "screen_level_up",
+    "screen_battle"
+  ],
+  "exitTo": [
+    "screen_map",
+    "screen_route_dialogue"
+  ],
+  "purpose": "Choose item/relic/gold rewards with card art and dynamic quantities.",
+  "style": {
+    "tone": "cheerful festival fantasy",
+    "pixelArt": true,
+    "safeAreaPadding": 32,
+    "desktopPreview": "centered portrait frame"
+  },
+  "codegraph": {
+    "nodeId": "screen_reward",
+    "relatedSceneFiles": [
+      "src/game/scenes/RewardScene.ts"
+    ],
+    "relatedComponents": [
+      "reward_background",
+      "reward_title_panel",
+      "reward_card_common",
+      "reward_card_rare",
+      "reward_card_special",
+      "reward_icon_one",
+      "reward_icon_two",
+      "reward_icon_three",
+      "skip_reward_button"
+    ],
+    "relatedAssetKeys": [
+      "bg_scene_reward",
+      "ui_panel_default",
+      "ui_reward_card_common",
+      "ui_reward_card_rare",
+      "ui_reward_card_rare",
+      "ico_item_mini_cupcake",
+      "ico_relic_star_sticker",
+      "ico_spell_star_spark",
+      "ui_button_secondary"
+    ],
+    "relatedSotDocs": [
+      "docs/00_BLOCKMANCER_SOURCE_OF_TRUTH_INDEX.md",
+      "docs/01_BLOCKMANCER_GAME_DESIGN_SOURCE_OF_TRUTH.md",
+      "docs/04_BLOCKMANCER_ASSET_ANIMATION_SOURCE_OF_TRUTH.md",
+      "docs/05_BLOCKMANCER_RELEASE_IMPLEMENTATION_SOURCE_OF_TRUTH.md",
+      "docs/06_BLOCKMANCER_CANONICAL_FOLDER_STRUCTURE_SOURCE_OF_TRUTH.md",
+      "docs/07_BLOCKMANCER_MONSTER_WIKIPEDIA_SOURCE_OF_TRUTH.md"
+    ]
+  },
+  "fonts": {
+    "title": {
+      "fontKey": "font_pixel_header",
+      "sizePx": 56
+    },
+    "body": {
+      "fontKey": "font_pixel_body",
+      "sizePx": 30
+    },
+    "number": {
+      "fontKey": "font_pixel_number",
+      "sizePx": 34
+    },
+    "small": {
+      "fontKey": "font_pixel_small",
+      "sizePx": 22
+    }
+  },
+  "sections": [
+    {
+      "id": "full_frame",
+      "x": 0,
+      "y": 0,
+      "w": 1080,
+      "h": 1920,
+      "role": "Full portrait scene canvas",
+      "components": [
+        "reward_background"
+      ]
+    },
+    {
+      "id": "safe_content",
+      "x": 32,
+      "y": 32,
+      "w": 1016,
+      "h": 1856,
+      "role": "32px safe content area",
+      "components": [
+        "reward_title_panel",
+        "reward_card_common",
+        "reward_card_rare",
+        "reward_card_special",
+        "reward_icon_one",
+        "reward_icon_two",
+        "reward_icon_three",
+        "skip_reward_button"
+      ]
+    }
+  ],
+  "components": [
+    {
+      "id": "reward_background",
+      "type": "backgroundLayer",
+      "assetKey": "bg_scene_reward",
+      "fallbackAssetKey": "placeholder_background",
+      "canonicalFolder": "public/assets/stages/global-scenes/",
+      "expectedSourceSize": {
+        "w": 1080,
+        "h": 1920
+      },
+      "runtimeRenderSize": {
+        "w": 1080,
+        "h": 1920
+      },
+      "x": 0,
+      "y": 0,
+      "w": 1080,
+      "h": 1920,
+      "anchor": "topLeft",
+      "fitMode": "exact",
+      "scaleMode": "backgroundExact",
+      "safePadding": 0,
+      "zIndex": 0,
+      "dynamicTextAllowed": false,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Full portrait background. Export exactly 1080x1920 and preserve the 32px full-screen safe area."
+    },
+    {
+      "id": "reward_title_panel",
+      "type": "panel",
+      "assetKey": "ui_panel_default",
+      "fallbackAssetKey": "ui_panel_default",
+      "canonicalFolder": "public/assets/ui/panels/",
+      "expectedSourceSize": {
+        "w": 840,
+        "h": 160
+      },
+      "runtimeRenderSize": {
+        "w": 840,
+        "h": 160
+      },
+      "x": 120,
+      "y": 120,
+      "w": 840,
+      "h": 160,
+      "anchor": "topLeft",
+      "fitMode": "nineSlice",
+      "scaleMode": "uiStretchNineSlice",
+      "safePadding": 24,
+      "zIndex": 30,
+      "dynamicTextAllowed": true,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Panel or frame art only. Dynamic labels and values are rendered by game text."
+    },
+    {
+      "id": "reward_card_common",
+      "type": "panel",
+      "assetKey": "ui_reward_card_common",
+      "fallbackAssetKey": "ui_panel_default",
+      "canonicalFolder": "public/assets/ui/panels/",
+      "expectedSourceSize": {
+        "w": 280,
+        "h": 680
+      },
+      "runtimeRenderSize": {
+        "w": 280,
+        "h": 680
+      },
+      "x": 88,
+      "y": 460,
+      "w": 280,
+      "h": 680,
+      "anchor": "topLeft",
+      "fitMode": "nineSlice",
+      "scaleMode": "uiStretchNineSlice",
+      "safePadding": 24,
+      "zIndex": 30,
+      "dynamicTextAllowed": true,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Panel or frame art only. Dynamic labels and values are rendered by game text."
+    },
+    {
+      "id": "reward_card_rare",
+      "type": "panel",
+      "assetKey": "ui_reward_card_rare",
+      "fallbackAssetKey": "ui_panel_default",
+      "canonicalFolder": "public/assets/ui/panels/",
+      "expectedSourceSize": {
+        "w": 280,
+        "h": 680
+      },
+      "runtimeRenderSize": {
+        "w": 280,
+        "h": 680
+      },
+      "x": 400,
+      "y": 460,
+      "w": 280,
+      "h": 680,
+      "anchor": "topLeft",
+      "fitMode": "nineSlice",
+      "scaleMode": "uiStretchNineSlice",
+      "safePadding": 24,
+      "zIndex": 30,
+      "dynamicTextAllowed": true,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Panel or frame art only. Dynamic labels and values are rendered by game text."
+    },
+    {
+      "id": "reward_card_special",
+      "type": "panel",
+      "assetKey": "ui_reward_card_rare",
+      "fallbackAssetKey": "ui_panel_default",
+      "canonicalFolder": "public/assets/ui/panels/",
+      "expectedSourceSize": {
+        "w": 280,
+        "h": 680
+      },
+      "runtimeRenderSize": {
+        "w": 280,
+        "h": 680
+      },
+      "x": 712,
+      "y": 460,
+      "w": 280,
+      "h": 680,
+      "anchor": "topLeft",
+      "fitMode": "nineSlice",
+      "scaleMode": "uiStretchNineSlice",
+      "safePadding": 24,
+      "zIndex": 30,
+      "dynamicTextAllowed": true,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Panel or frame art only. Dynamic labels and values are rendered by game text."
+    },
+    {
+      "id": "reward_icon_one",
+      "type": "iconSlot",
+      "assetKey": "ico_item_mini_cupcake",
+      "fallbackAssetKey": "placeholder_icon",
+      "canonicalFolder": "public/assets/icons/items/",
+      "expectedSourceSize": {
+        "w": 627,
+        "h": 627
+      },
+      "runtimeRenderSize": {
+        "w": 128,
+        "h": 128
+      },
+      "x": 228,
+      "y": 620,
+      "w": 128,
+      "h": 128,
+      "anchor": "center",
+      "fitMode": "iconCenter",
+      "scaleMode": "fitInteger",
+      "safePadding": 0,
+      "zIndex": 55,
+      "dynamicTextAllowed": false,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Icon centered in slot. No baked counts, labels, costs, or dynamic values."
+    },
+    {
+      "id": "reward_icon_two",
+      "type": "iconSlot",
+      "assetKey": "ico_relic_star_sticker",
+      "fallbackAssetKey": "placeholder_icon",
+      "canonicalFolder": "public/assets/icons/relics/",
+      "expectedSourceSize": {
+        "w": 627,
+        "h": 627
+      },
+      "runtimeRenderSize": {
+        "w": 128,
+        "h": 128
+      },
+      "x": 540,
+      "y": 620,
+      "w": 128,
+      "h": 128,
+      "anchor": "center",
+      "fitMode": "iconCenter",
+      "scaleMode": "fitInteger",
+      "safePadding": 0,
+      "zIndex": 55,
+      "dynamicTextAllowed": false,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Icon centered in slot. No baked counts, labels, costs, or dynamic values."
+    },
+    {
+      "id": "reward_icon_three",
+      "type": "iconSlot",
+      "assetKey": "ico_spell_star_spark",
+      "fallbackAssetKey": "placeholder_icon",
+      "canonicalFolder": "public/assets/icons/spells/",
+      "expectedSourceSize": {
+        "w": 627,
+        "h": 627
+      },
+      "runtimeRenderSize": {
+        "w": 128,
+        "h": 128
+      },
+      "x": 852,
+      "y": 620,
+      "w": 128,
+      "h": 128,
+      "anchor": "center",
+      "fitMode": "iconCenter",
+      "scaleMode": "fitInteger",
+      "safePadding": 0,
+      "zIndex": 55,
+      "dynamicTextAllowed": false,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Icon centered in slot. No baked counts, labels, costs, or dynamic values."
+    },
+    {
+      "id": "skip_reward_button",
+      "type": "button",
+      "assetKey": "ui_button_secondary",
+      "fallbackAssetKey": "ui_button_default",
+      "canonicalFolder": "public/assets/ui/buttons/",
+      "expectedSourceSize": {
+        "w": 360,
+        "h": 96
+      },
+      "runtimeRenderSize": {
+        "w": 360,
+        "h": 96
+      },
+      "x": 540,
+      "y": 1580,
+      "w": 360,
+      "h": 96,
+      "anchor": "center",
+      "fitMode": "nineSlice",
+      "scaleMode": "uiStretchNineSlice",
+      "safePadding": 24,
+      "zIndex": 90,
+      "dynamicTextAllowed": true,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Button art only. Labels, disabled state text, counts, costs, and localization are game text."
+    }
+  ],
+  "assetPlaceholders": [
+    {
+      "assetKey": "bg_scene_reward",
+      "fallbackAssetKey": "placeholder_background",
+      "canonicalFolder": "public/assets/stages/global-scenes/",
+      "expectedSourceSize": {
+        "w": 1080,
+        "h": 1920
+      }
+    },
+    {
+      "assetKey": "ui_panel_default",
+      "fallbackAssetKey": "ui_panel_default",
+      "canonicalFolder": "public/assets/ui/panels/",
+      "expectedSourceSize": {
+        "w": 840,
+        "h": 160
+      }
+    },
+    {
+      "assetKey": "ui_reward_card_common",
+      "fallbackAssetKey": "ui_panel_default",
+      "canonicalFolder": "public/assets/ui/panels/",
+      "expectedSourceSize": {
+        "w": 280,
+        "h": 680
+      }
+    },
+    {
+      "assetKey": "ui_reward_card_rare",
+      "fallbackAssetKey": "ui_panel_default",
+      "canonicalFolder": "public/assets/ui/panels/",
+      "expectedSourceSize": {
+        "w": 280,
+        "h": 680
+      }
+    },
+    {
+      "assetKey": "ui_reward_card_rare",
+      "fallbackAssetKey": "ui_panel_default",
+      "canonicalFolder": "public/assets/ui/panels/",
+      "expectedSourceSize": {
+        "w": 280,
+        "h": 680
+      }
+    },
+    {
+      "assetKey": "ico_item_mini_cupcake",
+      "fallbackAssetKey": "placeholder_icon",
+      "canonicalFolder": "public/assets/icons/items/",
+      "expectedSourceSize": {
+        "w": 627,
+        "h": 627
+      }
+    },
+    {
+      "assetKey": "ico_relic_star_sticker",
+      "fallbackAssetKey": "placeholder_icon",
+      "canonicalFolder": "public/assets/icons/relics/",
+      "expectedSourceSize": {
+        "w": 627,
+        "h": 627
+      }
+    },
+    {
+      "assetKey": "ico_spell_star_spark",
+      "fallbackAssetKey": "placeholder_icon",
+      "canonicalFolder": "public/assets/icons/spells/",
+      "expectedSourceSize": {
+        "w": 627,
+        "h": 627
+      }
+    },
+    {
+      "assetKey": "ui_button_secondary",
+      "fallbackAssetKey": "ui_button_default",
+      "canonicalFolder": "public/assets/ui/buttons/",
+      "expectedSourceSize": {
+        "w": 360,
+        "h": 96
+      }
+    }
+  ],
+  "interactions": [
+    "All button labels, counts, prices, HP, MP, EXP, level, score, combo, cascade, stack, quantity, and damage values are game text, never baked into PNG assets.",
+    "Touch targets for primary controls are at least 88x88px; battle primary controls target 96x96px.",
+    "Runtime positions are rounded to whole pixels before render."
+  ],
+  "fallbackRules": [
+    "If assetKey is missing, use fallbackAssetKey without changing component bounds.",
+    "If final PNG has wrong source size, reject it in asset QC and keep placeholder/fallback.",
+    "If localized text overflows, resize or wrap game text only; do not edit PNG layout."
+  ],
+  "acceptanceCriteria": [
+    "Canvas is 1080x1920 portrait.",
+    "Every component uses integer x/y/w/h coordinates.",
+    "Every visual component has assetKey, fallbackAssetKey, canonicalFolder, expectedSourceSize, runtimeRenderSize, anchor, fitMode, scaleMode, safePadding, zIndex, dynamicTextAllowed, and pixelPerfect fields.",
+    "No dynamic text is baked into PNG assets.",
+    "Final assets can replace placeholders without changing layout JSON."
+  ]
+}

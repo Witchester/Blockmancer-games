@@ -1,0 +1,326 @@
+{
+  "screenId": "screen_boss_rule_card",
+  "screenName": "Boss Rule Card / Boss Intro",
+  "canvas": {
+    "width": 1080,
+    "height": 1920,
+    "orientation": "portrait"
+  },
+  "entryFrom": [
+    "screen_map"
+  ],
+  "exitTo": [
+    "screen_battle"
+  ],
+  "purpose": "Show boss mechanics and start-boss affordance before a boss fight.",
+  "style": {
+    "tone": "cheerful festival fantasy",
+    "pixelArt": true,
+    "safeAreaPadding": 32,
+    "desktopPreview": "centered portrait frame"
+  },
+  "codegraph": {
+    "nodeId": "screen_boss_rule_card",
+    "relatedSceneFiles": [
+      "src/game/scenes/BattleScene.ts"
+    ],
+    "relatedComponents": [
+      "boss_arena_background",
+      "boss_rule_panel",
+      "boss_icon",
+      "boss_rule_icon",
+      "start_boss_button"
+    ],
+    "relatedAssetKeys": [
+      "bg_boss_cupcake_slime_king_arena",
+      "ui_panel_boss_rule",
+      "ico_boss_cupcake_slime_king",
+      "ico_boss_rule_boss_cupcake_slime_king",
+      "ui_button_start_boss"
+    ],
+    "relatedSotDocs": [
+      "docs/00_BLOCKMANCER_SOURCE_OF_TRUTH_INDEX.md",
+      "docs/01_BLOCKMANCER_GAME_DESIGN_SOURCE_OF_TRUTH.md",
+      "docs/04_BLOCKMANCER_ASSET_ANIMATION_SOURCE_OF_TRUTH.md",
+      "docs/05_BLOCKMANCER_RELEASE_IMPLEMENTATION_SOURCE_OF_TRUTH.md",
+      "docs/06_BLOCKMANCER_CANONICAL_FOLDER_STRUCTURE_SOURCE_OF_TRUTH.md",
+      "docs/07_BLOCKMANCER_MONSTER_WIKIPEDIA_SOURCE_OF_TRUTH.md"
+    ]
+  },
+  "fonts": {
+    "title": {
+      "fontKey": "font_pixel_header",
+      "sizePx": 56
+    },
+    "body": {
+      "fontKey": "font_pixel_body",
+      "sizePx": 30
+    },
+    "number": {
+      "fontKey": "font_pixel_number",
+      "sizePx": 34
+    },
+    "small": {
+      "fontKey": "font_pixel_small",
+      "sizePx": 22
+    }
+  },
+  "sections": [
+    {
+      "id": "full_frame",
+      "x": 0,
+      "y": 0,
+      "w": 1080,
+      "h": 1920,
+      "role": "Full portrait scene canvas",
+      "components": [
+        "boss_arena_background"
+      ]
+    },
+    {
+      "id": "safe_content",
+      "x": 32,
+      "y": 32,
+      "w": 1016,
+      "h": 1856,
+      "role": "32px safe content area",
+      "components": [
+        "boss_rule_panel",
+        "boss_icon",
+        "boss_rule_icon",
+        "start_boss_button"
+      ]
+    }
+  ],
+  "components": [
+    {
+      "id": "boss_arena_background",
+      "type": "backgroundLayer",
+      "assetKey": "bg_boss_cupcake_slime_king_arena",
+      "fallbackAssetKey": "placeholder_background",
+      "canonicalFolder": "public/assets/stages/stage_sprinkle_sewers/boss-arena/",
+      "expectedSourceSize": {
+        "w": 1080,
+        "h": 1920
+      },
+      "runtimeRenderSize": {
+        "w": 1080,
+        "h": 1920
+      },
+      "x": 0,
+      "y": 0,
+      "w": 1080,
+      "h": 1920,
+      "anchor": "topLeft",
+      "fitMode": "exact",
+      "scaleMode": "backgroundExact",
+      "safePadding": 0,
+      "zIndex": 0,
+      "dynamicTextAllowed": false,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Full portrait background. Export exactly 1080x1920 and preserve the 32px full-screen safe area."
+    },
+    {
+      "id": "boss_rule_panel",
+      "type": "panel",
+      "assetKey": "ui_panel_boss_rule",
+      "fallbackAssetKey": "ui_panel_default",
+      "canonicalFolder": "public/assets/ui/panels/",
+      "expectedSourceSize": {
+        "w": 888,
+        "h": 980
+      },
+      "runtimeRenderSize": {
+        "w": 888,
+        "h": 980
+      },
+      "x": 96,
+      "y": 300,
+      "w": 888,
+      "h": 980,
+      "anchor": "topLeft",
+      "fitMode": "nineSlice",
+      "scaleMode": "uiStretchNineSlice",
+      "safePadding": 24,
+      "zIndex": 30,
+      "dynamicTextAllowed": true,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Panel or frame art only. Dynamic labels and values are rendered by game text."
+    },
+    {
+      "id": "boss_icon",
+      "type": "iconSlot",
+      "assetKey": "ico_boss_cupcake_slime_king",
+      "fallbackAssetKey": "placeholder_icon",
+      "canonicalFolder": "public/assets/sprites/bosses/boss_cupcake_slime_king/portrait_icon/",
+      "expectedSourceSize": {
+        "w": 627,
+        "h": 627
+      },
+      "runtimeRenderSize": {
+        "w": 180,
+        "h": 180
+      },
+      "x": 540,
+      "y": 470,
+      "w": 180,
+      "h": 180,
+      "anchor": "center",
+      "fitMode": "iconCenter",
+      "scaleMode": "fitInteger",
+      "safePadding": 0,
+      "zIndex": 55,
+      "dynamicTextAllowed": false,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Icon centered in slot. No baked counts, labels, costs, or dynamic values."
+    },
+    {
+      "id": "boss_rule_icon",
+      "type": "iconSlot",
+      "assetKey": "ico_boss_rule_boss_cupcake_slime_king",
+      "fallbackAssetKey": "placeholder_icon",
+      "canonicalFolder": "public/assets/icons/boss-rules/",
+      "expectedSourceSize": {
+        "w": 627,
+        "h": 627
+      },
+      "runtimeRenderSize": {
+        "w": 96,
+        "h": 96
+      },
+      "x": 220,
+      "y": 760,
+      "w": 96,
+      "h": 96,
+      "anchor": "center",
+      "fitMode": "iconCenter",
+      "scaleMode": "fitInteger",
+      "safePadding": 0,
+      "zIndex": 55,
+      "dynamicTextAllowed": false,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Icon centered in slot. No baked counts, labels, costs, or dynamic values."
+    },
+    {
+      "id": "start_boss_button",
+      "type": "button",
+      "assetKey": "ui_button_start_boss",
+      "fallbackAssetKey": "ui_button_default",
+      "canonicalFolder": "public/assets/ui/buttons/",
+      "expectedSourceSize": {
+        "w": 420,
+        "h": 104
+      },
+      "runtimeRenderSize": {
+        "w": 420,
+        "h": 104
+      },
+      "x": 540,
+      "y": 1500,
+      "w": 420,
+      "h": 104,
+      "anchor": "center",
+      "fitMode": "nineSlice",
+      "scaleMode": "uiStretchNineSlice",
+      "safePadding": 24,
+      "zIndex": 90,
+      "dynamicTextAllowed": true,
+      "pixelPerfect": {
+        "integerCoordinates": true,
+        "allowFractionalScale": false,
+        "filtering": "nearest",
+        "antiAliasing": false,
+        "roundPixels": true
+      },
+      "notes": "Button art only. Labels, disabled state text, counts, costs, and localization are game text."
+    }
+  ],
+  "assetPlaceholders": [
+    {
+      "assetKey": "bg_boss_cupcake_slime_king_arena",
+      "fallbackAssetKey": "placeholder_background",
+      "canonicalFolder": "public/assets/stages/stage_sprinkle_sewers/boss-arena/",
+      "expectedSourceSize": {
+        "w": 1080,
+        "h": 1920
+      }
+    },
+    {
+      "assetKey": "ui_panel_boss_rule",
+      "fallbackAssetKey": "ui_panel_default",
+      "canonicalFolder": "public/assets/ui/panels/",
+      "expectedSourceSize": {
+        "w": 888,
+        "h": 980
+      }
+    },
+    {
+      "assetKey": "ico_boss_cupcake_slime_king",
+      "fallbackAssetKey": "placeholder_icon",
+      "canonicalFolder": "public/assets/sprites/bosses/boss_cupcake_slime_king/portrait_icon/",
+      "expectedSourceSize": {
+        "w": 627,
+        "h": 627
+      }
+    },
+    {
+      "assetKey": "ico_boss_rule_boss_cupcake_slime_king",
+      "fallbackAssetKey": "placeholder_icon",
+      "canonicalFolder": "public/assets/icons/boss-rules/",
+      "expectedSourceSize": {
+        "w": 627,
+        "h": 627
+      }
+    },
+    {
+      "assetKey": "ui_button_start_boss",
+      "fallbackAssetKey": "ui_button_default",
+      "canonicalFolder": "public/assets/ui/buttons/",
+      "expectedSourceSize": {
+        "w": 420,
+        "h": 104
+      }
+    }
+  ],
+  "interactions": [
+    "All button labels, counts, prices, HP, MP, EXP, level, score, combo, cascade, stack, quantity, and damage values are game text, never baked into PNG assets.",
+    "Touch targets for primary controls are at least 88x88px; battle primary controls target 96x96px.",
+    "Runtime positions are rounded to whole pixels before render."
+  ],
+  "fallbackRules": [
+    "If assetKey is missing, use fallbackAssetKey without changing component bounds.",
+    "If final PNG has wrong source size, reject it in asset QC and keep placeholder/fallback.",
+    "If localized text overflows, resize or wrap game text only; do not edit PNG layout."
+  ],
+  "acceptanceCriteria": [
+    "Canvas is 1080x1920 portrait.",
+    "Every component uses integer x/y/w/h coordinates.",
+    "Every visual component has assetKey, fallbackAssetKey, canonicalFolder, expectedSourceSize, runtimeRenderSize, anchor, fitMode, scaleMode, safePadding, zIndex, dynamicTextAllowed, and pixelPerfect fields.",
+    "No dynamic text is baked into PNG assets.",
+    "Final assets can replace placeholders without changing layout JSON."
+  ]
+}
