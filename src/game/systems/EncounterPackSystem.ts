@@ -19,7 +19,7 @@ import { contentRegistry } from './ContentRegistry';
 import { DifficultySystem } from './DifficultySystem';
 import { StageSystem } from './StageSystem';
 import { LevelUpSystem } from './LevelUpSystem';
-import { choice, seededRandom } from '../utils/random';
+import { seededRandom } from '../utils/random';
 
 export type GenerateEncounterPackInput = {
   stageId: string;
@@ -326,7 +326,7 @@ export class EncounterPackSystem {
 
     const entryEffectId = isFirstEnemy
       ? 'entry_none_safe'
-      : this.selectEntryEffect(nodeType, scalingRule.stageNumber);
+      : this.selectEntryEffect(nodeType, scalingRule.stageNumber, seed + 409);
 
     return {
       enemyId: selected.monsterId,
@@ -361,7 +361,7 @@ export class EncounterPackSystem {
     }
   }
 
-  private selectEntryEffect(nodeType: EncounterNodeType, stageNumber: number): string {
+  private selectEntryEffect(nodeType: EncounterNodeType, stageNumber: number, seed: number): string {
     const effects = contentRegistry
       .listEnabled<EnemyEntryEffect>('enemyEntryEffect')
       .filter(effect => effect.id !== 'entry_none_safe');
@@ -382,7 +382,9 @@ export class EncounterPackSystem {
       filtered = filtered.filter((effect) => ['entry_none_safe', 'entry_sprinkle_gift', 'entry_shield_trade'].includes(effect.id));
     }
 
-    const selected = choice(filtered.length > 0 ? filtered : effects);
+    const pool = (filtered.length > 0 ? filtered : effects).sort((left, right) => left.id.localeCompare(right.id));
+    const index = Math.min(pool.length - 1, Math.floor(seededRandom(seed, 0, pool.length)));
+    const selected = pool[index];
     return selected.id;
   }
 

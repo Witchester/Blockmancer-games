@@ -19,6 +19,7 @@ export function resolveLevelUpNextScene(game: BlockmancerGame, state: RunState):
 export function resetLevelUpOffer(state: RunState, resolved: boolean): void {
   state.levelUpScreenState.offeredUpgradeIds = [];
   state.levelUpScreenState.pendingLevelUpChoices = [];
+  state.levelUpScreenState.levelUpSelectionSeed = '';
   state.levelUpScreenState.levelUpScreenResolved = resolved;
 }
 

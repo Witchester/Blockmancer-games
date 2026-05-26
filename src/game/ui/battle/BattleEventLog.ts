@@ -29,7 +29,7 @@ const EVENT_LOG_SPEC: UiComponentSpec = {
   expectedSourceSize: { w: 1032, h: 96 },
   runtimeRenderSize: { w: 1032, h: 96 },
   x: 24,
-  y: 360,
+  y: 12,
   w: 1032,
   h: 96,
   anchor: 'topLeft',
@@ -39,7 +39,7 @@ const EVENT_LOG_SPEC: UiComponentSpec = {
   zIndex: 80,
   dynamicTextAllowed: true,
   pixelPerfect: PIXEL_PERFECT,
-  notes: 'UI-5 event log strip. Dynamic combat messages render as text.'
+  notes: 'UI-5 event log strip. Dynamic combat messages render as text at the start of puzzle section.'
 };
 
 export class BattleEventLog {
@@ -70,7 +70,7 @@ export class BattleEventLog {
     });
     this.root.add(this.panel.root);
 
-    const lineHeight = 24;
+    const lineHeight = 30;
     for (let index = 0; index < this.maxVisibleMessages; index += 1) {
       const label = this.scene.add.text(
         roundPixel(EVENT_LOG_SPEC.x + EVENT_LOG_SPEC.safePadding),
@@ -80,11 +80,11 @@ export class BattleEventLog {
           textStyle: 'micro',
           color: '#f6f7ff',
           wordWrapWidth: EVENT_LOG_SPEC.w - EVENT_LOG_SPEC.safePadding * 2,
-          lineSpacing: 0,
+          lineSpacing: 1,
           outline: true
         }, EVENT_LOG_SPEC)
       ).setOrigin(0, 0);
-      label.setMaxLines(1);
+      label.setMaxLines(2);
       label.setFixedSize(EVENT_LOG_SPEC.w - EVENT_LOG_SPEC.safePadding * 2, lineHeight);
       this.root.add(label);
       this.messageTexts.push(label);
@@ -137,7 +137,7 @@ export class BattleEventLog {
   }
 
   private formatMessage(message: BattleEventLogMessage): string {
-    return message.text.length > 96 ? `${message.text.slice(0, 93)}...` : message.text;
+    return message.text.length > 128 ? `${message.text.slice(0, 125)}...` : message.text;
   }
 
   private getMessageColor(type: BattleEventLogMessage['type']): string {

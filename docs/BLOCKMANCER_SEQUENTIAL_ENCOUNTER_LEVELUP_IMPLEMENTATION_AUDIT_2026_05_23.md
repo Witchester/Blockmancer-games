@@ -92,3 +92,17 @@
 2. "Run and document manual smoke for sequential encounter + node result + level-up save/load edge cases only; do not add new tooling."
 3. "Add stage ID alias validation for Bloxley naming drift and enforce a canonical runtime ID across content and docs."
 4. "Perform a conservative Stage 1/2/5/6 balance verification pass based on manual smoke findings; adjust only scaling JSON and caps."
+
+## 2026-05-26 Determinism Patch Addendum
+
+- `LevelUpSystem.pickLevelUpChoices` now accepts a persisted seed and uses `seededRandom`; it no longer uses `Math.random`.
+- `LevelUpRewardScene` now persists/reuses `levelUpSelectionSeed` and still restores exact unresolved offers from `offeredUpgradeIds`.
+- `LevelUpFlowRouter.resetLevelUpOffer` clears stale offer seeds after a choice/reroll/reset.
+- `EncounterPackSystem.selectEntryEffect` now chooses enemy entry effects from the encounter seed instead of non-seeded random choice.
+- `tests/run-remediation-smoke.mjs` now asserts the deterministic level-up and entry-effect wiring.
+- `package.json` now exposes `validate:ui-layouts`, matching the UI CodeGraph docs.
+
+Updated audit impact:
+- Step 3 entry-effect determinism gap: patched, but pack ID collision risk remains a separate low-frequency risk.
+- Step 6 non-seeded entry-effect risk: patched; fairness/balance still requires manual smoke.
+- Step 10 level-up card determinism gap: patched for generation and unresolved offer restore; manual mid-flow save/load smoke is still recommended.

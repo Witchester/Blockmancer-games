@@ -37,6 +37,8 @@ const nodeResultRouterText = readText('src/game/ui/node-result/NodeResultFlowRou
 const levelUpSceneText = readText('src/game/scenes/LevelUpRewardScene.ts');
 const levelUpAdapterText = readText('src/game/ui/level-up/LevelUpDataAdapter.ts');
 const levelUpRouterText = readText('src/game/ui/level-up/LevelUpFlowRouter.ts');
+const levelUpSystemText = readText('src/game/systems/LevelUpSystem.ts');
+const encounterPackSystemText = readText('src/game/systems/EncounterPackSystem.ts');
 assert(nodeResultSceneText.includes('buildNodeResultViewModel'), 'NodeResultScene does not use the node result display adapter.');
 assert(nodeResultSceneText.includes('continueFromNodeResult'), 'NodeResultScene does not use the node result flow router.');
 assert(nodeResultRouterText.indexOf("'LevelUpRewardScene'") < nodeResultRouterText.indexOf("'RewardScene'"), 'Node result flow should prefer pending level-up before reward routing.');
@@ -48,6 +50,10 @@ assert(levelUpAdapterText.includes('stackCount') && levelUpAdapterText.includes(
 assert(levelUpRouterText.includes('consumePendingLevelUp'), 'Level-up selection does not consume one pending level-up.');
 assert(levelUpRouterText.indexOf("'LevelUpRewardScene'") < levelUpRouterText.indexOf("'RewardScene'"), 'Level-up flow should resolve multiple pending level-ups before reward routing.');
 assert(levelUpRouterText.includes('game.mapSystem.completeNode'), 'Level-up flow does not return directly to map when no rewards remain.');
+assert(levelUpSystemText.includes('seededRandom') && !levelUpSystemText.includes('Math.random'), 'Level-up choices are not fully seed-driven.');
+assert(levelUpSceneText.includes('levelUpSelectionSeed') && levelUpSceneText.includes('pickLevelUpChoices(state, 3, seed)'), 'LevelUpRewardScene does not persist and reuse the level-up offer seed.');
+assert(levelUpRouterText.includes("levelUpSelectionSeed = ''"), 'Level-up offer reset does not clear stale offer seeds.');
+assert(encounterPackSystemText.includes('selectEntryEffect(nodeType, scalingRule.stageNumber, seed + 409)'), 'Encounter entry effects are not generated from the encounter seed.');
 
 const spellSystemText = readText('src/game/systems/SpellSystem.ts');
 const spellsDataText = readText('src/game/data/spells.ts');

@@ -145,8 +145,8 @@ export class BattleScreenShell {
     if (this.created) return this;
 
     this.root.add([this.combatSection, this.puzzleSection, this.controlsSection, this.modalLayer, this.debugLayer]);
-    this.combatSection.add([this.combatBackgroundLayer, this.combatUiLayer, this.combatVfxLayer, this.eventLogLayer]);
-    this.puzzleSection.add([this.puzzleBackgroundLayer, this.boardLayer, this.leftRailLayer, this.rightRailLayer]);
+    this.combatSection.add([this.combatBackgroundLayer, this.combatUiLayer, this.combatVfxLayer]);
+    this.puzzleSection.add([this.puzzleBackgroundLayer, this.eventLogLayer, this.boardLayer, this.leftRailLayer, this.rightRailLayer]);
     this.controlsSection.add([this.controlsBackgroundLayer, this.controlsButtonLayer]);
 
     this.createSectionBackgrounds();
@@ -206,7 +206,7 @@ export class BattleScreenShell {
     if (expected.controls.y !== 1536 || expected.controls.h !== 384) errors.push('controls section must be x0 y1536 w1080 h384.');
     if (expected.combat.y + expected.combat.h > expected.puzzle.y) errors.push('combat section overlaps puzzle section.');
     if (expected.puzzle.y + expected.puzzle.h > expected.controls.y) errors.push('puzzle section overlaps controls section.');
-    if (this.eventLogLayer.parentContainer !== this.combatSection) errors.push('eventLogLayer must stay inside combatSection.');
+    if (this.eventLogLayer.parentContainer !== this.puzzleSection) errors.push('eventLogLayer must stay inside puzzleSection.');
     if (!this.controlsSection.visible) warnings.push('controlsSection is currently hidden.');
     if (this.frame.width <= 0 || this.frame.height <= 0 || this.frame.scale <= 0) warnings.push('portrait frame has invalid viewport scale.');
 

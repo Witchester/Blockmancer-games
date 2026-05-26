@@ -105,8 +105,9 @@ export class LevelUpRewardScene extends Phaser.Scene {
       }
     }
 
-    const cards = game.levelUpSystem.pickLevelUpChoices(state, 3) as LevelUpUpgradeContent[];
-    screenState.levelUpSelectionSeed = `${state.currentNodeId}:${state.playerLevelState.level}:${state.playerLevelState.pendingLevelUps}:${Date.now()}`;
+    const seed = screenState.levelUpSelectionSeed || `${state.currentNodeId}:${state.playerLevelState.level}:${state.playerLevelState.pendingLevelUps}:${Date.now()}`;
+    const cards = game.levelUpSystem.pickLevelUpChoices(state, 3, seed) as LevelUpUpgradeContent[];
+    screenState.levelUpSelectionSeed = seed;
     screenState.offeredUpgradeIds = cards.map((card) => card.id);
     screenState.pendingLevelUpChoices = [...screenState.offeredUpgradeIds];
     screenState.chosenUpgradeIds = [];

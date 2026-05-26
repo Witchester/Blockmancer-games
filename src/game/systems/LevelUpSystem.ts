@@ -1,5 +1,6 @@
 import type { NodeResultSummary, PlayerLevelState, RunState } from '../types/GameTypes';
 import { contentRegistry } from './ContentRegistry';
+import { seededRandom } from '../utils/random';
 
 type LevelUpCardRarity = 'general' | 'hero' | 'rare';
 
@@ -103,26 +104,30 @@ export class LevelUpSystem {
     return this.getChosenUpgradeStack(state, upgrade.id) < limit;
   }
 
-  pickLevelUpChoices(state: RunState, count = 3): LevelUpUpgradeContent[] {
+  pickLevelUpChoices(state: RunState, count = 3, seed: string | number = this.defaultChoiceSeed(state)): LevelUpUpgradeContent[] {
+    const baseSeed = this.hashSeed(seed);
     const allUpgrades = contentRegistry.listEnabled<LevelUpUpgradeContent>('upgrade');
     const valid = allUpgrades
       .filter((upg) => upg.levelUpOnly === true || upg.id.startsWith('upg_lvl_'))
-      .filter((upg) => this.canOfferUpgrade(state, upg));
+      .filter((upg) => this.canOfferUpgrade(state, upg))
+      .sort((left, right) => left.id.localeCompare(right.id));
     const chosen: LevelUpUpgradeContent[] = [];
 
     const heroEligible = valid.filter((u) => u.upgradeType === 'hero_specific' && u.heroId === state.hero.id);
     if (state.playerLevelState.level >= 3 && heroEligible.length > 0) {
-      chosen.push(heroEligible[Math.floor(Math.random() * heroEligible.length)]);
+      chosen.push(this.seededPick(heroEligible, baseSeed + 17));
     }
 
+    let rollIndex = 0;
     while (chosen.length < count) {
-      const rarity = this.rollCardRarity();
+      const rarity = this.rollCardRarity(baseSeed + 101 + rollIndex * 37);
       const pool = this.getPoolByRarity(valid, rarity, state.hero.id)
         .filter((upg) => !chosen.some((existing) => existing.id === upg.id));
       if (pool.length <= 0) {
         break;
       }
-      chosen.push(pool[Math.floor(Math.random() * pool.length)]);
+      chosen.push(this.seededPick(pool, baseSeed + 211 + rollIndex * 53));
+      rollIndex += 1;
     }
 
     const uniqueValid = valid.filter((upg) => !chosen.some((existing) => existing.id === upg.id));
@@ -152,8 +157,8 @@ export class LevelUpSystem {
     state.playerLevelState.chosenUpgrades[upgrade.id] = stacks + 1;
   }
 
-  private rollCardRarity(): LevelUpCardRarity {
-    const roll = Math.random();
+  private rollCardRarity(seed: number): LevelUpCardRarity {
+    const roll = seededRandom(seed, 0, 1);
     if (roll < 0.65) return 'general';
     if (roll < 0.9) return 'hero';
     return 'rare';
@@ -167,6 +172,32 @@ export class LevelUpSystem {
       return valid.filter((entry) => (entry.cardType ?? entry.rarity) === 'rare');
     }
     return valid.filter((entry) => entry.upgradeType !== 'hero_specific');
+  }
+
+  private seededPick<T>(items: T[], seed: number): T {
+    const index = Math.min(items.length - 1, Math.floor(seededRandom(seed, 0, items.length)));
+    return items[index];
+  }
+
+  private defaultChoiceSeed(state: RunState): string {
+    return [
+      state.currentNodeId,
+      state.playerLevelState.level,
+      state.playerLevelState.pendingLevelUps,
+      Object.keys(state.playerLevelState.chosenUpgrades).sort().join(',')
+    ].join(':');
+  }
+
+  private hashSeed(seed: string | number): number {
+    if (typeof seed === 'number') {
+      return Number.isFinite(seed) ? seed : 0;
+    }
+    let hash = 0;
+    for (let index = 0; index < seed.length; index += 1) {
+      hash = ((hash << 5) - hash) + seed.charCodeAt(index);
+      hash |= 0;
+    }
+    return Math.abs(hash);
   }
 }
 

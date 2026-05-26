@@ -46,7 +46,7 @@ Keep the current stack: Phaser 3 + TypeScript + Vite + Capacitor remains the pra
 #### 1A. Feature Delta — Sequential Encounter Packs and Festival Level-Up
 
 **Added:** 2026-05-22  
-**Current status:** Design/SOT updated, implementation pending until repo code audit confirms otherwise.
+**Current status:** Implementation present after the 2026-05-23 repo audit and 2026-05-26 determinism patch; remaining risk is focused smoke/balance validation, final assets/audio, and broader gameplay-effect coverage.
 
 New Release 1 feature direction:
 
@@ -162,9 +162,9 @@ Route content counts:
 | Board controls | Implemented | `BoardSystem`, `BattleScene`, `InputSystem`, `MobileControls`. | Mobile ergonomics need device verification. | P1 |
 | Combat loop | Implemented | `CombatSystem`, `BattleScene`, enemy defeat/reward flow. | More tests for modifiers and bosses. | P1 |
 | Enemy system | Implemented / partial behavior depth | `EnemySystem`, monster content. | Advanced behaviors remain light. | P1 |
-| Encounter pack system | New / pending | SOT design added 2026-05-22. | Implement biome-based sequential enemy packs, current enemy index, node-clear reward gating, monster stack UI, and save/load support. | P1 |
-| Festival Level-Up system | New / pending | SOT design added 2026-05-22. | Implement XP gain, post-node level-up card choices, stackable general/hero upgrades, upgrade caps, and real effect handlers. | P1 |
-| Node Result Screen | New / pending | SOT design added 2026-05-22, expanded with EXP result requirement. | Implement post-node result screen showing EXP gained, EXP breakdown, EXP remaining to next level, pending level-up state, and duplicate-safe save/load behavior. | P1 |
+| Encounter pack system | Mostly implemented | `EncounterPackSystem`, biome monster pools, encounter scaling, battle chaining, `MonsterStackPreview`, save fields. 2026-05-26 patch made entry-effect choice seed-driven. | Manual smoke/balance still needed; pack ID collision risk remains a lower-priority audit item. | P1 |
+| Festival Level-Up system | Mostly implemented | `LevelUpSystem`, `LevelUpRewardScene`, level-up adapters/router, stackable upgrades, hero-specific filtering, save fields. 2026-05-26 patch made card offers seed-driven and restorable via persisted offer IDs. | Manual save/load and balance smoke still needed for unresolved level-up offers and upgrade pacing. | P1 |
+| Node Result Screen | Implemented, smoke pending | `NodeResultScene`, `NodeResultDataAdapter`, `NodeResultFlowRouter`, pending node-result save state, duplicate EXP claim guard. | Manual save/load replay smoke still needed around result continue timing. | P1 |
 | Boss system | Partial | `BossSystem`, `BossRuleSystem`, boss JSON, boss callbacks. | Some mechanics are placeholder-safe rather than fully distinct. | P1 |
 | Spell system | Partial | `SpellSystem`, spell content. | Runtime spell behavior coverage does not fully match content roster. | P1 |
 | Item system | Partial | `ItemSystem`, item content, route rewards. | Content coverage exceeds verified behavior coverage. | P1 |

@@ -96,3 +96,9 @@ For UI-14, CodeGraph MCP status reported an initialized index with 208 files, 36
 
 Runtime outer-flow screens now use shared UI primitives through `OuterFlowUi` while preserving existing routing and state behavior: Boot still preloads assets and waits for fonts, Main Menu still routes through opening/tutorial/new-run/continue handlers, Hero Select still uses existing hero content and unlock checks before `newRun(heroId)`, Game Over still sets victory/defeat status and clears saves on exit actions, and Victory still uses existing story/route ending lookup.
 
+## 2026-05-26 Sequential Encounter / Level-Up Audit Follow-Up
+
+CodeGraph and SOT comparison found that the older Release Implementation SOT rows still described encounter packs, Festival Level-Up, and Node Result as pending, while runtime code and UI CodeGraph notes showed those features present. The SOT rows were updated to implemented/mostly implemented status.
+
+Implementation follow-up closed the highest deterministic restore gap: `LevelUpSystem` now generates offers from a persisted seed, `LevelUpRewardScene` reuses `levelUpSelectionSeed` and exact `offeredUpgradeIds`, `LevelUpFlowRouter` clears stale seeds on reset, and `EncounterPackSystem` selects entry effects from the encounter seed. `npm run build`, `npm test`, and `npm run validate:ui-layouts` passed after the patch.
+

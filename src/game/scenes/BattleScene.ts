@@ -483,7 +483,8 @@ export class BattleScene extends Phaser.Scene {
     this.controlsY = this.battleLayout.bottomControlsRect.y + Math.round(this.battleLayout.bottomControlsRect.height / 2);
 
     this.battleShell = new BattleScreenShell(this, {
-      debug: this.registry.get('uiDebug') === true || this.registry.get('uiDebug') === 'true'
+      debug: this.registry.get('uiDebug') === true || this.registry.get('uiDebug') === 'true',
+      rootDepth: 20
     }).create();
     this.battlePuzzleSectionUi = new BattlePuzzleSectionUi(this, this.battleShell).create();
     this.battlePuzzleSectionUi.onInventoryClicked = () => {
@@ -891,7 +892,7 @@ export class BattleScene extends Phaser.Scene {
     const debug = this.registry.get('uiDebug') === true || this.registry.get('uiDebug') === 'true';
     this.battleCombatHud = new BattleCombatHud(this, this.battleShell).create(state);
     this.battleCombatHud.setDebugVisible(debug);
-    this.battleEventLog = new BattleEventLog(this, this.battleShell, { maxVisibleMessages: 3 }).create();
+    this.battleEventLog = new BattleEventLog(this, this.battleShell, { maxVisibleMessages: 2 }).create();
     this.monsterStackPreview = new MonsterStackPreview(this, this.battleShell, {
       getMonsterIconKey: (id) => this.sharedGame.assetSystem.getMonsterTexture(this, id, 'icon')
     }).create();
@@ -984,7 +985,7 @@ export class BattleScene extends Phaser.Scene {
     });
     this.heroPortrait = this.battleCombatHud?.heroSprite;
     this.enemySprite = this.battleCombatHud?.enemySprite;
-    this.battleEventLog?.setMessages(state.eventLog.slice(0, 3));
+    this.battleEventLog?.setMessages(state.eventLog.slice(0, 2));
     this.monsterStackPreview?.updateQueue(state.activeEncounterPack);
   }
 
@@ -1052,7 +1053,7 @@ export class BattleScene extends Phaser.Scene {
         const y = this.boardOffsetY + row * this.boardCellSize + this.boardCellSize / 2;
         const cell = this.add.rectangle(x, y, this.boardCellSize, this.boardCellSize, COLORS.boardEmpty, 1)
           .setStrokeStyle(1, COLORS.boardGrid, this.sharedGame.getSettings().showGrid ? 0.62 : 0);
-        cell.setDepth(10);
+        cell.setDepth(45);
         cellRow.push(cell);
 
         const sprite = this.add
@@ -1064,7 +1065,7 @@ export class BattleScene extends Phaser.Scene {
           .setVisible(false);
         setBoardBlockDisplaySize(sprite);
         sprite.setDisplaySize(this.boardCellSize, this.boardCellSize);
-        sprite.setDepth(11);
+        sprite.setDepth(46);
         spriteRow.push(sprite);
         const symbol = this.add.text(
           x,
@@ -1079,7 +1080,7 @@ export class BattleScene extends Phaser.Scene {
             strokeThickness: 2
           }
         ).setOrigin(0.5).setVisible(false);
-        symbol.setDepth(12);
+        symbol.setDepth(47);
         symbolRow.push(symbol);
       }
       this.boardCells.push(cellRow);

@@ -113,7 +113,7 @@ All mandatory screens are now documented as specs. Runtime implementation may st
 | Area | Status | Evidence | Notes |
 |---|---|---|---|
 | Combat HUD implemented | Yes | `src/game/ui/battle/BattleCombatHud.ts`, `src/game/scenes/BattleScene.ts` | Header, hero sprite/stat cluster, enemy sprite/stat cluster, shield/status chips, and enemy intent/countdown render inside Section 1 only. |
-| Event Log implemented | Yes | `src/game/ui/battle/BattleEventLog.ts` | Uses `battleShell.eventLogLayer`, `ui_event_log_strip`, dynamic text messages, and a max 2-3 visible message strip. |
+| Event Log implemented | Yes | `src/game/ui/battle/BattleEventLog.ts`, `src/game/ui/battle/BattleScreenShell.ts` | Uses `battleShell.eventLogLayer`, `ui_event_log_strip`, dynamic text messages, and a compact max 2 visible message strip at the top of Section 2 to reduce Section 1 clustering. |
 | Monster Stack Preview implemented | Yes | `src/game/ui/battle/MonsterStackPreview.ts` | Uses active/next enemy icons plus a dynamic count chip near the enemy side, outside the event log. |
 | VFX lane prepared | Yes | `BattleScreenShell.combatVfxLayer`, `BattleCombatHud.vfxLaneBounds` | Center lane is reserved for future VFX/damage numbers; UI-5 adds debug bounds only. |
 | BattleScene integration status | Yes | `BattleScene.createBattleCombatUi`, `BattleScene.updateBattleCombatHud` | Existing run/combat state drives the new components without changing combat logic. |
@@ -121,6 +121,14 @@ All mandatory screens are now documented as specs. Runtime implementation may st
 | Asset-drop-in readiness | Yes | `UiAssetSlotResolver`, UI-2 primitives, UI-5 components | Uses asset keys and fallbacks; missing final PNGs are nonfatal. |
 | UI-6 remaining work | Pending | Puzzle layer still uses existing BattleScene rendering | Hold/Next rails, board panel, right stat rail, and inventory compact indicator remain for UI-6. |
 | UI-7 remaining work | Pending | Controls layer still uses existing BattleScene rendering | Controls buttons and spell/action row remain for UI-7. |
+
+## 2026-05-26 Battle Readability Follow-Up
+
+| Area | Status | Evidence | Notes |
+|---|---|---|---|
+| Combat HUD readability | Updated | `src/game/ui/battle/BattleCombatHud.ts` | HP/MP meters, status chips, header panel, and hero/enemy sprite fit boxes were enlarged inside the combat section to improve scaled portrait readability. |
+| Event log placement | Updated | `src/game/ui/battle/BattleEventLog.ts`, `src/game/ui/battle/BattleScreenShell.ts` | Event log moved out of Section 1 and into the beginning of Section 2. The strip is resized to 1032x96 with two visible messages to keep combat HUD less clustered. |
+| Puzzle asset scale and next queue | Updated | `src/game/ui/battle/BattlePuzzleSectionUi.ts` | Board grid uses 410x820 design-space below the moved event log, preserving the 10x20 cell aspect. Next queue and side rails remain compact, and the puzzle Bag button was removed because Bag now belongs to the Section 3 controls row. |
 
 ## UI-7 Controls Section Status Notes
 
@@ -151,6 +159,7 @@ All mandatory screens are now documented as specs. Runtime implementation may st
 | Selection/apply flow | Yes | `src/game/ui/level-up/LevelUpFlowRouter.ts` | Confirm applies the selected upgrade once, consumes exactly one pending level-up, clears the offer, and locks duplicate taps. |
 | Multiple pending level-ups | Yes | `resolveLevelUpNextScene`, `continueFromLevelUp` | Remaining pending level-ups restart the Level-Up screen one at a time before reward/map routing. |
 | Reroll handling | Yes | `rerollLevelUpChoices` | Reroll button is rendered only when `playerLevelState.rerollCharges > 0`; reroll consumes one charge and creates a fresh offer. |
+| Deterministic offer restore | Yes | `LevelUpSystem.pickLevelUpChoices`, `LevelUpRewardScene.prepareCards`, `LevelUpFlowRouter.resetLevelUpOffer` | Level-up card generation uses the persisted `levelUpSelectionSeed`; unresolved offers restore exact `offeredUpgradeIds`, and reset/reroll clears stale seeds before generating a new offer. |
 | Asset fallback status | Yes | `src/game/data/assets.ts`, `src/game/scenes/LevelUpRewardScene.ts` | Uses level-up asset keys and manifest fallbacks; missing final panel, card, button, meter, background, icon, or sparkle art remains nonfatal. |
 | Gameplay rewrite status | Not attempted | `LevelUpSystem`, `UpgradeSystem` | EXP balance, upgrade balance, reward grants, and save schema are unchanged. |
 
@@ -169,10 +178,18 @@ All mandatory screens are now documented as specs. Runtime implementation may st
 | Area | Status | Evidence | Notes |
 |---|---|---|---|
 | Map UI alignment | Yes | `src/game/scenes/MapScene.ts`, `src/game/ui/map/MapDataAdapter.ts` | Uses shared panels, buttons, and icon slots for map screen chrome, node preview, actions, run summary, and node icons. |
+| Map layer visibility | Yes | `src/game/scenes/MapScene.ts` | Map background and dimmer are explicitly behind the UI, while node graph, text, summary chips, and action hint are above panel assets. Runtime map nodes draw direct high-contrast circle, icon, glyph, label, and hit-zone objects so the selection nodes remain visible even when icon art falls back. |
 | Stage Intro implemented | Yes | `src/game/scenes/StageIntroScene.ts`, `src/game/ui/stage-intro/StageIntroDataAdapter.ts` | Shows dynamic stage title, story flavor, stage goal, progress, modifiers, and continue button. |
 | Boss Rule Card implemented | Yes | `src/game/scenes/BossRuleCardScene.ts`, `src/game/ui/boss-rule/BossRuleDataAdapter.ts` | Shows boss name, boss/rule icons, existing boss rule text, warning, and Start Boss button. |
 | Routing aligned | Yes | `MapScene`, `MapFlowRouter`, `BossRuleCardScene`, `BattleScene` | Reward/Node Result returns to Map, Map routes to existing room scenes, boss nodes route through Boss Rule Card, and Boss Rule Card starts Battle. |
 | Gameplay rewrite status | Not attempted | `MapSystem`, `BossSystem`, `StageSystem`, `StageGoalSystem` | Node generation, stage length, encounter counts, boss mechanics, reward flow, EXP flow, and save schema are unchanged. |
+
+## Battle Runtime Alignment Status Notes
+
+| Area | Status | Evidence | Notes |
+|---|---|---|---|
+| Battle board alignment | Yes | `src/game/scenes/BattleScene.ts`, `src/game/ui/battle/BattlePuzzleSectionUi.ts`, `src/game/ui/battle/BattleScreenShell.ts` | The live board now converts the shell's 1080x1920 design board slot through the active portrait frame scale before creating board cells, keeping gameplay blocks aligned to the scaled UI shell on the 720x1280 Phaser canvas. |
+| Battle UI visibility | Yes | `src/game/scenes/BattleScene.ts` | The battle shell is raised above legacy background rectangles, and board cells/sprites/symbols render above the board panel/grid so the main gameplay screen remains readable and playable. |
 
 ## UI-12 Route Dialogue / Story Choice Status Notes
 

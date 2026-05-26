@@ -34,11 +34,11 @@ const PIXEL_PERFECT = {
 };
 
 export const BATTLE_COMBAT_HUD_BOUNDS = {
-  header: { x: 270, y: 18, w: 540, h: 48 },
-  heroSprite: { x: 204, y: 276, w: 220, h: 220 },
-  heroStats: { x: 48, y: 286, w: 300, h: 66 },
-  enemySprite: { x: 876, y: 276, w: 240, h: 240 },
-  enemyStats: { x: 732, y: 286, w: 300, h: 66 },
+  header: { x: 250, y: 16, w: 580, h: 56 },
+  heroSprite: { x: 204, y: 278, w: 240, h: 240 },
+  heroStats: { x: 44, y: 280, w: 324, h: 90 },
+  enemySprite: { x: 876, y: 278, w: 260, h: 260 },
+  enemyStats: { x: 712, y: 280, w: 324, h: 96 },
   vfxLane: { x: 360, y: 96, w: 360, h: 240 }
 } satisfies Record<string, UiRect>;
 
@@ -113,12 +113,12 @@ export class BattleCombatHud {
       fillAlpha: 0.5
     });
     this.root.add(this.headerPanel.root);
-    this.headerText = this.scene.add.text(540, 42, 'Stage 1 \u2014 Node 1/1', createUiTextStyle({
+    this.headerText = this.scene.add.text(540, 44, 'Stage 1 \u2014 Node 1/1', createUiTextStyle({
       textStyle: 'hudLabel',
       align: 'center',
       color: '#f6f7ff',
       outline: true,
-      wordWrapWidth: 500
+      wordWrapWidth: 540
     })).setOrigin(0.5, 0.5);
     this.root.add(this.headerText);
 
@@ -243,30 +243,30 @@ export class BattleCombatHud {
   }
 
   private createMetersAndChips(): void {
-    this.heroHpMeter = new UiMeter(this.scene, spec('hero_hp_meter_ui5', 'meter', { x: 48, y: 286, w: 212, h: 24 }, 'ui_meter_hp', 'ui_meter_fallback', 72, { safePadding: 4 }), {
+    this.heroHpMeter = new UiMeter(this.scene, spec('hero_hp_meter_ui5', 'meter', { x: 44, y: 280, w: 232, h: 32 }, 'ui_meter_hp', 'ui_meter_fallback', 72, { safePadding: 4 }), {
       label: 'HP',
       fillColor: COLORS.danger,
       trackColor: 0x252c49,
       fillInset: 4
     });
-    this.heroMpMeter = new UiMeter(this.scene, spec('hero_mp_meter_ui5', 'meter', { x: 48, y: 316, w: 212, h: 24 }, 'ui_meter_mp', 'ui_meter_fallback', 72, { safePadding: 4 }), {
+    this.heroMpMeter = new UiMeter(this.scene, spec('hero_mp_meter_ui5', 'meter', { x: 44, y: 318, w: 232, h: 32 }, 'ui_meter_mp', 'ui_meter_fallback', 72, { safePadding: 4 }), {
       label: 'MP',
       fillColor: COLORS.accent,
       trackColor: 0x252c49,
       fillInset: 4
     });
-    this.enemyHpMeter = new UiMeter(this.scene, spec('enemy_hp_meter_ui5', 'meter', { x: 820, y: 286, w: 212, h: 24 }, 'ui_meter_hp', 'ui_meter_fallback', 72, { safePadding: 4 }), {
+    this.enemyHpMeter = new UiMeter(this.scene, spec('enemy_hp_meter_ui5', 'meter', { x: 804, y: 280, w: 232, h: 32 }, 'ui_meter_hp', 'ui_meter_fallback', 72, { safePadding: 4 }), {
       label: 'HP',
       fillColor: COLORS.danger,
       trackColor: 0x252c49,
       fillInset: 4
     });
 
-    this.heroShieldChip = new UiChip(this.scene, spec('hero_shield_chip_ui5', 'chip', { x: 268, y: 286, w: 84, h: 24 }, 'ui_status_chip', 'ui_panel_default', 72, { safePadding: 6 }), { text: 'Shield 0' });
-    this.heroStatusChip = new UiChip(this.scene, spec('hero_status_chip_ui5', 'chip', { x: 268, y: 316, w: 84, h: 24 }, 'ui_status_chip', 'ui_panel_default', 72, { safePadding: 6 }), { text: 'Status OK' });
-    this.enemyShieldChip = new UiChip(this.scene, spec('enemy_shield_chip_ui5', 'chip', { x: 732, y: 286, w: 84, h: 24 }, 'ui_status_chip', 'ui_panel_default', 72, { safePadding: 6 }), { text: 'Shield 0' });
-    this.enemyStatusChip = new UiChip(this.scene, spec('enemy_status_chip_ui5', 'chip', { x: 732, y: 316, w: 84, h: 24 }, 'ui_status_chip', 'ui_panel_default', 72, { safePadding: 6 }), { text: 'Status OK' });
-    this.enemyIntentChip = new UiChip(this.scene, spec('enemy_intent_chip_ui5', 'chip', { x: 732, y: 342, w: 300, h: 28 }, 'ui_status_chip', 'ui_panel_default', 72, { safePadding: 8 }), { text: 'Intent -', state: 'alert' });
+    this.heroShieldChip = new UiChip(this.scene, spec('hero_shield_chip_ui5', 'chip', { x: 284, y: 280, w: 96, h: 32 }, 'ui_status_chip', 'ui_panel_default', 72, { safePadding: 6 }), { text: 'Shield 0' });
+    this.heroStatusChip = new UiChip(this.scene, spec('hero_status_chip_ui5', 'chip', { x: 284, y: 318, w: 96, h: 32 }, 'ui_status_chip', 'ui_panel_default', 72, { safePadding: 6 }), { text: 'Status OK' });
+    this.enemyShieldChip = new UiChip(this.scene, spec('enemy_shield_chip_ui5', 'chip', { x: 692, y: 280, w: 104, h: 32 }, 'ui_status_chip', 'ui_panel_default', 72, { safePadding: 6 }), { text: 'Shield 0' });
+    this.enemyStatusChip = new UiChip(this.scene, spec('enemy_status_chip_ui5', 'chip', { x: 692, y: 318, w: 104, h: 32 }, 'ui_status_chip', 'ui_panel_default', 72, { safePadding: 6 }), { text: 'Status OK' });
+    this.enemyIntentChip = new UiChip(this.scene, spec('enemy_intent_chip_ui5', 'chip', { x: 692, y: 356, w: 344, h: 34 }, 'ui_status_chip', 'ui_panel_default', 72, { safePadding: 8 }), { text: 'Intent -', state: 'alert' });
 
     [
       this.heroHpMeter,
@@ -299,7 +299,7 @@ export class BattleCombatHud {
     this.currentHeroId = heroId;
     const game = this.scene.game as BlockmancerGame;
     this.heroSprite = game.assetSystem.createHeroPoseSprite(this.scene, heroId, 'idle', 204, 276, { alpha: 0.95 });
-    game.assetSystem.fitSpriteToBox(this.heroSprite, 190, 190);
+    game.assetSystem.fitSpriteToBox(this.heroSprite, 210, 210);
     this.heroSprite.setOrigin(0.5, 1);
     this.root.add(this.heroSprite);
     this.root.sendToBack(this.heroSprite);
@@ -316,7 +316,7 @@ export class BattleCombatHud {
     this.enemySprite = enemy.roomType === 'boss'
       ? game.assetSystem.createBossPoseSprite(this.scene, enemy.id, 'idle', 876, 276, { alpha: 0.95 })
       : game.assetSystem.createMonsterPoseSprite(this.scene, enemy.id, 'idle', 876, 276, { elite: enemy.roomType === 'elite', alpha: 0.95 });
-    game.assetSystem.fitSpriteToBox(this.enemySprite, enemy.roomType === 'boss' ? 220 : 196, enemy.roomType === 'boss' ? 220 : 196);
+    game.assetSystem.fitSpriteToBox(this.enemySprite, enemy.roomType === 'boss' ? 240 : 216, enemy.roomType === 'boss' ? 240 : 216);
     this.enemySprite.setOrigin(0.5, 1);
     this.root.add(this.enemySprite);
     this.root.sendToBack(this.enemySprite);

@@ -3,7 +3,7 @@ import { BlockmancerGame } from '../BlockmancerGame';
 import { contentRegistry } from '../systems/ContentRegistry';
 import type { MapNodeDefinition, RoomType } from '../types/GameTypes';
 import type { UiComponentSpec } from '../types/ui-layout';
-import { UiButton, UiIconSlot, UiPanel } from '../ui/components';
+import { UiButton, UiPanel } from '../ui/components';
 import { buildMapNodeViewModels, enterBattleFromMap } from '../ui/map';
 import { COLORS, FONT_FAMILY, MAX_EVENT_LOG } from '../utils/constants';
 import { getPortraitLayout } from '../utils/layout';
@@ -31,6 +31,12 @@ type NodeVisualRef = {
   y: number;
   radius: number;
 };
+
+const MAP_BACKGROUND_DEPTH = -20;
+const MAP_DIMMER_DEPTH = -10;
+const MAP_GRAPH_DEPTH = 120;
+const MAP_CONTENT_DEPTH = 130;
+const MAP_ACTION_HINT_DEPTH = 95;
 
 export class MapScene extends Phaser.Scene {
   private infoLayer?: Phaser.GameObjects.Container;
@@ -167,9 +173,9 @@ export class MapScene extends Phaser.Scene {
       centerY,
       { kind: 'background' }
     );
-    background.setDisplaySize(layout.screen.width, layout.screen.height).setAlpha(0.16);
+    background.setDisplaySize(layout.screen.width, layout.screen.height).setAlpha(0.16).setDepth(MAP_BACKGROUND_DEPTH);
 
-    this.add.rectangle(centerX, centerY, layout.screen.width, layout.screen.height, COLORS.background, 0.72);
+    this.add.rectangle(centerX, centerY, layout.screen.width, layout.screen.height, COLORS.background, 0.72).setDepth(MAP_DIMMER_DEPTH);
     new UiPanel(this, this.uiSpec('map_graph_panel', 'panel', 'ui_panel_default', 'placeholder_panel', layout.mapArea.x, layout.mapArea.y, layout.mapArea.width, layout.mapArea.height, 'topLeft', 20), {
       fillColor: COLORS.panel,
       fillAlpha: 0.95,
@@ -214,13 +220,13 @@ export class MapScene extends Phaser.Scene {
       fontFamily: FONT_FAMILY,
       fontSize: layout.scaleMode === 'tiny' ? '24px' : '30px',
       fontStyle: 'bold'
-    }).setOrigin(0.5, 0);
+    }).setOrigin(0.5, 0).setDepth(MAP_CONTENT_DEPTH);
 
     this.add.text(layout.headerArea.x + layout.headerArea.width / 2, layout.headerArea.y + layout.headerArea.height - 4, `Stage ${state.stage}/${stageCount} � ${stage?.name ?? 'Festival Dungeon'} � Room ${currentNode?.label ?? 'Start'}`, {
       color: '#98a0c7',
       fontFamily: FONT_FAMILY,
       fontSize: layout.scaleMode === 'tiny' ? '13px' : '15px'
-    }).setOrigin(0.5, 1);
+    }).setOrigin(0.5, 1).setDepth(MAP_CONTENT_DEPTH);
   }
 
   private drawSelectedNodeArea(layout: MapSceneLayout): void {
@@ -230,12 +236,12 @@ export class MapScene extends Phaser.Scene {
       fontSize: layout.scaleMode === 'tiny' ? '13px' : '15px',
       lineSpacing: 4,
       wordWrap: { width: layout.selectedNodeArea.width - 20 }
-    });
+    }).setDepth(MAP_CONTENT_DEPTH);
   }
 
   private drawRunSummary(layout: MapSceneLayout): void {
     this.infoLayer?.destroy(true);
-    this.infoLayer = this.add.container(0, 0);
+    this.infoLayer = this.add.container(0, 0).setDepth(MAP_CONTENT_DEPTH);
 
     const state = this.gameState.runState;
     const currentNode = this.gameState.mapSystem.getNode(state.map, state.currentNodeId);
@@ -302,7 +308,7 @@ export class MapScene extends Phaser.Scene {
         fontFamily: FONT_FAMILY,
         fontSize: layout.scaleMode === 'tiny' ? '12px' : '13px'
       }
-    ).setOrigin(0.5, 1);
+    ).setOrigin(0.5, 1).setDepth(MAP_ACTION_HINT_DEPTH);
   }
 
   private renderMap(): void {
@@ -310,7 +316,7 @@ export class MapScene extends Phaser.Scene {
     if (!layout) return;
 
     this.mapLayer?.destroy(true);
-    this.mapLayer = this.add.container(0, 0);
+    this.mapLayer = this.add.container(0, 0).setDepth(MAP_GRAPH_DEPTH);
 
     const state = this.gameState.runState;
     const availableNodes = this.gameState.mapSystem.getAvailableNodes(state);
@@ -365,25 +371,31 @@ export class MapScene extends Phaser.Scene {
       const fill = isCurrent ? COLORS.gold : node.completed ? COLORS.success : isLocked ? 0x303750 : COLORS.accent;
       const stroke = isSelected ? COLORS.gold : isCurrent ? 0xfff1b5 : isLocked ? 0x5d678c : 0x9ab3ff;
 
-      const circle = this.add.circle(entry.x, entry.y, radius, fill, 1).setStrokeStyle(isSelected ? 5 : 3, stroke, 0.95);
+      const circle = this.add.circle(entry.x, entry.y, radius, fill, 1).setStrokeStyle(isSelected ? 5 : 3, stroke, 0.95).setDepth(10);
       if (isCurrent) {
         this.mapLayer?.add(this.add.text(entry.x, entry.y - radius - 10, 'YOU', {
           color: '#ffca6b',
           fontFamily: FONT_FAMILY,
           fontSize: layout.scaleMode === 'tiny' ? '11px' : '12px',
           fontStyle: 'bold'
-        }).setOrigin(0.5));
+        }).setOrigin(0.5).setDepth(40));
       }
 
       const iconKey = (contentRegistry.getMapNode(`node_${node.roomType}`) as { iconKey?: string } | null)?.iconKey;
       const stateKey = isCurrent ? 'current' : node.completed ? 'completed' : isAvailable ? 'available' : 'locked';
       const texture = this.gameState.assetSystem.getMapNodeTexture(this, node.roomType, stateKey, iconKey ?? model?.iconAssetKey);
-      const icon = new UiIconSlot(this, this.uiSpec(`map_node_icon_${node.id}`, 'iconSlot', texture, 'placeholder_icon', entry.x, entry.y, radius + 12, radius + 12, 'center', 55));
-      const fallbackIcon = this.add.text(entry.x, entry.y, node.icon, {
-        color: '#0b0d16',
+      const icon = this.gameState.assetSystem.addImage(this, entry.x, entry.y, texture, 'icon')
+        .setDisplaySize(radius + 12, radius + 12)
+        .setAlpha(isLocked ? 0.52 : 0.95)
+        .setDepth(30);
+      const nodeGlyph = this.add.text(entry.x, entry.y, node.icon, {
+        color: isLocked ? '#c4cbff' : '#05060a',
         fontFamily: FONT_FAMILY,
-        fontSize: layout.scaleMode === 'tiny' ? '20px' : '22px'
-      }).setOrigin(0.5).setAlpha(texture ? 0 : 1);
+        fontSize: layout.scaleMode === 'tiny' ? '18px' : '20px',
+        fontStyle: 'bold',
+        stroke: isLocked ? '#050814' : '#f6f7ff',
+        strokeThickness: isLocked ? 2 : 1
+      }).setOrigin(0.5).setDepth(35);
 
       const typeShort = this.getNodeTypeLabel(node.roomType, layout.scaleMode);
       const label = this.add.text(entry.x, entry.y + radius + 8, typeShort, {
@@ -391,9 +403,9 @@ export class MapScene extends Phaser.Scene {
         fontFamily: FONT_FAMILY,
         fontSize: layout.scaleMode === 'tiny' ? '12px' : '13px',
         fontStyle: isSelected ? 'bold' : 'normal'
-      }).setOrigin(0.5, 0);
+      }).setOrigin(0.5, 0).setDepth(40);
 
-      const hit = this.add.rectangle(entry.x, entry.y, Math.max(44, radius * 2 + 10), Math.max(44, radius * 2 + 10), 0x000000, 0.001).setInteractive({ useHandCursor: true });
+      const hit = this.add.rectangle(entry.x, entry.y, Math.max(44, radius * 2 + 10), Math.max(44, radius * 2 + 10), 0x000000, 0.001).setDepth(80).setInteractive({ useHandCursor: true });
       hit.on('pointerdown', () => {
         this.selectedNodeId = node.id;
         this.renderMap();
@@ -401,7 +413,7 @@ export class MapScene extends Phaser.Scene {
         this.updatePrimaryAction();
       });
 
-      this.mapLayer?.add([circle, icon.root, fallbackIcon, label, hit]);
+      this.mapLayer?.add([circle, icon, nodeGlyph, label, hit]);
     });
   }
 

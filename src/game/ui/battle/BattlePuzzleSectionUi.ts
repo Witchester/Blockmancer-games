@@ -4,7 +4,7 @@ import type { TetrominoType } from '../../types/GameTypes';
 import type { UiComponentSpec } from '../../types/ui-layout';
 import { COLORS, FONT_FAMILY, TETROMINO_SHAPES } from '../../utils/constants';
 import { getTetrominoBlockId } from '../../systems/BoardSystem';
-import { UiPanel, UiButton } from '../components';
+import { UiPanel } from '../components';
 import type { BattleScreenShell } from './BattleScreenShell';
 
 const PIXEL_PERFECT = {
@@ -17,12 +17,11 @@ const PIXEL_PERFECT = {
 
 // Section 2 starts at y = 480. Coordinates are local to Section 2 container.
 export const PUZZLE_SECTION_LOCAL_BOUNDS = {
-  hold: { x: 72, y: 136, w: 220, h: 220 }, // absolute 616 - 480 = 136
-  next: { x: 72, y: 400, w: 220, h: 360 }, // absolute 880 - 480 = 400
-  board: { x: 372, y: 96, w: 336, h: 576 }, // absolute 576 - 480 = 96
-  boardGrid: { x: 420, y: 144, w: 240, h: 480 }, // absolute 624 - 480 = 144
-  rightRail: { x: 780, y: 136, w: 240, h: 520 }, // absolute 616 - 480 = 136
-  inventory: { x: 900, y: 810, w: 160, h: 96 } // absolute 1290 - 480 = 810 (anchor: center)
+  hold: { x: 48, y: 152, w: 200, h: 200 }, // absolute 632 - 480 = 152
+  next: { x: 48, y: 392, w: 200, h: 288 }, // absolute 872 - 480 = 392
+  board: { x: 326, y: 112, w: 428, h: 888 }, // absolute 592 - 480 = 112
+  boardGrid: { x: 335, y: 140, w: 410, h: 820 }, // absolute 620 - 480 = 140
+  rightRail: { x: 832, y: 152, w: 200, h: 520 } // absolute 632 - 480 = 152
 };
 
 function spec(
@@ -98,7 +97,6 @@ export class BattlePuzzleSectionUi {
   boardPanel!: UiPanel;
   boardGridPanel!: UiPanel;
   rightStatCards!: UiPanel;
-  inventoryButton!: UiButton;
 
   // Hold components
   holdTitle!: Phaser.GameObjects.Text;
@@ -146,7 +144,7 @@ export class BattlePuzzleSectionUi {
     });
     this.shell.leftRailLayer.add(this.holdPanel.root);
 
-    this.holdTitle = this.scene.add.text(110, 24, 'HOLD', {
+    this.holdTitle = this.scene.add.text(100, 22, 'HOLD', {
       color: '#ffca6b',
       fontFamily: FONT_FAMILY,
       fontSize: '18px',
@@ -154,7 +152,7 @@ export class BattlePuzzleSectionUi {
     }).setOrigin(0.5, 0);
     this.holdPanel.root.add(this.holdTitle);
 
-    this.holdEmptyLabel = this.scene.add.text(110, 120, 'Empty', {
+    this.holdEmptyLabel = this.scene.add.text(100, 112, 'Empty', {
       color: '#d8deff',
       fontFamily: FONT_FAMILY,
       fontSize: '18px',
@@ -167,9 +165,9 @@ export class BattlePuzzleSectionUi {
     for (let index = 0; index < 16; index += 1) {
       const col = index % 4;
       const row = Math.floor(index / 4);
-      // Center the 4x4 grid (cellSize = 24) at (110, 120) inside the 220x220 panel
-      const x = 110 - 48 + col * 24 + 12;
-      const y = 120 - 48 + row * 24 + 12;
+      // Center the 4x4 grid (cellSize = 24) in the compact hold panel.
+      const x = 100 - 48 + col * 24 + 12;
+      const y = 112 - 48 + row * 24 + 12;
 
       const tile = this.scene.add.rectangle(x, y, 24, 24, COLORS.boardEmpty, 1)
         .setStrokeStyle(1, COLORS.boardGrid, game.getSettings().showGrid ? 0.9 : 0);
@@ -201,7 +199,7 @@ export class BattlePuzzleSectionUi {
     });
     this.shell.leftRailLayer.add(this.nextQueuePanel.root);
 
-    this.nextTitle = this.scene.add.text(110, 24, 'NEXT', {
+    this.nextTitle = this.scene.add.text(100, 22, 'NEXT', {
       color: '#ffca6b',
       fontFamily: FONT_FAMILY,
       fontSize: '18px',
@@ -210,19 +208,19 @@ export class BattlePuzzleSectionUi {
     this.nextQueuePanel.root.add(this.nextTitle);
 
     // Create 4 slots vertically inside Next Queue panel
-    const slotStartY = 60;
-    const slotHeight = 64;
-    const slotGap = 8;
+    const slotStartY = 46;
+    const slotHeight = 50;
+    const slotGap = 5;
 
     for (let slot = 0; slot < 4; slot += 1) {
       const slotY = slotStartY + slot * (slotHeight + slotGap);
       
       // Card frame for each slot
-      const card = this.scene.add.rectangle(110, slotY + 32, 196, slotHeight, COLORS.panelAlt, 0.98)
+      const card = this.scene.add.rectangle(100, slotY + slotHeight / 2, 176, slotHeight, COLORS.panelAlt, 0.98)
         .setStrokeStyle(1, COLORS.accentSoft, 0.45);
       this.nextQueuePanel.root.add(card);
 
-      const slotLabel = this.scene.add.text(194, slotY + 32, '#' + (slot + 1), {
+      const slotLabel = this.scene.add.text(176, slotY + slotHeight / 2, '#' + (slot + 1), {
         color: '#98a0c7',
         fontFamily: FONT_FAMILY,
         fontSize: '12px',
@@ -233,20 +231,20 @@ export class BattlePuzzleSectionUi {
 
       // Create mini 4x4 preview for this slot (cellSize = 12)
       const miniGridStartX = 24;
-      const miniGridStartY = slotY + 8;
+      const miniGridStartY = slotY + 7;
       for (let index = 0; index < 16; index += 1) {
         const col = index % 4;
         const row = Math.floor(index / 4);
-        const x = miniGridStartX + col * 12 + 6;
-        const y = miniGridStartY + row * 12 + 6;
+        const x = miniGridStartX + col * 10 + 5;
+        const y = miniGridStartY + row * 10 + 5;
 
-        const tile = this.scene.add.rectangle(x, y, 12, 12, COLORS.boardEmpty, 1)
+        const tile = this.scene.add.rectangle(x, y, 10, 10, COLORS.boardEmpty, 1)
           .setStrokeStyle(1, COLORS.boardGrid, game.getSettings().showGrid ? 0.7 : 0);
         this.nextPreviewTiles.push(tile);
         this.nextQueuePanel.root.add(tile);
 
         const sprite = this.scene.add.sprite(x, y, game.assetSystem.getTextureKey(this.scene, null, 'block'))
-          .setDisplaySize(12, 12)
+          .setDisplaySize(10, 10)
           .setVisible(false);
         this.nextPreviewSprites.push(sprite);
         this.nextQueuePanel.root.add(sprite);
@@ -296,7 +294,12 @@ export class BattlePuzzleSectionUi {
     });
     this.shell.rightRailLayer.add(this.rightStatCards.root);
 
-    this.rightStatTitle = this.scene.add.text(120, 24, 'STATS', {
+    const rightRailWidth = PUZZLE_SECTION_LOCAL_BOUNDS.rightRail.w;
+    const rightRailCenterX = rightRailWidth / 2;
+    const cardWidth = rightRailWidth - 24;
+    const cardStartX = 12;
+
+    this.rightStatTitle = this.scene.add.text(rightRailCenterX, 24, 'STATS', {
       color: '#ffca6b',
       fontFamily: FONT_FAMILY,
       fontSize: '18px',
@@ -305,9 +308,6 @@ export class BattlePuzzleSectionUi {
     this.rightStatCards.root.add(this.rightStatTitle);
 
     // Create sub-cards / chips for stats inside right rail
-    const cardWidth = 216;
-    const cardStartX = 12;
-
     // Stat Row 1: Cleared Lines & Combo
     const row1 = this.scene.add.rectangle(cardStartX + cardWidth / 2, 70, cardWidth, 54, COLORS.panelAlt, 0.98)
       .setStrokeStyle(1, COLORS.accentSoft, 0.45);
@@ -345,16 +345,16 @@ export class BattlePuzzleSectionUi {
       .setStrokeStyle(1, COLORS.accentSoft, 0.45);
     this.rightStatCards.root.add(row3);
 
-    this.feverLabelText = this.scene.add.text(120, 190, 'FEVER', {
+    this.feverLabelText = this.scene.add.text(rightRailCenterX, 190, 'FEVER', {
       color: '#65d6a5',
       fontFamily: FONT_FAMILY,
       fontSize: '13px',
       fontStyle: 'bold'
     }).setOrigin(0.5, 0);
 
-    this.feverBarBg = this.scene.add.rectangle(120, 230, cardWidth - 24, 12, COLORS.boardEmpty, 1)
+    this.feverBarBg = this.scene.add.rectangle(rightRailCenterX, 230, cardWidth - 24, 12, COLORS.boardEmpty, 1)
       .setStrokeStyle(1, COLORS.accent, 0.55);
-    this.feverBarFill = this.scene.add.rectangle(120 - (cardWidth - 24) / 2, 230, 0, 8, COLORS.success, 1)
+    this.feverBarFill = this.scene.add.rectangle(rightRailCenterX - (cardWidth - 24) / 2, 230, 0, 8, COLORS.success, 1)
       .setOrigin(0, 0.5);
 
     this.rightStatCards.root.add([this.feverLabelText, this.feverBarBg, this.feverBarFill]);
@@ -373,22 +373,6 @@ export class BattlePuzzleSectionUi {
     });
     this.rightStatCards.root.add(this.objectiveText);
 
-    // 5. Inventory Compact Button (on Right Rail Layer)
-    this.inventoryButton = new UiButton(
-      this.scene,
-      spec('inventory_compact_button', 'button', PUZZLE_SECTION_LOCAL_BOUNDS.inventory, 'ui_inventory_compact', 'ui_button_default', 90, {
-        anchor: 'center',
-        canonicalFolder: 'public/assets/ui/buttons/'
-      }),
-      {
-        label: 'Bag',
-        onClick: () => {
-          this.onInventoryClicked?.();
-        }
-      }
-    );
-    this.shell.rightRailLayer.add(this.inventoryButton.root);
-
     this.created = true;
     return this;
   }
@@ -401,7 +385,6 @@ export class BattlePuzzleSectionUi {
     this.boardPanel.destroy();
     this.boardGridPanel.destroy();
     this.rightStatCards.destroy();
-    this.inventoryButton.destroy();
 
     this.holdPreviewTiles.forEach((t) => t.destroy());
     this.holdPreviewSprites.forEach((s) => s.destroy());
@@ -503,7 +486,7 @@ export class BattlePuzzleSectionUi {
 
     // Fever Meter update
     const pct = statsState.feverMax > 0 ? statsState.feverProgress / statsState.feverMax : 0;
-    const barWidth = 216 - 24;
+    const barWidth = PUZZLE_SECTION_LOCAL_BOUNDS.rightRail.w - 48;
     this.feverBarFill.width = Math.max(0, Math.min(barWidth - 2, (barWidth - 2) * pct));
     this.feverLabelText.setText(pct >= 1 ? 'FEVER FULL!' : `FEVER ${statsState.feverProgress}/${statsState.feverMax}`);
 
@@ -514,10 +497,8 @@ export class BattlePuzzleSectionUi {
     this.objectiveText.setText(details || 'No objective or modifiers active.');
   }
 
-  updateInventoryIndicator(inventoryState: PuzzleSectionInventoryState): void {
-    const labelText = inventoryState.count > 0 ? `Bag (${inventoryState.count})` : 'Bag';
-    this.inventoryButton.setText(labelText);
-    this.inventoryButton.setEnabled(inventoryState.active);
+  updateInventoryIndicator(_inventoryState: PuzzleSectionInventoryState): void {
+    // Bag lives in the controls section shortcut row.
   }
 
   setVisible(visible: boolean): void {
@@ -526,7 +507,6 @@ export class BattlePuzzleSectionUi {
     this.boardPanel.setVisible(visible);
     this.boardGridPanel.setVisible(visible);
     this.rightStatCards.setVisible(visible);
-    this.inventoryButton.setVisible(visible);
   }
 
   setDebugVisible(enabled: boolean): void {
@@ -535,15 +515,17 @@ export class BattlePuzzleSectionUi {
     this.boardPanel.setDebugVisible(enabled);
     this.boardGridPanel.setDebugVisible(enabled);
     this.rightStatCards.setDebugVisible(enabled);
-    this.inventoryButton.setDebugVisible(enabled);
   }
 
   getBoardBounds(): { x: number; y: number; w: number; h: number } {
+    const frame = this.shell.getFrame();
+    const designX = PUZZLE_SECTION_LOCAL_BOUNDS.boardGrid.x;
+    const designY = 480 + PUZZLE_SECTION_LOCAL_BOUNDS.boardGrid.y;
     return {
-      x: PUZZLE_SECTION_LOCAL_BOUNDS.boardGrid.x,
-      y: PUZZLE_SECTION_LOCAL_BOUNDS.boardGrid.y + 480, // Return absolute world bounds
-      w: PUZZLE_SECTION_LOCAL_BOUNDS.boardGrid.w,
-      h: PUZZLE_SECTION_LOCAL_BOUNDS.boardGrid.h
+      x: Math.round(frame.frameX + designX * frame.scale),
+      y: Math.round(frame.frameY + designY * frame.scale),
+      w: Math.round(PUZZLE_SECTION_LOCAL_BOUNDS.boardGrid.w * frame.scale),
+      h: Math.round(PUZZLE_SECTION_LOCAL_BOUNDS.boardGrid.h * frame.scale)
     };
   }
 
@@ -554,7 +536,6 @@ export class BattlePuzzleSectionUi {
       boardLocal: { ...PUZZLE_SECTION_LOCAL_BOUNDS.board },
       boardGridLocal: { ...PUZZLE_SECTION_LOCAL_BOUNDS.boardGrid },
       rightRailLocal: { ...PUZZLE_SECTION_LOCAL_BOUNDS.rightRail },
-      inventoryLocal: { ...PUZZLE_SECTION_LOCAL_BOUNDS.inventory },
       puzzleSectionAbsolute: { x: 0, y: 480, w: 1080, h: 1056 }
     };
   }
