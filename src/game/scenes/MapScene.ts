@@ -2,7 +2,9 @@ import Phaser from 'phaser';
 import { BlockmancerGame } from '../BlockmancerGame';
 import { contentRegistry } from '../systems/ContentRegistry';
 import type { MapNodeDefinition, RoomType } from '../types/GameTypes';
-import { Button } from '../ui/Button';
+import type { UiComponentSpec } from '../types/ui-layout';
+import { UiButton, UiIconSlot, UiPanel } from '../ui/components';
+import { buildMapNodeViewModels, enterBattleFromMap } from '../ui/map';
 import { COLORS, FONT_FAMILY, MAX_EVENT_LOG } from '../utils/constants';
 import { getPortraitLayout } from '../utils/layout';
 
@@ -35,7 +37,7 @@ export class MapScene extends Phaser.Scene {
   private mapLayer?: Phaser.GameObjects.Container;
   private selectedNodeId: string | null = null;
   private selectedNodeText?: Phaser.GameObjects.Text;
-  private primaryActionButton?: Button;
+  private primaryActionButton?: UiButton;
   private primaryActionHint?: Phaser.GameObjects.Text;
   private layout?: MapSceneLayout;
 
@@ -49,15 +51,8 @@ export class MapScene extends Phaser.Scene {
 
     const stageStoryId = this.gameState.stageSystem.getStageStoryId(this.gameState.runState.stage);
     if (stageStoryId && !this.gameState.storySystem.hasSeen(stageStoryId)) {
-      const beat = this.gameState.storySystem.getStageIntro(stageStoryId);
-      if (beat) {
-        this.scene.start('StoryScene', {
-          beat,
-          beatId: stageStoryId,
-          returnScene: 'MapScene'
-        });
-        return;
-      }
+      this.scene.start('StageIntroScene');
+      return;
     }
 
     const viewport = getPortraitLayout(this);
@@ -175,10 +170,30 @@ export class MapScene extends Phaser.Scene {
     background.setDisplaySize(layout.screen.width, layout.screen.height).setAlpha(0.16);
 
     this.add.rectangle(centerX, centerY, layout.screen.width, layout.screen.height, COLORS.background, 0.72);
-    this.add.rectangle(layout.mapArea.x + layout.mapArea.width / 2, layout.mapArea.y + layout.mapArea.height / 2, layout.mapArea.width, layout.mapArea.height, COLORS.panel, 0.95).setStrokeStyle(2, COLORS.accent, 0.35);
-    this.add.rectangle(layout.selectedNodeArea.x + layout.selectedNodeArea.width / 2, layout.selectedNodeArea.y + layout.selectedNodeArea.height / 2, layout.selectedNodeArea.width, layout.selectedNodeArea.height, COLORS.panelAlt, 0.94).setStrokeStyle(1, COLORS.accentSoft, 0.35);
-    this.add.rectangle(layout.runSummaryArea.x + layout.runSummaryArea.width / 2, layout.runSummaryArea.y + layout.runSummaryArea.height / 2, layout.runSummaryArea.width, layout.runSummaryArea.height, COLORS.panelAlt, 0.94).setStrokeStyle(1, COLORS.accentSoft, 0.35);
-    this.add.rectangle(layout.actionArea.x + layout.actionArea.width / 2, layout.actionArea.y + layout.actionArea.height / 2, layout.actionArea.width, layout.actionArea.height, COLORS.panel, 0.90).setStrokeStyle(1, COLORS.accentSoft, 0.28);
+    new UiPanel(this, this.uiSpec('map_graph_panel', 'panel', 'ui_panel_default', 'placeholder_panel', layout.mapArea.x, layout.mapArea.y, layout.mapArea.width, layout.mapArea.height, 'topLeft', 20), {
+      fillColor: COLORS.panel,
+      fillAlpha: 0.95,
+      strokeColor: COLORS.accent,
+      strokeAlpha: 0.35
+    });
+    new UiPanel(this, this.uiSpec('node_preview_panel', 'panel', 'ui_panel_node_preview', 'ui_panel_default', layout.selectedNodeArea.x, layout.selectedNodeArea.y, layout.selectedNodeArea.width, layout.selectedNodeArea.height, 'topLeft', 20), {
+      fillColor: COLORS.panelAlt,
+      fillAlpha: 0.94,
+      strokeColor: COLORS.accentSoft,
+      strokeAlpha: 0.35
+    });
+    new UiPanel(this, this.uiSpec('map_summary_panel', 'panel', 'ui_panel_default', 'placeholder_panel', layout.runSummaryArea.x, layout.runSummaryArea.y, layout.runSummaryArea.width, layout.runSummaryArea.height, 'topLeft', 20), {
+      fillColor: COLORS.panelAlt,
+      fillAlpha: 0.94,
+      strokeColor: COLORS.accentSoft,
+      strokeAlpha: 0.35
+    });
+    new UiPanel(this, this.uiSpec('map_action_panel', 'panel', 'ui_panel_default', 'placeholder_panel', layout.actionArea.x, layout.actionArea.y, layout.actionArea.width, layout.actionArea.height, 'topLeft', 20), {
+      fillColor: COLORS.panel,
+      fillAlpha: 0.9,
+      strokeColor: COLORS.accentSoft,
+      strokeAlpha: 0.28
+    });
   }
 
   private drawHeader(layout: MapSceneLayout): void {
@@ -186,6 +201,13 @@ export class MapScene extends Phaser.Scene {
     const stage = this.gameState.stageSystem.getStageByIndex(state.stage);
     const stageCount = this.gameState.stageSystem.getStageCount();
     const currentNode = this.gameState.mapSystem.getNode(state.map, state.currentNodeId);
+
+    new UiPanel(this, this.uiSpec('map_header_panel', 'panel', 'ui_panel_default', 'placeholder_panel', layout.headerArea.x, layout.headerArea.y, layout.headerArea.width, layout.headerArea.height, 'topLeft', 25), {
+      fillColor: COLORS.panel,
+      fillAlpha: 0.86,
+      strokeColor: COLORS.gold,
+      strokeAlpha: 0.34
+    });
 
     this.add.text(layout.headerArea.x + layout.headerArea.width / 2, layout.headerArea.y + 2, 'Dungeon Map', {
       color: '#f6f7ff',
@@ -253,26 +275,22 @@ export class MapScene extends Phaser.Scene {
   }
 
   private drawActionArea(layout: MapSceneLayout): void {
-    this.primaryActionButton = new Button(
+    this.primaryActionButton = new UiButton(
       this,
-      layout.primaryActionButton.x + layout.primaryActionButton.width / 2,
-      layout.primaryActionButton.y + layout.primaryActionButton.height / 2,
-      layout.primaryActionButton.width,
-      layout.primaryActionButton.height,
-      'Enter Room',
-      () => this.enterSelectedNode(),
-      { fontSize: layout.scaleMode === 'tiny' ? '16px' : '18px' }
+      this.uiSpec('map_primary_action', 'button', 'ui_button_primary', 'ui_button_default', layout.primaryActionButton.x, layout.primaryActionButton.y, layout.primaryActionButton.width, layout.primaryActionButton.height, 'topLeft', 90),
+      {
+        label: 'Enter Room',
+        onClick: () => this.enterSelectedNode()
+      }
     );
 
-    new Button(
+    new UiButton(
       this,
-      layout.backButton.x + layout.backButton.width / 2,
-      layout.backButton.y + layout.backButton.height / 2,
-      layout.backButton.width,
-      layout.backButton.height,
-      'Back To Menu',
-      () => this.scene.start('MainMenuScene'),
-      { fontSize: layout.scaleMode === 'tiny' ? '16px' : '18px' }
+      this.uiSpec('map_back_button', 'button', 'ui_button_secondary', 'ui_button_default', layout.backButton.x, layout.backButton.y, layout.backButton.width, layout.backButton.height, 'topLeft', 90),
+      {
+        label: 'Back To Menu',
+        onClick: () => this.scene.start('MainMenuScene')
+      }
     );
 
     this.primaryActionHint = this.add.text(
@@ -295,7 +313,9 @@ export class MapScene extends Phaser.Scene {
     this.mapLayer = this.add.container(0, 0);
 
     const state = this.gameState.runState;
-    const availableIds = new Set(this.gameState.mapSystem.getAvailableNodes(state).map((node) => node.id));
+    const availableNodes = this.gameState.mapSystem.getAvailableNodes(state);
+    const availableIds = new Set(availableNodes.map((node) => node.id));
+    const nodeModels = new Map(buildMapNodeViewModels(state, availableNodes).map((model) => [model.id, model]));
 
     const visuals: NodeVisualRef[] = state.map.map((node) => ({
       node,
@@ -326,13 +346,16 @@ export class MapScene extends Phaser.Scene {
         if (dx * dx + dy * dy < 16) {
           continue;
         }
-        const line = this.add.line(0, 0, start.x, start.y, end.x, end.y, 0x44507a, 1).setLineWidth(4);
+        const targetModel = nodeModels.get(targetId);
+        const lineColor = targetModel?.pathAssetKey === 'ui_map_path_locked' ? 0x303750 : 0x44507a;
+        const line = this.add.line(0, 0, start.x, start.y, end.x, end.y, lineColor, 1).setLineWidth(4);
         this.mapLayer.add(line);
       }
     }
 
     visuals.forEach((entry) => {
       const node = entry.node;
+      const model = nodeModels.get(node.id);
       const isCurrent = state.currentNodeId === node.id;
       const isSelected = this.selectedNodeId === node.id;
       const isAvailable = availableIds.has(node.id);
@@ -354,9 +377,8 @@ export class MapScene extends Phaser.Scene {
 
       const iconKey = (contentRegistry.getMapNode(`node_${node.roomType}`) as { iconKey?: string } | null)?.iconKey;
       const stateKey = isCurrent ? 'current' : node.completed ? 'completed' : isAvailable ? 'available' : 'locked';
-      const texture = this.gameState.assetSystem.getMapNodeTexture(this, node.roomType, stateKey, iconKey);
-      const icon = this.gameState.assetSystem.createImageByAssetKey(this, texture, 'mapIcon', entry.x, entry.y, { kind: 'icon' });
-      icon.setDisplaySize(radius + 8, radius + 8);
+      const texture = this.gameState.assetSystem.getMapNodeTexture(this, node.roomType, stateKey, iconKey ?? model?.iconAssetKey);
+      const icon = new UiIconSlot(this, this.uiSpec(`map_node_icon_${node.id}`, 'iconSlot', texture, 'placeholder_icon', entry.x, entry.y, radius + 12, radius + 12, 'center', 55));
       const fallbackIcon = this.add.text(entry.x, entry.y, node.icon, {
         color: '#0b0d16',
         fontFamily: FONT_FAMILY,
@@ -379,7 +401,7 @@ export class MapScene extends Phaser.Scene {
         this.updatePrimaryAction();
       });
 
-      this.mapLayer?.add([circle, icon, fallbackIcon, label, hit]);
+      this.mapLayer?.add([circle, icon.root, fallbackIcon, label, hit]);
     });
   }
 
@@ -416,7 +438,7 @@ export class MapScene extends Phaser.Scene {
     const node = this.gameState.mapSystem.getNode(state.map, selectedId);
     if (!node) {
       this.primaryActionButton?.setText('Enter Room');
-      this.primaryActionButton?.setDisabled(true);
+      this.primaryActionButton?.setState('disabled');
       this.primaryActionHint?.setText('Select an available room.');
       return;
     }
@@ -426,7 +448,7 @@ export class MapScene extends Phaser.Scene {
     const canEnter = isAvailable;
 
     this.primaryActionButton?.setText(this.getPrimaryActionLabel(node.roomType));
-    this.primaryActionButton?.setDisabled(!canEnter);
+    this.primaryActionButton?.setState(canEnter ? 'default' : 'disabled');
 
     if (canEnter) {
       this.primaryActionHint?.setText(isCurrent ? 'You are here.' : 'Tap to enter selected room.');
@@ -530,7 +552,14 @@ export class MapScene extends Phaser.Scene {
       this.gameState.randomGameplayEventSystem.applyEffects(state, mapEvent, (message) => this.log(message));
     }
 
-    if (['fight', 'elite', 'boss'].includes(node.roomType)) {
+    if (node.roomType === 'boss') {
+      this.gameState.runState.runStatus = 'map';
+      this.gameState.saveRun();
+      this.scene.start('BossRuleCardScene');
+      return;
+    }
+
+    if (['fight', 'elite'].includes(node.roomType)) {
       this.startBattle(node.roomType);
       return;
     }
@@ -565,41 +594,7 @@ export class MapScene extends Phaser.Scene {
   }
 
   private startBattle(roomType: RoomType): void {
-    const state = this.gameState.runState;
-    state.activeEnemy = null;
-    state.activeEncounterPack = null;
-    state.pendingNodeResult = null;
-    state.lastBattleWasBoss = roomType === 'boss';
-    const randomEvent = this.gameState.randomGameplayEventSystem.roll(state, 'battle_start');
-    if (randomEvent) {
-      this.log(`Random event incoming: ${randomEvent.name}.`);
-    }
-    const boardSizeMessage = this.gameState.boardSizeModifierSystem.applyEncounterBoardSize(state);
-    if (boardSizeMessage) {
-      this.log(boardSizeMessage);
-    }
-    const chaosRule = this.gameState.chaosRuleSystem.rollForCombat(state);
-    if (chaosRule) {
-      this.gameState.metaSystem.recordChaosRuleDiscovered(chaosRule.id);
-      this.log(`Festival Chaos rolled: ${chaosRule.name}.`);
-    }
-    const objective = this.gameState.battleObjectiveSystem.rollForCombat(state);
-    if (objective) {
-      this.log(`Mini-objective: ${objective.name}.`);
-    }
-    if (roomType === 'boss') {
-      const goalMessage = this.gameState.stageGoalSystem.applyBossStartEffect(state);
-      if (goalMessage) {
-        this.log(goalMessage);
-      }
-      state.currentBossRule = undefined;
-    }
-    state.player.emergencyBarrierUsed = false;
-    state.currentRoomProgress = 'entered';
-    state.runStatus = 'battle';
-    this.log(roomType === 'boss' ? 'The boss arena lights up for a big festival showdown.' : 'A fresh batch of festival troublemakers hops in.');
-    this.gameState.saveRun();
-    this.scene.start('BattleScene');
+    enterBattleFromMap(this, roomType);
   }
 
   private startRouteSceneIfNeeded(context: 'first_eligible_event_node' | 'after_first_combat_victory', returnScene: string): boolean {
@@ -626,5 +621,45 @@ export class MapScene extends Phaser.Scene {
     }
     const { goal, progress } = goalProgress;
     return `${goal.name} ${progress.progress}/${progress.requiredAmount}${progress.completed ? ' done' : ''}`;
+  }
+
+  private uiSpec(
+    id: string,
+    type: string,
+    assetKey: string,
+    fallbackAssetKey: string,
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    anchor: UiComponentSpec['anchor'],
+    zIndex: number
+  ): UiComponentSpec {
+    return {
+      id,
+      type,
+      assetKey,
+      fallbackAssetKey,
+      canonicalFolder: type === 'iconSlot' ? 'public/assets/icons/map-nodes/' : 'public/assets/ui/',
+      expectedSourceSize: { w: Math.max(1, Math.round(w)), h: Math.max(1, Math.round(h)) },
+      runtimeRenderSize: { w: Math.max(1, Math.round(w)), h: Math.max(1, Math.round(h)) },
+      x: Math.round(x),
+      y: Math.round(y),
+      w: Math.max(1, Math.round(w)),
+      h: Math.max(1, Math.round(h)),
+      anchor,
+      fitMode: type === 'iconSlot' ? 'iconCenter' : type === 'button' || type === 'panel' ? 'nineSlice' : 'exact',
+      scaleMode: type === 'iconSlot' ? 'fitInteger' : type === 'button' || type === 'panel' ? 'uiStretchNineSlice' : 'none',
+      safePadding: type === 'iconSlot' ? 0 : 12,
+      zIndex,
+      dynamicTextAllowed: type !== 'iconSlot',
+      pixelPerfect: {
+        integerCoordinates: true,
+        allowFractionalScale: false,
+        filtering: 'nearest',
+        antiAliasing: false,
+        roundPixels: true
+      }
+    };
   }
 }

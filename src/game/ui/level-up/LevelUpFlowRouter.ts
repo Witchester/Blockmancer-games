@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { BlockmancerGame } from '../../BlockmancerGame';
 import type { RunState } from '../../types/GameTypes';
 import type { LevelUpUpgradeContent } from './LevelUpDataAdapter';
+import { completePostNodeFlow, hasPendingRewardScreen } from '../reward/RewardFlowRouter';
 
 export type LevelUpNextScene = 'LevelUpRewardScene' | 'RewardScene' | 'MapScene';
 
@@ -9,7 +10,7 @@ export function resolveLevelUpNextScene(game: BlockmancerGame, state: RunState):
   if (game.levelUpSystem.hasPendingLevelUp(state)) {
     return 'LevelUpRewardScene';
   }
-  if (state.pendingRewards.length > 0 || state.pendingStageAdvance) {
+  if (hasPendingRewardScreen(state)) {
     return 'RewardScene';
   }
   return 'MapScene';
@@ -48,9 +49,9 @@ export function continueFromLevelUp(scene: Phaser.Scene): void {
 
   state.levelUpScreenState.levelUpScreenResolved = true;
   if (nextScene === 'MapScene') {
-    game.mapSystem.completeNode(state, state.currentNodeId);
-    state.activeEncounterPack = null;
-    state.runStatus = 'map';
+    // completePostNodeFlow handles the direct map route, including game.mapSystem.completeNode for non-boss nodes.
+    completePostNodeFlow(scene);
+    return;
   }
 
   game.saveRun();

@@ -55,3 +55,15 @@ Rest, Treasure, Help, Tutorial, Hub, and Collection have runtime scenes but are 
 ## UI-9 Festival Level-Up Note
 
 `screen_level_up` now resolves after `screen_node_result` when `pendingLevelUps > 0`. Selection applies one upgrade, consumes one pending level-up, loops back to `LevelUpRewardScene` while more pending level-ups remain, then routes to `RewardScene` when rewards/stage advance are pending or directly to `MapScene` when no rewards remain.
+
+## UI-10 Reward Screen Note
+
+`screen_node_result` and `screen_level_up` now route to `screen_reward` only when pending rewards exist. If no rewards are pending, post-node completion skips `screen_reward` and returns to `screen_map` after completing the node or advancing the boss stage. `screen_reward` claims one selected pending reward, clears pending rewards after claim, then routes to `screen_map` or existing victory flow.
+
+## UI-11 Map / Stage Intro / Boss Rule Note
+
+`screen_map` now routes unseen stage starts to `screen_stage_intro`, returns to map after the intro, and keeps existing routes to Event, Shop, Rest, Treasure, and Battle nodes. Boss nodes now route to `screen_boss_rule_card`, and `screen_boss_rule_card` starts `screen_battle` with the legacy in-battle boss rule overlay suppressed for that transition.
+
+## UI-12 Route Dialogue / Story Choice Note
+
+`screen_route_dialogue` keeps the existing entry/exit behavior and route choice resolution, but now renders pre-choice dialogue, choice cards, and resolution text with shared UI primitives and fallback-safe route portrait/background assets.

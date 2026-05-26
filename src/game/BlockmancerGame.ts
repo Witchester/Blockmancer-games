@@ -8,6 +8,8 @@ import { HeroSelectScene } from './scenes/HeroSelectScene';
 import { HubScene } from './scenes/HubScene';
 import { CollectionScene } from './scenes/CollectionScene';
 import { MapScene } from './scenes/MapScene';
+import { StageIntroScene } from './scenes/StageIntroScene';
+import { BossRuleCardScene } from './scenes/BossRuleCardScene';
 import { BattleScene } from './scenes/BattleScene';
 import { RewardScene } from './scenes/RewardScene';
 import { NodeResultScene } from './scenes/NodeResultScene';
@@ -117,6 +119,8 @@ export class BlockmancerGame extends Phaser.Game {
         HubScene,
         CollectionScene,
         MapScene,
+        StageIntroScene,
+        BossRuleCardScene,
         BattleScene,
         RewardScene,
         NodeResultScene,

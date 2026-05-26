@@ -26,8 +26,10 @@ import type {
   NodeEncounterPack,
   EncounterEnemyEntry
 } from '../types/GameTypes';
+import type { UiComponentSpec } from '../types/ui-layout';
 import { MobileControls } from '../ui/MobileControls';
 import { Button } from '../ui/Button';
+import { UiButton, UiIconSlot, UiPanel } from '../ui/components';
 import {
   BattleCombatHud,
   BattleControlsInputAdapter,
@@ -37,6 +39,7 @@ import {
   MonsterStackPreview,
   BattlePuzzleSectionUi
 } from '../ui/battle';
+import { createInventoryViewModel, type InventoryEntryViewModel } from '../ui/inventory';
 import { getPortraitLayout, isCompactLayout } from '../utils/layout';
 import {
   BOARD_CELL_SIZE,
@@ -303,9 +306,10 @@ export class BattleScene extends Phaser.Scene {
   private hazardTrayText?: Phaser.GameObjects.Text;
   private inventoryExpanded = false;
   private inventoryOverlay!: Phaser.GameObjects.Container;
-  private inventoryButtons: Button[] = [];
+  private inventoryButtons: Array<Button | UiButton> = [];
   private inventoryDynamicObjects: Phaser.GameObjects.GameObject[] = [];
   private inventoryRenderKey = '';
+  private selectedInventoryEntryId?: string;
   private spellButtons: Array<{ spellId: SpellId; button: Button }> = [];
   private readonly floatingTextPool: Phaser.GameObjects.Text[] = [];
   private activeBossIntroObjects: Phaser.GameObjects.GameObject[] = [];
@@ -348,12 +352,14 @@ export class BattleScene extends Phaser.Scene {
   private battleShell?: BattleScreenShell;
   private battleControlsSectionUi?: BattleControlsSectionUi;
   private lumiWishkeeperTriggered = false;
+  private bossRuleCardShownBeforeBattle = false;
 
   constructor() {
     super('BattleScene');
   }
 
-  create(): void {
+  create(data?: { bossRuleCardShown?: boolean }): void {
+    this.bossRuleCardShownBeforeBattle = Boolean(data?.bossRuleCardShown);
     const game = this.game as BlockmancerGame;
     const state = game.runState;
     state.runStatus = 'battle';
@@ -512,7 +518,9 @@ export class BattleScene extends Phaser.Scene {
       }
       this.sharedGame.audioSystem.play('boss_intro', this);
       this.showBossIntro(state.activeEnemy.name, bossBeat.lines[0] ?? fallbackIntro);
-      this.showBossRuleCard(state.activeEnemy.id);
+      if (!this.bossRuleCardShownBeforeBattle) {
+        this.showBossRuleCard(state.activeEnemy.id);
+      }
       this.sharedGame.bossSystem.applyBossStartMechanic(state, this.board).forEach((message) => this.combat.addLog(message));
     }
     const chaos = this.sharedGame.chaosRuleSystem.getActive(state);
@@ -1305,19 +1313,24 @@ export class BattleScene extends Phaser.Scene {
     const layout = this.battleLayout;
     const middleRect = layout?.middleBoardRect ?? { x: 12, y: this.topSectionHeight, width: this.screenWidth - 24, height: this.middleSectionHeight };
     const middleCenterY = middleRect.y + middleRect.height / 2;
-    const bg = this.add.rectangle(
+    const backdrop = this.add.rectangle(
       this.screenWidth / 2,
       middleCenterY,
       middleRect.width,
       middleRect.height - 8,
-      COLORS.panel,
-      0.98
-    ).setStrokeStyle(2, COLORS.accentSoft, 0.5);
-    
+      0x05060a,
+      0.58
+    );
+    const panel = new UiPanel(this, this.uiSpec('inventory_modal_panel', 'panel', 'ui_panel_inventory', 'ui_panel_default', middleRect.x + 8, middleRect.y + 8, middleRect.width - 16, middleRect.height - 16, 'topLeft', 101), {
+      fillColor: COLORS.panel,
+      fillAlpha: 0.92,
+      strokeColor: COLORS.accentSoft,
+      strokeAlpha: 0.55
+    });
     const title = this.add.text(
       this.screenWidth / 2,
       middleRect.y + 22,
-      'Bag',
+      'Inventory',
       {
         color: '#ffca6b',
         fontFamily: FONT_FAMILY,
@@ -1326,7 +1339,7 @@ export class BattleScene extends Phaser.Scene {
       }
     ).setOrigin(0.5);
     
-    this.inventoryOverlay.add([bg, title]);
+    this.inventoryOverlay.add([backdrop, panel.root, title]);
   }
 
   private handleHold(): boolean {
@@ -3854,12 +3867,27 @@ export class BattleScene extends Phaser.Scene {
       }
       this.inventoryRenderKey = renderKey;
       this.clearInventoryOverlayContent();
-      
-      const startX = middleRect.x + 24;
-      const startY = middleRect.y + 66;
 
-      if (state.inventory.length === 0) {
-        const emptyText = this.add.text(this.screenWidth / 2, startY + 92, 'Your bag is empty.', {
+      const model = createInventoryViewModel(state, this.selectedInventoryEntryId);
+      this.selectedInventoryEntryId = model.selected?.id;
+      const startX = middleRect.x + 30;
+      const startY = middleRect.y + 66;
+      const listWidth = Math.min(352, middleRect.width - 72);
+      const detailLeft = startX + listWidth + 18;
+      const detailWidth = Math.max(160, middleRect.x + middleRect.width - detailLeft - 28);
+
+      const summary = this.add.text(this.screenWidth / 2, startY - 20, model.summary, {
+        color: '#d8deff',
+        fontFamily: FONT_FAMILY,
+        fontSize: '15px',
+        align: 'center',
+        wordWrap: { width: middleRect.width - 72 }
+      }).setOrigin(0.5);
+      this.inventoryOverlay.add(summary);
+      this.inventoryDynamicObjects.push(summary);
+
+      if (model.entries.length === 0) {
+        const emptyText = this.add.text(this.screenWidth / 2, startY + 92, 'Your inventory is empty.', {
           color: '#d8deff',
           fontFamily: FONT_FAMILY,
           fontSize: '24px',
@@ -3868,80 +3896,23 @@ export class BattleScene extends Phaser.Scene {
         this.inventoryOverlay.add(emptyText);
         this.inventoryDynamicObjects.push(emptyText);
       }
-      
-      state.inventory.forEach((stack, index) => {
-        const itemDef = this.sharedGame.itemSystem.getItem(stack.itemId);
-        if (!itemDef) return;
-        
-        const col = index % 2;
-        const row = Math.floor(index / 2);
-        const x = startX + col * 170;
-        const y = startY + row * 70;
-        
-        const btn = new Button(this, x + 70, y + 30, 158, 58, `${itemDef.name}\n(x${stack.count})`, () => {
-          const hazardCountBefore = state.activeHazards.length;
-          const shieldBefore = state.player.shield;
-          const incomingBefore = state.incomingJunkQueue.reduce((sum, entry) => sum + entry.remainingAmount, 0);
-          let consumed = true;
-          let msg = '';
-          const effectType = itemDef.effect?.type;
-          if (effectType === 'delay_incoming_junk') {
-            const touched = this.delayIncomingJunk(3, 'Snack Shield');
-            if (touched <= 0) {
-              consumed = false;
-              msg = 'No incoming junk to delay right now.';
-            } else {
-              msg = 'Snack Shield delayed the mess!';
-            }
-          } else if (effectType === 'reflect_incoming_junk') {
-            const reflected = this.reflectIncomingJunk(Math.max(1, Math.ceil(incomingBefore * 0.5)), 'Return Stamp');
-            if (reflected <= 0) {
-              consumed = false;
-              msg = 'No incoming junk to stamp yet.';
-            } else {
-              msg = `Return Stamp sent crumbs back! (${reflected})`;
-            }
-          } else if (effectType === 'block_incoming_junk') {
-            const blocked = this.reduceIncomingJunk(3, 'Trash Lid');
-            if (blocked <= 0) {
-              consumed = false;
-              msg = 'No incoming junk to cover right now.';
-            } else {
-              msg = `Trash Lid blocked ${blocked} incoming junk.`;
-            }
-          } else {
-            msg = this.sharedGame.itemSystem.applyItem(state, stack.itemId, this.board, this.combat);
-          }
-          this.combat.addLog(msg);
-          const itemAnimation = itemDef.useVfxKey ?? itemDef.vfxKey ?? `anim_${stack.itemId}_use`;
-          this.playVfx(itemAnimation, x + 22, y + 30, ITEM_VFX_BOX_SIZE, 141);
-          if (state.activeHazards.length < hazardCountBefore) {
-            this.playVfx(itemDef.counterSuccessVfxKey ?? `anim_${stack.itemId}_counter_success`, x + 22, y + 30, ITEM_VFX_BOX_SIZE, 142);
-          }
-          if (state.player.shield > shieldBefore) {
-            this.playVfx('anim_vfx_shield_gain', this.heroPortrait?.x ?? 112, this.heroPortrait?.y ?? 94, COMBAT_HIT_VFX_BOX_SIZE, 126);
-          }
-          this.syncIncomingJunkHazardFromQueue();
-          if (consumed) {
-            this.sharedGame.inventorySystem.removeItem(state, stack.itemId, 1);
-            state.runStats.itemsUsed += 1;
-            this.sharedGame.audioSystem.play('item_use', this);
-            this.sharedGame.saveRun();
-          }
-          
-          if (state.inventory.length === 0) {
-            this.inventoryExpanded = false;
-          }
-          this.renderAll();
-        }, { iconKey: this.sharedGame.assetSystem.getIcon(this, 'item', stack.itemId, itemDef.iconKey) });
-        this.inventoryOverlay.add(btn);
-        this.inventoryButtons.push(btn);
+
+      model.entries.slice(0, 6).forEach((entry, index) => {
+        const y = startY + index * 58;
+        this.renderInventoryEntry(entry, startX, y, listWidth, entry.id === model.selected?.id);
       });
-      
-      const closeBtn = new Button(this, this.screenWidth / 2, middleRect.y + middleRect.height - 34, 132, 52, 'Close', () => {
-        this.toggleInventory();
+
+      if (model.selected) {
+        this.renderInventoryDetail(model.selected, detailLeft, startY, detailWidth, Math.min(284, middleRect.height - 142));
+      }
+
+      const closeBtn = new UiButton(this, this.uiSpec('inventory_close_button', 'button', 'ui_button_secondary', 'ui_button_default', this.screenWidth / 2, middleRect.y + middleRect.height - 34, 132, 52, 'center', 115), {
+        label: 'Close',
+        onClick: () => {
+          this.toggleInventory();
+        }
       });
-      this.inventoryOverlay.add(closeBtn);
+      this.inventoryOverlay.add(closeBtn.root);
       this.inventoryButtons.push(closeBtn);
     } else {
       this.inventoryRenderKey = '';
@@ -3949,6 +3920,144 @@ export class BattleScene extends Phaser.Scene {
     }
 
     this.renderFeverAndButtons(state);
+  }
+
+  private renderInventoryEntry(entry: InventoryEntryViewModel, x: number, y: number, width: number, selected: boolean): void {
+    const actionText = entry.kind === 'item' && entry.canUse ? 'Use' : 'View';
+    const panel = new UiPanel(this, this.uiSpec(`inventory_item_card_${entry.kind}_${entry.id}`, 'panel', 'ui_inventory_item_card', 'ui_panel_default', x, y, width, 50, 'topLeft', 105), {
+      fillColor: COLORS.panelAlt,
+      fillAlpha: 0.84,
+      strokeColor: selected ? COLORS.success : entry.kind === 'item' ? COLORS.gold : COLORS.accentSoft,
+      strokeAlpha: selected ? 0.75 : 0.35
+    }).setState(selected ? 'selected' : 'default');
+    const icon = new UiIconSlot(this, this.uiSpec(`inventory_icon_${entry.kind}_${entry.id}`, 'iconSlot', entry.iconKey, 'placeholder_icon', x + 26, y + 25, 38, 38, 'center', 110), {
+      quantityText: entry.quantityText,
+      disabled: entry.kind !== 'item'
+    });
+    const title = this.add.text(x + 54, y + 8, entry.title, {
+      color: '#f6f7ff',
+      fontFamily: FONT_FAMILY,
+      fontSize: '15px',
+      fontStyle: 'bold',
+      wordWrap: { width: width - 164 }
+    });
+    const detail = this.add.text(x + 54, y + 29, entry.detail, {
+      color: '#98a0c7',
+      fontFamily: FONT_FAMILY,
+      fontSize: '12px',
+      wordWrap: { width: width - 164 }
+    });
+    const button = new UiButton(this, this.uiSpec(`inventory_action_${entry.kind}_${entry.id}`, 'button', entry.kind === 'item' ? 'ui_button_apply' : 'ui_button_secondary', 'ui_button_default', x + width - 42, y + 25, 72, 38, 'center', 112), {
+      label: actionText,
+      disabled: entry.kind === 'item' && !entry.canUse,
+      onClick: () => {
+        if (entry.kind === 'item') {
+          this.useInventoryItem(entry.id, x + 24, y + 24);
+        } else {
+          this.selectedInventoryEntryId = entry.id;
+          this.inventoryRenderKey = '';
+          this.renderMiddleOverlays();
+        }
+      }
+    });
+
+    this.inventoryOverlay.add([panel.root, icon.root, title, detail, button.root]);
+    this.inventoryDynamicObjects.push(panel.root, icon.root, title, detail);
+    this.inventoryButtons.push(button);
+  }
+
+  private renderInventoryDetail(entry: InventoryEntryViewModel, x: number, y: number, width: number, height: number): void {
+    const panel = new UiPanel(this, this.uiSpec('inventory_detail_panel', 'panel', 'ui_inventory_detail_panel', 'ui_panel_default', x, y, width, height, 'topLeft', 105), {
+      fillColor: COLORS.panel,
+      fillAlpha: 0.84,
+      strokeColor: COLORS.accent,
+      strokeAlpha: 0.34
+    });
+    const title = this.add.text(x + 18, y + 18, entry.title, {
+      color: '#ffca6b',
+      fontFamily: FONT_FAMILY,
+      fontSize: '18px',
+      fontStyle: 'bold',
+      wordWrap: { width: width - 36 }
+    });
+    const kind = this.add.text(x + 18, y + 50, entry.detail, {
+      color: '#98a0c7',
+      fontFamily: FONT_FAMILY,
+      fontSize: '13px',
+      wordWrap: { width: width - 36 }
+    });
+    const body = this.add.text(x + 18, y + 82, entry.description, {
+      color: '#d8deff',
+      fontFamily: FONT_FAMILY,
+      fontSize: '14px',
+      wordWrap: { width: width - 36 },
+      lineSpacing: 4
+    });
+    this.inventoryOverlay.add([panel.root, title, kind, body]);
+    this.inventoryDynamicObjects.push(panel.root, title, kind, body);
+  }
+
+  private useInventoryItem(itemId: string, effectX: number, effectY: number): void {
+    const state = this.sharedGame.runState;
+    const itemDef = this.sharedGame.itemSystem.getItem(itemId);
+    if (!itemDef) {
+      return;
+    }
+
+    const hazardCountBefore = state.activeHazards.length;
+    const shieldBefore = state.player.shield;
+    const incomingBefore = state.incomingJunkQueue.reduce((sum, entry) => sum + entry.remainingAmount, 0);
+    let consumed = true;
+    let msg = '';
+    const effectType = itemDef.effect?.type;
+    if (effectType === 'delay_incoming_junk') {
+      const touched = this.delayIncomingJunk(3, 'Snack Shield');
+      if (touched <= 0) {
+        consumed = false;
+        msg = 'No incoming junk to delay right now.';
+      } else {
+        msg = 'Snack Shield delayed the mess!';
+      }
+    } else if (effectType === 'reflect_incoming_junk') {
+      const reflected = this.reflectIncomingJunk(Math.max(1, Math.ceil(incomingBefore * 0.5)), 'Return Stamp');
+      if (reflected <= 0) {
+        consumed = false;
+        msg = 'No incoming junk to stamp yet.';
+      } else {
+        msg = `Return Stamp sent crumbs back! (${reflected})`;
+      }
+    } else if (effectType === 'block_incoming_junk') {
+      const blocked = this.reduceIncomingJunk(3, 'Trash Lid');
+      if (blocked <= 0) {
+        consumed = false;
+        msg = 'No incoming junk to cover right now.';
+      } else {
+        msg = `Trash Lid blocked ${blocked} incoming junk.`;
+      }
+    } else {
+      msg = this.sharedGame.itemSystem.applyItem(state, itemId, this.board, this.combat);
+    }
+    this.combat.addLog(msg);
+    const itemAnimation = itemDef.useVfxKey ?? itemDef.vfxKey ?? `anim_${itemId}_use`;
+    this.playVfx(itemAnimation, effectX, effectY, ITEM_VFX_BOX_SIZE, 141);
+    if (state.activeHazards.length < hazardCountBefore) {
+      this.playVfx(itemDef.counterSuccessVfxKey ?? `anim_${itemId}_counter_success`, effectX, effectY, ITEM_VFX_BOX_SIZE, 142);
+    }
+    if (state.player.shield > shieldBefore) {
+      this.playVfx('anim_vfx_shield_gain', this.heroPortrait?.x ?? 112, this.heroPortrait?.y ?? 94, COMBAT_HIT_VFX_BOX_SIZE, 126);
+    }
+    this.syncIncomingJunkHazardFromQueue();
+    if (consumed) {
+      this.sharedGame.inventorySystem.removeItem(state, itemId, 1);
+      state.runStats.itemsUsed += 1;
+      this.sharedGame.audioSystem.play('item_use', this);
+      this.sharedGame.saveRun();
+    }
+
+    if (state.inventory.length === 0) {
+      this.inventoryExpanded = false;
+    }
+    this.renderAll();
   }
 
   private renderFeverAndButtons(state: RunState): void {
@@ -3975,7 +4084,13 @@ export class BattleScene extends Phaser.Scene {
   }
 
   private getInventoryRenderKey(state: RunState): string {
-    return state.inventory.map((stack) => `${stack.itemId}:${stack.count}`).join('|');
+    return [
+      state.inventory.map((stack) => `${stack.itemId}:${stack.count}`).join('|'),
+      state.relics.join(','),
+      state.ownedRewards.join(','),
+      state.spells.join(','),
+      this.selectedInventoryEntryId ?? ''
+    ].join('::');
   }
 
   private clearInventoryOverlayContent(): void {
@@ -3983,6 +4098,46 @@ export class BattleScene extends Phaser.Scene {
     this.inventoryButtons = [];
     this.inventoryDynamicObjects.forEach((item) => item.destroy());
     this.inventoryDynamicObjects = [];
+  }
+
+  private uiSpec(
+    id: string,
+    type: string,
+    assetKey: string,
+    fallbackAssetKey: string,
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    anchor: UiComponentSpec['anchor'],
+    zIndex: number
+  ): UiComponentSpec {
+    return {
+      id,
+      type,
+      assetKey,
+      fallbackAssetKey,
+      canonicalFolder: type === 'iconSlot' ? 'public/assets/icons/' : 'public/assets/ui/',
+      expectedSourceSize: { w, h },
+      runtimeRenderSize: { w, h },
+      x: Math.round(x),
+      y: Math.round(y),
+      w: Math.round(w),
+      h: Math.round(h),
+      anchor,
+      fitMode: type === 'iconSlot' ? 'iconCenter' : 'nineSlice',
+      scaleMode: type === 'iconSlot' ? 'fitInteger' : 'uiStretchNineSlice',
+      safePadding: type === 'iconSlot' ? 0 : 24,
+      zIndex,
+      dynamicTextAllowed: type !== 'iconSlot',
+      pixelPerfect: {
+        integerCoordinates: true,
+        allowFractionalScale: false,
+        filtering: 'nearest',
+        antiAliasing: false,
+        roundPixels: true
+      }
+    };
   }
 
   private showFloatingText(text: string, x: number, y: number, color: string, fontSize = 30): void {

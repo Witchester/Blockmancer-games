@@ -66,3 +66,33 @@ Use CodeGraph to identify affected scenes, then use QA checklist for visual acce
 ## Status / known gaps
 CodeGraph MCP was available, but no standalone CLI output artifact was generated. Manual Mermaid docs are canonical deliverables for this task.
 
+## UI-10 Reward Screen Findings
+
+For UI-10, CodeGraph MCP status reported an initialized index with 188 files, 3497 nodes, and 9673 edges. `codegraph_context` and `codegraph_impact` identified `RewardScene`, `RewardSystem`, `NodeResultFlowRouter`, `LevelUpFlowRouter`, `MapSystem`, `RunState.pendingRewards`, and `RunState.pendingStageAdvance` as the implementation surface.
+
+Runtime reward routing now prefers pending level-ups first, then `RewardScene` only when `pendingRewards` contains claimable rewards. When no rewards remain, post-node completion routes directly to map/next-node flow while still advancing boss stages safely. Reward claiming applies one selected pending reward, clears `pendingRewards` after claim, applies post-battle effects, clears active encounter state, and saves before returning to map.
+
+## UI-11 Map / Stage Intro / Boss Rule Findings
+
+For UI-11, CodeGraph MCP status reported an initialized index with 191 files, 3529 nodes, and 9761 edges before implementation. `codegraph_context` and `codegraph_impact` identified `MapScene`, `StoryScene`, `BattleScene.showBossRuleCard`, `MapSystem`, `StageSystem`, `StageGoalSystem`, `BossSystem`, `BossRuleSystem`, shared UI primitives, and the map/stage/boss layout JSON files as the relevant surface.
+
+Runtime map rendering now uses shared UI panel/button/icon primitives for the map frame, header, node preview, run summary, actions, and node icons while preserving existing `MapSystem` node generation. Stage intro is handled by a focused `StageIntroScene` before returning to map. Boss nodes route to a dedicated `BossRuleCardScene`, which shows existing boss rule data and then starts `BattleScene` without replaying the legacy in-battle rule overlay.
+
+## UI-12 Route Dialogue / Story Choice Findings
+
+For UI-12, CodeGraph MCP status reported an initialized index with 193 files, 3560 nodes, and 8434 edges before implementation. `codegraph_context` and `codegraph_impact` identified `RouteDialogueScene`, `DialogueSystem`, `RouteStorySystem`, `RouteStorySystem.resolveRouteChoice`, route progress state, shared UI primitives, asset fallback helpers, and `screen_route_dialogue.layout.json` as the implementation surface.
+
+Runtime route dialogue now uses shared panels, buttons, and icon slots for background, portrait, nameplate, dialogue panel, continue/skip controls, and route choice cards. Route choice application still delegates to the existing `RouteStorySystem.resolveRouteChoice`, preserving route IDs, route flags, lane scores, rewards, risks, and save keys.
+
+## UI-13 Shop / Inventory / Settings Findings
+
+For UI-13, CodeGraph MCP status reported an initialized index with 202 files, 3608 nodes, and 9990 edges before implementation. `codegraph_context` and `codegraph_impact` identified `ShopScene`, `ShopSystem`, `BattleScene` inventory overlay methods, `InventorySystem`, `ItemSystem`, `SettingsScene`, `SettingsSystem`, shared UI primitives, asset fallback helpers, and the shop/inventory/settings layout JSON files as the implementation surface.
+
+Runtime shop rendering now uses shared UI primitives and a presentation adapter while preserving all existing shop handlers and prices. The battle inventory modal now renders item, relic, and spell inventory data with shared panels/icons/buttons; item use still delegates to the existing battle item-use path. Settings now renders tabbed audio/accessibility/controls rows over the existing settings fields and save path without changing save keys or schema.
+
+## UI-14 Outer Flow Findings
+
+For UI-14, CodeGraph MCP status reported an initialized index with 208 files, 3655 nodes, and 10158 edges before implementation. `codegraph_context` and `codegraph_impact` identified `BootScene`, `MainMenuScene`, `HeroSelectScene`, `GameOverScene`, `VictoryScene`, run start/continue methods on `BlockmancerGame`, hero content/unlock checks, shared UI primitives, asset fallback helpers, and the splash/main-menu/hero-select/defeat/victory layout JSON files as the implementation surface.
+
+Runtime outer-flow screens now use shared UI primitives through `OuterFlowUi` while preserving existing routing and state behavior: Boot still preloads assets and waits for fonts, Main Menu still routes through opening/tutorial/new-run/continue handlers, Hero Select still uses existing hero content and unlock checks before `newRun(heroId)`, Game Over still sets victory/defeat status and clears saves on exit actions, and Victory still uses existing story/route ending lookup.
+

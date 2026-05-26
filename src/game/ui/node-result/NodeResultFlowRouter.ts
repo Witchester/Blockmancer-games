@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { BlockmancerGame } from '../../BlockmancerGame';
 import type { NodeResultSummary, RunState } from '../../types/GameTypes';
+import { completePostNodeFlow, hasPendingRewardScreen } from '../reward/RewardFlowRouter';
 
 function applyPostNodeHealing(game: BlockmancerGame, state: RunState, summary: NodeResultSummary): void {
   const claim = game.encounterPackSystem.getOrCreateNodeResultClaim(state, summary);
@@ -19,7 +20,7 @@ export function resolveNodeResultNextScene(game: BlockmancerGame, state: RunStat
   if (game.levelUpSystem.hasPendingLevelUp(state)) {
     return 'LevelUpRewardScene';
   }
-  if (state.pendingRewards.length > 0 || state.pendingStageAdvance) {
+  if (hasPendingRewardScreen(state)) {
     return 'RewardScene';
   }
   return 'MapScene';
@@ -47,8 +48,8 @@ export function continueFromNodeResult(scene: Phaser.Scene, summary: NodeResultS
   }
 
   if (nextScene === 'MapScene') {
-    game.mapSystem.completeNode(state, state.currentNodeId);
-    state.runStatus = 'map';
+    completePostNodeFlow(scene);
+    return;
   }
 
   game.saveRun();
