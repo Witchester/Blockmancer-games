@@ -3,7 +3,7 @@ import { BlockmancerGame } from '../BlockmancerGame';
 import { contentRegistry } from '../systems/ContentRegistry';
 import type { MapNodeDefinition, RoomType } from '../types/GameTypes';
 import type { UiComponentSpec } from '../types/ui-layout';
-import { UiButton, UiPanel } from '../ui/components';
+import { UiButton, UiIconSlot, UiPanel } from '../ui/components';
 import { buildMapNodeViewModels, enterBattleFromMap } from '../ui/map';
 import { COLORS, FONT_FAMILY, MAX_EVENT_LOG } from '../utils/constants';
 import { getPortraitLayout } from '../utils/layout';
@@ -34,9 +34,13 @@ type NodeVisualRef = {
 
 const MAP_BACKGROUND_DEPTH = -20;
 const MAP_DIMMER_DEPTH = -10;
-const MAP_GRAPH_DEPTH = 120;
-const MAP_CONTENT_DEPTH = 130;
+const MAP_GRAPH_DEPTH = 60;
+const MAP_CONTENT_DEPTH = 70;
 const MAP_ACTION_HINT_DEPTH = 95;
+
+// Depth at which node hit-areas live. Must be above all UiPanel zIndices (max 20)
+// and above MAP_GRAPH_DEPTH (60) so they are never obscured by scene-level panels.
+const MAP_NODE_HIT_DEPTH = 90;
 
 export class MapScene extends Phaser.Scene {
   private infoLayer?: Phaser.GameObjects.Container;
@@ -46,6 +50,14 @@ export class MapScene extends Phaser.Scene {
   private primaryActionButton?: UiButton;
   private primaryActionHint?: Phaser.GameObjects.Text;
   private layout?: MapSceneLayout;
+
+  /**
+   * Hit rectangles are added directly to the scene (not into mapLayer) so that
+   * Phaser's global depth-based input ordering applies to them correctly.
+   * mapLayer is a Container and its children's depth values are local to the
+   * container – they do NOT compete with scene-level objects in the input queue.
+   */
+  private mapHitAreas: Phaser.GameObjects.Rectangle[] = [];
 
   constructor() {
     super('MapScene');
@@ -222,7 +234,7 @@ export class MapScene extends Phaser.Scene {
       fontStyle: 'bold'
     }).setOrigin(0.5, 0).setDepth(MAP_CONTENT_DEPTH);
 
-    this.add.text(layout.headerArea.x + layout.headerArea.width / 2, layout.headerArea.y + layout.headerArea.height - 4, `Stage ${state.stage}/${stageCount} � ${stage?.name ?? 'Festival Dungeon'} � Room ${currentNode?.label ?? 'Start'}`, {
+    this.add.text(layout.headerArea.x + layout.headerArea.width / 2, layout.headerArea.y + layout.headerArea.height - 4, `Stage ${state.stage}/${stageCount} · ${stage?.name ?? 'Festival Dungeon'} · Room ${currentNode?.label ?? 'Start'}`, {
       color: '#98a0c7',
       fontFamily: FONT_FAMILY,
       fontSize: layout.scaleMode === 'tiny' ? '13px' : '15px'
@@ -246,7 +258,7 @@ export class MapScene extends Phaser.Scene {
     const state = this.gameState.runState;
     const currentNode = this.gameState.mapSystem.getNode(state.map, state.currentNodeId);
     const goal = this.getStageGoalSummary();
-    const relicSummary = state.ownedRewards.length ? `${state.ownedRewards.length} � ${state.ownedRewards[0]}` : '0';
+    const relicSummary = state.ownedRewards.length ? `${state.ownedRewards.length} · ${state.ownedRewards[0]}` : '0';
 
     const chips = [
       ['HP', `${state.player.hp}/${state.player.maxHp}`],
@@ -314,6 +326,10 @@ export class MapScene extends Phaser.Scene {
   private renderMap(): void {
     const layout = this.layout;
     if (!layout) return;
+
+    // Destroy hit areas first – they live outside mapLayer directly on the scene.
+    this.mapHitAreas.forEach((h) => h.destroy());
+    this.mapHitAreas = [];
 
     this.mapLayer?.destroy(true);
     this.mapLayer = this.add.container(0, 0).setDepth(MAP_GRAPH_DEPTH);
@@ -384,18 +400,12 @@ export class MapScene extends Phaser.Scene {
       const iconKey = (contentRegistry.getMapNode(`node_${node.roomType}`) as { iconKey?: string } | null)?.iconKey;
       const stateKey = isCurrent ? 'current' : node.completed ? 'completed' : isAvailable ? 'available' : 'locked';
       const texture = this.gameState.assetSystem.getMapNodeTexture(this, node.roomType, stateKey, iconKey ?? model?.iconAssetKey);
-      const icon = this.gameState.assetSystem.addImage(this, entry.x, entry.y, texture, 'icon')
-        .setDisplaySize(radius + 12, radius + 12)
-        .setAlpha(isLocked ? 0.52 : 0.95)
-        .setDepth(30);
-      const nodeGlyph = this.add.text(entry.x, entry.y, node.icon, {
-        color: isLocked ? '#c4cbff' : '#05060a',
+      const icon = new UiIconSlot(this, this.uiSpec(`map_node_icon_${node.id}`, 'iconSlot', texture, 'placeholder_icon', entry.x, entry.y, radius + 12, radius + 12, 'center', 55));
+      const fallbackIcon = this.add.text(entry.x, entry.y, node.icon, {
+        color: '#0b0d16',
         fontFamily: FONT_FAMILY,
-        fontSize: layout.scaleMode === 'tiny' ? '18px' : '20px',
-        fontStyle: 'bold',
-        stroke: isLocked ? '#050814' : '#f6f7ff',
-        strokeThickness: isLocked ? 2 : 1
-      }).setOrigin(0.5).setDepth(35);
+        fontSize: layout.scaleMode === 'tiny' ? '20px' : '22px'
+      }).setOrigin(0.5).setAlpha(texture ? 0 : 1).setDepth(30);
 
       const typeShort = this.getNodeTypeLabel(node.roomType, layout.scaleMode);
       const label = this.add.text(entry.x, entry.y + radius + 8, typeShort, {
@@ -405,7 +415,27 @@ export class MapScene extends Phaser.Scene {
         fontStyle: isSelected ? 'bold' : 'normal'
       }).setOrigin(0.5, 0).setDepth(40);
 
-      const hit = this.add.rectangle(entry.x, entry.y, Math.max(44, radius * 2 + 10), Math.max(44, radius * 2 + 10), 0x000000, 0.001).setDepth(80).setInteractive({ useHandCursor: true });
+      // ─────────────────────────────────────────────────────────────────────
+      // KEY FIX: add the hit rectangle directly to the scene, NOT into
+      // mapLayer (a Container).  In Phaser 3, a Container's children do NOT
+      // participate in the global depth-sorted input queue; their setDepth()
+      // values are container-local and will lose to any scene-level object
+      // (e.g. an interactive UiPanel) regardless of numeric value.
+      // By adding the hit area to the scene at depth MAP_NODE_HIT_DEPTH (90)
+      // it is always evaluated before any panel at depth ≤ 25.
+      // ─────────────────────────────────────────────────────────────────────
+      const hit = this.add
+        .rectangle(
+          entry.x,
+          entry.y,
+          Math.max(44, radius * 2 + 10),
+          Math.max(44, radius * 2 + 10),
+          0x000000,
+          0.001
+        )
+        .setDepth(MAP_NODE_HIT_DEPTH)
+        .setInteractive({ useHandCursor: true });
+
       hit.on('pointerdown', () => {
         this.selectedNodeId = node.id;
         this.renderMap();
@@ -413,7 +443,12 @@ export class MapScene extends Phaser.Scene {
         this.updatePrimaryAction();
       });
 
-      this.mapLayer?.add([circle, icon, nodeGlyph, label, hit]);
+      // Track so we can destroy on next renderMap() call.
+      this.mapHitAreas.push(hit);
+
+      // Visual objects (circle, icon, label) stay in the container for
+      // grouped rendering; only the input-receiving hit area is hoisted out.
+      this.mapLayer?.add([circle, icon.root, fallbackIcon, label]);
     });
   }
 
@@ -438,7 +473,7 @@ export class MapScene extends Phaser.Scene {
     const action = this.getPrimaryActionLabel(node.roomType);
     const risk = node.roomType === 'boss' ? 'High risk, stage advance on win.' : node.roomType === 'elite' ? 'Hard battle, better loot.' : 'Clear this room to advance the route.';
     this.selectedNodeText?.setText([
-      `${node.label} � ${this.getNodeTypeLabel(node.roomType, 'full')} � ${status}`,
+      `${node.label} · ${this.getNodeTypeLabel(node.roomType, 'full')} · ${status}`,
       `${risk}`,
       `Action: ${action}`
     ]);
