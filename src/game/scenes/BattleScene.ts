@@ -989,7 +989,7 @@ export class BattleScene extends Phaser.Scene {
     this.monsterStackPreview?.updateQueue(state.activeEncounterPack);
   }
 
-  private addStageBackgroundLayers(): void {
+private addStageBackgroundLayers(): void {
     const state = this.sharedGame.runState;
     const enemy = state.activeEnemy;
     const layout = this.battleLayout;
@@ -1008,39 +1008,20 @@ export class BattleScene extends Phaser.Scene {
       }
       this.sharedGame.assetSystem.createImageByAssetKey(this, bossArena, 'stageBackground', centerX, centerY, { kind: 'background' })
         .setDisplaySize(combatRect.width, combatRect.height)
-        .setAlpha(0.92)
+        .setAlpha(0.86)
         .setDepth(-50);
-    } else {
-      const far = this.sharedGame.assetSystem.getStageBackground(this, state.stage, 'battleFar');
-      const mid = this.sharedGame.assetSystem.getStageBackground(this, state.stage, 'battleMid');
-      const near = this.sharedGame.assetSystem.getStageBackground(this, state.stage, 'battleNear');
-      if (import.meta.env.DEV) {
-        console.log('[BattleScene] stage battle keys:', { far, mid, near, stage: state.stage });
-      }
-      const layers = [far, mid, near].filter((key, index, all) => all.indexOf(key) === index);
-
-      layers.forEach((key, index) => {
-        this.sharedGame.assetSystem.createImageByAssetKey(this, key, 'stageBackground', centerX, centerY, { kind: 'background' })
-          .setDisplaySize(combatRect.width, combatRect.height)
-          .setAlpha(layers.length > 1 ? [0.58, 0.76, 0.9][index] ?? 0.72 : 0.86)
-          .setDepth(-50 + index);
-      });
     }
 
-    const puzzleFar = this.sharedGame.assetSystem.getStageBackground(this, state.stage, 'puzzleFar');
-    const puzzleMid = this.sharedGame.assetSystem.getStageBackground(this, state.stage, 'puzzleMid');
-    const puzzleNear = this.sharedGame.assetSystem.getStageBackground(this, state.stage, 'puzzleNear');
+    const puzzleBg = this.sharedGame.assetSystem.getStageBackground(this, state.stage, 'puzzleMid');
     if (import.meta.env.DEV) {
-      console.log('[BattleScene] stage puzzle keys:', { puzzleFar, puzzleMid, puzzleNear, stage: state.stage });
+      console.log('[BattleScene] stage puzzle key:', { puzzleBg, stage: state.stage });
     }
-    const puzzleLayers = [puzzleFar, puzzleMid, puzzleNear].filter((key, index, all) => all.indexOf(key) === index);
-
-    puzzleLayers.forEach((key, index) => {
-      this.sharedGame.assetSystem.createImageByAssetKey(this, key, 'stageBackground', puzzleCenterX, puzzleCenterY, { kind: 'background' })
+    if (puzzleBg) {
+      this.sharedGame.assetSystem.createImageByAssetKey(this, puzzleBg, 'stageBackground', puzzleCenterX, puzzleCenterY, { kind: 'background' })
         .setDisplaySize(puzzleRect.width, puzzleRect.height)
-        .setAlpha(puzzleLayers.length > 1 ? [0.34, 0.5, 0.62][index] ?? 0.45 : 0.52)
-        .setDepth(-42 + index);
-    });
+        .setAlpha(0.52)
+        .setDepth(-42);
+    }
   }
 
   private buildBoard(): void {

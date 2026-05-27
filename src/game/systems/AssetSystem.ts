@@ -1000,9 +1000,6 @@ export class AssetSystem {
     graphics.fillRoundedRect(0, 0, width, height, Math.max(4, Math.round(width * 0.12)));
     graphics.lineStyle(Math.max(2, Math.round(width * 0.06)), stroke, 1);
     graphics.strokeRoundedRect(2, 2, width - 4, height - 4, Math.max(4, Math.round(width * 0.12)));
-    graphics.lineStyle(Math.max(1, Math.round(width * 0.04)), stroke, 0.55);
-    graphics.lineBetween(width * 0.25, height * 0.25, width * 0.75, height * 0.75);
-    graphics.lineBetween(width * 0.75, height * 0.25, width * 0.25, height * 0.75);
     graphics.generateTexture(key, width, height);
     graphics.destroy();
   }

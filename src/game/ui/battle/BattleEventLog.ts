@@ -1,8 +1,8 @@
 import Phaser from 'phaser';
 import type { UiComponentSpec } from '../../types/ui-layout';
-import { COLORS } from '../../utils/constants';
+import { COLORS, FONT_FAMILY_STACKS } from '../../utils/constants';
 import { roundPixel, type UiRect } from '../PixelPerfect';
-import { UiPanel, createUiTextStyle } from '../components';
+import { UiPanel } from '../components';
 import type { BattleScreenShell } from './BattleScreenShell';
 
 export type BattleEventLogMessage = {
@@ -64,25 +64,29 @@ export class BattleEventLog {
     this.shell.eventLogLayer.add(this.root);
     this.panel = new UiPanel(this.scene, EVENT_LOG_SPEC, {
       fillColor: COLORS.panelAlt,
-      fillAlpha: 0.68,
+      fillAlpha: 0.85,
       strokeColor: COLORS.accent,
-      strokeAlpha: 0.4
+      strokeAlpha: 0.6
     });
     this.root.add(this.panel.root);
 
-    const lineHeight = 30;
+    const lineHeight = 42;
     for (let index = 0; index < this.maxVisibleMessages; index += 1) {
       const label = this.scene.add.text(
         roundPixel(EVENT_LOG_SPEC.x + EVENT_LOG_SPEC.safePadding),
         roundPixel(EVENT_LOG_SPEC.y + EVENT_LOG_SPEC.safePadding + index * lineHeight),
         '',
-        createUiTextStyle({
-          textStyle: 'micro',
+        {
           color: '#f6f7ff',
-          wordWrapWidth: EVENT_LOG_SPEC.w - EVENT_LOG_SPEC.safePadding * 2,
-          lineSpacing: 1,
-          outline: true
-        }, EVENT_LOG_SPEC)
+          fontFamily: FONT_FAMILY_STACKS.readable,
+          fontSize: '22px',
+          fontStyle: 'bold',
+          align: 'left',
+          wordWrap: { width: EVENT_LOG_SPEC.w - EVENT_LOG_SPEC.safePadding * 2 },
+          lineSpacing: 6,
+          stroke: '#05060a',
+          strokeThickness: 3
+        }
       ).setOrigin(0, 0);
       label.setMaxLines(2);
       label.setFixedSize(EVENT_LOG_SPEC.w - EVENT_LOG_SPEC.safePadding * 2, lineHeight);

@@ -368,9 +368,8 @@ export class MapScene extends Phaser.Scene {
         if (dx * dx + dy * dy < 16) {
           continue;
         }
-        const targetModel = nodeModels.get(targetId);
-        const lineColor = targetModel?.pathAssetKey === 'ui_map_path_locked' ? 0x303750 : 0x44507a;
-        const line = this.add.line(0, 0, start.x, start.y, end.x, end.y, lineColor, 1).setLineWidth(4);
+        const lineColor = nodeModels.get(targetId)?.pathAssetKey === 'ui_map_path_locked' ? 0x4a5778 : 0x5e75ff;
+        const line = this.add.line(0, 0, start.x, start.y, end.x, end.y, lineColor, 1).setLineWidth(5);
         this.mapLayer.add(line);
       }
     }
