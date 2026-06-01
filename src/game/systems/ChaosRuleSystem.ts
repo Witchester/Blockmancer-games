@@ -1,4 +1,4 @@
-import type { GameplayEffect, RewardModifier, RunState } from '../types/GameTypes';
+import type { ActiveHazardKind, GameplayEffect, RewardModifier, RunState } from '../types/GameTypes';
 import { weightedChoice } from '../utils/random';
 import { contentRegistry } from './ContentRegistry';
 import { GameplayEffectSystem } from './GameplayEffectSystem';
@@ -48,13 +48,21 @@ export class ChaosRuleSystem {
     return state.activeChaosRule ? contentRegistry.getOptionalById<ChaosRuleEntry>('chaosRule', state.activeChaosRule) : null;
   }
 
-  applyStartEffects(state: RunState, addLog: (message: string) => void, board?: { addConfettiBlocks(count: number): number; addJunkRows(count: number): void; addStickyBlocks?(count: number): number; addRoyalBlocks?(count: number): number; addSpecialBlocksForSpell?(blockId: string, count: number): number; swapNextAndHold?(): boolean; clearRandomCluster?(count: number): number }): void {
+  applyStartEffects(
+    state: RunState,
+    addLog: (message: string) => void,
+    board?: { addConfettiBlocks(count: number): number; addJunkRows(count: number): void; addStickyBlocks?(count: number): number; addRoyalBlocks?(count: number): number; addSpecialBlocksForSpell?(blockId: string, count: number): number; swapNextAndHold?(): boolean; clearRandomCluster?(count: number): number },
+    reactiveHooks?: {
+      queueHazard?: (kind: ActiveHazardKind, options?: { amount?: number; blockId?: string; delayPieces?: number; sourceId?: string }) => void;
+      queueIncomingJunk?: (amount: number, sourceId: string, delayPieces: number, blockId?: string) => void;
+    }
+  ): void {
     const rule = this.getActive(state);
     if (!rule) {
       return;
     }
     addLog(`Festival Chaos: ${rule.name} - ${rule.description}`);
-    this.effectSystem.applyMany(rule.effects, { state, board: board as never, addLog, sourceName: rule.id });
+    this.effectSystem.applyMany(rule.effects, { state, board: board as never, addLog, sourceName: rule.id, ...reactiveHooks });
   }
 
   clear(state: RunState): void {

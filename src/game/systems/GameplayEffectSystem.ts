@@ -1,4 +1,4 @@
-import type { GameplayEffect, RunState } from '../types/GameTypes';
+import type { ActiveHazardKind, GameplayEffect, RunState } from '../types/GameTypes';
 
 export type GameplayEffectBoardHooks = {
   addStickyBlocks?(count: number): number;
@@ -15,6 +15,8 @@ export type GameplayEffectContext = {
   board?: GameplayEffectBoardHooks;
   addLog?: (message: string) => void;
   sourceName?: string;
+  queueHazard?: (kind: ActiveHazardKind, options?: { amount?: number; blockId?: string; delayPieces?: number; sourceId?: string }) => void;
+  queueIncomingJunk?: (amount: number, sourceId: string, delayPieces: number, blockId?: string) => void;
 };
 
 export type GameplayEffectHandlerResult = {
@@ -55,6 +57,10 @@ export class GameplayEffectSystem {
         return { handled: true, message: `Confetti adds ${count} sparkle block${count === 1 ? '' : 's'}.` };
       }
       case 'add_junk_rows':
+        if (context.queueIncomingJunk) {
+          context.queueIncomingJunk(Math.max(1, value), context.sourceName ?? 'gameplay_effect', 3, effect.blockId ?? 'block_crumb_junk');
+          return { handled: true, message: `${Math.max(1, value)} warned junk block${value === 1 ? '' : 's'} enter the tray.` };
+        }
         board?.addJunkRows?.(Math.max(1, value));
         return { handled: true, message: `${Math.max(1, value)} junk row${value === 1 ? '' : 's'} rumble in.` };
       case 'add_royal_blocks': {
@@ -67,6 +73,10 @@ export class GameplayEffectSystem {
         return { handled: true, message: `${count} ${blockId.replace(/^block_/, '').replace(/_/g, ' ')} block${count === 1 ? '' : 's'} appear.` };
       }
       case 'swap_next_hold':
+        if (context.queueHazard) {
+          context.queueHazard('bad_piece', { sourceId: context.sourceName, delayPieces: 2 });
+          return { handled: true, message: 'A weird queue delivery is warned before it lands.' };
+        }
         return { handled: true, message: board?.swapNextAndHold?.() ? 'Next and Hold swap places.' : 'Next and Hold try to swap, but nothing changes.' };
       case 'clear_random_blocks': {
         const cleared = board?.clearRandomCluster?.(value) ?? 0;
@@ -91,6 +101,10 @@ export class GameplayEffectSystem {
         return { handled: true, message: 'The board slows down for a breath.' };
       case 'speed_spike':
       case 'increase_fall_speed':
+        if (context.queueHazard) {
+          context.queueHazard('speed_wave', { sourceId: context.sourceName, delayPieces: 4, amount: value });
+          return { handled: true, message: 'A speed wave warning starts with time to counter.' };
+        }
         state.fallSpeed = Math.min(1.85, state.fallSpeed + value);
         return { handled: true, message: 'The board gets a little faster.' };
       case 'stage_goal_progress':

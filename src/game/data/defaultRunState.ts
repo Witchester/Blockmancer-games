@@ -555,6 +555,9 @@ export function createDefaultRunState(): RunState {
     pendingStageAdvance: false,
     victory: false,
     runStats: createDefaultRunStats(),
+    /** Release 1 flags for meta/hub/friendship handling */
+    metaBonusesApplied: false,
+    claimedFriendRewards: [],
     saveVersion: SAVE_VERSION
   };
 }
@@ -689,6 +692,12 @@ export function normalizeRunState(input: unknown): RunState {
   merged.lastCascadeLines = Math.max(0, raw.lastCascadeLines ?? defaults.lastCascadeLines);
   merged.currentEventId = typeof raw.currentEventId === 'string' ? raw.currentEventId : null;
   merged.saveVersion = SAVE_VERSION;
+  // Normalize new Release 1 run flags
+  merged.claimedFriendRewards = Array.isArray((raw as { claimedFriendRewards?: unknown }).claimedFriendRewards)
+    ? ((raw as { claimedFriendRewards?: unknown }).claimedFriendRewards as unknown[]).filter((v): v is string => typeof v === 'string')
+    : [...defaults.claimedFriendRewards];
+
+  merged.metaBonusesApplied = Boolean((raw as { metaBonusesApplied?: unknown }).metaBonusesApplied ?? defaults.metaBonusesApplied);
   oopsieSystem.normalizeState(merged);
   merged.activeOopsies = [...merged.player.oopsies];
   merged.routeProgress = normalizeRouteProgress(merged.routeProgress, merged.hero.id);

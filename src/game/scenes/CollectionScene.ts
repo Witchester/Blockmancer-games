@@ -26,11 +26,12 @@ export class CollectionScene extends Phaser.Scene {
 
     game.friendshipSystem.list().slice(0, 10).forEach((entry, index) => {
       const points = game.metaSystem.state.monsterFriendship[entry.monsterId] ?? 0;
+      const summary = game.friendshipSystem.getEntryEffectSummary(entry, game.metaSystem.state);
       new Card(this, layout.centerX, 190 + index * 86, layout.contentWidth - 24, 70, {
         title: entry.name,
-        body: `Friendship points: ${points}/${entry.pointsRequired}`,
+        body: `Friendship points: ${points}/${entry.pointsRequired}\nBenefit: ${summary.current}\nNext: ${summary.next}`,
         titleFontSize: compact ? '18px' : '20px',
-        bodyFontSize: compact ? '15px' : '17px',
+        bodyFontSize: compact ? '13px' : '15px',
         strokeColor: COLORS.accentSoft
       });
     });

@@ -32,9 +32,11 @@ export class HubScene extends Phaser.Scene {
       const level = game.metaSystem.state.hubBuildings[building.id] ?? 0;
       const nextLevel = game.hubProgressionSystem.getNextLevel(building.id, game.metaSystem.state);
       const costText = nextLevel ? `Cost: ${game.hubProgressionSystem.formatCost(nextLevel.cost)}` : 'Locked for backlog';
+      const effects = game.hubProgressionSystem.getBuildingEffectDescription(building.id, game.metaSystem.state);
+      const bodyText = `${building.description}\nCurrent: ${effects.current}\nNext: ${effects.next}\n${costText}`;
       new Card(this, x, y, layout.contentWidth / 2 - 20, 104, {
         title: `${building.name} Lv.${level}`,
-        body: `${building.description}\n${costText}`,
+        body: bodyText,
         titleFontSize: compact ? '18px' : '20px',
         bodyFontSize: compact ? '14px' : '15px',
         strokeColor: COLORS.accentSoft

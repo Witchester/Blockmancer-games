@@ -19,6 +19,56 @@ export type HubBuildingEntry = {
 };
 
 export class HubProgressionSystem {
+  // Release 1: small, conservative hub effects mapping by building id and level
+  private static readonly HUB_EFFECTS: Record<string, Record<number, { desc: string; gold?: number; shield?: number; mana?: number; items?: string[]; reroll?: number }>> = {
+    hub_cake_stall: {
+      1: { desc: 'Start run with a Mini Cupcake.', items: ['item_mini_cupcake'] }
+    },
+    hub_repair_tent: {
+      1: { desc: 'Start run with +1 shield.', shield: 1 }
+    },
+    hub_snack_table: {
+      1: { desc: 'Start run with +15 gold.', gold: 15 }
+    },
+    hub_arcade_booth: {
+      1: { desc: 'Start run with an extra reward reroll.', reroll: 1 }
+    },
+    hub_star_lantern_stage: {
+      1: { desc: 'Start run with +10 mana.', mana: 10 }
+    }
+  };
+
+  getRunStartBonuses(meta: MetaState): { startingGold: number; startingShield: number; startingMana: number; items: string[]; rewardRerolls: number } {
+    const out = { startingGold: 0, startingShield: 0, startingMana: 0, items: [] as string[], rewardRerolls: 0 };
+    for (const [buildingId, level] of Object.entries(meta.hubBuildings)) {
+      const mapping = HubProgressionSystem.HUB_EFFECTS[buildingId];
+      if (!mapping) continue;
+      // Apply only the highest level mapping that is <= current level
+      const applicableLevels = Object.keys(mapping).map((k) => Number(k)).sort((a, b) => a - b);
+      for (const lvl of applicableLevels) {
+        if (level >= lvl) {
+          const cfg = mapping[lvl];
+          if (cfg.gold) out.startingGold += cfg.gold;
+          if (cfg.shield) out.startingShield += cfg.shield;
+          if (cfg.mana) out.startingMana += cfg.mana;
+          if (cfg.items) out.items.push(...cfg.items);
+          if (cfg.reroll) out.rewardRerolls += cfg.reroll;
+        }
+      }
+    }
+    return out;
+  }
+
+  getBuildingEffectDescription(buildingId: string, meta: MetaState): { current: string; next: string } {
+    const mapping = HubProgressionSystem.HUB_EFFECTS[buildingId] ?? {};
+    const currentLevel = meta.hubBuildings[buildingId] ?? 0;
+    const currentCfg = mapping[currentLevel] ?? null;
+    const nextCfg = mapping[currentLevel + 1] ?? null;
+    return {
+      current: currentCfg ? currentCfg.desc : 'No Release 1 effect yet.',
+      next: nextCfg ? nextCfg.desc : 'No additional Release 1 effect.'
+    };
+  }
   listBuildings(): HubBuildingEntry[] {
     return contentRegistry.listEnabled<HubBuildingEntry>('hubBuilding');
   }

@@ -100,16 +100,15 @@ export class ShopSystem {
       };
     }
     
-    state.player.gold -= cost;
-    state.gold = state.player.gold;
-    
     const items = this.rewardSystem.getRewardPool().filter(r => r.type === 'Item');
     const reward = items.length > 0 ? choice(items) : null;
     
     if (reward) {
+      state.player.gold -= cost;
+      state.gold = state.player.gold;
       return {
         transition: 'stay',
-        messages: [this.rewardSystem.applyReward(state, reward.id)]
+        messages: [`Marnie rings up an item for ${cost} gold.`, this.rewardSystem.applyReward(state, reward.id)]
       };
     }
     

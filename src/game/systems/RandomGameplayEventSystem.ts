@@ -1,4 +1,4 @@
-import type { GameplayEffect, RewardModifier, RunState } from '../types/GameTypes';
+import type { ActiveHazardKind, GameplayEffect, RewardModifier, RunState } from '../types/GameTypes';
 import { choice } from '../utils/random';
 import { contentRegistry } from './ContentRegistry';
 import { GameplayEffectSystem } from './GameplayEffectSystem';
@@ -26,6 +26,11 @@ type BoardHooks = {
   addRoyalBlocks(count: number): number;
   swapNextAndHold(): boolean;
   clearRandomCluster(count: number): number;
+};
+
+type ReactiveHooks = {
+  queueHazard?: (kind: ActiveHazardKind, options?: { amount?: number; blockId?: string; delayPieces?: number; sourceId?: string }) => void;
+  queueIncomingJunk?: (amount: number, sourceId: string, delayPieces: number, blockId?: string) => void;
 };
 
 export class RandomGameplayEventSystem {
@@ -62,9 +67,9 @@ export class RandomGameplayEventSystem {
     state.activeRandomGameplayEvents = [];
   }
 
-  applyEffects(state: RunState, eventEntry: RandomGameplayEventEntry, addLog: (message: string) => void, board?: BoardHooks): void {
+  applyEffects(state: RunState, eventEntry: RandomGameplayEventEntry, addLog: (message: string) => void, board?: BoardHooks, reactiveHooks?: ReactiveHooks): void {
     addLog(`Random Event: ${eventEntry.name} - ${eventEntry.toneText ?? eventEntry.description}`);
-    this.effectSystem.applyMany(eventEntry.effects, { state, board, addLog, sourceName: eventEntry.id });
+    this.effectSystem.applyMany(eventEntry.effects, { state, board, addLog, sourceName: eventEntry.id, ...reactiveHooks });
   }
 
   private getMaxActive(state: RunState): number {

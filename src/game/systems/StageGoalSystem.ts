@@ -137,7 +137,11 @@ export class StageGoalSystem {
       return null;
     }
     const { goal, progress } = current;
+    if (progress.bossEffectApplied) {
+      return null;
+    }
     if (progress.completed) {
+      progress.bossEffectApplied = true;
       switch (goal.bossDebuff) {
         case 'fewer_sticky_blocks':
           enemy.attackIntervalLocks += 1;
@@ -166,6 +170,7 @@ export class StageGoalSystem {
     }
 
     progress.failed = true;
+    progress.bossEffectApplied = true;
     switch (goal.bossBuffOnFail) {
       case 'extra_sticky':
         state.activeHazards.push({

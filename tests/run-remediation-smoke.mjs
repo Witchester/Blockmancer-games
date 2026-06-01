@@ -134,6 +134,19 @@ const stageGoalSystemText = readText('src/game/systems/StageGoalSystem.ts');
 assert(stageGoalSystemText.includes('recordCascadeProgress'), 'StageGoalSystem missing cascade-driven stage goal progression.');
 assert(stageGoalSystemText.includes('recordBattleVictoryProgress'), 'StageGoalSystem missing battle-victory stage goal progression.');
 assert(stageGoalSystemText.includes('activeHazards.push'), 'StageGoalSystem boss fail consequences are still text-only.');
+assert(stageGoalSystemText.includes('bossEffectApplied'), 'Stage goal boss consequences are not guarded against duplicate application.');
+assert(battleSceneText.includes('stageGoalSystem.applyBossStartEffect(state)'), 'BattleScene does not apply stage-goal boss consequences after boss spawn.');
+assert(battleSceneText.includes("case 'incoming_junk_queue'"), 'Enemy behavior incoming_junk_queue is not handled by BattleScene.');
+assert(battleSceneText.includes("case 'lock_random_column'"), 'Enemy behavior lock_random_column is not routed to a warning-window handler.');
+assert(battleSceneText.includes('hazard.warningText'), 'Hazard warning tray starts without logging readable warning text.');
+
+const gameplayEffectSystemText = readText('src/game/systems/GameplayEffectSystem.ts');
+assert(gameplayEffectSystemText.includes('queueHazard'), 'GameplayEffectSystem cannot route event effects through hazard warning windows.');
+assert(gameplayEffectSystemText.includes('queueIncomingJunk'), 'GameplayEffectSystem cannot route junk effects through incoming junk queue.');
+
+const shopSystemText = readText('src/game/systems/ShopSystem.ts');
+const buyItemBlock = shopSystemText.slice(shopSystemText.indexOf('buyItem(state: RunState)'), shopSystemText.indexOf('leave(): ShopResolution'));
+assert(buyItemBlock.indexOf('const items = this.rewardSystem.getRewardPool()') < buyItemBlock.indexOf('state.player.gold -= cost'), 'ShopSystem.buyItem spends gold before confirming stock.');
 
 const routeStorySystemText = readText('src/game/systems/RouteStorySystem.ts');
 const routeDialogueSceneText = readText('src/game/scenes/RouteDialogueScene.ts');
@@ -154,6 +167,17 @@ const requiredAssetFolders = [
 for (const filePath of requiredAssetFolders) {
   assert(fs.existsSync(path.join(repoRoot, filePath)), `Missing route/story asset scaffold: ${filePath}`);
 }
+
+// Release 1 Hub/Friendship remediation checks
+const hubProgText = readText('src/game/systems/HubProgressionSystem.ts');
+assert(hubProgText.includes('getRunStartBonuses'), 'HubProgressionSystem missing getRunStartBonuses helper.');
+const friendshipText = readText('src/game/systems/FriendshipSystem.ts');
+assert(friendshipText.includes('getRunStartGifts'), 'FriendshipSystem missing getRunStartGifts helper.');
+const blockGameText = readText('src/game/BlockmancerGame.ts');
+assert(blockGameText.includes('metaBonusesApplied'), 'BlockmancerGame.newRun must guard meta bonuses with metaBonusesApplied.');
+assert(blockGameText.includes('claimedFriendRewards'), 'BlockmancerGame.newRun must initialize claimedFriendRewards for per-run friendship gifts.');
+const defaultRunText = readText('src/game/data/defaultRunState.ts');
+assert(defaultRunText.includes('metaBonusesApplied') && defaultRunText.includes('claimedFriendRewards'), 'Default run state must include metaBonusesApplied and claimedFriendRewards defaults.');
 
 await runCascadeGravitySmoke(assert);
 

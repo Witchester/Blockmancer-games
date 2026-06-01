@@ -522,14 +522,24 @@ export class BattleScene extends Phaser.Scene {
       if (!this.bossRuleCardShownBeforeBattle) {
         this.showBossRuleCard(state.activeEnemy.id);
       }
+      const stageGoalMessage = this.sharedGame.stageGoalSystem.applyBossStartEffect(state);
+      if (stageGoalMessage) {
+        this.combat.addLog(stageGoalMessage);
+      }
       this.sharedGame.bossSystem.applyBossStartMechanic(state, this.board).forEach((message) => this.combat.addLog(message));
     }
     const chaos = this.sharedGame.chaosRuleSystem.getActive(state);
     if (chaos) {
-      this.sharedGame.chaosRuleSystem.applyStartEffects(state, (message) => this.combat.addLog(message), this.board);
+      this.sharedGame.chaosRuleSystem.applyStartEffects(state, (message) => this.combat.addLog(message), this.board, {
+        queueHazard: (kind, options) => this.startHazardWarning(kind, options),
+        queueIncomingJunk: (amount, sourceId, delayPieces, blockId) => this.queueIncomingJunk(amount, sourceId, delayPieces, blockId)
+      });
     }
     for (const eventEntry of this.sharedGame.randomGameplayEventSystem.getActive(state)) {
-      this.sharedGame.randomGameplayEventSystem.applyEffects(state, eventEntry, (message) => this.combat.addLog(message), this.board);
+      this.sharedGame.randomGameplayEventSystem.applyEffects(state, eventEntry, (message) => this.combat.addLog(message), this.board, {
+        queueHazard: (kind, options) => this.startHazardWarning(kind, options),
+        queueIncomingJunk: (amount, sourceId, delayPieces, blockId) => this.queueIncomingJunk(amount, sourceId, delayPieces, blockId)
+      });
     }
     this.syncBoardState();
     game.saveRun();
@@ -1851,6 +1861,11 @@ private addStageBackgroundLayers(): void {
         }
         this.combat.addLog('Crumb junk lines up in the snack tray.');
         break;
+      case 'incoming_junk_queue':
+        this.queueIncomingJunk(this.getStageHazardAmount(enemy.roomType === 'elite' ? 4 : 3), enemy.id, Math.max(3, this.getStageCounterWindow()), 'block_crumb_junk');
+        damage = Math.max(0, damage - 2);
+        this.combat.addLog('A larger junk delivery enters the tray with a counter window.');
+        break;
       case 'pattern_junk':
         this.queueIncomingJunk(this.getStageHazardAmount(3), enemy.id, this.getStageCounterWindow(), 'block_crumb_junk');
         this.startHazardWarning('royal_pattern', {
@@ -1885,9 +1900,9 @@ private addStageBackgroundLayers(): void {
         this.combat.addLog('Mana Hex raises spell costs for a short time.');
         break;
       case 'shake_board':
-        damage += 2;
+        this.startHazardWarning('bad_piece', { sourceId: enemy.id, delayPieces: 2 });
         this.shakeCamera(220, 0.0075);
-        this.combat.addLog('Heavy Slam rattles the board violently.');
+        this.combat.addLog('Heavy Slam rattles the board and warns a weird delivery.');
         break;
       case 'increase_fall_speed':
         this.startHazardWarning('speed_wave', { sourceId: enemy.id, delayPieces: Math.max(3, this.getStageCounterWindow()) });
@@ -1929,6 +1944,14 @@ private addStageBackgroundLayers(): void {
       case 'swap_next_hold':
         this.startHazardWarning('bad_piece', { sourceId: enemy.id, delayPieces: 2 });
         this.combat.addLog('A goblin is carrying a weird piece toward the queue.');
+        break;
+      case 'lock_random_column':
+        this.startHazardWarning('low_ceiling', {
+          sourceId: enemy.id,
+          delayPieces: Math.max(4, this.getStageCounterWindow() + 1),
+          amount: 1
+        });
+        this.combat.addLog('A royal column marker warns before ceiling pressure arrives.');
         break;
       case 'reverse_controls':
         enemy.reverseControlsTurns = 3;
@@ -2208,7 +2231,9 @@ private addStageBackgroundLayers(): void {
       return;
     }
 
-    this.sharedGame.runState.activeHazards.push(this.createHazard(kind, options));
+    const hazard = this.createHazard(kind, options);
+    this.sharedGame.runState.activeHazards.push(hazard);
+    this.combat.addLog(hazard.warningText);
     this.playVfx(this.getHazardWarningAnimationId(kind), this.screenWidth - 76, this.topSectionHeight + 52, ITEM_VFX_BOX_SIZE, 127);
   }
 
@@ -2315,7 +2340,8 @@ private addStageBackgroundLayers(): void {
         break;
       case 'freeze':
         this.sharedGame.runState.fallSpeed = Math.min(MAX_FALL_SPEED, this.sharedGame.runState.fallSpeed + 0.04);
-        this.combat.addLog('The chilly block moment makes the board a little quicker.');
+        this.board.addSpecialBlocksForSpell('block_ice', 1, 'hazard');
+        this.combat.addLog('The chilly block moment leaves an ice block and makes the board a little quicker.');
         break;
       case 'preview': {
         const enemy = this.sharedGame.runState.activeEnemy;
@@ -2327,8 +2353,9 @@ private addStageBackgroundLayers(): void {
         break;
       }
       case 'low_ceiling':
-        this.board.clearTopOccupiedCells(Math.ceil(this.boardColumns / 2));
-        this.combat.addLog('The low ceiling nudges the top row clear instead of trapping you.');
+        this.board.clearTopOccupiedCells(Math.ceil(this.boardColumns / 3));
+        this.queueIncomingJunk(2, hazard.sourceId ?? 'low_ceiling', Math.max(2, this.getStageCounterWindow()), hazard.blockId ?? 'block_cloud_junk');
+        this.combat.addLog('The low ceiling clears breathing room, then queues cloud junk instead of trapping you.');
         break;
       case 'bad_piece':
         this.board.setNextPieceType(Phaser.Math.Between(0, 1) === 0 ? 'S' : 'Z');
@@ -2344,6 +2371,9 @@ private addStageBackgroundLayers(): void {
       }
       case 'speed_wave':
         this.sharedGame.runState.fallSpeed = Math.min(MAX_FALL_SPEED, this.sharedGame.runState.fallSpeed + 0.08);
+        if (this.sharedGame.runState.activeEnemy) {
+          this.sharedGame.runState.activeEnemy.attackCounter = Math.max(1, this.sharedGame.runState.activeEnemy.attackCounter - 1);
+        }
         this.combat.addLog('The floor wobbles faster for a bit.');
         break;
       case 'royal_pattern': {

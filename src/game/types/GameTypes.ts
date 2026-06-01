@@ -433,6 +433,7 @@ export type StageGoalProgress = {
   requiredAmount: number;
   completed: boolean;
   failed: boolean;
+  bossEffectApplied?: boolean;
 };
 
 export type BoardSizeModifier = {
@@ -770,5 +771,9 @@ export interface RunState {
   pendingStageAdvance: boolean;
   victory: boolean;
   runStats: RunStats;
+  /** Release 1: guard to ensure meta bonuses applied exactly once per run */
+  metaBonusesApplied: boolean;
+  /** Once-per-run claimed friendship rewards (monsterId list) */
+  claimedFriendRewards: string[];
   saveVersion: number;
 }

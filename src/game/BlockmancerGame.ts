@@ -144,6 +144,53 @@ export class BlockmancerGame extends Phaser.Game {
     this.runState = createDefaultRunState();
     this.heroSystem.applyHeroToRun(this.runState, heroId);
     this.upgradeSystem.recalculateLevelUpDerivedStats(this.runState);
+    // Apply Release 1: hub progression and friendship run-start bonuses exactly once per run
+    // Reset per-run friendship claim tracking
+    this.runState.claimedFriendRewards = [];
+    if (!this.runState.metaBonusesApplied) {
+      const hub = this.hubProgressionSystem.getRunStartBonuses(this.metaSystem.state);
+      if (hub.startingGold && hub.startingGold > 0) {
+        this.runState.player.gold += hub.startingGold;
+        this.runState.player.totalGoldCollected += hub.startingGold;
+        this.runState.gold = this.runState.player.gold;
+      }
+      if (hub.startingShield && hub.startingShield > 0) {
+        this.runState.player.shield += hub.startingShield;
+      }
+      if (hub.startingMana && hub.startingMana > 0) {
+        this.runState.player.mana = Math.min(this.runState.player.maxMana, this.runState.player.mana + hub.startingMana);
+      }
+      for (const itemId of hub.items) {
+        this.inventorySystem.addItem(this.runState, itemId);
+      }
+      if (hub.rewardRerolls && hub.rewardRerolls > 0) {
+        this.runState.rewardRerolls += hub.rewardRerolls;
+      }
+      this.runState.metaBonusesApplied = true;
+    }
+
+    // Friendship: grant small once-per-run helper gifts for unlocked friends
+    const friendGifts = this.friendshipSystem.getRunStartGifts(this.metaSystem.state);
+    for (const gift of friendGifts) {
+      if (this.runState.claimedFriendRewards.includes(gift.monsterId)) continue;
+      if (gift.gold && gift.gold > 0) {
+        this.runState.player.gold += gift.gold;
+        this.runState.player.totalGoldCollected += gift.gold;
+        this.runState.gold = this.runState.player.gold;
+      }
+      if (gift.shield && gift.shield > 0) {
+        this.runState.player.shield += gift.shield;
+      }
+      if (gift.mana && gift.mana > 0) {
+        this.runState.player.mana = Math.min(this.runState.player.maxMana, this.runState.player.mana + gift.mana);
+      }
+      if (gift.items) {
+        for (const itemId of gift.items) {
+          this.inventorySystem.addItem(this.runState, itemId);
+        }
+      }
+      this.runState.claimedFriendRewards.push(gift.monsterId);
+    }
     this.runState.map = this.mapSystem.createMap(this.runState.stage);
     this.stageGoalSystem.ensureGoal(this.runState);
     this.boardSizeModifierSystem.applyEncounterBoardSize(this.runState);
