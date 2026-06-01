@@ -34,7 +34,11 @@ import type {
   HazardSeverity,
   NodeEncounterPack,
   PlayerLevelState,
-  LevelUpScreenState
+  LevelUpScreenState,
+  FeverShowtimeState,
+  FeverReleaseReason,
+  FeverReleaseSummary,
+  FeverHeatLevel
 } from '../types/GameTypes';
 import { createDefaultPlayerState } from '../utils/constants';
 import { OopsieSystem } from '../systems/OopsieSystem';
@@ -53,6 +57,7 @@ type PartialRunState = Partial<Omit<RunState, 'player' | 'hero' | 'weapon' | 'bo
   activeEnemy?: EnemyInstance | null;
   activeHazards?: ActiveHazardState[];
   reactiveState?: Partial<ReactiveBattleState>;
+  feverShowtime?: Partial<FeverShowtimeState>;
   /** @deprecated kept for backward save compatibility */
   currentEnemy?: EnemyInstance | null;
   /** @deprecated kept for backward save compatibility */
@@ -86,13 +91,32 @@ function cloneBoardCell(cell: unknown): BoardCell {
     return cell;
   }
   if (cell && typeof cell === 'object') {
-    const raw = cell as Partial<Extract<BoardCell, object>>;
-    return {
+    const raw = cell as Partial<Extract<BoardCell, object>> & {
+      feverCharged?: boolean;
+      softJunk?: boolean;
+      feverGenerated?: boolean;
+      sourceId?: string;
+    };
+    const cloned: Extract<BoardCell, object> & {
+      feverCharged?: boolean;
+      softJunk?: boolean;
+      feverGenerated?: boolean;
+      sourceId?: string;
+    } = {
       color: typeof raw.color === 'number' ? raw.color : 0x888888,
       blockId: typeof raw.blockId === 'string' ? raw.blockId : 'block_unknown',
       blockType: raw.blockType ?? 'special',
       clearEffects: Array.isArray(raw.clearEffects) ? raw.clearEffects.map((effect) => ({ ...effect })) : []
     };
+    if (raw.feverCharged) {
+      cloned.feverCharged = true;
+    }
+    if (raw.softJunk) {
+      cloned.softJunk = true;
+      cloned.feverGenerated = Boolean(raw.feverGenerated);
+      cloned.sourceId = typeof raw.sourceId === 'string' ? raw.sourceId : 'fever_soft_junk';
+    }
+    return cloned;
   }
   return 0;
 }
@@ -182,6 +206,102 @@ function normalizeLevelUpScreenState(value: unknown, levelState: PlayerLevelStat
     rerollCharges: Math.min(rerollCharges, Math.max(0, levelState.rerollCharges)),
     levelUpSelectionSeed: typeof raw.levelUpSelectionSeed === 'string' ? raw.levelUpSelectionSeed : defaults.levelUpSelectionSeed,
     levelUpScreenResolved: levelState.pendingLevelUps <= 0 ? true : levelUpScreenResolved
+  };
+}
+
+export function createDefaultFeverShowtimeState(): FeverShowtimeState {
+  return {
+    meter: 0,
+    ready: false,
+    active: false,
+    locksRemaining: 0,
+    baseDurationLocks: 5,
+    maxChargedLines: 3,
+    chargedLineRows: [],
+    heat: 0,
+    heatLevel: 'none',
+    manualReleaseAvailable: false,
+    releaseRequested: false,
+    lastReleaseSummary: undefined
+  };
+}
+
+export function normalizeFeverShowtimeState(value: unknown): FeverShowtimeState {
+  const defaults = createDefaultFeverShowtimeState();
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return defaults;
+  }
+  const raw = value as Partial<FeverShowtimeState>;
+  const finiteNumber = (input: unknown, fallback: number): number => {
+    const n = Number(input);
+    return Number.isFinite(n) ? n : fallback;
+  };
+  const clampInteger = (input: unknown, fallback: number, min: number, max: number): number =>
+    Math.max(min, Math.min(max, Math.floor(finiteNumber(input, fallback))));
+  const allowedHeatLevels = new Set<FeverHeatLevel>(['none', 'low', 'medium', 'high', 'max']);
+  const heat = clampInteger(raw.heat, defaults.heat, 0, 100);
+  const calculatedHeatLevel: FeverHeatLevel = heat >= 100
+    ? 'max'
+    : heat >= 70
+      ? 'high'
+      : heat >= 40
+        ? 'medium'
+        : heat >= 20
+          ? 'low'
+          : 'none';
+  const heatLevel = typeof raw.heatLevel === 'string' && allowedHeatLevels.has(raw.heatLevel as FeverHeatLevel) && raw.heatLevel === calculatedHeatLevel
+    ? raw.heatLevel as FeverHeatLevel
+    : calculatedHeatLevel;
+
+  const chargedLineRows = Array.isArray(raw.chargedLineRows)
+    ? raw.chargedLineRows
+        .map((row) => Math.floor(finiteNumber(row, -1)))
+        .filter((row) => row >= 0)
+    : defaults.chargedLineRows;
+  const meter = clampInteger(raw.meter, defaults.meter, 0, 100);
+
+  let lastReleaseSummary: FeverReleaseSummary | undefined = undefined;
+  if (raw.lastReleaseSummary && typeof raw.lastReleaseSummary === 'object' && !Array.isArray(raw.lastReleaseSummary)) {
+    const summaryRaw = raw.lastReleaseSummary as Partial<FeverReleaseSummary>;
+    const allowedReleaseReasons = new Set<FeverReleaseReason>([
+      'manual',
+      'duration_expired',
+      'max_charged_lines',
+      'node_end',
+      'battle_end',
+      'invalid_state_repair'
+    ]);
+    const summaryHeatLevel = typeof summaryRaw.heatLevel === 'string' && allowedHeatLevels.has(summaryRaw.heatLevel as FeverHeatLevel)
+      ? summaryRaw.heatLevel as FeverHeatLevel
+      : 'none';
+    const releaseReason = typeof summaryRaw.releaseReason === 'string' && allowedReleaseReasons.has(summaryRaw.releaseReason as FeverReleaseReason)
+      ? summaryRaw.releaseReason as FeverReleaseReason
+      : 'invalid_state_repair';
+
+    lastReleaseSummary = {
+      chargedLinesCleared: Math.max(0, Number(summaryRaw.chargedLinesCleared ?? 0)),
+      rawDamage: Math.max(0, Number(summaryRaw.rawDamage ?? 0)),
+      cappedDamage: Math.max(0, Number(summaryRaw.cappedDamage ?? 0)),
+      overflowDamage: Math.max(0, Number(summaryRaw.overflowDamage ?? 0)),
+      manaGained: Math.max(0, Number(summaryRaw.manaGained ?? 0)),
+      heatLevel: summaryHeatLevel,
+      releaseReason
+    };
+  }
+
+  return {
+    meter,
+    ready: Boolean(raw.ready ?? defaults.ready) || meter >= 100,
+    active: Boolean(raw.active ?? defaults.active),
+    locksRemaining: clampInteger(raw.locksRemaining, defaults.locksRemaining, 0, 100),
+    baseDurationLocks: clampInteger(raw.baseDurationLocks, defaults.baseDurationLocks, 1, 100),
+    maxChargedLines: clampInteger(raw.maxChargedLines, defaults.maxChargedLines, 1, 100),
+    chargedLineRows,
+    heat,
+    heatLevel,
+    manualReleaseAvailable: Boolean(raw.manualReleaseAvailable ?? defaults.manualReleaseAvailable),
+    releaseRequested: Boolean(raw.releaseRequested ?? defaults.releaseRequested),
+    lastReleaseSummary
   };
 }
 
@@ -550,6 +670,7 @@ export function createDefaultRunState(): RunState {
     levelUpScreenState: createDefaultLevelUpScreenState(),
     boardSizeModifier: undefined,
     routeProgress: createDefaultRouteProgress(),
+    feverShowtime: createDefaultFeverShowtimeState(),
     festivalHubVisited: false,
     lastBattleWasBoss: false,
     pendingStageAdvance: false,
@@ -660,6 +781,10 @@ export function normalizeRunState(input: unknown): RunState {
     levelUpScreenState: createDefaultLevelUpScreenState(),
     boardSizeModifier: raw.boardSizeModifier ? { ...raw.boardSizeModifier } : undefined,
     routeProgress: normalizeRouteProgress(raw.routeProgress, raw.hero?.id ?? defaults.hero.id),
+    feverShowtime: normalizeFeverShowtimeState(
+      (raw as { feverShowtime?: unknown; feverMeter?: unknown }).feverShowtime
+        ?? { meter: (raw as { feverMeter?: unknown }).feverMeter ?? player.fever }
+    ),
     festivalHubVisited: Boolean(raw.festivalHubVisited),
     runStats: {
       ...defaults.runStats,

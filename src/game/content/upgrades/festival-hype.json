@@ -1,0 +1,23 @@
+{
+  "id": "upg_fever_gain",
+  "name": "Festival Hype",
+  "category": "utility",
+  "rarity": "common",
+  "description": "Fever meter fills faster during cascades. +10% Fever gain per stack (max +50%).",
+  "iconKey": "placeholder_upgrade",
+  "appliesTo": {
+    "contentType": "global",
+    "ids": [],
+    "tags": []
+  },
+  "effects": [
+    "increase_fever_gain"
+  ],
+  "maxLevel": 5,
+  "levelScaling": {
+    "mode": "percent",
+    "valuePerLevel": 10
+  },
+  "tags": ["stackable", "combo", "starter"],
+  "enabled": true
+}

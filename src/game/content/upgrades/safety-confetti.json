@@ -1,0 +1,23 @@
+{
+  "id": "upg_fever_safety_release",
+  "name": "Safety Confetti",
+  "category": "defense",
+  "rarity": "uncommon",
+  "description": "Fever release under high board pressure clears 1 hazard block per stack. Priority: junk > sticky > ice > royal.",
+  "iconKey": "placeholder_upgrade",
+  "appliesTo": {
+    "contentType": "global",
+    "ids": [],
+    "tags": []
+  },
+  "effects": [
+    "fever_safety_clear"
+  ],
+  "maxLevel": 2,
+  "levelScaling": {
+    "mode": "flat",
+    "valuePerLevel": 1
+  },
+  "tags": ["stackable", "defense", "board_control"],
+  "enabled": true
+}

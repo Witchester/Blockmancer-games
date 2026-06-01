@@ -179,6 +179,25 @@ assert(blockGameText.includes('claimedFriendRewards'), 'BlockmancerGame.newRun m
 const defaultRunText = readText('src/game/data/defaultRunState.ts');
 assert(defaultRunText.includes('metaBonusesApplied') && defaultRunText.includes('claimedFriendRewards'), 'Default run state must include metaBonusesApplied and claimedFriendRewards defaults.');
 
+// Phase 1 Fever Showtime State Model assertions
+assert(defaultRunText.includes('feverShowtime: createDefaultFeverShowtimeState(),'), 'defaultRunState.ts must initialize feverShowtime.');
+assert(defaultRunText.includes('feverShowtime: normalizeFeverShowtimeState('), 'defaultRunState.ts must normalize feverShowtime.');
+const gameTypesText = readText('src/game/types/GameTypes.ts');
+assert(gameTypesText.includes('export type FeverShowtimeState = {'), 'GameTypes.ts must define FeverShowtimeState type.');
+assert(gameTypesText.includes('feverShowtime: FeverShowtimeState;'), 'GameTypes.ts must include feverShowtime inside RunState.');
+const saveSystemText = readText('src/game/systems/SaveSystem.ts');
+assert(saveSystemText.includes('version < 9'), 'SaveSystem.ts must include version 9 save migration block.');
+
+const feverSystemText = readText('src/game/systems/FeverSystem.ts');
+assert(feverSystemText.includes('getDefaultFeverShowtimeState'), 'FeverSystem.ts must implement getDefaultFeverShowtimeState.');
+assert(feverSystemText.includes('normalizeFeverState'), 'FeverSystem.ts must implement normalizeFeverState.');
+assert(feverSystemText.includes('gainFever'), 'FeverSystem.ts must implement gainFever.');
+assert(feverSystemText.includes('canActivateFever'), 'FeverSystem.ts must implement canActivateFever.');
+assert(feverSystemText.includes('activateFever'), 'FeverSystem.ts must implement activateFever.');
+assert(feverSystemText.includes('tickFeverOnPieceLock'), 'FeverSystem.ts must implement tickFeverOnPieceLock.');
+assert(feverSystemText.includes('requestFeverRelease'), 'FeverSystem.ts must implement requestFeverRelease.');
+assert(feverSystemText.includes('clearFeverStateForNodeEnd'), 'FeverSystem.ts must implement clearFeverStateForNodeEnd.');
+
 await runCascadeGravitySmoke(assert);
 
 if (failures.length > 0) {

@@ -4,6 +4,7 @@ import { createDefaultBoardState } from '../data/constants';
 import { ANIMATION_DEFINITIONS, getAnimationFrameKeys, type AnimationCategory, type AnimationSequenceDefinition } from '../data/animations';
 import type { AssetDisplayCategory } from '../data/asset-display-rules';
 import { contentRegistry } from '../systems/ContentRegistry';
+import { FeverSystem } from '../systems/FeverSystem';
 import type { ActiveHazardKind, ActiveHazardState, BoardCell, EnemyInstance, NodeEncounterPack, NodeResultSummary, RewardDefinition, RoomType } from '../types/GameTypes';
 import { Button } from '../ui/Button';
 import { BOARD_COLS, BOARD_ROWS, COLORS, MAX_EVENT_LOG, TETROMINO_COLORS, TETROMINO_SHAPES } from '../utils/constants';
@@ -47,6 +48,7 @@ const DEBUG_FONT_FAMILY = '"Segoe UI", Arial, sans-serif';
 export class DebugScene extends Phaser.Scene {
   private statusText?: Phaser.GameObjects.Text;
   private selectionOverlay?: Phaser.GameObjects.Container;
+  private readonly feverSystem = new FeverSystem();
   private itemIndex = 0;
   private relicIndex = 0;
   private upgradeIndex = 0;
@@ -121,6 +123,9 @@ export class DebugScene extends Phaser.Scene {
       ['Apply Route Reward', () => this.applyDebugRouteReward(false), 'Apply Route Risk', () => this.applyDebugRouteReward(true)],
       ['Clear Hazards', () => this.clearHazards(), 'Preview Glitter', () => this.queueDebugHazard('preview')],
       ['Stack Preview QA', () => this.openMonsterStackQa(), 'Node Result QA', () => this.openNodeResultQa()],
+      ['Fever Snapshot', () => this.showFeverSnapshot(), 'Fever Ready', () => this.setFeverReady()],
+      ['Fever Charge Row', () => this.addFeverChargedLine(), 'Fever Heat', () => this.addFeverHeat()],
+      ['Fever Validate', () => this.validateFeverState(), 'Fever Cleanup', () => this.clearFeverLocalState()],
       ['Clear Run Save', () => this.clearRunSave(), 'New Debug Run', () => this.newDebugRun()]
     ];
 
@@ -698,6 +703,88 @@ export class DebugScene extends Phaser.Scene {
     state.reactiveState.nopeStampPieces = 0;
     state.reactiveState.sleepGuardPieces = 0;
     this.saveAndReport('Cleared all active hazards and temporary reactive warnings.');
+  }
+
+  private showFeverSnapshot(): void {
+    const state = this.ensureRun();
+    const snapshot = this.feverSystem.getDebugSnapshot(state.feverShowtime, state.board, state);
+    this.updateStatus(
+      `Fever snapshot: meter ${snapshot.meter}/100, ready ${snapshot.ready}, active ${snapshot.active}, locks ${snapshot.locksRemaining}, charged rows ${snapshot.chargedLineRows.join(', ') || 'none'}, heat ${snapshot.heatLevel} (${snapshot.heat}), Soft Junk ${snapshot.softJunkCount}, warnings ${snapshot.warnings.length ? snapshot.warnings.join(' | ') : 'none'}.`
+    );
+  }
+
+  private setFeverReady(): void {
+    const state = this.ensureRun();
+    state.feverShowtime = {
+      ...this.feverSystem.clearBoardLocalFeverState(state.feverShowtime),
+      meter: 100,
+      ready: true
+    };
+    state.player.fever = 100;
+    state.player.feverActiveLocks = 0;
+    this.saveAndReport('Fever meter set to ready for debug testing.');
+  }
+
+  private addFeverChargedLine(): void {
+    const state = this.ensureRun();
+    const row = Math.max(2, state.board.rows - 1 - state.feverShowtime.chargedLineRows.length);
+    state.feverShowtime = {
+      ...state.feverShowtime,
+      active: true,
+      ready: false,
+      meter: 0,
+      locksRemaining: Math.max(1, state.feverShowtime.locksRemaining || state.feverShowtime.baseDurationLocks),
+      manualReleaseAvailable: true,
+      releaseRequested: false,
+      chargedLineRows: [...new Set([...state.feverShowtime.chargedLineRows, row])]
+    };
+    for (let col = 0; col < state.board.columns; col += 1) {
+      const existing = state.board.grid[row]?.[col];
+      state.board.grid[row][col] = existing && typeof existing === 'object'
+        ? { ...existing, feverCharged: true }
+        : {
+            color: TETROMINO_COLORS.I,
+            blockId: 'block_rune_blue',
+            blockType: 'normal',
+            clearEffects: [],
+            feverCharged: true
+          };
+    }
+    this.saveAndReport(`Added debug Charged Line marker on row ${row}.`);
+  }
+
+  private addFeverHeat(): void {
+    const state = this.ensureRun();
+    state.feverShowtime = this.feverSystem.addFeverHeat(
+      {
+        ...state.feverShowtime,
+        active: true,
+        locksRemaining: Math.max(1, state.feverShowtime.locksRemaining || state.feverShowtime.baseDurationLocks)
+      },
+      20,
+      'debug_fever_heat'
+    );
+    this.saveAndReport('Added debug Fever Heat.');
+  }
+
+  private validateFeverState(): void {
+    const state = this.ensureRun();
+    const repair = this.feverSystem.repairInvalidFeverState(state.feverShowtime, state.board, state);
+    state.feverShowtime = repair.fever;
+    if (repair.board) {
+      state.board = repair.board;
+    }
+    this.saveAndReport(repair.repaired ? `Showtime state repaired safely. ${repair.warnings.join(' ')}` : 'Fever state is valid.');
+  }
+
+  private clearFeverLocalState(): void {
+    const state = this.ensureRun();
+    state.feverShowtime = this.feverSystem.prepareFeverStateForSave(state.feverShowtime, 'node_end');
+    state.player.feverActiveLocks = 0;
+    state.board = this.feverSystem.clearSoftJunkForNodeEnd(
+      this.feverSystem.clearFeverBoardMarkers(state.board)
+    );
+    this.saveAndReport('Cleared board-local Fever debug state.');
   }
 
   private clearRunSave(): void {

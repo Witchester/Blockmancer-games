@@ -12,6 +12,7 @@ import { choice, randInt } from '../utils/random';
 import { resolveCascadeGravity } from './CascadeGravitySystem';
 import { contentRegistry } from './ContentRegistry';
 import { OopsieSystem } from './OopsieSystem';
+import { FeverSystem } from './FeverSystem';
 
 const PIECE_TYPES: TetrominoType[] = ['I', 'O', 'T', 'S', 'Z', 'J', 'L'];
 const SPECIAL_BLOCK_IDS = [
@@ -50,9 +51,10 @@ export class BoardSystem {
   private nextQueue: TetrominoType[] = [];
   holdPieceType: TetrominoType | null = null;
   holdUsedThisPiece = false;
-  private readonly filledCellBuffer: Array<[number, number]> = [];
-  private readonly oopsieSystem = new OopsieSystem();
-  private readonly junkBlockIds = new Set(['block_crumb_junk', 'block_cloud_junk', 'block_cracked_junk', 'block_royal', 'block_sticky']);
+   private readonly filledCellBuffer: Array<[number, number]> = [];
+   private readonly oopsieSystem = new OopsieSystem();
+   public feverSystem: FeverSystem;
+   private readonly junkBlockIds = new Set(['block_crumb_junk', 'block_cloud_junk', 'block_cracked_junk', 'block_royal', 'block_sticky']);
   private readonly specialSpawnCountsBySource = new Map<string, number>();
   private readonly maxSpecialSpawnsPerBattleBySource = 3;
   private readonly maxSpecialBlocksActive = 8;
@@ -61,16 +63,17 @@ export class BoardSystem {
   private readonly maxStarBlocksActive = 2;
   private readonly maxRoyalBlocksActive = 4;
 
-  constructor(private readonly state?: RunState) {
-    this.columns = state?.board.columns ?? BOARD_COLS;
-    this.rows = state?.board.rows ?? BOARD_ROWS;
-    this.grid = this.createEmptyGrid();
-    this.currentPiece = null;
-    this.nextPieceType = this.rollPieceType();
-    this.nextQueue = [this.nextPieceType];
-    this.refillNextQueue(NEXT_QUEUE_SIZE + 1);
-    this.restoreFromState();
-  }
+    constructor(private readonly state?: RunState) {
+        this.columns = state?.board.columns ?? BOARD_COLS;
+        this.rows = state?.board.rows ?? BOARD_ROWS;
+        this.grid = this.createEmptyGrid();
+        this.currentPiece = null;
+        this.nextPieceType = this.rollPieceType();
+        this.nextQueue = [this.nextPieceType];
+        this.refillNextQueue(NEXT_QUEUE_SIZE + 1);
+        this.restoreFromState();
+        this.feverSystem = new FeverSystem();
+    }
 
   reset(): void {
     this.grid = this.createEmptyGrid();
@@ -384,45 +387,120 @@ export class BoardSystem {
     return this.lockPiece();
   }
 
-  private lockPiece(): BoardTickResult {
-    if (!this.currentPiece) {
-      return {
-        moved: false,
-        locked: false,
-        clearedLines: 0,
-        toppedOut: false
-      };
-    }
-
-    for (let rowIndex = 0; rowIndex < this.currentPiece.matrix.length; rowIndex += 1) {
-      for (let columnIndex = 0; columnIndex < this.currentPiece.matrix[rowIndex].length; columnIndex += 1) {
-        if (!this.currentPiece.matrix[rowIndex][columnIndex]) {
-          continue;
+    private lockPiece(): BoardTickResult {
+        if (!this.currentPiece) {
+            return {
+                moved: false,
+                locked: false,
+                clearedLines: 0,
+                toppedOut: false
+            };
         }
 
-        const x = this.currentPiece.x + columnIndex;
-        const y = this.currentPiece.y + rowIndex;
+        // Place the current piece into the grid
+        for (let rowIndex = 0; rowIndex < this.currentPiece.matrix.length; rowIndex += 1) {
+            for (let columnIndex = 0; columnIndex < this.currentPiece.matrix[rowIndex].length; columnIndex += 1) {
+                if (!this.currentPiece.matrix[rowIndex][columnIndex]) {
+                    continue;
+                }
 
-        if (y < 0) {
-          continue;
+                const x = this.currentPiece.x + columnIndex;
+                const y = this.currentPiece.y + rowIndex;
+
+                if (y < 0) {
+                    continue;
+                }
+
+                const blockId = this.currentPiece.blockIdsMatrix?.[rowIndex]?.[columnIndex] ?? getTetrominoBlockId(this.currentPiece.type);
+                this.grid[y][x] = this.createBoardBlockCell(blockId);
+            }
         }
 
-        const blockId = this.currentPiece.blockIdsMatrix?.[rowIndex]?.[columnIndex] ?? getTetrominoBlockId(this.currentPiece.type);
-        this.grid[y][x] = this.createBoardBlockCell(blockId);
-      }
+        // Check if Fever is active
+        const state = this.state;
+        if (state && state.feverShowtime.active) {
+            // Fever is active: charge completed lines instead of clearing
+            const completedLines = this.feverSystem.detectCompletedLinesForFever(this.state.board);
+            let chargedRowsAdded: number[] = [];
+            if (completedLines.length > 0) {
+                const result = this.feverSystem.chargeCompletedLinesDuringFever(this.state.board, state.feverShowtime);
+                // The chargeCompletedLinesDuringFever mutates the board and returns updated fever state
+                this.state.board = result.board;
+                this.state.feverShowtime = result.fever;
+                chargedRowsAdded = result.chargedRowsAdded;
+            }
+
+            // Tick the fever lock duration
+            this.state.feverShowtime = this.feverSystem.tickFeverOnPieceLock(this.state.feverShowtime);
+
+            // If release is requested after ticking, resolve the fever release
+            if (this.state.feverShowtime.releaseRequested) {
+                const releaseReason = this.state.feverShowtime.lastReleaseSummary?.releaseReason ?? 'manual';
+                const releaseResult = this.feverSystem.releaseFeverShowtime(
+                    this.state.board,
+                    this.state.feverShowtime,
+                    releaseReason,
+                    this.state
+                );
+                this.state.board = releaseResult.board;
+                this.state.feverShowtime = releaseResult.fever;
+
+                // Phase 5: Apply Graceful Release shield on manual release
+                if (releaseReason === 'manual') {
+                    this.feverSystem.applyManualReleaseShieldBonus(this.state);
+                }
+
+                // Phase 5: Apply Safety Confetti hazard clear on high/critical pressure
+                const safetyClearCount = this.feverSystem.getSafetyReleaseClearCount(this.state);
+                if (safetyClearCount > 0) {
+                    const clearResult = this.feverSystem.applySafetyReleaseHazardClear(
+                        this.state, this.state.board, safetyClearCount
+                    );
+                    if (clearResult.cleared > 0) {
+                        this.state.board = clearResult.board;
+                    }
+                }
+
+                // If there was a cascade result from releasing, we need to use that for the cleared lines and cascadeResult in the return.
+                // Otherwise, we treat it as no lines cleared from the lock piece (since we charged, not cleared).
+                let cascadeResult: CascadeResult | undefined = undefined;
+                let clearedLines = 0;
+                if (releaseResult.cascadeResult) {
+                    cascadeResult = releaseResult.cascadeResult;
+                    clearedLines = cascadeResult.totalLinesCleared;
+                }
+                const spawned = this.spawnPiece();
+                return {
+                    moved: false,
+                    locked: true,
+                    clearedLines,
+                    cascadeResult,
+                    toppedOut: !spawned
+                };
+            }
+
+            // No release requested yet, so we treat this lock as having cleared zero lines (since we charged, not cleared)
+            const spawned = this.spawnPiece();
+            return {
+                moved: false,
+                locked: true,
+                clearedLines: 0,
+                cascadeResult: undefined, // No cascade from charging
+                toppedOut: !spawned
+            };
+        } else {
+            // Fever is not active: proceed with normal line clearing
+            const cascadeResult = this.clearLinesCascade();
+            const spawned = this.spawnPiece();
+            return {
+                moved: false,
+                locked: true,
+                clearedLines: cascadeResult.totalLinesCleared,
+                cascadeResult,
+                toppedOut: !spawned
+            };
+        }
     }
-
-    const cascadeResult = this.clearLinesCascade();
-    const spawned = this.spawnPiece();
-
-    return {
-      moved: false,
-      locked: true,
-      clearedLines: cascadeResult.totalLinesCleared,
-      cascadeResult,
-      toppedOut: !spawned
-    };
-  }
 
   private handleSpecialBlockClear(row: number, column: number, cellValue: BoardCell, triggered: string[]): void {
     if (!this.isBoardBlock(cellValue)) {

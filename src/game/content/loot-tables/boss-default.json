@@ -46,6 +46,27 @@
       "condition": "none"
     },
     {
+      "contentType": "upgrade",
+      "id": "upg_fever_overflow",
+      "weight": 6,
+      "rarity": "rare",
+      "condition": "none"
+    },
+    {
+      "contentType": "upgrade",
+      "id": "upg_fever_star_encore",
+      "weight": 5,
+      "rarity": "rare",
+      "condition": "none"
+    },
+    {
+      "contentType": "upgrade",
+      "id": "upg_fever_capacity",
+      "weight": 6,
+      "rarity": "uncommon",
+      "condition": "none"
+    },
+    {
       "contentType": "gold",
       "id": "gold_bundle_massive",
       "weight": 10,

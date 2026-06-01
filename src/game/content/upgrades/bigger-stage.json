@@ -1,0 +1,23 @@
+{
+  "id": "upg_fever_capacity",
+  "name": "Bigger Stage",
+  "category": "utility",
+  "rarity": "uncommon",
+  "description": "Hold more Charged Lines during Showtime. +1 max Charged Line per stack. Boss fights cap at 4 lines.",
+  "iconKey": "placeholder_upgrade",
+  "appliesTo": {
+    "contentType": "global",
+    "ids": [],
+    "tags": []
+  },
+  "effects": [
+    "increase_fever_capacity"
+  ],
+  "maxLevel": 2,
+  "levelScaling": {
+    "mode": "flat",
+    "valuePerLevel": 1
+  },
+  "tags": ["stackable", "board_control"],
+  "enabled": true
+}

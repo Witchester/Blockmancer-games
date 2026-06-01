@@ -3,6 +3,7 @@ import type { RunState } from '../types/GameTypes';
 import type { MetaState } from '../types/MetaTypes';
 import { DEFAULT_SETTINGS, type GameSettings } from '../types/SettingsTypes';
 import { SAVE_VERSION } from '../data/constants';
+import { FeverSystem } from './FeverSystem';
 
 const SAVE_KEY = 'blockmancer-dungeon-save';
 const META_SAVE_KEY = 'blockmancer-meta-save';
@@ -41,13 +42,20 @@ function readLegacySettings(): GameSettings {
 }
 
 export class SaveSystem {
+  private readonly feverSystem = new FeverSystem();
+
   hasSave(): boolean {
     return this.loadRun() !== null;
   }
 
   saveRun(runState: RunState): void {
+    const cleanedBoard = this.feverSystem.clearSoftJunkForNodeEnd(
+      this.feverSystem.clearFeverBoardMarkers(runState.board)
+    );
     const dataToSave: RunState = {
       ...runState,
+      board: cleanedBoard,
+      feverShowtime: this.feverSystem.prepareFeverStateForSave(runState.feverShowtime, 'run_save'),
       saveVersion: CURRENT_SAVE_VERSION
     };
     writeJsonStorage(SAVE_KEY, dataToSave);
@@ -250,6 +258,29 @@ export class SaveSystem {
           pack.routeFallbackTriggeredForEncounterPack = false;
         }
       }
+    }
+
+    if (version < 9 || !isObject(migrated.feverShowtime)) {
+      migrated.feverShowtime = this.feverSystem.migrateLegacyFeverState(migrated);
+    } else {
+      migrated.feverShowtime = this.feverSystem.normalizeFeverSaveState(migrated.feverShowtime);
+    }
+
+    const loadedFever = migrated.feverShowtime as RunState['feverShowtime'];
+    const hadBoardLocalFever = loadedFever.active || loadedFever.locksRemaining > 0 || loadedFever.chargedLineRows.length > 0 || loadedFever.heat > 0 || loadedFever.releaseRequested;
+    const repaired = this.feverSystem.repairInvalidFeverState(
+      this.feverSystem.prepareFeverStateForSave(loadedFever, 'run_save'),
+      isObject(migrated.board) ? migrated.board as unknown as RunState['board'] : undefined,
+      migrated as unknown as RunState
+    );
+    migrated.feverShowtime = repaired.fever;
+    if (repaired.board) {
+      migrated.board = this.feverSystem.clearSoftJunkForNodeEnd(
+        this.feverSystem.clearFeverBoardMarkers(repaired.board)
+      );
+    }
+    if ((repaired.repaired || hadBoardLocalFever) && import.meta.env.DEV) {
+      console.warn('[SaveSystem] Save migration repaired invalid Fever state. Showtime state repaired safely.', repaired.warnings);
     }
 
     return migrated;

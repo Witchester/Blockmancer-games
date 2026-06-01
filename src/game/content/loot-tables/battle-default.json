@@ -39,6 +39,41 @@
       "condition": "none"
     },
     {
+      "contentType": "upgrade",
+      "id": "upg_fever_gain",
+      "weight": 12,
+      "rarity": "common",
+      "condition": "none"
+    },
+    {
+      "contentType": "upgrade",
+      "id": "upg_fever_duration",
+      "weight": 8,
+      "rarity": "uncommon",
+      "condition": "none"
+    },
+    {
+      "contentType": "upgrade",
+      "id": "upg_fever_manual_release",
+      "weight": 7,
+      "rarity": "uncommon",
+      "condition": "none"
+    },
+    {
+      "contentType": "upgrade",
+      "id": "upg_fever_safety_release",
+      "weight": 7,
+      "rarity": "uncommon",
+      "condition": "none"
+    },
+    {
+      "contentType": "upgrade",
+      "id": "upg_fever_capacity",
+      "weight": 8,
+      "rarity": "uncommon",
+      "condition": "none"
+    },
+    {
       "contentType": "relic",
       "id": "rel_slime_core",
       "weight": 5,

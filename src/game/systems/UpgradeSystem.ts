@@ -12,6 +12,13 @@ export const SUPPORTED_UPGRADE_EFFECT_IDS = [
   'upg_emergency_barrier',
   'upg_cascade_choir',
   'upg_fever_fizz',
+  'upg_fever_gain',
+  'upg_fever_duration',
+  'upg_fever_capacity',
+  'upg_fever_manual_release',
+  'upg_fever_safety_release',
+  'upg_fever_overflow',
+  'upg_fever_star_encore',
   'upg_gold_sense',
   'upg_heavy_drop',
   'upg_snack_pockets',
@@ -97,6 +104,21 @@ export class UpgradeSystem {
       case 'upg_fever_fizz':
         player.fever = Math.min(100, player.fever + 15);
         return `Fever Fizz reaches level ${level}: fever meter +15.`;
+      case 'upg_fever_gain':
+        player.fever = Math.min(100, player.fever + 5);
+        return `Festival Hype reaches level ${level}: Fever gain +10%. The meter fills faster!`;
+      case 'upg_fever_duration':
+        return `Longer Showtime reaches level ${level}: Fever Showtime adds one more beat!`;
+      case 'upg_fever_capacity':
+        return `Bigger Stage reaches level ${level}: can hold more Charged Lines!`;
+      case 'upg_fever_manual_release':
+        return `Graceful Release reaches level ${level}: manual release grants shield!`;
+      case 'upg_fever_safety_release':
+        return `Safety Confetti reaches level ${level}: high-pressure release clears hazards!`;
+      case 'upg_fever_overflow':
+        return `Showtime Overflow reaches level ${level}: overflow sparkles into extra utility!`;
+      case 'upg_fever_star_encore':
+        return 'Star Encore lights up: a star block may appear after Fever release!';
       case 'upg_gold_sense':
         state.rewardRerolls += 1;
         return `Gold Sense reaches level ${level}: gain 1 reward reroll.`;

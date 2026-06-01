@@ -1,0 +1,23 @@
+{
+  "id": "upg_fever_overflow",
+  "name": "Showtime Overflow",
+  "category": "utility",
+  "rarity": "rare",
+  "description": "Boss damage overflow converts +20% more efficiently into utility per stack. Does not increase boss direct damage.",
+  "iconKey": "placeholder_upgrade",
+  "appliesTo": {
+    "contentType": "global",
+    "ids": [],
+    "tags": []
+  },
+  "effects": [
+    "increase_fever_overflow"
+  ],
+  "maxLevel": 3,
+  "levelScaling": {
+    "mode": "percent",
+    "valuePerLevel": 20
+  },
+  "tags": ["stackable", "boss_reward"],
+  "enabled": true
+}

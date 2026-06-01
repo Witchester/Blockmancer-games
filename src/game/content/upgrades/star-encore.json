@@ -1,0 +1,23 @@
+{
+  "id": "upg_fever_star_encore",
+  "name": "Star Encore",
+  "category": "utility",
+  "rarity": "rare",
+  "description": "After Fever release, creates 1 star block if safe space exists. Does not trigger during boss phase transition.",
+  "iconKey": "placeholder_upgrade",
+  "appliesTo": {
+    "contentType": "global",
+    "ids": [],
+    "tags": []
+  },
+  "effects": [
+    "star_encore"
+  ],
+  "maxLevel": 1,
+  "levelScaling": {
+    "mode": "flat",
+    "valuePerLevel": 1
+  },
+  "tags": ["stackable", "board_control", "boss_reward"],
+  "enabled": true
+}

@@ -1,0 +1,23 @@
+{
+  "id": "upg_fever_manual_release",
+  "name": "Graceful Release",
+  "category": "defense",
+  "rarity": "uncommon",
+  "description": "Manual Fever release grants +3 shield per stack. Does not apply on auto-release.",
+  "iconKey": "placeholder_upgrade",
+  "appliesTo": {
+    "contentType": "global",
+    "ids": [],
+    "tags": []
+  },
+  "effects": [
+    "manual_release_shield"
+  ],
+  "maxLevel": 3,
+  "levelScaling": {
+    "mode": "flat",
+    "valuePerLevel": 3
+  },
+  "tags": ["stackable", "defense"],
+  "enabled": true
+}

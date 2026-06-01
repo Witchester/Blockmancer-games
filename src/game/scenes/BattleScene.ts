@@ -454,6 +454,10 @@ export class BattleScene extends Phaser.Scene {
       this.combat.addLog(`Festival shield grants +${startingShield} shield at battle start.`);
     }
     this.fever = new FeverSystem();
+    this.repairFeverRuntimeState('battle_start');
+    if (this.sharedGame.bossSystem.isBoss(state.activeEnemy)) {
+      this.cleanupBoardLocalFeverState('boss_start');
+    }
     this.spells = new SpellSystem(state, this.board, this.combat);
 
     const layout = getPortraitLayout(this);
@@ -548,6 +552,37 @@ export class BattleScene extends Phaser.Scene {
 
   private get sharedGame(): BlockmancerGame {
     return this.game as BlockmancerGame;
+  }
+
+  private repairFeverRuntimeState(context: 'battle_start' | 'battle_end' | 'node_end' | 'boss_start'): void {
+    const state = this.sharedGame.runState;
+    const repair = this.fever.repairInvalidFeverState(state.feverShowtime, state.board, state);
+    if (repair.board) {
+      state.board = repair.board;
+    }
+    state.feverShowtime = repair.fever;
+    if (repair.repaired) {
+      if (import.meta.env.DEV) {
+        console.warn(`[BattleScene] Fever repair during ${context}:`, repair.warnings);
+      }
+      if (!state.eventLog[0]?.includes('Showtime state repaired safely.')) {
+        state.eventLog.unshift('Showtime state repaired safely.');
+        state.eventLog = state.eventLog.slice(0, 50);
+      }
+    }
+  }
+
+  private cleanupBoardLocalFeverState(context: 'battle_end' | 'node_end' | 'boss_start'): void {
+    const state = this.sharedGame.runState;
+    state.feverShowtime = this.fever.prepareFeverStateForSave(
+      state.feverShowtime,
+      context === 'boss_start' ? 'battle_end' : context
+    );
+    state.player.feverActiveLocks = 0;
+    state.board = this.fever.clearSoftJunkForNodeEnd(
+      this.fever.clearFeverBoardMarkers(state.board)
+    );
+    this.repairFeverRuntimeState(context);
   }
 
   private alignBoardToPuzzleSection(): void {
@@ -1521,7 +1556,16 @@ private addStageBackgroundLayers(): void {
       }
     }
 
-    this.inputSystem?.update(delta);
+        this.inputSystem?.update(delta);
+
+        // Manual release debug key (M)
+        if (this.inputSystem?.isKeyJustDown('M')) {
+            const state = this.sharedGame.runState;
+            if (state.feverShowtime.active) {
+                state.feverShowtime = this.board.feverSystem.requestFeverRelease(state.feverShowtime, 'manual');
+                // Note: the release will be resolved on the next piece lock.
+            }
+        }
   }
 
   private resolveTick(result: BoardTickResult): void {
@@ -2792,6 +2836,7 @@ private addStageBackgroundLayers(): void {
     // Check for next enemy
     if (this.sharedGame.encounterPackSystem.hasRemainingEncounterEnemies(state.activeEncounterPack)) {
       this.combat.addLog(`${enemyName} tumbles out of the way. Another festival troublemaker hops in!`);
+      this.cleanupBoardLocalFeverState('battle_end');
 
       // Advance pack
       this.sharedGame.encounterPackSystem.advanceEncounterEnemy(state.activeEncounterPack!);
@@ -2855,10 +2900,12 @@ private addStageBackgroundLayers(): void {
       state.activeEncounterPack && !this.sharedGame.encounterPackSystem.hasRemainingEncounterEnemies(state.activeEncounterPack)
     );
     if (!fullEncounterClear) {
+      this.cleanupBoardLocalFeverState('battle_end');
       state.activeEnemy = null;
       this.sharedGame.saveRun();
       return;
     }
+    this.cleanupBoardLocalFeverState('node_end');
     if (state.activeEncounterPack) {
       state.activeEncounterPack.encounterPackCompleted = true;
       state.activeEncounterPack.remainingEnemyCount = 0;

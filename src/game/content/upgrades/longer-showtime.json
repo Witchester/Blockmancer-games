@@ -1,0 +1,23 @@
+{
+  "id": "upg_fever_duration",
+  "name": "Longer Showtime",
+  "category": "utility",
+  "rarity": "uncommon",
+  "description": "Fever Showtime lasts longer. +1 piece lock duration per stack. Boss fights cap at 5 locks.",
+  "iconKey": "placeholder_upgrade",
+  "appliesTo": {
+    "contentType": "global",
+    "ids": [],
+    "tags": []
+  },
+  "effects": [
+    "increase_fever_duration"
+  ],
+  "maxLevel": 3,
+  "levelScaling": {
+    "mode": "flat",
+    "valuePerLevel": 1
+  },
+  "tags": ["stackable", "board_control"],
+  "enabled": true
+}

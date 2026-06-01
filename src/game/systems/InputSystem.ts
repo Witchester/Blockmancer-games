@@ -161,37 +161,50 @@ export class InputSystem {
     this.pendingInputs.push(...remaining);
   }
 
-  private invokeBuffered(action: BufferedAction): boolean {
-    switch (action) {
-      case 'moveLeft':
-        return this.handlers.moveLeft();
-      case 'moveRight':
-        return this.handlers.moveRight();
-      case 'rotate':
-        return this.handlers.rotate();
-      case 'softDrop':
-        return this.handlers.softDrop();
-      case 'hardDrop':
-        return this.handlers.hardDrop();
-      case 'hold':
-        return this.handlers.hold();
-      default:
-        return false;
+    private invokeBuffered(action: BufferedAction): boolean {
+        switch (action) {
+            case 'moveLeft':
+                return this.handlers.moveLeft();
+            case 'moveRight':
+                return this.handlers.moveRight();
+            case 'rotate':
+                return this.handlers.rotate();
+            case 'softDrop':
+                return this.handlers.softDrop();
+            case 'hardDrop':
+                return this.handlers.hardDrop();
+            case 'hold':
+                return this.handlers.hold();
+            default:
+                return false;
+        }
     }
-  }
 
-  destroy(): void {
-    this.scene.input.keyboard?.off('keydown-UP', this.handleRotateUp);
-    this.scene.input.keyboard?.off('keydown-W', this.handleRotateW);
-    this.scene.input.keyboard?.off('keydown-SPACE', this.handleHardDrop);
-    this.scene.input.keyboard?.off('keydown-SHIFT', this.handleHoldShift);
-    this.scene.input.keyboard?.off('keydown-C', this.handleHoldC);
-    this.scene.input.keyboard?.off('keydown-I', this.handleInventory);
-    this.scene.input.keyboard?.off('keydown-ESC', this.handlePause);
-    this.scene.input.keyboard?.off('keydown-ONE', this.handleCastOne);
-    this.scene.input.keyboard?.off('keydown-TWO', this.handleCastTwo);
-    this.scene.input.keyboard?.off('keydown-THREE', this.handleCastThree);
-    this.scene.input.keyboard?.off('keydown-FOUR', this.handleCastFour);
-    this.pendingInputs.length = 0;
-  }
+    /**
+     * Returns true if the specified key was just pressed down (ignoring input buffer).
+     * @param key The key string (e.g., 'M', 'SPACE', etc.)
+     * @returns True if the key was just pressed down this frame.
+     */
+    isKeyJustDown(key: string): boolean {
+        const keyObj = this.keys[key];
+        if (!keyObj) {
+            return false;
+        }
+        return Phaser.Input.Keyboard.JustDown(keyObj);
+    }
+
+    destroy(): void {
+        this.scene.input.keyboard?.off('keydown-UP', this.handleRotateUp);
+        this.scene.input.keyboard?.off('keydown-W', this.handleRotateW);
+        this.scene.input.keyboard?.off('keydown-SPACE', this.handleHardDrop);
+        this.scene.input.keyboard?.off('keydown-SHIFT', this.handleHoldShift);
+        this.scene.input.keyboard?.off('keydown-C', this.handleHoldC);
+        this.scene.input.keyboard?.off('keydown-I', this.handleInventory);
+        this.scene.input.keyboard?.off('keydown-ESC', this.handlePause);
+        this.scene.input.keyboard?.off('keydown-ONE', this.handleCastOne);
+        this.scene.input.keyboard?.off('keydown-TWO', this.handleCastTwo);
+        this.scene.input.keyboard?.off('keydown-THREE', this.handleCastThree);
+        this.scene.input.keyboard?.off('keydown-FOUR', this.handleCastFour);
+        this.pendingInputs.length = 0;
+    }
 }

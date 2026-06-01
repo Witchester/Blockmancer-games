@@ -220,6 +220,77 @@ export type LevelUpScreenState = {
   levelUpScreenResolved: boolean;
 };
 
+export type FeverHeatLevel = "none" | "low" | "medium" | "high" | "max";
+
+export type FeverReleaseReason =
+  | "manual"
+  | "duration_expired"
+  | "max_charged_lines"
+  | "node_end"
+  | "battle_end"
+  | "invalid_state_repair";
+
+export type FeverReleaseSummary = {
+  chargedLinesCleared: number;
+  rawDamage: number;
+  cappedDamage: number;
+  overflowDamage: number;
+  manaGained: number;
+  heatLevel: FeverHeatLevel;
+  releaseReason: FeverReleaseReason;
+  cascadeResult?: CascadeResult;
+  encounterType?: FeverEncounterType;
+  capApplied?: boolean;
+  overflowUtility?: ShowtimeOverflowUtility[];
+};
+
+export type FeverEncounterType = "normal" | "elite" | "boss" | "final_boss";
+
+export type ShowtimeOverflowUtility =
+  | {
+      type: "shield";
+      amount: number;
+    }
+  | {
+      type: "mana";
+      amount: number;
+    }
+  | {
+      type: "boss_intent_delay";
+      amount: number;
+    }
+  | {
+      type: "clear_hazard_blocks";
+      amount: number;
+    }
+  | {
+      type: "reduce_next_boss_hazard";
+      amount: number;
+    }
+  | {
+      type: "score_bonus";
+      amount: number;
+    }
+  | {
+      type: "gold_bonus";
+      amount: number;
+    };
+
+export type FeverShowtimeState = {
+  meter: number;
+  ready: boolean;
+  active: boolean;
+  locksRemaining: number;
+  baseDurationLocks: number;
+  maxChargedLines: number;
+  chargedLineRows: number[];
+  heat: number;
+  heatLevel: FeverHeatLevel;
+  manualReleaseAvailable: boolean;
+  releaseRequested: boolean;
+  lastReleaseSummary?: FeverReleaseSummary;
+};
+
 export interface PlayerState {
   maxHp: number;
   hp: number;
@@ -645,6 +716,7 @@ export type BoardBlockCell = {
   blockId: string;
   blockType: 'normal' | 'special' | 'heavy' | 'hazard';
   clearEffects: BoardBlockClearEffect[];
+  feverCharged?: boolean;
 };
 
 export type BoardCell = number | BoardBlockCell;
@@ -757,6 +829,14 @@ export interface RunState {
   activeRandomGameplayEvents: string[];
   activeHazards: ActiveHazardState[];
   incomingJunkQueue: IncomingJunkQueueEntry[];
+  delayedJunkQueue?: Array<{
+    id: string;
+    sourceId: string;
+    cellCount: number;
+    delayPieces: number;
+    junkBlockId: string;
+    reason: string;
+  }>;
   reactiveState: ReactiveBattleState;
   activeOopsies: string[];
   currentBossRule?: string;
@@ -766,6 +846,7 @@ export interface RunState {
   levelUpScreenState: LevelUpScreenState;
   boardSizeModifier?: BoardSizeModifier;
   routeProgress: RouteProgressState;
+  feverShowtime: FeverShowtimeState;
   festivalHubVisited: boolean;
   lastBattleWasBoss: boolean;
   pendingStageAdvance: boolean;
