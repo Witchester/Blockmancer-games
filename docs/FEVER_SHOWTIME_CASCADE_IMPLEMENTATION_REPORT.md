@@ -636,10 +636,49 @@
 - Broad debug tool rewrite
 
 ### Risks / blockers
-- Existing Phase 3 boss damage cap methods in `FeverSystem` are still stubbed (`getFeverDamageCapRatio`, `calculateRawFeverReleaseDamage`, `applyFeverDamageCaps`, `convertShowtimeOverflow`). Phase 7 did not fake these mechanics. Boss-cap bypass warning/verification remains blocked until Phase 3 damage-cap implementation is completed or restored.
+- Resolved after the initial Phase 7 pass: Phase 3 boss damage cap methods in `FeverSystem` are no longer stubbed.
+- Boss phase skip prevention remains limited to the available 50% phase threshold and direct-damage caps because the boss system does not expose richer phase threshold data.
 - No project-local CodeGraph refresh script exists in `package.json`; no invented refresh command was run.
 - DebugScene gained additional rows; layout is responsive and build-clean, but portrait visual smoke was not run in this phase.
 
 ### Next phase readiness
-- Not ready
-- Reason: Save/load and cleanup safety scaffolding is in place and build-clean, but Phase 3 boss damage caps/overflow remain stubbed in the current source and should be completed or verified before claiming full Fever Showtime readiness.
+- Ready
+- Reason: Save/load and cleanup safety scaffolding is in place, Phase 3 Fever release caps/overflow are restored, and `npm run build` passes. Remaining boss phase protection is bounded by the current boss system's available phase data.
+
+
+## Phase 3 Repair — Boss Caps and Showtime Overflow Restoration
+
+### Implemented
+- Restored `getFeverDamageCapRatio` with the documented caps:
+  - Normal: uncapped
+  - Elite: 40% of enemy max HP
+  - Boss: 30% of enemy max HP
+  - Final boss: 25% of enemy max HP
+- Restored raw Fever release damage calculation from charged lines, player line damage, combo bonus, cascade multiplier, drop bonus, and enemy armor.
+- Restored direct Fever release damage application to enemy HP/shield.
+- Restored Showtime Overflow conversion into active hazard clear, boss intent delay, shield, mana, and gold.
+- Added boss phase-threshold protection for the exposed 50% boss phase transition.
+- Added dev warning when boss cap bypass is converted into Showtime Overflow.
+
+### Files changed
+- `src/game/systems/FeverSystem.ts`
+- `docs/FEVER_SHOWTIME_CASCADE_IMPLEMENTATION_REPORT.md`
+
+### Runtime behavior
+- Fever release now calculates and applies a capped direct burst before remaining Cascade Gravity combat resolution runs.
+- Overflow does not become extra direct boss damage and does not persist to the next enemy or node.
+- Fever release clears Fever Heat after resolving.
+- Event log records Showtime release, capped burst damage, Boss Drama Guard, phase gate, and overflow utility feedback.
+
+### Boss cap behavior
+- Elite, boss, and final boss caps use enemy max HP.
+- Boss phase gate prevents a single Fever release from crossing below the exposed 50% phase threshold before phase 2 can trigger.
+- If raw damage exceeds the cap or phase gate, the excess becomes Showtime Overflow.
+
+### Build/type-check result
+- Command: `npm run build`
+- Result: Pass
+
+### Remaining limitations
+- The boss system only exposes one phase threshold (`phase2Triggered` at 50% HP), so multi-phase skip prevention is not implemented.
+- `score_bonus` remains an available utility type but is not used because `RunState` does not currently expose a score field.

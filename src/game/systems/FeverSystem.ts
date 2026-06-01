@@ -832,6 +832,8 @@ export class FeverSystem {
                 active: false,
                 locksRemaining: 0,
                 chargedLineRows: [],
+                heat: 0,
+                heatLevel: 'none',
                 manualReleaseAvailable: false,
                 releaseRequested: false,
                 lastReleaseSummary: {
@@ -909,6 +911,8 @@ export class FeverSystem {
             active: false,
             locksRemaining: 0,
             chargedLineRows: [],
+            heat: 0,
+            heatLevel: 'none',
             manualReleaseAvailable: false,
             releaseRequested: false,
             lastReleaseSummary: {
@@ -925,6 +929,9 @@ export class FeverSystem {
                 overflowUtility: undefined
             }
         };
+
+        const combatResult = this.applyFeverReleaseCombatResult(updatedFever.lastReleaseSummary!, state);
+        updatedFever.lastReleaseSummary = combatResult.releaseSummary;
 
         return {
             board,
@@ -967,8 +974,17 @@ export class FeverSystem {
      * @returns The cap ratio (as a decimal) or null if no cap.
      */
     getFeverDamageCapRatio(encounterType: FeverEncounterType): number | null {
-        // Stub implementation: return null (no cap) for now.
-        return null;
+        switch (encounterType) {
+            case 'elite':
+                return 0.4;
+            case 'boss':
+                return 0.3;
+            case 'final_boss':
+                return 0.25;
+            case 'normal':
+            default:
+                return null;
+        }
     }
 
     /**
@@ -978,8 +994,29 @@ export class FeverSystem {
      * @returns The raw damage before caps and overflow.
      */
     calculateRawFeverReleaseDamage(releaseSummary: FeverReleaseSummary, state: RunState): number {
-        // Stub implementation: return 0 for now.
-        return 0;
+        const chargedLines = Math.max(0, Math.floor(releaseSummary.chargedLinesCleared));
+        if (chargedLines <= 0 || !state.activeEnemy) {
+            return 0;
+        }
+
+        const cascade = releaseSummary.cascadeResult;
+        const lineBonus = chargedLines <= 4
+            ? LINE_CLEAR_BONUS[chargedLines] ?? 0
+            : LINE_CLEAR_BONUS[4] + (chargedLines - 4) * 10;
+        const comboBonus = state.combo >= 4 ? 12 : state.combo === 3 ? 7 : state.combo === 2 ? 3 : 0;
+        const rawBase = state.player.baseLineDamage + state.player.lineDamageBonus + lineBonus + comboBonus;
+        const cascadeCount = Math.max(1, cascade?.cascadeCount ?? 1);
+        const cascadeMultiplier = cascadeCount >= 4
+            ? 2
+            : cascadeCount === 3
+                ? 1.5
+                : cascadeCount === 2
+                    ? 1.25
+                    : 1;
+        const chargedLineBurst = chargedLines * 4;
+        const cascadeDropBonus = Math.min(10, Math.floor((cascade?.blocksDropped ?? 0) / 6));
+        const mitigated = Math.round(rawBase * cascadeMultiplier + chargedLineBurst + cascadeDropBonus - state.activeEnemy.armor);
+        return Math.max(1, mitigated);
     }
 
     /**
@@ -999,12 +1036,42 @@ export class FeverSystem {
         capApplied: boolean;
         phaseGateApplied: boolean;
     } {
-        // Stub implementation: no cap, no overflow.
+        const safeRawDamage = Math.max(0, Math.floor(rawDamage));
+        const enemy = state.activeEnemy;
+        if (!enemy || safeRawDamage <= 0) {
+            return {
+                cappedDamage: 0,
+                overflowDamage: 0,
+                capApplied: false,
+                phaseGateApplied: false
+            };
+        }
+
+        const ratio = this.getFeverDamageCapRatio(encounterType);
+        let cap = ratio === null ? safeRawDamage : Math.max(1, Math.floor(enemy.maxHp * ratio));
+        let phaseGateApplied = false;
+
+        if ((encounterType === 'boss' || encounterType === 'final_boss') && !enemy.phase2Triggered) {
+            const phaseThresholdHp = Math.floor(enemy.maxHp * 0.5);
+            if (enemy.currentHp > phaseThresholdHp && enemy.currentHp - Math.min(safeRawDamage, cap) < phaseThresholdHp) {
+                cap = Math.max(1, Math.min(cap, enemy.currentHp - phaseThresholdHp));
+                phaseGateApplied = true;
+            }
+        }
+
+        const cappedDamage = Math.min(safeRawDamage, cap);
+        const overflowDamage = Math.max(0, safeRawDamage - cappedDamage);
+        if (overflowDamage > 0 && (encounterType === 'boss' || encounterType === 'final_boss')) {
+            this.warnDevOnce(
+                'fever-boss-cap-bypass-blocked',
+                '[Fever] Boss cap bypass attempt was converted into Showtime Overflow.'
+            );
+        }
         return {
-            cappedDamage: rawDamage,
-            overflowDamage: 0,
-            capApplied: false,
-            phaseGateApplied: false
+            cappedDamage,
+            overflowDamage,
+            capApplied: cappedDamage < safeRawDamage,
+            phaseGateApplied
         };
     }
 
@@ -1021,8 +1088,51 @@ export class FeverSystem {
         state: RunState;
         overflowUtility: ShowtimeOverflowUtility[];
     } {
-        // Stub implementation: no utility.
-        return { state, overflowUtility: [] };
+        const points = Math.max(
+            0,
+            Math.floor((Math.max(0, overflowDamage) / 25) * this.getShowtimeOverflowEfficiencyMultiplier(state))
+        );
+        const overflowUtility: ShowtimeOverflowUtility[] = [];
+        if (points <= 0) {
+            return { state, overflowUtility };
+        }
+
+        let remaining = points;
+        const clearableHazards = Math.min(remaining, state.activeHazards.length);
+        if (clearableHazards > 0) {
+            state.activeHazards = state.activeHazards.slice(clearableHazards);
+            overflowUtility.push({ type: 'clear_hazard_blocks', amount: clearableHazards });
+            remaining -= clearableHazards;
+        }
+
+        if (remaining > 0 && state.activeEnemy?.roomType === 'boss') {
+            state.activeEnemy.attackCounter += 1;
+            overflowUtility.push({ type: 'boss_intent_delay', amount: 1 });
+            remaining -= 1;
+        }
+
+        if (remaining > 0 && state.player.shield < 99) {
+            const shieldAmount = Math.min(99 - state.player.shield, remaining * 2);
+            state.player.shield += shieldAmount;
+            overflowUtility.push({ type: 'shield', amount: shieldAmount });
+            remaining -= Math.ceil(shieldAmount / 2);
+        }
+
+        if (remaining > 0 && state.player.mana < state.player.maxMana) {
+            const manaAmount = Math.min(state.player.maxMana - state.player.mana, remaining * 2);
+            state.player.mana += manaAmount;
+            overflowUtility.push({ type: 'mana', amount: manaAmount });
+            remaining -= Math.ceil(manaAmount / 2);
+        }
+
+        if (remaining > 0) {
+            const goldAmount = remaining * 3;
+            state.player.gold += goldAmount;
+            state.gold = state.player.gold;
+            overflowUtility.push({ type: 'gold_bonus', amount: goldAmount });
+        }
+
+        return { state, overflowUtility };
     }
 
     /**
@@ -1038,8 +1148,83 @@ export class FeverSystem {
         state: RunState;
         releaseSummary: FeverReleaseSummary;
     } {
-        // Stub implementation: return state and releaseSummary unchanged.
-        return { state, releaseSummary };
+        const enemy = state.activeEnemy;
+        if (!enemy) {
+            return { state, releaseSummary };
+        }
+
+        const encounterType = this.getFeverEncounterType(state);
+        const rawDamage = this.calculateRawFeverReleaseDamage(releaseSummary, state);
+        const capResult = this.applyFeverDamageCaps(rawDamage, state, encounterType);
+        const overflowResult = this.convertShowtimeOverflow(capResult.overflowDamage, state);
+        const cappedDamage = capResult.cappedDamage;
+        const blocked = Math.min(enemy.shield, cappedDamage);
+        enemy.shield -= blocked;
+        const hpDamage = Math.max(0, cappedDamage - blocked);
+        enemy.currentHp = Math.max(0, enemy.currentHp - hpDamage);
+        state.runStats.damageDealt += hpDamage;
+
+        const chargedLines = Math.max(0, releaseSummary.chargedLinesCleared);
+        const baseMana = chargedLines <= 4
+            ? MANA_GAIN[chargedLines] ?? 0
+            : MANA_GAIN[4] + (chargedLines - 4) * 25;
+        const cascadeMana = releaseSummary.cascadeResult && releaseSummary.cascadeResult.cascadeCount > 1
+            ? Math.floor(baseMana * CASCADE_MANA_BONUS_MULTIPLIER)
+            : 0;
+        const manaGained = Math.max(0, baseMana + cascadeMana);
+        if (manaGained > 0) {
+            state.player.mana = clamp(state.player.mana + manaGained, 0, state.player.maxMana);
+        }
+
+        state.eventLog.unshift('Showtime released!');
+        if (cappedDamage > 0) {
+            state.eventLog.unshift(`Fever burst dealt ${cappedDamage} damage!`);
+        }
+        if (blocked > 0) {
+            state.eventLog.unshift(`${enemy.name}'s shield blocks ${blocked} Showtime damage.`);
+        }
+        if (capResult.capApplied) {
+            state.eventLog.unshift('Boss Drama Guard softened the burst!');
+        }
+        if (capResult.phaseGateApplied) {
+            state.eventLog.unshift('The boss holds the stage for the next act!');
+        }
+        for (const utility of overflowResult.overflowUtility) {
+            switch (utility.type) {
+                case 'clear_hazard_blocks':
+                    state.eventLog.unshift('Showtime Overflow cleared a hazard!');
+                    break;
+                case 'boss_intent_delay':
+                    state.eventLog.unshift('Showtime Overflow delayed the boss!');
+                    break;
+                case 'shield':
+                    state.eventLog.unshift('Showtime Overflow became shield!');
+                    break;
+                case 'mana':
+                    state.eventLog.unshift('Showtime Overflow became mana!');
+                    break;
+                case 'gold_bonus':
+                    state.eventLog.unshift(`Showtime Overflow dropped ${utility.amount} gold!`);
+                    break;
+                default:
+                    break;
+            }
+        }
+        state.eventLog = state.eventLog.slice(0, 50);
+
+        return {
+            state: overflowResult.state,
+            releaseSummary: {
+                ...releaseSummary,
+                rawDamage,
+                cappedDamage,
+                overflowDamage: capResult.overflowDamage,
+                manaGained,
+                encounterType,
+                capApplied: capResult.capApplied,
+                overflowUtility: overflowResult.overflowUtility
+            }
+        };
     }
 
     // ==================== Phase 4: Fever Pressure Budget, Soft Junk, and Fever Heat ====================
