@@ -29,7 +29,7 @@ import type {
 import type { UiComponentSpec } from '../types/ui-layout';
 import { MobileControls } from '../ui/MobileControls';
 import { Button } from '../ui/Button';
-import { UiButton, UiIconSlot, UiPanel } from '../ui/components';
+import { UiButton, UiIconSlot, UiPanel, isUiDebugEnabled } from '../ui/components';
 import {
   BattleCombatHud,
   BattleControlsInputAdapter,
@@ -487,7 +487,7 @@ export class BattleScene extends Phaser.Scene {
     this.controlsY = this.battleLayout.bottomControlsRect.y + Math.round(this.battleLayout.bottomControlsRect.height / 2);
 
     this.battleShell = new BattleScreenShell(this, {
-      debug: this.registry.get('uiDebug') === true || this.registry.get('uiDebug') === 'true',
+      debug: isUiDebugEnabled(this),
       rootDepth: 20
     }).create();
     this.battlePuzzleSectionUi = new BattlePuzzleSectionUi(this, this.battleShell).create();
@@ -934,7 +934,7 @@ export class BattleScene extends Phaser.Scene {
       return;
     }
     const state = this.sharedGame.runState;
-    const debug = this.registry.get('uiDebug') === true || this.registry.get('uiDebug') === 'true';
+    const debug = isUiDebugEnabled(this);
     this.battleCombatHud = new BattleCombatHud(this, this.battleShell).create(state);
     this.battleCombatHud.setDebugVisible(debug);
     this.battleEventLog = new BattleEventLog(this, this.battleShell, { maxVisibleMessages: 2 }).create();

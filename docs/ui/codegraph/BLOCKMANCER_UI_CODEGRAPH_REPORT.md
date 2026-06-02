@@ -102,3 +102,17 @@ CodeGraph and SOT comparison found that the older Release Implementation SOT row
 
 Implementation follow-up closed the highest deterministic restore gap: `LevelUpSystem` now generates offers from a persisted seed, `LevelUpRewardScene` reuses `levelUpSelectionSeed` and exact `offeredUpgradeIds`, `LevelUpFlowRouter` clears stale seeds on reset, and `EncounterPackSystem` selects entry effects from the encounter seed. `npm run build`, `npm test`, and `npm run validate:ui-layouts` passed after the patch.
 
+## 2026-06-02 Battle Wireframe Visibility Fix
+
+Battle UI wireframe/debug overlays now require an explicit dev URL opt-in through `?uiDebug=1` or `?uiDebug=true`. Registry-only and persisted browser state no longer enable the overlay, preventing debug frames from covering normal battle text and assets.
+
+## 2026-06-02 Shared UI Depth Fix
+
+Shared UI components now keep scene root depth at normal creation-order depth unless a caller explicitly supplies `depthOffset` or calls `setDepth`. This prevents panel and slot fallback frames from rendering above later normal Phaser text/assets on reward, hero select, menu, and other mixed UI scenes.
+
+Panel and button components also suppress the generated `missing_ui` image when UI art is unavailable, relying on their styled fallback rectangles instead. This keeps missing panel/button art from appearing as bright placeholder wireframes across normal screens.
+
+## 2026-06-02 Level-Up Upgrade Screen Cleanup
+
+The 3-lane level-up upgrade screen no longer displays card rank/level copy on offer cards; owned cards now show neutral ownership text. Item-like reroll/resource rewards were removed from level-up offers and fallbacks so consumable/reward resources stay in post-battle reward flow.
+

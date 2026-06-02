@@ -1,7 +1,7 @@
 {
   "id": "upg_lvl_reward_reroll",
-  "name": "Lucky Ticket",
-  "description": "Gain +1 level-up reroll charge.",
+  "name": "Retired Lucky Ticket",
+  "description": "Retired legacy level-up reroll. Unavailable in level-up offers.",
   "category": "level_up",
   "rarity": "common",
   "upgradeType": "general",
@@ -10,5 +10,5 @@
   "effectId": "lvl_reward_reroll",
   "levelUpOnly": true,
   "iconKey": "upg_lvl_reward_reroll",
-  "enabled": true
+  "enabled": false
 }

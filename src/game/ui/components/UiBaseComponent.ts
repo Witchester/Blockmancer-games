@@ -92,10 +92,15 @@ export function getComponentCenter(component: UiComponentSpec): { x: number; y: 
   };
 }
 
-export function isUiDebugEnabled(scene: Phaser.Scene, explicit?: boolean): boolean {
+export function isUiDebugEnabled(_scene: Phaser.Scene, explicit?: boolean): boolean {
+  if (!import.meta.env.DEV) return false;
   if (explicit !== undefined) return explicit;
-  const registryValue = scene.registry?.get('uiDebug');
-  return registryValue === true || (import.meta.env.DEV && registryValue === 'true');
+
+  const search = globalThis.location?.search ?? '';
+  const params = new URLSearchParams(search);
+  const queryValue = params.get('uiDebug');
+
+  return queryValue === '1' || queryValue === 'true';
 }
 
 export class UiBaseComponent {
@@ -118,7 +123,7 @@ export class UiBaseComponent {
     this.state = options.state ?? 'default';
     this.debug = isUiDebugEnabled(scene, options.debug);
     this.root = scene.add.container(this.bounds.x, this.bounds.y);
-    this.root.setDepth(roundPixel(this.spec.zIndex + (options.depthOffset ?? 0)));
+    this.root.setDepth(roundPixel(options.depthOffset ?? 0));
     this.root.setVisible(options.visible ?? this.state !== 'hidden');
     this.root.setAlpha(options.alpha ?? UI_STATE_STYLES[this.state].alpha);
   }
@@ -202,7 +207,7 @@ export class UiBaseComponent {
   protected createSlotImage(
     assetKey?: string,
     kind: AssetKind | 'block' = inferAssetKind(this.spec),
-    options: { fit?: 'exact' | 'contain'; flipX?: boolean; alpha?: number } = {}
+    options: { fit?: 'exact' | 'contain'; flipX?: boolean; alpha?: number; hideMissingUi?: boolean } = {}
   ): Phaser.GameObjects.Image {
     const local = this.getLocalAnchorPoint();
     const resolved = this.resolveAssetSlot(assetKey);
@@ -211,6 +216,9 @@ export class UiBaseComponent {
     image.setOrigin(origin.x, origin.y);
     if (options.flipX) image.setFlipX(true);
     if (typeof options.alpha === 'number') image.setAlpha(options.alpha);
+    if (options.hideMissingUi && (resolved.textureKey === 'missing_ui' || resolved.placeholderKey === 'missing_ui')) {
+      image.setVisible(false);
+    }
     this.fitImageToSlot(image, options.fit ?? (this.spec.fitMode === 'contain' ? 'contain' : 'exact'));
     image.setDepth(this.root.depth);
     this.root.add(image);
