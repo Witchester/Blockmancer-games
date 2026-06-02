@@ -1,0 +1,84 @@
+{
+    "id":  "card_clever_timing",
+    "category":  "hero",
+    "iconKey":  "placeholder_upgrade",
+    "rarity":  "uncommon",
+    "tags":  [
+                 "generic_hero",
+                 "mana",
+                 "utility"
+             ],
+    "name":  "Clever Timing",
+    "legendaryPool":  [
+                          {
+                              "id":  "card_clever_timing_legendary_placeholder",
+                              "name":  "Placeholder Evolution",
+                              "effectConfig":  {
+
+                                               },
+                              "description":  "Coming in Prompt 5.",
+                              "tags":  [
+                                           "placeholder"
+                                       ],
+                              "effectType":  "hero_passive_modifier"
+                          }
+                      ],
+    "description":  "Time is on your side. Reroll and mana timing improve.",
+    "flavorText":  "Wait for the right moment.",
+    "legacyAliases":  [
+                          "upg_lvl_reward_reroll",
+                          "upg_lucky_roll",
+                          "upg_lvl_spell_damage"
+                      ],
+    "isGenericHeroCard":  true,
+    "enabled":  true,
+    "slotCost":  1,
+    "levels":  [
+                   {
+                       "effectType":  "hero_mana_gain",
+                       "title":  "Lucky Roll",
+                       "description":  "Gain +1 reward reroll charge.",
+                       "level":  1,
+                       "effectConfig":  {
+                                            "rerollBonus":  1
+                                        }
+                   },
+                   {
+                       "effectType":  "hero_mana_gain",
+                       "title":  "Mana Rhythm",
+                       "description":  "+3 mana after each cascade.",
+                       "level":  2,
+                       "effectConfig":  {
+                                            "manaPerCascade":  3
+                                        }
+                   },
+                   {
+                       "effectType":  "hero_warning_timing",
+                       "title":  "Timing Window",
+                       "description":  "Enemy attack counter shows exact number.",
+                       "level":  3,
+                       "effectConfig":  {
+                                            "exactEnemyCounter":  true
+                                        }
+                   },
+                   {
+                       "effectType":  "hero_mana_gain",
+                       "title":  "Recovery Beat",
+                       "description":  "Regain 5 mana when taking damage.",
+                       "level":  4,
+                       "effectConfig":  {
+                                            "manaOnDamage":  5
+                                        }
+                   },
+                   {
+                       "effectType":  "hero_mana_gain",
+                       "title":  "Festival Tempo",
+                       "description":  "All cooldowns and counters are +1 faster. Ready for Legendary Evolution.",
+                       "level":  5,
+                       "effectConfig":  {
+                                            "tempoBonus":  1
+                                        }
+                   }
+               ],
+    "maxLevel":  5
+}

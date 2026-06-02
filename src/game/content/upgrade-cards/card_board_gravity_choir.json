@@ -1,0 +1,83 @@
+{
+    "id":  "card_board_gravity_choir",
+    "category":  "board",
+    "iconKey":  "placeholder_upgrade",
+    "rarity":  "common",
+    "tags":  [
+                 "board",
+                 "cascade",
+                 "damage"
+             ],
+    "name":  "Gravity Choir",
+    "legendaryPool":  [
+                          {
+                              "id":  "card_board_gravity_choir_legendary_placeholder",
+                              "name":  "Placeholder Evolution",
+                              "effectConfig":  {
+
+                                               },
+                              "description":  "Coming in Prompt 5.",
+                              "tags":  [
+                                           "placeholder"
+                                       ],
+                              "effectType":  "board_line_damage"
+                          }
+                      ],
+    "description":  "Cascade Gravity sings louder. Cascade rewards improve.",
+    "flavorText":  "Let gravity do the singing.",
+    "legacyAliases":  [
+                          "upg_cascade_choir",
+                          "upg_sharp_sprinkles",
+                          "upg_smooth_cascade"
+                      ],
+    "enabled":  true,
+    "slotCost":  1,
+    "levels":  [
+                   {
+                       "effectType":  "board_cascade_bonus",
+                       "title":  "Soft Hum",
+                       "description":  "Cascade damage +5%.",
+                       "level":  1,
+                       "effectConfig":  {
+                                            "cascadeDamageBonus":  0.05
+                                        }
+                   },
+                   {
+                       "effectType":  "board_cascade_bonus",
+                       "title":  "Harmony Drop",
+                       "description":  "Cascade mana gain +2.",
+                       "level":  2,
+                       "effectConfig":  {
+                                            "cascadeManaBonus":  2
+                                        }
+                   },
+                   {
+                       "effectType":  "board_cascade_bonus",
+                       "title":  "Rhythm Fall",
+                       "description":  "Cascades grant +4 Fever meter.",
+                       "level":  3,
+                       "effectConfig":  {
+                                            "cascadeFeverBonus":  4
+                                        }
+                   },
+                   {
+                       "effectType":  "board_cascade_bonus",
+                       "title":  "Choir Amplifier",
+                       "description":  "Triple-cascade or higher deals bonus damage equal to cascade count.",
+                       "level":  4,
+                       "effectConfig":  {
+                                            "deepCascadeDamage":  true
+                                        }
+                   },
+                   {
+                       "effectType":  "board_cascade_bonus",
+                       "title":  "Gravity Symphony",
+                       "description":  "Cascade bonuses doubled. Ready for Legendary Evolution.",
+                       "level":  5,
+                       "effectConfig":  {
+                                            "cascadeMultiplier":  2
+                                        }
+                   }
+               ],
+    "maxLevel":  5
+}

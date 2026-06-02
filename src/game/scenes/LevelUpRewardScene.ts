@@ -10,6 +10,7 @@ import {
   buildLevelUpViewModel,
   continueFromLevelUp,
   rerollLevelUpChoices,
+  selectLevelUpCategory,
   type LevelUpUpgradeCardViewModel,
   type LevelUpUpgradeContent
 } from '../ui/level-up';
@@ -35,11 +36,18 @@ export class LevelUpRewardScene extends Phaser.Scene {
 
     if (!game.levelUpSystem.hasPendingLevelUp(state)) {
       state.levelUpScreenState.levelUpScreenResolved = true;
+      state.levelUpScreenState.selectedCategory = null;
       continueFromLevelUp(this);
       return;
     }
 
-    this.cards = this.prepareCards();
+    const selectedCategory = state.levelUpScreenState.selectedCategory;
+    if (!selectedCategory) {
+      this.createCategorySelection();
+      return;
+    }
+
+    this.cards = this.prepareCategoryCards(selectedCategory);
     const model = buildLevelUpViewModel(state, this.cards);
     const layout = getPortraitLayout(this);
     const panelWidth = Math.min(layout.contentWidth, 640);
@@ -68,7 +76,8 @@ export class LevelUpRewardScene extends Phaser.Scene {
       strokeAlpha: 0.38
     });
 
-    this.add.text(layout.centerX, panelTop + 55, model.title, {
+    const categoryLabel = selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1);
+    this.add.text(layout.centerX, panelTop + 55, 'Festival Level-Up  \u2014  ' + categoryLabel, {
       fontFamily: FONT_FAMILY,
       fontSize: '34px',
       fontStyle: 'bold',
@@ -90,7 +99,7 @@ export class LevelUpRewardScene extends Phaser.Scene {
     this.updateSelection();
   }
 
-  private prepareCards(): LevelUpUpgradeContent[] {
+  private prepareCategoryCards(category: 'hero' | 'board' | 'fever'): LevelUpUpgradeContent[] {
     const game = this.game as BlockmancerGame;
     const state = game.runState;
     const screenState = state.levelUpScreenState;
@@ -105,8 +114,22 @@ export class LevelUpRewardScene extends Phaser.Scene {
       }
     }
 
-    const seed = screenState.levelUpSelectionSeed || `${state.currentNodeId}:${state.playerLevelState.level}:${state.playerLevelState.pendingLevelUps}:${Date.now()}`;
-    const cards = game.levelUpSystem.pickLevelUpChoices(state, 3, seed) as LevelUpUpgradeContent[];
+    const seed = screenState.levelUpSelectionSeed || state.currentNodeId + ':' + state.playerLevelState.level + ':' + state.playerLevelState.pendingLevelUps + ':' + Date.now();
+    const cards = game.levelUpSystem.filterLevelUpChoicesByCategory(state, category, 3, seed) as LevelUpUpgradeContent[];
+
+    if (cards.length === 0) {
+      return [{
+        id: 'upg_lvl_fallback_empty',
+        name: 'Back to Categories',
+        description: 'No cards available in this category right now. Choose another category, or switch heroes for different options.',
+        iconKey: 'ui_level_up_stack_chip',
+        upgradeType: 'general',
+        cardType: 'general',
+        stackLimit: 999,
+        effectId: 'lvl_reward_reroll'
+      }];
+    }
+
     screenState.levelUpSelectionSeed = seed;
     screenState.offeredUpgradeIds = cards.map((card) => card.id);
     screenState.pendingLevelUpChoices = [...screenState.offeredUpgradeIds];
@@ -115,6 +138,123 @@ export class LevelUpRewardScene extends Phaser.Scene {
     screenState.levelUpScreenResolved = false;
     game.saveRun();
     return cards;
+  }
+
+  private createCategorySelection(): void {
+    const game = this.game as BlockmancerGame;
+    const state = game.runState;
+    const layout = getPortraitLayout(this);
+    const panelWidth = Math.min(layout.contentWidth, 640);
+    const panelHeight = Math.min(layout.height - 64, 600);
+    const panelLeft = layout.centerX - panelWidth / 2;
+    const panelTop = layout.centerY - panelHeight / 2;
+
+    this.cameras.main.setBackgroundColor(COLORS.background);
+    game.assetSystem.createImageByAssetKey(this, 'bg_scene_level_up', 'stageBackground', layout.centerX, layout.centerY, {
+      kind: 'background',
+      alpha: 0.38
+    }).setDisplaySize(layout.width, layout.height);
+    this.add.rectangle(layout.centerX, layout.centerY, layout.width, layout.height, 0x090b13, 0.72);
+
+    new UiPanel(this, this.uiSpec('level_up_panel', 'panel', 'ui_panel_level_up', 'ui_panel_default', panelLeft, panelTop, panelWidth, panelHeight, 'topLeft', 30), {
+      fillColor: COLORS.panel,
+      fillAlpha: 0.92,
+      strokeColor: COLORS.gold,
+      strokeAlpha: 0.48
+    });
+
+    new UiPanel(this, this.uiSpec('level_up_banner', 'panel', 'ui_level_up_panel_intro', 'ui_panel_default', layout.centerX - Math.min(430, panelWidth - 56) / 2, panelTop + 24, Math.min(430, panelWidth - 56), 62, 'topLeft', 50), {
+      fillColor: COLORS.panelAlt,
+      fillAlpha: 0.5,
+      strokeColor: COLORS.gold,
+      strokeAlpha: 0.38
+    });
+
+    this.add.text(layout.centerX, panelTop + 55, 'Choose Your Upgrade Path', {
+      fontFamily: FONT_FAMILY,
+      fontSize: '34px',
+      fontStyle: 'bold',
+      color: '#ffca6b',
+      stroke: '#090b13',
+      strokeThickness: 5
+    }).setOrigin(0.5);
+
+    this.add.text(layout.centerX, panelTop + 110, 'Hero improves your character. Board improves stacking and cascade control. Fever improves Showtime power and release timing.', {
+      fontFamily: FONT_FAMILY,
+      fontSize: '15px',
+      color: '#98a0c7',
+      align: 'center',
+      wordWrap: { width: panelWidth - 80 }
+    }).setOrigin(0.5);
+
+    const categories: Array<{ key: 'hero' | 'board' | 'fever'; label: string; color: number; desc: string }> = [
+      { key: 'hero', label: 'Hero', color: 0x9adfff, desc: 'Character power, spells, and mana' },
+      { key: 'board', label: 'Board', color: 0x9aff9e, desc: 'Stacking, cascades, and hazard control' },
+      { key: 'fever', label: 'Fever', color: 0xff9a9a, desc: 'Showtime power and release timing' }
+    ];
+
+    const buttonW = panelWidth - 88;
+    const buttonH = 96;
+    const startY = panelTop + 180;
+
+    categories.forEach((cat, index) => {
+      const y = startY + index * (buttonH + 20);
+      const isFull = game.levelUpSystem.isCategoryFull(state, cat.key);
+      const used = game.levelUpSystem.getUsedSlotCount(state, cat.key);
+      const totalUsed = game.levelUpSystem.getUsedSlotCount(state);
+
+      const fillColor = isFull ? 0x333344 : cat.color;
+      const fillAlpha = isFull ? 0.4 : 0.28;
+      const strokeAlpha = isFull ? 0.15 : 0.5;
+
+      new UiPanel(this, this.uiSpec('category_panel_' + cat.key, 'panel', 'ui_panel_category', 'ui_panel_default', panelLeft + 44, y, buttonW, buttonH, 'topLeft', 50), {
+        fillColor,
+        fillAlpha,
+        strokeColor: cat.color,
+        strokeAlpha
+      });
+
+      if (!isFull && totalUsed < 5) {
+        const hit = this.add.zone(layout.centerX, y + buttonH / 2, buttonW, buttonH)
+          .setInteractive({ useHandCursor: true })
+          .setDepth(96);
+        hit.on('pointerup', () => {
+          selectLevelUpCategory(state, cat.key);
+          game.saveRun();
+          this.scene.restart();
+        });
+      }
+
+      this.add.text(layout.centerX, y + 22, cat.label, {
+        fontFamily: FONT_FAMILY,
+        fontSize: '26px',
+        fontStyle: 'bold',
+        color: isFull ? '#555566' : '#f6f7ff'
+      }).setOrigin(0.5);
+
+      const statusText = isFull || totalUsed >= 5
+        ? 'Full  --  ' + used + '/2'
+        : used + '/2  --  ' + (5 - totalUsed) + ' slot(s) free';
+      this.add.text(layout.centerX, y + 52, statusText + '  |  ' + cat.desc, {
+        fontFamily: FONT_FAMILY,
+        fontSize: '14px',
+        color: isFull ? '#555566' : '#98a0c7'
+      }).setOrigin(0.5);
+    });
+
+    const backY = startY + categories.length * (buttonH + 20) + 20;
+    this.add.text(layout.centerX, backY + 30, 'Level-ups pending: ' + state.playerLevelState.pendingLevelUps, {
+      fontFamily: FONT_FAMILY,
+      fontSize: '15px',
+      color: '#98a0c7'
+    }).setOrigin(0.5);
+
+    const remainingSlots = 5 - game.levelUpSystem.getUsedSlotCount(state);
+    this.add.text(layout.centerX, backY + 54, remainingSlots + ' total slot(s) free', {
+      fontFamily: FONT_FAMILY,
+      fontSize: '14px',
+      color: remainingSlots > 0 ? '#9aff9e' : '#ff9a9a'
+    }).setOrigin(0.5);
   }
 
   private renderLevelSummary(model: ReturnType<typeof buildLevelUpViewModel>, centerX: number, y: number, panelWidth: number): void {
@@ -141,7 +281,7 @@ export class LevelUpRewardScene extends Phaser.Scene {
     this.add.text(centerX, meterTop + 50, `${model.currentXp}/${model.xpToNextLevel} EXP toward Level ${model.finalLevel + 1}  |  ${model.pendingLevelUps} level-up${model.pendingLevelUps === 1 ? '' : 's'} pending`, {
       fontFamily: FONT_FAMILY,
       fontSize: '15px',
-      color: '#d8deff',
+      color: '#98a0c7',
       align: 'center',
       wordWrap: { width: panelWidth - 64 }
     }).setOrigin(0.5);
@@ -203,7 +343,7 @@ export class LevelUpRewardScene extends Phaser.Scene {
         color: '#f6f7ff',
         wordWrap: { width: cardW - 132 }
       });
-      this.add.text(x + 106, y + 49, `${card.rarity.toUpperCase()}  |  Stack ${card.stackCount}/${card.stackLimit}`, {
+      this.add.text(x + 106, y + 49, card.rarity.toUpperCase() + '  |  ' + this.cardStatusText(card), {
         fontFamily: FONT_FAMILY,
         fontSize: '14px',
         color: this.rarityTextColor(card.rarity)
@@ -223,6 +363,13 @@ export class LevelUpRewardScene extends Phaser.Scene {
         }).setMaxLines(1);
       }
     });
+  }
+
+  private cardStatusText(card: LevelUpUpgradeCardViewModel): string {
+    if (card.isLegendary) return 'Legendary';
+    if (card.readyToEvolve) return 'Ready to Evolve';
+    if (card.isOwned) return 'Card Lv' + card.cardLevel;
+    return 'New Card';
   }
 
   private renderFooter(model: ReturnType<typeof buildLevelUpViewModel>, centerX: number, y: number, panelWidth: number): void {
@@ -255,6 +402,16 @@ export class LevelUpRewardScene extends Phaser.Scene {
     if (!card) {
       return;
     }
+
+    if (card.id === 'upg_lvl_fallback_empty') {
+      const game = this.game as BlockmancerGame;
+      game.runState.levelUpScreenState.selectedCategory = null;
+      game.runState.levelUpScreenState.offeredUpgradeIds = [];
+      game.saveRun();
+      this.scene.restart();
+      return;
+    }
+
     this.selectionLocked = true;
     this.confirmButton?.setEnabled(false);
 

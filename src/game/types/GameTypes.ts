@@ -202,6 +202,64 @@ export type NodeResultClaimState = {
   postNodeHealingApplied?: boolean;
 };
 
+export type UpgradeCategory = "hero" | "board" | "fever";
+
+export type LegendaryUnlockCondition = {
+  type: string;
+  value: number;
+  description: string;
+};
+
+export type UpgradeCardLevel = {
+  level: 1 | 2 | 3 | 4 | 5;
+  title: string;
+  description: string;
+  effectType: string;
+  effectConfig: Record<string, unknown>;
+};
+
+export type LegendaryEvolutionDefinition = {
+  id: string;
+  name: string;
+  description: string;
+  effectType: string;
+  effectConfig: Record<string, unknown>;
+  tags: string[];
+  unlockCondition?: LegendaryUnlockCondition;
+};
+
+export type UpgradeCardDefinition = {
+  id: string;
+  category: UpgradeCategory;
+  heroId?: string;
+  isGenericHeroCard?: boolean;
+  maxLevel: 5;
+  slotCost: 1;
+  levels: UpgradeCardLevel[];
+  legendaryPool: LegendaryEvolutionDefinition[];
+};
+
+export type RunUpgradeCardState = {
+  cardId: string;
+  category: "hero" | "board" | "fever";
+  level: 1 | 2 | 3 | 4 | 5;
+  slotIndex: number;
+  readyToEvolve?: boolean;
+  legendaryEvolutionId?: string;
+};
+
+export type RunUpgradeSlotState = {
+  index: number;
+  category?: "hero" | "board" | "fever";
+  cardId?: string;
+};
+
+export type RunUpgradeState = {
+  version: number;
+  slots: RunUpgradeSlotState[];
+  ownedCards: Record<string, RunUpgradeCardState>;
+  legacyUpgradeIds?: string[];
+};
 export type PlayerLevelState = {
   level: number;
   currentXp: number;
@@ -218,6 +276,10 @@ export type LevelUpScreenState = {
   rerollCharges: number;
   levelUpSelectionSeed: string;
   levelUpScreenResolved: boolean;
+  /** Category-first level-up flow: category the player selected (null = not yet chosen) */
+  selectedCategory?: UpgradeCategory | null;
+  /** Pending Legendary Evolution: card ID waiting for evolution after Lv5 */
+  pendingLegendaryEvolution?: { cardId: string } | null;
 };
 
 export type FeverHeatLevel = "none" | "low" | "medium" | "high" | "max";
@@ -856,5 +918,7 @@ export interface RunState {
   metaBonusesApplied: boolean;
   /** Once-per-run claimed friendship rewards (monsterId list) */
   claimedFriendRewards: string[];
+  /** Upgrade card system run state (Prompt 1 - data model foundation) */
+  runUpgradeState: RunUpgradeState;
   saveVersion: number;
 }

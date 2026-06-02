@@ -1,0 +1,81 @@
+{
+    "id":  "card_fever_safety_confetti",
+    "category":  "fever",
+    "iconKey":  "placeholder_upgrade",
+    "rarity":  "common",
+    "tags":  [
+                 "fever",
+                 "safety",
+                 "cleanup"
+             ],
+    "name":  "Safety Confetti",
+    "legendaryPool":  [
+                          {
+                              "id":  "card_fever_safety_confetti_legendary_placeholder",
+                              "name":  "Placeholder Evolution",
+                              "effectConfig":  {
+
+                                               },
+                              "description":  "Coming in Prompt 5.",
+                              "tags":  [
+                                           "placeholder"
+                                       ],
+                              "effectType":  "fever_gain_bonus"
+                          }
+                      ],
+    "description":  "Confetti keeps things safe. High-pressure release becomes safer.",
+    "flavorText":  "POP! But safely.",
+    "legacyAliases":  [
+                          "upg_fever_safety_release"
+                      ],
+    "enabled":  true,
+    "slotCost":  1,
+    "levels":  [
+                   {
+                       "effectType":  "fever_release_safety",
+                       "title":  "Soft Pop",
+                       "description":  "High-pressure release clears 1 hazard block.",
+                       "level":  1,
+                       "effectConfig":  {
+                                            "clearHazards":  1
+                                        }
+                   },
+                   {
+                       "effectType":  "fever_release_safety",
+                       "title":  "Confetti Shield",
+                       "description":  "Release grants 3 shield even at high heat.",
+                       "level":  2,
+                       "effectConfig":  {
+                                            "heatShield":  3
+                                        }
+                   },
+                   {
+                       "effectType":  "fever_release_safety",
+                       "title":  "Party Popper",
+                       "description":  "Release clears all Soft Junk on the board.",
+                       "level":  3,
+                       "effectConfig":  {
+                                            "clearSoftJunk":  true
+                                        }
+                   },
+                   {
+                       "effectType":  "fever_release_safety",
+                       "title":  "Safety Burst",
+                       "description":  "Release at max heat clears ALL board hazards.",
+                       "level":  4,
+                       "effectConfig":  {
+                                            "maxHeatClearAll":  true
+                                        }
+                   },
+                   {
+                       "effectType":  "fever_release_safety",
+                       "title":  "Festival Safe Zone",
+                       "description":  "All releases clear hazards. Ready for Legendary Evolution.",
+                       "level":  5,
+                       "effectConfig":  {
+                                            "allReleasesClearHazards":  true
+                                        }
+                   }
+               ],
+    "maxLevel":  5
+}

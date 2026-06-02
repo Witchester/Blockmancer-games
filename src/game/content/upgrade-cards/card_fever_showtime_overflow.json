@@ -1,0 +1,81 @@
+{
+    "id":  "card_fever_showtime_overflow",
+    "category":  "fever",
+    "iconKey":  "placeholder_upgrade",
+    "rarity":  "rare",
+    "tags":  [
+                 "fever",
+                 "overflow",
+                 "boss_safe"
+             ],
+    "name":  "Showtime Overflow",
+    "legendaryPool":  [
+                          {
+                              "id":  "card_fever_showtime_overflow_legendary_placeholder",
+                              "name":  "Placeholder Evolution",
+                              "effectConfig":  {
+
+                                               },
+                              "description":  "Coming in Prompt 5.",
+                              "tags":  [
+                                           "placeholder"
+                                       ],
+                              "effectType":  "fever_gain_bonus"
+                          }
+                      ],
+    "description":  "Overflow becomes useful. Excess damage converts to utility.",
+    "flavorText":  "Nothing goes to waste!",
+    "legacyAliases":  [
+                          "upg_fever_overflow"
+                      ],
+    "enabled":  true,
+    "slotCost":  1,
+    "levels":  [
+                   {
+                       "effectType":  "fever_overflow_utility",
+                       "title":  "Spillover",
+                       "description":  "Overflow damage converts to shield at 30% rate.",
+                       "level":  1,
+                       "effectConfig":  {
+                                            "shieldConversion":  0.3
+                                        }
+                   },
+                   {
+                       "effectType":  "fever_overflow_utility",
+                       "title":  "Sparkle Drops",
+                       "description":  "Overflow damage converts to mana at 20% rate.",
+                       "level":  2,
+                       "effectConfig":  {
+                                            "manaConversion":  0.2
+                                        }
+                   },
+                   {
+                       "effectType":  "fever_overflow_utility",
+                       "title":  "Utility Spill",
+                       "description":  "Overflow also grants +1 gold per 10 overflow.",
+                       "level":  3,
+                       "effectConfig":  {
+                                            "goldConversion":  0.1
+                                        }
+                   },
+                   {
+                       "effectType":  "fever_overflow_utility",
+                       "title":  "Boss Sparkle",
+                       "description":  "Overflow against bosses delays next boss action by 1 lock.",
+                       "level":  4,
+                       "effectConfig":  {
+                                            "bossDelay":  1
+                                        }
+                   },
+                   {
+                       "effectType":  "fever_overflow_utility",
+                       "title":  "Festival Overflow",
+                       "description":  "All conversions doubled. Ready for Legendary Evolution.",
+                       "level":  5,
+                       "effectConfig":  {
+                                            "conversionMultiplier":  2
+                                        }
+                   }
+               ],
+    "maxLevel":  5
+}

@@ -227,7 +227,8 @@ export class SaveSystem {
           chosenUpgradeIds: [],
           rerollCharges: 0,
           levelUpSelectionSeed: '',
-          levelUpScreenResolved: true
+          levelUpScreenResolved: true,
+          selectedCategory: null
         };
       }
       if (isObject(migrated.activeEncounterPack)) {
@@ -257,6 +258,25 @@ export class SaveSystem {
         if (typeof pack.routeFallbackTriggeredForEncounterPack !== 'boolean') {
           pack.routeFallbackTriggeredForEncounterPack = false;
         }
+      }
+    }
+
+        if (version < 10 || !isObject(migrated.runUpgradeState)) {
+      const legacyUpgrades = Array.isArray(migrated.upgrades)
+        ? migrated.upgrades.filter((id: unknown): id is string => typeof id === 'string')
+        : [];
+      migrated.runUpgradeState = {
+        version: 1,
+        slots: [
+          { index: 0 },
+          { index: 1 },
+          { index: 2 }
+        ],
+        ownedCards: {},
+        legacyUpgradeIds: legacyUpgrades
+      };
+      if (Array.isArray(migrated.ownedRewards)) {
+        (migrated.runUpgradeState as Record<string, unknown>).legacyOwnedRewards = [...(migrated.ownedRewards as unknown[])];
       }
     }
 

@@ -1506,3 +1506,194 @@ If a route reward clears, glows, pins, freezes, or transforms a board block, the
 10. Open UI that uses content icons and confirm missing icons fall back safely.
 11. Trigger a route story event and confirm dialogue/choice UI assets fall back safely if missing.
 12. Choose a route reward that highlights or clears blocks and confirm it uses existing glow/clear frame hooks without changing Cascade Gravity.
+
+<!-- FEVER_SHOWTIME_CASCADE_UPDATE_2026_06_02_START -->
+## 2026-06-02 Feature Update — Fever Showtime Reactive Difficulty
+
+### Purpose
+
+Fever Showtime adds a new reactive difficulty layer: the player may delay line clears for a stronger release, while enemies and bosses may continue applying readable pressure.
+
+The design target is:
+
+```text
+Greedy Fever play should be tempting, understandable, and risky, but never an unavoidable instant-loss trap.
+```
+
+### Fever Pressure Budget
+
+During active Fever, any enemy/boss effect that adds blocks, junk, hazards, board pressure, preview disruption, or board-shape pressure should route through Fever Pressure Budget when practical.
+
+Pressure bands:
+
+```ts
+type FeverPressureBand = "low" | "medium" | "high" | "critical";
+```
+
+Pressure snapshot should consider:
+
+```text
+occupied cell ratio
+highest occupied row / danger height
+spawn-zone safety
+Charged Line count
+Soft Junk count
+active hazard count
+incoming junk queue
+requested pressure amount
+board size
+```
+
+Suggested result shape:
+
+```ts
+type FeverPressureBudgetResult = {
+  requestedCells: number;
+  appliedHardCells: number;
+  softJunkCells: number;
+  delayedJunkCells: number;
+  heatAdded: number;
+  shieldDamage: number;
+  bossAdvantagePoints: number;
+  skippedUnsafeCells: number;
+  pressureBand: FeverPressureBand;
+};
+```
+
+### Pressure Conversion Rules
+
+| Pressure Band | Hard Pressure | Converted Pressure | Heat |
+| --- | ---: | ---: | ---: |
+| Low | 100% | 0% | +0 |
+| Medium | ~70% | ~30% | +5 |
+| High | ~40% | ~60% | +10 |
+| Critical | 0-20% only if spawn-safe | 80-100% | +15 |
+
+Converted pressure may become:
+
+```text
+Soft Junk
+Fever Heat
+delayed junk
+shield damage, if current combat rules support it
+boss advantage
+reduced reward
+event log pressure
+```
+
+Converted pressure must not become:
+
+```text
+unavoidable instant Game Over
+unwarned spawn-zone block
+uncounterable boss kill
+permanent board corruption
+```
+
+### Soft Junk
+
+Soft Junk is temporary pressure created by Fever Pressure Budget.
+
+Rules:
+
+1. Soft Junk may appear during Fever or from Fever pressure conversion.
+2. Soft Junk occupies board space but is less punishing than normal hard junk.
+3. Soft Junk must not spawn directly in the piece spawn zone.
+4. Soft Junk should prefer lower/mid board safe cells.
+5. Soft Junk should be visually/logically distinct from normal junk.
+6. Soft Junk may clear during Fever release if affected by the cleared/charged area.
+7. Remaining Soft Junk resolves after Fever ends:
+   - safe conversion -> normal junk
+   - unsafe conversion -> delayed junk or Fever Heat penalty
+   - no delayed-junk support -> reduced reward or boss shield fallback
+8. Soft Junk never persists between nodes.
+
+### Fever Heat
+
+Fever Heat is the greed pressure score.
+
+Heat sources:
+
+```text
+staying in Fever longer
+charging many lines
+boss pressure during Fever
+high/critical board pressure
+Soft Junk generated during Fever
+critical pressure conversion
+```
+
+Heat effects apply on Fever release:
+
+| Heat Level | Effect Direction |
+| --- | --- |
+| none / low | no penalty |
+| medium | reduce Fever mana gain slightly |
+| high | reduce Fever mana gain, reduce overflow efficiency, possible small boss shield |
+| max | messy release: stronger reward reduction, delayed pressure, or boss advantage |
+
+Rules:
+
+- Heat must not prevent Fever release.
+- Heat must not directly cause unavoidable instant Game Over.
+- Heat should punish greed through reward/utility changes, delayed pressure, or boss advantage.
+- Heat must clear at node end.
+
+### Fever Hazard Fairness Rules
+
+Every Fever pressure interaction must obey the core reactive difficulty rules:
+
+```text
+warning first
+counter window
+no soft-lock
+no simultaneous impossible hazard stack
+fallback-safe if unsupported
+```
+
+Additional Fever-specific rules:
+
+```text
+No direct hard-pressure spawn in the active piece spawn zone during Fever.
+No pressure effect may rely on hidden cancellation as normal behavior.
+Critical pressure converts rather than instantly kills.
+Last-resort repair exists only for invalid/impossible states.
+Player must understand why a pressure effect changed form.
+```
+
+### Route Reward / Risk Integration
+
+Route choices may interact with Fever only if the runtime effect is real.
+
+Allowed route reward examples:
+
+```text
+Milo: first cascade of battle grants bonus Fever.
+Pippa: Fever release cleans sticky/junk if supported.
+Zuzu: gadget Fever pressure converts more safely.
+Nixie: lowers Fever Heat gain once per node.
+Bruk: Showtime Overflow converts into shield.
+Lumi: Star Encore or star/Fever guidance.
+```
+
+Risky route choices may add Fever pressure, but must still pass Fever Pressure Budget.
+
+### Fever Smoke Test Matrix
+
+Add these to reactive difficulty smoke tests:
+
+| Test Area | Expected Result |
+| --- | --- |
+| Normal Fever activation | Completed rows become Charged Lines; no immediate clear. |
+| Manual release | Charged Lines clear together; Cascade Gravity resolves. |
+| Duration expiry | Fever releases safely and clears active state. |
+| Max Charged Lines | Auto-release triggers; no duplicate charged rows. |
+| Boss cap | Boss direct damage cap applies; overflow converts to utility. |
+| Pressure low | Boss pressure applies mostly normally. |
+| Pressure high | Excess pressure converts to Soft Junk/Heat/delayed pressure/boss advantage. |
+| Pressure critical | No unavoidable instant Game Over. |
+| Soft Junk | No spawn-zone placement; resolves safely after Fever. |
+| Heat | Heat affects reward/utility but does not block release. |
+| Node end | Charged Lines, Soft Junk, Heat, and active Fever state are cleared. |
+| Save/load | Old saves and invalid active Fever states repair safely. |
+<!-- FEVER_SHOWTIME_CASCADE_UPDATE_2026_06_02_END -->

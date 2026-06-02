@@ -1,0 +1,83 @@
+{
+    "id":  "card_careful_footing",
+    "category":  "hero",
+    "iconKey":  "placeholder_upgrade",
+    "rarity":  "uncommon",
+    "tags":  [
+                 "generic_hero",
+                 "hazard",
+                 "control"
+             ],
+    "name":  "Careful Footing",
+    "legendaryPool":  [
+                          {
+                              "id":  "card_careful_footing_legendary_placeholder",
+                              "name":  "Placeholder Evolution",
+                              "effectConfig":  {
+
+                                               },
+                              "description":  "Coming in Prompt 5.",
+                              "tags":  [
+                                           "placeholder"
+                                       ],
+                              "effectType":  "hero_passive_modifier"
+                          }
+                      ],
+    "description":  "Watch your step. Hazard handling and warning timing improve.",
+    "flavorText":  "One careful step at a time.",
+    "legacyAliases":  [
+                          "upg_lvl_hazard_resist",
+                          "upg_lvl_entry_grace"
+                      ],
+    "isGenericHeroCard":  true,
+    "enabled":  true,
+    "slotCost":  1,
+    "levels":  [
+                   {
+                       "effectType":  "hero_warning_timing",
+                       "title":  "Watchful Eye",
+                       "description":  "Hazard warnings appear 1 extra turn earlier.",
+                       "level":  1,
+                       "effectConfig":  {
+                                            "hazardWarningBonus":  1
+                                        }
+                   },
+                   {
+                       "effectType":  "board_soft_junk_reduction",
+                       "title":  "Quick Dodge",
+                       "description":  "Soft Junk lines clear 20% faster.",
+                       "level":  2,
+                       "effectConfig":  {
+                                            "junkClearRate":  0.2
+                                        }
+                   },
+                   {
+                       "effectType":  "board_low_ceiling_safety",
+                       "title":  "Safe Path",
+                       "description":  "Low-ceiling warnings happen 2 turns earlier.",
+                       "level":  3,
+                       "effectConfig":  {
+                                            "ceilingWarningBonus":  2
+                                        }
+                   },
+                   {
+                       "effectType":  "board_hazard_warning",
+                       "title":  "Hazard Scout",
+                       "description":  "See the next incoming hazard type on the board.",
+                       "level":  4,
+                       "effectConfig":  {
+                                            "revealNextHazard":  true
+                                        }
+                   },
+                   {
+                       "effectType":  "hero_warning_timing",
+                       "title":  "Festival Footwork",
+                       "description":  "All hazards cleared after node end. Ready for Legendary Evolution.",
+                       "level":  5,
+                       "effectConfig":  {
+                                            "clearHazardsOnNodeEnd":  true
+                                        }
+                   }
+               ],
+    "maxLevel":  5
+}

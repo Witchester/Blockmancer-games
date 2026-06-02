@@ -26,7 +26,8 @@ export type ContentCategory =
   | 'friendship'
   | 'biomeMonsterPool'
   | 'encounterPackScaling'
-  | 'enemyEntryEffect';
+  | 'enemyEntryEffect'
+  | 'upgradeCard';
 
 export interface ContentReference<TId extends string = string> {
   id: TId;

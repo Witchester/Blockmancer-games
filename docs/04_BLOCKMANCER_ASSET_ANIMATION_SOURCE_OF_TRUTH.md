@@ -1444,3 +1444,138 @@ Use this checklist before marking a third-party asset as usable:
 [ ] Asset filename can be mapped safely to the current project key.
 [ ] Asset license allows commercial game usage.
 ```
+
+<!-- FEVER_SHOWTIME_CASCADE_UPDATE_2026_06_02_START -->
+## 2026-06-02 Feature Update — Fever Showtime Asset and Animation Standard
+
+### Purpose
+
+Fever Showtime requires readable HUD, board-overlay, and VFX feedback while preserving fallback safety and portrait-mobile clarity.
+
+No new top-level asset folders are introduced.
+
+### Fever UI Asset Keys
+
+Recommended Fever UI asset keys:
+
+| Asset Key | Folder | Purpose | Source / Render Notes |
+| --- | --- | --- | --- |
+| `ui_meter_fever_showtime` | `public/assets/ui/meters/` | Fever meter | meter art, text rendered by UI |
+| `ui_badge_fever_ready` | `public/assets/ui/hud/` | Ready indicator | compact HUD badge |
+| `ui_badge_showtime_active` | `public/assets/ui/hud/` | Active Showtime badge | compact HUD badge |
+| `ui_chip_fever_locks` | `public/assets/ui/hud/` | Locks remaining chip | value rendered by UI text |
+| `ui_chip_charged_lines` | `public/assets/ui/hud/` | Charged Lines count | value rendered by UI text |
+| `ui_chip_fever_heat` | `public/assets/ui/hud/` | Heat level chip | label rendered by UI text |
+| `ui_button_fever_activate` | `public/assets/ui/buttons/` | Activate Fever control | use existing button fallback |
+| `ui_button_fever_release` | `public/assets/ui/buttons/` | Manual release control | use existing button fallback |
+| `ui_badge_boss_drama_guard` | `public/assets/ui/hud/` | Boss cap feedback | compact boss feedback badge |
+| `ui_chip_showtime_overflow` | `public/assets/ui/hud/` | Overflow summary | text rendered by UI |
+
+### Fever Board Feedback Asset Keys
+
+| Asset Key | Folder | Exact Frames | Purpose |
+| --- | --- | ---: | --- |
+| `ui_charged_line_glow` | `public/assets/ui/animations/` | 4 | Row/cell overlay for Charged Lines |
+| `ui_charged_line_release_flash` | `public/assets/ui/animations/` | 6 | Release flash before Cascade Gravity |
+| `ui_soft_junk_marker` | `public/assets/ui/animations/` | 4 | Soft Junk board marker |
+| `ui_fever_heat_pulse` | `public/assets/ui/animations/` | 5 | Heat warning pulse |
+| `ui_boss_drama_guard_pulse` | `public/assets/ui/animations/` | 5 | Boss cap feedback pulse |
+
+Frame naming uses the exact-frame contract:
+
+```text
+{asset_id}__play__f00.png
+{asset_id}__play__f01.png
+```
+
+### Fever VFX Asset Keys
+
+| VFX ID | Folder | Exact Frames | Purpose |
+| --- | --- | ---: | --- |
+| `vfx_fever_showtime_start` | `public/assets/effects/vfx_fever_showtime_start/` | 8 | Activate Fever |
+| `vfx_fever_line_charged` | `public/assets/effects/vfx_fever_line_charged/` | 5 | Completed row becomes Charged Line |
+| `vfx_fever_release_burst` | `public/assets/effects/vfx_fever_release_burst/` | 8 | Manual/auto release |
+| `vfx_showtime_overflow_sparkle` | `public/assets/effects/vfx_showtime_overflow_sparkle/` | 6 | Overflow utility conversion |
+| `vfx_soft_junk_splash` | `public/assets/effects/vfx_soft_junk_splash/` | 5 | Soft Junk placement |
+| `vfx_fever_heat_rise` | `public/assets/effects/vfx_fever_heat_rise/` | 5 | Heat increase |
+| `vfx_boss_drama_guard` | `public/assets/effects/vfx_boss_drama_guard/` | 6 | Boss cap/phase guard |
+| `vfx_star_encore_spawn` | `public/assets/effects/vfx_star_encore_spawn/` | 6 | Star Encore upgrade trigger |
+| `vfx_safety_confetti_clear` | `public/assets/effects/vfx_safety_confetti_clear/` | 6 | Safety Confetti hazard clear |
+
+### Fever Upgrade Icons
+
+Fever upgrade icons use:
+
+```text
+public/assets/icons/upgrades/
+```
+
+Recommended icon keys:
+
+```text
+ico_upg_fever_gain
+ico_upg_fever_duration
+ico_upg_fever_capacity
+ico_upg_fever_manual_release
+ico_upg_fever_safety_release
+ico_upg_fever_overflow
+ico_upg_fever_star_encore
+```
+
+Rules:
+
+- Source size: `627x627` transparent PNG.
+- Runtime card render: `48-64px`.
+- Compact summary render: `24-32px`.
+- Missing icons must fall back to existing upgrade placeholder.
+
+### Board Block Metadata / Visual Rules
+
+Charged Lines and Soft Junk may use board cell metadata, but they do not require new board block source sizes.
+
+Preferred metadata:
+
+```ts
+cell.feverCharged = true;
+cell.softJunk = true;
+cell.feverGenerated = true;
+```
+
+Rules:
+
+- Charged Line marker must not change block identity unless the runtime explicitly supports it.
+- Soft Junk must be visually distinct from normal junk if possible.
+- Overlay/VFX must not make board cells unreadable.
+- Missing final Fever VFX must fall back to event log text and simple UI pulse.
+- No Fever overlay may break Cascade Gravity or collision logic.
+
+### Animation Validation
+
+`validate:animations` should understand these exact-frame definitions when implemented. Missing final PNGs remain warning-only unless release-lock mode is enabled.
+
+### Asset Production Priority
+
+Priority 1 for Fever presentation:
+
+```text
+ui_meter_fever_showtime
+ui_badge_fever_ready
+ui_badge_showtime_active
+ui_charged_line_glow
+ui_soft_junk_marker
+vfx_fever_showtime_start
+vfx_fever_line_charged
+vfx_fever_release_burst
+vfx_boss_drama_guard
+```
+
+Priority 2:
+
+```text
+Showtime Overflow VFX
+Fever Heat VFX
+Star Encore VFX
+Safety Confetti VFX
+upgrade icons
+```
+<!-- FEVER_SHOWTIME_CASCADE_UPDATE_2026_06_02_END -->

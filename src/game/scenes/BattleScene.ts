@@ -4120,13 +4120,21 @@ private addStageBackgroundLayers(): void {
   }
 
   private renderFeverAndButtons(state: RunState): void {
+    const fever = state.feverShowtime;
+    const meter = Math.max(0, Math.min(100, fever.meter));
+    const chargedCount = fever.chargedLineRows.length;
+    const status = fever.active
+      ? `Showtime ON\n${fever.locksRemaining} locks / ${chargedCount} charged`
+      : fever.ready
+        ? `Fever READY\n${meter}%`
+        : `Fever ${meter}%\nCombo ${state.combo}`;
     this.feverText?.setText(
-      state.player.feverActiveLocks > 0
-        ? `Fever ON\n${state.player.feverActiveLocks} locks`
-        : `Fever ${state.player.fever}%\nCombo ${state.combo}`
+      fever.heatLevel !== 'none' && fever.active
+        ? `${status}\nHeat ${fever.heatLevel}`
+        : status
     );
-    this.feverBarFill?.setSize(Math.max(0, Math.min(1, state.player.fever / 100)) * 132, 8);
-    this.feverBarFill?.setFillStyle(state.player.feverActiveLocks > 0 ? COLORS.gold : COLORS.success, 1);
+    this.feverBarFill?.setSize((fever.active ? 1 : meter / 100) * 132, 8);
+    this.feverBarFill?.setFillStyle(fever.active ? COLORS.gold : fever.ready ? COLORS.success : COLORS.accent, 1);
     this.cascadeText?.setText(
       state.lastCascadeLevel > 0
         ? `Cascade x${state.lastCascadeLevel} / ${state.lastCascadeLines} line${state.lastCascadeLines === 1 ? '' : 's'}`

@@ -371,3 +371,129 @@ Rules:
 - Do not introduce a new folder in an artist brief without updating this SOT.
 - Battle and puzzle folder separation must be preserved unless a future SOT update explicitly changes it.
 - Preserve save-facing IDs and runtime asset IDs unless a migration is documented.
+
+<!-- FEVER_SHOWTIME_CASCADE_UPDATE_2026_06_02_START -->
+## 17. Fever Showtime Asset Placement Rules
+
+The Fever Showtime Cascade system does not introduce new top-level asset folders.
+
+### 17.1 UI / HUD / Meter Assets
+
+Fever UI assets use existing canonical UI folders:
+
+```text
+public/assets/ui/meters/
+public/assets/ui/hud/
+public/assets/ui/buttons/
+public/assets/ui/animations/
+public/assets/ui/placeholders/
+```
+
+Recommended keys:
+
+```text
+ui_meter_fever_showtime
+ui_badge_fever_ready
+ui_badge_showtime_active
+ui_chip_fever_locks
+ui_chip_charged_lines
+ui_chip_fever_heat
+ui_button_fever_activate
+ui_button_fever_release
+ui_badge_boss_drama_guard
+ui_chip_showtime_overflow
+ui_charged_line_glow
+ui_charged_line_release_flash
+ui_soft_junk_marker
+ui_fever_heat_pulse
+ui_boss_drama_guard_pulse
+```
+
+Rules:
+
+- Values such as meter amount, Charged Line count, locks remaining, and Heat level must be rendered by game text.
+- Do not bake numbers into PNGs.
+- Fever UI should use compact HUD/right-rail patterns.
+- Do not add a separate top HP/Mana/Fever status bar.
+
+### 17.2 Fever VFX Assets
+
+Fever VFX uses existing effects folder:
+
+```text
+public/assets/effects/{vfx_id}/
+```
+
+Recommended VFX folders:
+
+```text
+public/assets/effects/vfx_fever_showtime_start/
+public/assets/effects/vfx_fever_line_charged/
+public/assets/effects/vfx_fever_release_burst/
+public/assets/effects/vfx_showtime_overflow_sparkle/
+public/assets/effects/vfx_soft_junk_splash/
+public/assets/effects/vfx_fever_heat_rise/
+public/assets/effects/vfx_boss_drama_guard/
+public/assets/effects/vfx_star_encore_spawn/
+public/assets/effects/vfx_safety_confetti_clear/
+```
+
+Rules:
+
+- Use exact-frame PNG naming.
+- VFX source size is `627x627` transparent PNG.
+- Missing VFX must fall back to event log text and simple UI pulse.
+- VFX must not block board readability.
+
+### 17.3 Fever Upgrade Icons
+
+Fever upgrade icons use:
+
+```text
+public/assets/icons/upgrades/
+```
+
+Recommended keys:
+
+```text
+ico_upg_fever_gain
+ico_upg_fever_duration
+ico_upg_fever_capacity
+ico_upg_fever_manual_release
+ico_upg_fever_safety_release
+ico_upg_fever_overflow
+ico_upg_fever_star_encore
+```
+
+Rules:
+
+- Source size is `627x627`.
+- Transparent background.
+- Missing icons fall back through the existing upgrade placeholder system.
+- Upgrade JSON must reference asset keys, not raw paths.
+
+### 17.4 Charged Line and Soft Junk Board Feedback
+
+Charged Line and Soft Junk visuals should be overlays/metadata-driven feedback unless the runtime intentionally creates a special board-block content entry.
+
+Allowed primary placement:
+
+```text
+public/assets/ui/animations/
+public/assets/effects/
+```
+
+Use board-block folders only if a real board block content ID is created and validated:
+
+```text
+public/assets/sprites/board-blocks/{block_id}/
+```
+
+Rules:
+
+- Board gameplay blocks remain `24x24`.
+- Board icons remain `48x48`.
+- Charged Line overlay must not change block identity unless the runtime supports it.
+- Soft Junk must not create raw-path content references.
+- No Fever asset may be delivered in legacy background folders.
+<!-- FEVER_SHOWTIME_CASCADE_UPDATE_2026_06_02_END -->

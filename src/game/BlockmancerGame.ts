@@ -14,6 +14,7 @@ import { BattleScene } from './scenes/BattleScene';
 import { RewardScene } from './scenes/RewardScene';
 import { NodeResultScene } from './scenes/NodeResultScene';
 import { LevelUpRewardScene } from './scenes/LevelUpRewardScene';
+import { LegendaryEvolutionScene } from './scenes/LegendaryEvolutionScene';
 import { RouteDialogueScene } from './scenes/RouteDialogueScene';
 import { EventScene } from './scenes/EventScene';
 import { ShopScene } from './scenes/ShopScene';
@@ -125,6 +126,7 @@ export class BlockmancerGame extends Phaser.Game {
         RewardScene,
         NodeResultScene,
         LevelUpRewardScene,
+        LegendaryEvolutionScene,
         RouteDialogueScene,
         EventScene,
         ShopScene,

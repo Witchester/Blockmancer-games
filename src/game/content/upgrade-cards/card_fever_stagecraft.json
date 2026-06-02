@@ -1,0 +1,81 @@
+{
+    "id":  "card_fever_stagecraft",
+    "category":  "fever",
+    "iconKey":  "placeholder_upgrade",
+    "rarity":  "uncommon",
+    "tags":  [
+                 "fever",
+                 "heat",
+                 "control"
+             ],
+    "name":  "Stagecraft",
+    "legendaryPool":  [
+                          {
+                              "id":  "card_fever_stagecraft_legendary_placeholder",
+                              "name":  "Placeholder Evolution",
+                              "effectConfig":  {
+
+                                               },
+                              "description":  "Coming in Prompt 5.",
+                              "tags":  [
+                                           "placeholder"
+                                       ],
+                              "effectType":  "fever_gain_bonus"
+                          }
+                      ],
+    "description":  "Master the stage. Heat management and stage tricks improve.",
+    "flavorText":  "It\u0027s all about stage presence.",
+    "legacyAliases":  [
+
+                      ],
+    "enabled":  true,
+    "slotCost":  1,
+    "levels":  [
+                   {
+                       "effectType":  "fever_stagecraft",
+                       "title":  "Cool Down",
+                       "description":  "Heat decays 20% faster after release.",
+                       "level":  1,
+                       "effectConfig":  {
+                                            "heatDecayBonus":  0.2
+                                        }
+                   },
+                   {
+                       "effectType":  "fever_stagecraft",
+                       "title":  "Stage Whisper",
+                       "description":  "Heat threshold for \u0027medium\u0027 raised by 10 (from 40 to 50).",
+                       "level":  2,
+                       "effectConfig":  {
+                                            "mediumThresholdBonus":  10
+                                        }
+                   },
+                   {
+                       "effectType":  "fever_stagecraft",
+                       "title":  "Backstage Pass",
+                       "description":  "Fever meter refills to 20 after release instead of 0.",
+                       "level":  3,
+                       "effectConfig":  {
+                                            "refillFloor":  20
+                                        }
+                   },
+                   {
+                       "effectType":  "fever_stagecraft",
+                       "title":  "Crowd Work",
+                       "description":  "Enemy attack delayed by 1 lock when Fever activates.",
+                       "level":  4,
+                       "effectConfig":  {
+                                            "enemyDelay":  1
+                                        }
+                   },
+                   {
+                       "effectType":  "fever_stagecraft",
+                       "title":  "Festival Mastery",
+                       "description":  "All heat thresholds raised by 15. Ready for Legendary Evolution.",
+                       "level":  5,
+                       "effectConfig":  {
+                                            "thresholdBonus":  15
+                                        }
+                   }
+               ],
+    "maxLevel":  5
+}

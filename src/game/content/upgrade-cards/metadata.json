@@ -1,0 +1,89 @@
+{
+  "contentType": "upgradeCard",
+  "version": "1.0.0",
+  "idPrefix": "card_",
+  "displayName": "Upgrade Cards (Prompt 4)",
+  "description": "New upgrade-card definition format for Hero / Board / Fever categories with Lv1-Lv5 progression and Legendary Evolution pools.",
+  "idFormat": "card_<category>_<name>",
+  "exampleIds": [
+    "card_hero_listening_lines",
+    "card_board_gravity_choir",
+    "card_fever_festival_hype"
+  ],
+  "requiredFields": ["id", "category", "name", "maxLevel", "slotCost", "levels", "legendaryPool", "enabled"],
+  "fields": {
+    "id": { "type": "string", "pattern": "^card_[a-z0-9]+(?:_[a-z0-9]+)*$" },
+    "category": { "type": "enum", "dataList": "upgradeCategory" },
+    "name": { "type": "string" },
+    "heroId": { "type": "string" },
+    "isGenericHeroCard": { "type": "boolean" },
+    "description": { "type": "string" },
+    "maxLevel": { "type": "number", "min": 5, "max": 5 },
+    "slotCost": { "type": "number", "min": 1, "max": 1 },
+    "rarity": { "type": "enum", "dataList": "rarity" },
+    "iconKey": { "type": "string" },
+    "flavorText": { "type": "string" },
+    "levels": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "itemType": "object"
+    },
+    "legendaryPool": {
+      "type": "array",
+      "itemType": "object"
+    },
+    "tags": { "type": "array", "itemType": "string" },
+    "legacyAliases": { "type": "array", "itemType": "string" },
+    "enabled": { "type": "boolean" }
+  },
+  "dataList": {
+    "upgradeCategory": ["hero", "board", "fever"],
+    "rarity": ["common", "uncommon", "rare", "epic", "legendary"],
+    "effectTypes": [
+      "hero_max_hp_boost",
+      "hero_shield_start",
+      "hero_heal_after_node",
+      "hero_mana_gain",
+      "hero_spell_damage",
+      "hero_passive_modifier",
+      "hero_warning_timing",
+      "hero_milo_mana_bonus",
+      "hero_pippa_fire_mastery",
+      "hero_zuzu_bomb_safety",
+      "hero_nixie_slow_timing",
+      "hero_bruk_guard_bonus",
+      "hero_lumi_star_bonus",
+      "board_line_damage",
+      "board_cascade_bonus",
+      "board_hold_bonus",
+      "board_next_queue_reveal",
+      "board_soft_junk_reduction",
+      "board_hazard_warning",
+      "board_low_ceiling_safety",
+      "board_stack_rhythm",
+      "fever_gain_bonus",
+      "fever_duration_bonus",
+      "fever_capacity_bonus",
+      "fever_release_shield",
+      "fever_release_safety",
+      "fever_overflow_utility",
+      "fever_star_encore",
+      "fever_stagecraft"
+    ],
+    "tags": [
+      "hero", "board", "fever", "generic", "hero_specific",
+      "damage", "defense", "mana", "combo", "cascade",
+      "hold", "preview", "hazard", "fever_showtime",
+      "starter", "build_enabler", "boss_safe"
+    ]
+  },
+  "defaults": {
+    "category": "hero",
+    "maxLevel": 5,
+    "slotCost": 1,
+    "enabled": true,
+    "levels": [],
+    "legendaryPool": []
+  }
+}

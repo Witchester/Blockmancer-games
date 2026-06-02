@@ -1,0 +1,85 @@
+{
+    "id":  "card_hero_table_guard",
+    "category":  "hero",
+    "iconKey":  "placeholder_upgrade",
+    "rarity":  "rare",
+    "tags":  [
+                 "hero_specific",
+                 "defense",
+                 "heal"
+             ],
+    "name":  "Table Guard",
+    "legendaryPool":  [
+                          {
+                              "id":  "card_hero_table_guard_legendary_placeholder",
+                              "name":  "Placeholder Evolution",
+                              "effectConfig":  {
+
+                                               },
+                              "description":  "Coming in Prompt 5.",
+                              "tags":  [
+                                           "placeholder"
+                                       ],
+                              "effectType":  "hero_passive_modifier"
+                          }
+                      ],
+    "description":  "Bruk\u0027s shield grows stronger. Defense and snack effects improve.",
+    "heroId":  "hero_bruk_snack_knight",
+    "flavorText":  "\"Nobody touches the snacks.\" - Bruk",
+    "legacyAliases":  [
+                          "upg_lvl_bruk_snack_armor",
+                          "upg_lvl_bruk_table_shield",
+                          "upg_lvl_bruk_no_snack_lost",
+                          "upg_lvl_bruk_victory_plate"
+                      ],
+    "enabled":  true,
+    "slotCost":  1,
+    "levels":  [
+                   {
+                       "effectType":  "hero_bruk_guard_bonus",
+                       "title":  "Snack Armor",
+                       "description":  "Max HP +8.",
+                       "level":  1,
+                       "effectConfig":  {
+                                            "maxHpBonus":  8
+                                        }
+                   },
+                   {
+                       "effectType":  "hero_bruk_guard_bonus",
+                       "title":  "Table Shield",
+                       "description":  "Start each battle with 6 shield.",
+                       "level":  2,
+                       "effectConfig":  {
+                                            "startShield":  6
+                                        }
+                   },
+                   {
+                       "effectType":  "hero_bruk_guard_bonus",
+                       "title":  "No Snack Lost",
+                       "description":  "Inventory items have 30% chance to not be consumed on use.",
+                       "level":  3,
+                       "effectConfig":  {
+                                            "itemSaveChance":  0.3
+                                        }
+                   },
+                   {
+                       "effectType":  "hero_bruk_guard_bonus",
+                       "title":  "Victory Plate",
+                       "description":  "Heal 5 HP after each node clear.",
+                       "level":  4,
+                       "effectConfig":  {
+                                            "healAfterNode":  5
+                                        }
+                   },
+                   {
+                       "effectType":  "hero_bruk_guard_bonus",
+                       "title":  "Festival Feast",
+                       "description":  "All healing doubled. Ready for Legendary Evolution.",
+                       "level":  5,
+                       "effectConfig":  {
+                                            "healMultiplier":  2
+                                        }
+                   }
+               ],
+    "maxLevel":  5
+}

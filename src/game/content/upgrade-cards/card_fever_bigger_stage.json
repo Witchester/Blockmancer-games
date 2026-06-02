@@ -1,0 +1,80 @@
+{
+    "id":  "card_fever_bigger_stage",
+    "category":  "fever",
+    "iconKey":  "placeholder_upgrade",
+    "rarity":  "uncommon",
+    "tags":  [
+                 "fever",
+                 "capacity"
+             ],
+    "name":  "Bigger Stage",
+    "legendaryPool":  [
+                          {
+                              "id":  "card_fever_bigger_stage_legendary_placeholder",
+                              "name":  "Placeholder Evolution",
+                              "effectConfig":  {
+
+                                               },
+                              "description":  "Coming in Prompt 5.",
+                              "tags":  [
+                                           "placeholder"
+                                       ],
+                              "effectType":  "fever_gain_bonus"
+                          }
+                      ],
+    "description":  "A bigger stage holds more. Charged Line capacity increases.",
+    "flavorText":  "Make room for the big number!",
+    "legacyAliases":  [
+                          "upg_fever_capacity"
+                      ],
+    "enabled":  true,
+    "slotCost":  1,
+    "levels":  [
+                   {
+                       "effectType":  "fever_capacity_bonus",
+                       "title":  "Wider Stage",
+                       "description":  "Max Charged Lines +1.",
+                       "level":  1,
+                       "effectConfig":  {
+                                            "capacityBonus":  1
+                                        }
+                   },
+                   {
+                       "effectType":  "fever_capacity_bonus",
+                       "title":  "Deeper Stage",
+                       "description":  "Max Charged Lines +1 more (total +2).",
+                       "level":  2,
+                       "effectConfig":  {
+                                            "capacityBonus":  1
+                                        }
+                   },
+                   {
+                       "effectType":  "fever_capacity_bonus",
+                       "title":  "Stage Lights",
+                       "description":  "Charged Lines glow visibly on the board.",
+                       "level":  3,
+                       "effectConfig":  {
+                                            "chargedGlow":  true
+                                        }
+                   },
+                   {
+                       "effectType":  "fever_capacity_bonus",
+                       "title":  "Trap Door",
+                       "description":  "Soft Junk cannot occupy Charged Line rows.",
+                       "level":  4,
+                       "effectConfig":  {
+                                            "protectChargedRows":  true
+                                        }
+                   },
+                   {
+                       "effectType":  "fever_capacity_bonus",
+                       "title":  "Grand Stage",
+                       "description":  "Max Charged Lines +2 total. Ready for Legendary Evolution.",
+                       "level":  5,
+                       "effectConfig":  {
+                                            "capacityBonus":  2
+                                        }
+                   }
+               ],
+    "maxLevel":  5
+}

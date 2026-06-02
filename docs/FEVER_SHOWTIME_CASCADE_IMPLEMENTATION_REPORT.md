@@ -682,3 +682,87 @@
 ### Remaining limitations
 - The boss system only exposes one phase threshold (`phase2Triggered` at 50% HP), so multi-phase skip prevention is not implemented.
 - `score_bonus` remains an available utility type but is not used because `RunState` does not currently expose a score field.
+
+
+## Phase 8 — Final Validation and Release Readiness
+
+### Implemented / Verified
+- CodeGraph index was available and used before editing: 213 indexed files, 3,806 symbols, 8,121 edges.
+- CodeGraph impact review identified `FeverSystem`, `BattleScene`, and `SaveSystem` as the highest-risk Fever validation surfaces.
+- Fever state model, normalization, migration, active-state repair, save stripping, and board-local cleanup were verified in code.
+- Charged Lines, manual release request, duration-expired release, max Charged Lines release, and post-release Cascade Gravity were verified in `FeverSystem` / `BoardSystem`.
+- Elite, boss, and final boss direct damage caps were verified in `FeverSystem.applyFeverDamageCaps`: 40%, 30%, and 25% max HP respectively.
+- Boss phase skip protection was verified for the currently exposed 50% phase threshold.
+- Showtime Overflow was verified as utility conversion and does not become extra boss damage.
+- Fever Pressure Budget, Soft Junk, Fever Heat, safety repair, and node/battle cleanup helpers were verified in code.
+- Fever upgrade content and runtime handlers were verified for gain, duration, capacity, manual release shield, safety release, overflow efficiency, and Star Encore.
+- Fixed a final validation bug: Fever right-rail UI now reads `state.feverShowtime` instead of legacy `state.player.fever` / `feverActiveLocks`, so Ready, active locks, Charged Lines, and Heat feedback use the canonical Fever state.
+- Save/load safety was verified through save stripping: active Fever, Charged Lines, Soft Junk, Heat, release requests, and Fever board markers are removed from persisted run saves.
+- Content validation, metadata validation, animation validation, remediation smoke test, UI layout validation, asset sync, asset variant audit, and production build were run.
+
+### Files changed during final validation
+- `src/game/scenes/BattleScene.ts` — fixed Fever right-rail display to use canonical `feverShowtime`.
+- `docs/FEVER_SHOWTIME_CASCADE_IMPLEMENTATION_REPORT.md` — added Phase 8 final validation and readiness section.
+
+### Code Taste Command Result
+- Command: `code taste-1`
+- Result: Pass
+- Key findings:
+  - Command completed successfully with no console output.
+- Action taken:
+  - Continued with CodeGraph-guided audit and made one small UI state-source fix.
+
+### Validation Commands
+| Command | Result | Notes |
+| --- | --- | --- |
+| `npm run validate:content` | Not available | No npm script exists. Direct equivalent `node scripts/validate-content-data.mjs` passed: 395 JSON files, 36 route scenes. |
+| `npm run validate:metadata` | Not available | No npm script exists. Direct equivalent `node scripts/validate-content-metadata.mjs` passed. |
+| `npm run validate:animations` | Not available | No npm script exists. Direct equivalent `node scripts/validate-animations.mjs` passed with nonfatal warnings: 1,763 expected frame files missing and 53 monster/boss entries missing preferred sheets/fallback idle. |
+| `npm run sync:assets` | Pass | Passed. Reported 2,250 fallback-safe missing production assets and 487 content keys without physical primary/legacy files. |
+| `npm run audit:asset-variants` | Pass | Passed with 32 asset variant warnings for optional/special folders, monster/boss variants, and boss arena backgrounds. |
+| `npm run build` | Pass | `tsc --noEmit && vite build` completed successfully. |
+| `npm run test` | Pass | `tests/run-remediation-smoke.mjs` passed. |
+| `npm run lint` | Not available | No npm script exists. |
+| `npm run validate:ui-layouts` | Pass | Additional UI validation run because Fever UI changed; 17 layout specs passed. |
+
+### Manual Smoke Test Results
+| Area | Result | Notes |
+| --- | --- | --- |
+| Normal battle Fever | Not run | Prepared checklist only; code paths verified. Needs browser/device play smoke. |
+| Duration expiry release | Not run | Prepared checklist only; `tickFeverOnPieceLock` and release request path verified. |
+| Max Charged Lines release | Not run | Prepared checklist only; max charge path verified in code. |
+| Elite cap | Not run | Prepared checklist only; 40% cap verified in code. |
+| Boss cap | Not run | Prepared checklist only; 30% cap and Boss Drama Guard feedback verified in code. |
+| Final boss cap | Not run | Prepared checklist only; 25% cap verified in code. |
+| Pressure Budget | Not run | Prepared checklist only; pressure conversion code verified. |
+| Soft Junk | Not run | Prepared checklist only; spawn-zone avoidance and cleanup code verified. |
+| Fever Heat | Not run | Prepared checklist only; Heat release modifier and cleanup code verified. |
+| Fever upgrades | Not run | Prepared checklist only; content and runtime handler coverage verified. |
+| Save/load | Not run | Prepared checklist only; save migration/cleanup code and remediation smoke verified. |
+| UI/mobile layout | Not run | Browser/mobile smoke not run; `validate:ui-layouts` passed and Fever right rail was fixed. |
+
+### Remaining Risks
+- Manual desktop and portrait-mobile gameplay smoke tests were not run in this phase, so release readiness cannot be marked Ready.
+- Final production animation frames and many monster/boss sheets are still missing; validation treats these as fallback-safe but release presentation remains incomplete.
+- Asset variant audit still reports missing optional variants, boss portraits/sheets, and boss arena backgrounds.
+- Boss phase skip prevention is limited to the single exposed 50% phase threshold; richer multi-phase protection would need boss-system phase data.
+- The requested `npm run validate:content`, `validate:metadata`, and `validate:animations` scripts are absent from `package.json`; direct script equivalents pass.
+- No `npm run lint` script exists.
+
+### Blockers
+- Manual Fever gameplay smoke testing across normal, elite, boss, and final boss encounters is still required.
+- Portrait-mobile browser/device verification is still required for final UI readability.
+- Release-quality production art/animation gaps remain if this phase is intended to declare product release readiness rather than code safety.
+
+### Release Readiness
+Status: Not ready
+
+Reason:
+- Code/build/content/save safety validation passed, and one Fever UI bug was fixed, but full manual gameplay and portrait-mobile smoke coverage was not executed.
+- Final asset warnings are fallback-safe but not release-presentable without an explicit product decision accepting placeholder/fallback visuals.
+
+### Next Recommended Work
+- Run the prepared manual Fever smoke checklist in a browser and on portrait mobile.
+- Capture normal, elite, boss, and final boss Fever releases with caps, Overflow, Pressure Budget, Soft Junk, Heat, upgrades, and save/load cleanup.
+- Add npm script aliases for `validate:content`, `validate:metadata`, and `validate:animations` so future phase prompts match the actual command surface.
+- Import or explicitly defer the missing production animation frames, monster/boss sheets, and boss arena backgrounds.

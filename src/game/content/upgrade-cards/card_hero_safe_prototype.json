@@ -1,0 +1,85 @@
+{
+    "id":  "card_hero_safe_prototype",
+    "category":  "hero",
+    "iconKey":  "placeholder_upgrade",
+    "rarity":  "rare",
+    "tags":  [
+                 "hero_specific",
+                 "bomb",
+                 "tech"
+             ],
+    "name":  "Safe Prototype",
+    "legendaryPool":  [
+                          {
+                              "id":  "card_hero_safe_prototype_legendary_placeholder",
+                              "name":  "Placeholder Evolution",
+                              "effectConfig":  {
+
+                                               },
+                              "description":  "Coming in Prompt 5.",
+                              "tags":  [
+                                           "placeholder"
+                                       ],
+                              "effectType":  "hero_passive_modifier"
+                          }
+                      ],
+    "description":  "Zuzu\u0027s gadgets become more reliable. Bomb and gadget effects improve.",
+    "heroId":  "hero_zuzu_goblin_engineer",
+    "flavorText":  "\"Tested it myself! Mostly.\" - Zuzu",
+    "legacyAliases":  [
+                          "upg_lvl_zuzu_bomb_friend",
+                          "upg_lvl_zuzu_safety_clamp",
+                          "upg_lvl_zuzu_extra_fuse",
+                          "upg_lvl_zuzu_gadget_retry"
+                      ],
+    "enabled":  true,
+    "slotCost":  1,
+    "levels":  [
+                   {
+                       "effectType":  "hero_zuzu_bomb_safety",
+                       "title":  "Extra Fuse",
+                       "description":  "Bomb Rune damage +10.",
+                       "level":  1,
+                       "effectConfig":  {
+                                            "bombDamageBonus":  10
+                                        }
+                   },
+                   {
+                       "effectType":  "hero_zuzu_bomb_safety",
+                       "title":  "Safety Clamp",
+                       "description":  "Bomb clears +1 extra block safely.",
+                       "level":  2,
+                       "effectConfig":  {
+                                            "bombRadiusBonus":  1
+                                        }
+                   },
+                   {
+                       "effectType":  "hero_zuzu_bomb_safety",
+                       "title":  "Gadget Retry",
+                       "description":  "Once per battle, reroll a missed bomb placement.",
+                       "level":  3,
+                       "effectConfig":  {
+                                            "bombRetry":  1
+                                        }
+                   },
+                   {
+                       "effectType":  "hero_zuzu_bomb_safety",
+                       "title":  "Bomb Friend",
+                       "description":  "Bombs no longer damage Zuzu (self-damage removed).",
+                       "level":  4,
+                       "effectConfig":  {
+                                            "selfDamageImmune":  true
+                                        }
+                   },
+                   {
+                       "effectType":  "hero_zuzu_bomb_safety",
+                       "title":  "Festival Fireworks",
+                       "description":  "Bombs trigger cascade bonus. Ready for Legendary Evolution.",
+                       "level":  5,
+                       "effectConfig":  {
+                                            "bombCascadeBonus":  true
+                                        }
+                   }
+               ],
+    "maxLevel":  5
+}

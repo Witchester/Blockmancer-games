@@ -46,7 +46,7 @@ Keep the current stack: Phaser 3 + TypeScript + Vite + Capacitor remains the pra
 #### 1A. Feature Delta — Sequential Encounter Packs and Festival Level-Up
 
 **Added:** 2026-05-22  
-**Current status:** Implementation present after the 2026-05-23 repo audit and 2026-05-26 determinism patch; remaining risk is focused smoke/balance validation, final assets/audio, and broader gameplay-effect coverage.
+**Current status:** Design/SOT updated, implementation pending until repo code audit confirms otherwise.
 
 New Release 1 feature direction:
 
@@ -162,9 +162,9 @@ Route content counts:
 | Board controls | Implemented | `BoardSystem`, `BattleScene`, `InputSystem`, `MobileControls`. | Mobile ergonomics need device verification. | P1 |
 | Combat loop | Implemented | `CombatSystem`, `BattleScene`, enemy defeat/reward flow. | More tests for modifiers and bosses. | P1 |
 | Enemy system | Implemented / partial behavior depth | `EnemySystem`, monster content. | Advanced behaviors remain light. | P1 |
-| Encounter pack system | Mostly implemented | `EncounterPackSystem`, biome monster pools, encounter scaling, battle chaining, `MonsterStackPreview`, save fields. 2026-05-26 patch made entry-effect choice seed-driven. | Manual smoke/balance still needed; pack ID collision risk remains a lower-priority audit item. | P1 |
-| Festival Level-Up system | Mostly implemented | `LevelUpSystem`, `LevelUpRewardScene`, level-up adapters/router, stackable upgrades, hero-specific filtering, save fields. 2026-05-26 patch made card offers seed-driven and restorable via persisted offer IDs. | Manual save/load and balance smoke still needed for unresolved level-up offers and upgrade pacing. | P1 |
-| Node Result Screen | Implemented, smoke pending | `NodeResultScene`, `NodeResultDataAdapter`, `NodeResultFlowRouter`, pending node-result save state, duplicate EXP claim guard. | Manual save/load replay smoke still needed around result continue timing. | P1 |
+| Encounter pack system | New / pending | SOT design added 2026-05-22. | Implement biome-based sequential enemy packs, current enemy index, node-clear reward gating, monster stack UI, and save/load support. | P1 |
+| Festival Level-Up system | New / pending | SOT design added 2026-05-22. | Implement XP gain, post-node level-up card choices, stackable general/hero upgrades, upgrade caps, and real effect handlers. | P1 |
+| Node Result Screen | New / pending | SOT design added 2026-05-22, expanded with EXP result requirement. | Implement post-node result screen showing EXP gained, EXP breakdown, EXP remaining to next level, pending level-up state, and duplicate-safe save/load behavior. | P1 |
 | Boss system | Partial | `BossSystem`, `BossRuleSystem`, boss JSON, boss callbacks. | Some mechanics are placeholder-safe rather than fully distinct. | P1 |
 | Spell system | Partial | `SpellSystem`, spell content. | Runtime spell behavior coverage does not fully match content roster. | P1 |
 | Item system | Partial | `ItemSystem`, item content, route rewards. | Content coverage exceeds verified behavior coverage. | P1 |
@@ -179,7 +179,7 @@ Route content counts:
 | Event system | Partial | `EventSystem`, room-event content. | Effects are switch-limited. | P1 |
 | Shop system | Partial | `ShopSystem`, `ShopScene`. | Economy and inventory smoke pending. | P2 |
 | Oopsie system | Partial | `OopsieSystem`, oopsie content. | Needs tone/effect verification. | P1 |
-| Fever system | Partial | `FeverSystem`, combat hooks. | UX/balance smoke pending. | P2 |
+| Fever system | Target updated / implementation pending audit | `FeverSystem`, combat hooks, now superseded by Fever Showtime Cascade target design. | Implement/verify phased Showtime state, Charged Lines, boss caps, Pressure Budget, upgrades, UI, save safety, and final smoke. | P1 |
 | Save system | Implemented | `SaveSystem`, `defaultRunState`, meta migration. | No migration tests. | P0 |
 | Asset system | Implemented fallback/manifest | `AssetSystem`, `assets.ts`, `animations.ts`, folder script. | Final art missing. | P1 |
 | Audio system | Partial fallback | `AudioSystem`, asset sync report. | Real audio missing. | P2 |
@@ -4851,3 +4851,155 @@ If a command does not exist, document it instead of treating it as a fatal failu
 Finish with:
 Summary / Files changed / Commands run / How to test / Known limitations / Recommended next phase
 ```
+
+<!-- FEVER_SHOWTIME_CASCADE_UPDATE_2026_06_02_START -->
+## 2026-06-02 Feature Delta — Fever Showtime Cascade
+
+### Status
+
+**Design status:** Approved / SOT-updated.  
+**Implementation status:** Planned phased implementation unless a later code audit proves it is already implemented.  
+**Release risk:** Medium-high gameplay integration risk; fallback-safe if phased correctly.
+
+The existing Fever system was previously marked partial. This update defines the target Release 1 Fever implementation as **Fever Showtime Cascade**.
+
+### Feature Summary
+
+Fever Showtime adds:
+
+```text
+Fever meter / Ready state
+manual activation
+Charged Lines
+manual release
+auto release
+Cascade Gravity release resolution
+combat damage integration
+elite/boss/final boss caps
+Boss Drama Guard
+Showtime Overflow
+Fever Pressure Budget
+Soft Junk
+Fever Heat
+capped Fever upgrades
+UI / UX integration
+save/load safety
+debug validation
+final smoke test
+```
+
+### Implementation Phase Plan
+
+| Phase | Name | Output |
+| ---: | --- | --- |
+| 1 | Fever Showtime State Model | State shape, defaults, normalization, meter/ready/active lifecycle, node-end cleanup |
+| 2 | Charged Lines and Manual Release | Completed lines charge during Fever; release clears them and runs Cascade Gravity |
+| 3 | Combat Damage, Boss Caps, and Showtime Overflow | Damage calculation, elite/boss/final caps, phase guard, overflow utility |
+| 4 | Fever Pressure Budget, Soft Junk, and Fever Heat | Systemic pressure conversion, Soft Junk, Heat, safe boss/enemy pressure |
+| 5 | Fever Upgrades | Capped upgrade content and runtime handlers |
+| 6 | UI / UX Integration | Meter, Ready, Activate/Release, Charged Lines, Heat, Soft Junk, Overflow, boss cap feedback |
+| 7 | Save / Load Safety and Debug Tools | Migration, invalid state repair, lifecycle cleanup, debug/dev helpers |
+| 8 | Final Validation and Release Readiness | Full validation commands, manual smoke, readiness decision |
+
+### Implementation Report
+
+All phases must update:
+
+```text
+docs/FEVER_SHOWTIME_CASCADE_IMPLEMENTATION_REPORT.md
+```
+
+Each phase must record:
+
+```text
+implemented behavior
+files changed
+runtime behavior
+save/load behavior
+what was intentionally not implemented
+risks/blockers
+Code Taste command result
+next phase readiness
+```
+
+### Code Taste Requirement
+
+Every phase should run:
+
+```bash
+code taste-1
+```
+
+after CodeGraph index/context/impact and before risky edits.
+
+If unavailable, record:
+
+```text
+Result: Not available
+Action taken: continued with CodeGraph + manual inspection
+```
+
+### Validation Strategy
+
+Phases 1-7 should run only quick build/type check if needed:
+
+```bash
+npm run build
+```
+
+Phase 8 runs the full available suite:
+
+```bash
+npm run validate:content
+npm run validate:metadata
+npm run validate:animations
+npm run sync:assets
+npm run audit:asset-variants
+npm run build
+npm run test
+npm run lint
+```
+
+If `test` or `lint` are unavailable, record as Not available.
+
+### Release Acceptance Criteria
+
+Fever Showtime is release-ready only when:
+
+```text
+Fever state model is valid.
+Charged Lines work.
+Manual and auto release work.
+Cascade Gravity still works.
+Normal enemies receive Fever damage.
+Elite cap = 40%.
+Boss cap = 30%.
+Final boss cap = 22-25%.
+Boss phase skip prevention works.
+Showtime Overflow converts safely.
+Pressure Budget scales pressure.
+Soft Junk resolves safely.
+Heat affects rewards/pressure safely.
+Upgrades have runtime handlers and caps.
+UI is readable on portrait mobile.
+Old saves and invalid active Fever states repair safely.
+Charged Lines/Soft Junk/Heat never persist between nodes.
+No infinite Fever loops found.
+No unavoidable instant Game Over from Fever pressure found.
+```
+
+### Current Backlog Impact
+
+Add to P1 / Release 1 Core:
+
+```text
+Implement Fever Showtime Cascade phases 1-8.
+Validate Stage 5 / High Score Hydra with Fever Pressure Budget.
+Add Fever UI and placeholder-safe VFX.
+Add Fever save/load migration tests or smoke harness.
+```
+
+### Implementation Notes
+
+Do not treat prompts as implementation evidence. Update this file again only after a repo audit confirms which phases are implemented, partial, or missing.
+<!-- FEVER_SHOWTIME_CASCADE_UPDATE_2026_06_02_END -->

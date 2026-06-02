@@ -46,7 +46,8 @@ const CONTENT_FOLDERS: ContentFolderConfig[] = [
   { category: 'friendship', folder: 'friendship', fallbackId: 'friend_cupcake_slime' },
   { category: 'biomeMonsterPool', folder: 'difficulty-scaling', fallbackId: 'pool_sprinkle_sewers' },
   { category: 'encounterPackScaling', folder: 'difficulty-scaling', fallbackId: 'scale_encounter_stage1_normal' },
-  { category: 'enemyEntryEffect', folder: 'difficulty-scaling', fallbackId: 'entry_none_safe' }
+  { category: 'enemyEntryEffect', folder: 'difficulty-scaling', fallbackId: 'entry_none_safe' },
+  { category: 'upgradeCard', folder: 'upgrade-cards' }
 ];
 
 const jsonModules = (import.meta as unknown as {

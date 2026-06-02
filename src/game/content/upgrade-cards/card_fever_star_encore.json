@@ -1,0 +1,82 @@
+{
+    "id":  "card_fever_star_encore",
+    "category":  "fever",
+    "iconKey":  "placeholder_upgrade",
+    "rarity":  "rare",
+    "tags":  [
+                 "fever",
+                 "star",
+                 "combo"
+             ],
+    "name":  "Star Encore",
+    "legendaryPool":  [
+                          {
+                              "id":  "card_fever_star_encore_legendary_placeholder",
+                              "name":  "Placeholder Evolution",
+                              "effectConfig":  {
+
+                                               },
+                              "description":  "Coming in Prompt 5.",
+                              "tags":  [
+                                           "placeholder"
+                                       ],
+                              "effectType":  "fever_gain_bonus"
+                          }
+                      ],
+    "description":  "Stars join the show. Star blocks appear after Fever release.",
+    "flavorText":  "A star takes the stage!",
+    "legacyAliases":  [
+                          "upg_fever_star_encore"
+                      ],
+    "enabled":  true,
+    "slotCost":  1,
+    "levels":  [
+                   {
+                       "effectType":  "fever_star_encore",
+                       "title":  "Twinkle",
+                       "description":  "1 star block may appear after release (25% chance per empty column).",
+                       "level":  1,
+                       "effectConfig":  {
+                                            "starChance":  0.25
+                                        }
+                   },
+                   {
+                       "effectType":  "fever_star_encore",
+                       "title":  "Star Drop",
+                       "description":  "Star chance +15% (40% total).",
+                       "level":  2,
+                       "effectConfig":  {
+                                            "starChanceBonus":  0.15
+                                        }
+                   },
+                   {
+                       "effectType":  "fever_star_encore",
+                       "title":  "Twin Stars",
+                       "description":  "Up to 2 star blocks may appear after release.",
+                       "level":  3,
+                       "effectConfig":  {
+                                            "maxStars":  2
+                                        }
+                   },
+                   {
+                       "effectType":  "fever_star_encore",
+                       "title":  "Starlight Burst",
+                       "description":  "Star blocks cleared during Fever grant +5 mana.",
+                       "level":  4,
+                       "effectConfig":  {
+                                            "starClearMana":  5
+                                        }
+                   },
+                   {
+                       "effectType":  "fever_star_encore",
+                       "title":  "Festival Constellation",
+                       "description":  "Up to 3 stars, 60% chance each. Ready for Legendary Evolution.",
+                       "level":  5,
+                       "effectConfig":  {
+                                            "starChance":  0.6,
+                                            "maxStars":  3
+                                        }
+                   }
+               ],
+    "maxLevel":  5
+}

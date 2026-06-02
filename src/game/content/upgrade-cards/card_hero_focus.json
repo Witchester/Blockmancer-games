@@ -1,0 +1,83 @@
+{
+    "id":  "card_hero_focus",
+    "category":  "hero",
+    "iconKey":  "placeholder_upgrade",
+    "rarity":  "common",
+    "tags":  [
+                 "generic_hero",
+                 "starter",
+                 "defense"
+             ],
+    "name":  "Hero Focus",
+    "legendaryPool":  [
+                          {
+                              "id":  "card_hero_focus_legendary_placeholder",
+                              "name":  "Placeholder Evolution",
+                              "effectConfig":  {
+
+                                               },
+                              "description":  "Coming in Prompt 5.",
+                              "tags":  [
+                                           "placeholder"
+                                       ],
+                              "effectType":  "hero_passive_modifier"
+                          }
+                      ],
+    "description":  "Sharpen your abilities. Max HP and spell damage improve.",
+    "flavorText":  "Every Blockmancer needs focus.",
+    "legacyAliases":  [
+                          "upg_lvl_max_hp_percent",
+                          "upg_lvl_mana_gain"
+                      ],
+    "isGenericHeroCard":  true,
+    "enabled":  true,
+    "slotCost":  1,
+    "levels":  [
+                   {
+                       "effectType":  "hero_max_hp_boost",
+                       "title":  "Practice",
+                       "description":  "Max HP +6.",
+                       "level":  1,
+                       "effectConfig":  {
+                                            "maxHpBonus":  6
+                                        }
+                   },
+                   {
+                       "effectType":  "hero_spell_damage",
+                       "title":  "Discipline",
+                       "description":  "Spell damage +10%.",
+                       "level":  2,
+                       "effectConfig":  {
+                                            "spellDamageMultiplier":  1.1
+                                        }
+                   },
+                   {
+                       "effectType":  "hero_shield_start",
+                       "title":  "Determination",
+                       "description":  "Start battles with 4 shield.",
+                       "level":  3,
+                       "effectConfig":  {
+                                            "startShield":  4
+                                        }
+                   },
+                   {
+                       "effectType":  "board_line_damage",
+                       "title":  "Mastery",
+                       "description":  "Line-clear damage +2.",
+                       "level":  4,
+                       "effectConfig":  {
+                                            "lineDamageBonus":  2
+                                        }
+                   },
+                   {
+                       "effectType":  "hero_max_hp_boost",
+                       "title":  "Festival Resolve",
+                       "description":  "All stat bonuses +50%. Ready for Legendary Evolution.",
+                       "level":  5,
+                       "effectConfig":  {
+                                            "statMultiplier":  1.5
+                                        }
+                   }
+               ],
+    "maxLevel":  5
+}

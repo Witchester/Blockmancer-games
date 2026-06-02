@@ -572,7 +572,7 @@ Each stage has one optional goal. Success can improve rewards or weaken the boss
 | 2 | Disable 2 Goblin Machines | Prototype No. 7 drops less junk. | Prototype starts overclocked. |
 | 3 | Save 3 Ice Cream Crates | Player starts boss with shield. | Fall speed spike during boss. |
 | 4 | Keep 2 Guards Asleep | Rare treasure or reduced sleep effect. | More Sleepy effects in boss. |
-| 5 | Reach combo score target | Start boss with Fever. | Hydra gains extra combo punishment. |
+| 5 | Reach combo score target | Start boss with partial Fever meter or Fever Ready state only. | Hydra gains extra combo punishment. |
 | 6 | Break 3 Royal Seals | King Bloxley starts weakened. | Final boss starts with royal blocks. |
 
 ##### Festival Chaos Rules
@@ -608,6 +608,7 @@ Initial objective direction:
 - Cast 2 spells in one battle.
 - End battle with board below 50% height.
 - Trigger Fever before victory.
+- Charge and release Fever Showtime safely.
 
 ##### Boss Rule Cards
 
@@ -2942,3 +2943,262 @@ activeOopsies
 currentBossRule
 boardSizeModifier
 ```
+
+<!-- FEVER_SHOWTIME_CASCADE_UPDATE_2026_06_02_START -->
+## 2026-06-02 Feature Update — Fever Showtime Cascade
+
+### Purpose
+
+Fever is upgraded from a simple meter into **Fever Showtime Cascade**, a short, high-skill, high-readability power window that rewards planning, cascades, and stylish board control.
+
+Core fantasy:
+
+```text
+The player calls Showtime, stacks completed rows as glowing Charged Lines, then releases them together for a festival-bright cascade burst.
+```
+
+This feature strengthens Stage 5 identity while remaining usable across the run.
+
+### Core Fever Showtime Loop
+
+```text
+1. Player fills Fever meter through line clears, cascades, special blocks, upgrades, and supported hero/relic effects.
+2. At 100 meter, Fever becomes Ready.
+3. Player manually activates Fever.
+4. During active Fever, completed lines become Charged Lines instead of clearing immediately.
+5. Fever lasts a short number of piece locks.
+6. Player may manually release early.
+7. Fever auto-releases when duration expires, max Charged Lines are reached, or cleanup requires it.
+8. On release, all Charged Lines clear together.
+9. Normal Cascade Gravity runs after the Charged Lines clear.
+10. Combat damage, boss caps, Showtime Overflow, Soft Junk, Fever Heat, and upgrade effects resolve.
+```
+
+### Base Fever Values
+
+```ts
+const FEVER_METER_MAX = 100;
+const FEVER_BASE_DURATION_LOCKS = 4;
+const FEVER_BASE_MAX_CHARGED_LINES = 4;
+const FEVER_RELEASE_METER_REFILL_CAP = 30;
+```
+
+### Encounter Caps
+
+| Encounter | Max Fever duration after upgrades | Max Charged Lines | Direct Fever release damage cap |
+| --- | ---: | ---: | --- |
+| Normal | 7 locks | 6 | No direct HP cap; overkill does not carry to next enemy by default |
+| Elite | 6 locks | 5 | 40% of enemy max HP |
+| Boss | 5 locks | 4 | 30% of boss max HP |
+| Final boss | 5 locks | 4 | 22-25% of boss max HP |
+
+### Boss Drama Guard
+
+A single Fever release may break one boss phase, but may not skip multiple boss phases.
+
+If Fever release damage exceeds an elite/boss/final boss cap, the excess becomes **Showtime Overflow** utility instead of extra direct damage.
+
+Allowed Showtime Overflow utility:
+
+```text
+shield
+mana
+boss intent delay
+clear hazard blocks
+reduce next boss hazard
+score bonus
+gold bonus
+```
+
+Overflow must not become:
+
+```text
+extra boss damage beyond cap
+damage to the next enemy
+boss phase skipping
+Fever refill loops
+```
+
+### Board State Lifecycle Rule
+
+The physical board is encounter-local.
+
+Allowed to persist between nodes:
+
+```text
+HP
+MP
+shield/status if existing run rules allow
+items
+relics
+upgrades
+Fever meter
+Fever Ready state if intended by current design
+stage goal rewards
+```
+
+Forbidden to persist between nodes:
+
+```text
+Charged Lines
+paused completed lines
+Soft Junk
+Fever Heat
+active Fever state
+releaseRequested
+unresolved cascades
+Showtime Overflow pending state
+enemy countdowns
+temporary boss cap state
+charged board markers
+soft junk board markers
+```
+
+Sequential enemy nodes may keep the same node board only while the encounter pack is still active. When the full node ends, board-local Fever state must be cleared.
+
+Boss nodes must always start with a fresh boss board. A player may enter with Fever meter or Ready state, but never with preloaded Charged Lines.
+
+### Fever Pressure Budget
+
+During active Fever, enemy/boss block-add pressure should not be hard-cancelled by hidden scripting.
+
+Instead, pressure scales by board danger:
+
+| Pressure band | Behavior |
+| --- | --- |
+| Low | Full or near-full pressure applies. |
+| Medium | Reduced pressure applies; small Fever Heat gain. |
+| High | Small hard pressure applies; excess becomes Soft Junk, Fever Heat, delayed pressure, or boss advantage. |
+| Critical | Direct hard pressure is mostly converted into non-instant-loss pressure. Last-resort repair is allowed only for impossible states. |
+
+### Soft Junk
+
+Soft Junk is temporary Fever-compatible board pressure.
+
+Rules:
+
+- Soft Junk may appear during Fever from pressure conversion.
+- It should be visually/logically distinct from normal junk.
+- It must not spawn directly in the piece spawn zone.
+- It must resolve safely when Fever ends.
+- It must not persist between nodes.
+- It must never create unavoidable instant Game Over.
+
+### Fever Heat
+
+Fever Heat is the greed pressure system.
+
+Heat increases from:
+
+```text
+staying in Fever longer
+stacking many Charged Lines
+boss pressure during Fever
+high board pressure
+Soft Junk generated during Fever
+critical pressure conversion
+```
+
+Heat levels:
+
+| Heat | Level |
+| ---: | --- |
+| 0-19 | none |
+| 20-39 | low |
+| 40-69 | medium |
+| 70-99 | high |
+| 100+ | max |
+
+Heat should punish greedy play through reduced rewards, boss advantage, delayed pressure, or lower overflow efficiency. It must not block Fever release or directly cause unavoidable instant Game Over.
+
+### Fever Upgrades
+
+Fever upgrades are allowed but must stay capped.
+
+| Upgrade ID | Name | Effect | Max Stack |
+| --- | --- | --- | ---: |
+| `upg_fever_gain` | Festival Hype | Fever gain +10% per stack | 5 |
+| `upg_fever_duration` | Longer Showtime | Fever duration +1 lock per stack | 3 |
+| `upg_fever_capacity` | Bigger Stage | Max Charged Lines +1 per stack | 2 |
+| `upg_fever_manual_release` | Graceful Release | Manual Fever release grants +3 shield per stack | 3 |
+| `upg_fever_safety_release` | Safety Confetti | High/critical-pressure release clears 1 hazard block per stack | 2 |
+| `upg_fever_overflow` | Showtime Overflow | Boss overflow converts 20% more efficiently per stack | 3 |
+| `upg_fever_star_encore` | Star Encore | After safe Fever release, create 1 star block if space exists | 1 |
+
+Boss/final boss caps always override upgrade bonuses.
+
+No upgrade may:
+
+```text
+increase boss direct damage cap
+allow Charged Lines to persist between nodes
+increase boss max Charged Lines above 4
+increase boss/final boss Fever duration above 5 locks
+skip multiple boss phases
+create infinite Fever refill loops
+```
+
+### UI / UX Placement
+
+Fever UI must stay inside the existing portrait-mobile layout.
+
+Required UI signals:
+
+```text
+Fever meter
+Ready state
+Activate control
+Active Showtime state
+locks remaining
+Charged Lines current/max
+Release control
+Fever Heat level
+Soft Junk indicator
+Showtime Overflow summary
+Boss Drama Guard feedback
+```
+
+Placement rules:
+
+- Use the right rail Fever stat card or compact HUD pattern.
+- Activate/Release should use existing action/control patterns.
+- Do not add a separate top HP/Mana/Fever status bar.
+- Do not cover the board, Hold, Next Queue, right rail, inventory, event log, or bottom controls.
+
+### Stage 5 Goal Clarification
+
+Stage 5 goal success should grant **partial Fever meter or Fever Ready state** at boss start.
+
+It must not grant:
+
+```text
+prebuilt Charged Lines
+paused completed rows
+Soft Junk
+Fever Heat
+unresolved Fever release
+preloaded boss damage
+```
+
+### Save / Load Requirements
+
+Old saves without Fever state must normalize safely.
+
+Invalid active Fever state must repair by:
+
+```text
+clearing active Fever
+clearing Charged Lines
+clearing Soft Junk
+clearing Heat
+clearing release requests
+preserving valid meter / Ready state
+logging dev warning
+```
+
+Player-facing repair message, if needed:
+
+```text
+Showtime state repaired safely.
+```
+<!-- FEVER_SHOWTIME_CASCADE_UPDATE_2026_06_02_END -->

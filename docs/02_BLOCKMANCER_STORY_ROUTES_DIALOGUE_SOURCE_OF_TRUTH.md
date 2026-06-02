@@ -415,7 +415,7 @@ type StoryboardScene = {
 ##### Stage Goal Card
 
 - **Goal:** Reach Combo Score Target
-- **Success Result:** player starts boss with partial Fever.
+- **Success Result:** player starts boss with partial Fever meter or Fever Ready state; never preloaded Charged Lines.
 - **Failure Result:** Hydra adds one extra score demand; never an instant-loss state.
 - **Route Note:** Arcade score path opens and may add route insight for the active hero.
 
@@ -430,8 +430,8 @@ type StoryboardScene = {
 
 - **Title:** Combo or Be Chomped
 - **Boss:** High Score Hydra
-- **Rule:** This battle emphasizes Fever gain, cascade challenges, score callouts, and preview disruption.
-- **Player Tip:** The Hydra respects clean cascades. Build for chain reactions instead of rushing single clears.
+- **Rule:** This battle emphasizes Fever Showtime, cascade challenges, score callouts, preview disruption, and safe pressure conversion.
+- **Player Tip:** The Hydra respects clean cascades. Build Charged Lines, release before Fever Heat gets messy, and let Cascade Gravity do the applause.
 - **Fairness Note:** The boss may add pressure, but every major setback has a visible warning and at least one counterplay route.
 
 ##### Boss Intro Dialogue
@@ -7875,3 +7875,161 @@ Festival True Ending:
 Main writing rule:
 
 > Every route should solve a personal problem and a festival problem at the same time.
+
+<!-- FEVER_SHOWTIME_CASCADE_UPDATE_2026_06_02_START -->
+## 2026-06-02 Feature Update — Fever Showtime Story and Microcopy
+
+### Narrative Purpose
+
+Fever Showtime should feel like a cheerful arcade-festival spotlight moment, not a dark rage mode or emergency cheat.
+
+Preferred flavor:
+
+```text
+Showtime
+stage lights
+festival beat
+arcade sparkle
+charged lines
+grand cascade
+messy but safe pressure
+Boss Drama Guard
+```
+
+Avoid:
+
+```text
+rage
+curse
+doom
+blood
+corruption
+execution
+instant kill
+```
+
+### Core Player-Facing Terms
+
+| System Term | Player-Facing Term |
+| --- | --- |
+| Fever active | Showtime |
+| completed Fever row | Charged Line |
+| Fever release | Showtime Release |
+| boss damage cap | Boss Drama Guard |
+| overflow damage | Showtime Overflow |
+| Fever pressure conversion | Showtime Pressure |
+| Soft Junk | Soft Junk |
+| Fever Heat | Fever Heat / Showtime Heat |
+| messy high-Heat release | Messy Showtime Release |
+
+### Event Log Message Pool
+
+Use short, mobile-readable lines:
+
+```text
+Showtime is ready!
+Fever Showtime begins!
+Showtime line charged!
+Charged Lines: {current}/{max}
+Release when the stage feels right!
+Showtime released!
+The final beat has arrived!
+The stage is full of charged lines!
+Cascade Showtime!
+Showtime fizzled safely.
+Fever Heat is rising!
+Messy Showtime release!
+Soft Junk splashed onto the board!
+Soft Junk cleared safely!
+Soft Junk became delayed junk!
+Showtime Overflow became shield!
+Showtime Overflow sparkled into mana!
+Showtime Overflow cleared a hazard!
+Showtime Overflow delayed the boss!
+Boss Drama Guard softened the burst!
+The boss holds the stage for the next act!
+Star Encore placed a star block!
+Safety Confetti cleared a hazard!
+Showtime state repaired safely.
+```
+
+### Stage 5 — Starfall Arcade Updated Hazard Note
+
+Replace generic Fever references with:
+
+```text
+Hazard note: Showtime rewards elegant setup. During Fever, completed lines become Charged Lines. Release them carefully for a grand cascade, but greedy stacking can raise Fever Heat.
+```
+
+### Stage 5 Goal Result Clarification
+
+For **Reach Combo Score Target**:
+
+```text
+Success Result: player starts the boss with partial Fever meter or Fever Ready state.
+Failure Result: Hydra adds one extra score demand; never an instant-loss state.
+```
+
+The success reward must not imply that Charged Lines or a prepared board carry into the boss.
+
+### High Score Hydra Updated Boss Rule Card
+
+- **Title:** Showtime Score Rush
+- **Boss:** High Score Hydra
+- **Rule:** This battle emphasizes Fever Showtime, cascade challenges, score callouts, preview disruption, and safe pressure conversion.
+- **Player Tip:** Build clean Charged Lines, release before Fever Heat gets messy, and let Cascade Gravity do the applause.
+- **Fairness Note:** The Hydra may pressure the board during Showtime, but pressure scales by board danger. Unsafe pressure becomes Soft Junk, Fever Heat, delayed pressure, or boss advantage instead of an unavoidable instant loss.
+- **Boss Drama Guard Note:** A single Showtime burst can push the Hydra to the next act, but it cannot skip the whole performance.
+
+### High Score Hydra Intro Addendum
+
+Suggested extra lines:
+
+- **Festival Announcer:** "The arcade lights dim, the score bells wake, and Showtime rules are now in effect."
+- **High Score Hydra:** "Stack your applause, little Blockmancer. I count every cascade."
+- **Block-O-Matic 3000:** "Showtime advisory: charged rows are dramatic, but drama still requires safety rails."
+- **Hero:** "Then we will release the stage lights at exactly the right beat."
+
+### Boss Drama Guard Microcopy
+
+When Fever release is capped:
+
+```text
+Boss Drama Guard softened the burst!
+The boss holds the stage for the next act!
+Showtime burst reached the boss cap!
+```
+
+Tone rule:
+
+```text
+Explain the cap as theatrical structure, not punishment.
+```
+
+### Fever Upgrade Microcopy
+
+| Upgrade | Trigger Text |
+| --- | --- |
+| Festival Hype | Festival Hype filled the meter faster! |
+| Longer Showtime | Longer Showtime adds one more beat! |
+| Bigger Stage | Bigger Stage can hold more charged lines! |
+| Graceful Release | Graceful Release grants shield! |
+| Safety Confetti | Safety Confetti cleared a hazard! |
+| Showtime Overflow | Showtime Overflow sparkled into extra utility! |
+| Star Encore | Star Encore placed a star block! |
+
+### Route Integration Notes
+
+Route rewards may mention Fever only when supported by real gameplay effects.
+
+Examples:
+
+- Milo true route may improve warning clarity or first-cascade Fever gain.
+- Lumi true route may add star/Fever guidance.
+- Zuzu risky route may add gadget pressure during Fever, but must remain fair.
+- Bruk route rewards may convert Showtime Overflow into shield.
+- Pippa may help clear sticky/junk during Showtime release.
+- Nixie may reduce Fever Heat or slow pressure if supported.
+
+No route dialogue should promise Charged Lines carrying into a boss or between nodes.
+<!-- FEVER_SHOWTIME_CASCADE_UPDATE_2026_06_02_END -->

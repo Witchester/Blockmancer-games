@@ -12,6 +12,11 @@ export type LevelUpUpgradeCardViewModel = {
   stackCount: number;
   stackLimit: number;
   cardAssetKey: string;
+  cardLevel: number;
+  isOwned: boolean;
+  isMaxed: boolean;
+  readyToEvolve: boolean;
+  isLegendary: boolean;
 };
 
 export type LevelUpViewModel = {
@@ -85,6 +90,8 @@ export function buildLevelUpViewModel(state: RunState, cards: LevelUpUpgradeCont
       const rarity = normalizeRarity(card);
       const stackCount = Math.max(0, Math.floor(levelState.chosenUpgrades[card.id] ?? 0));
       const stackLimit = Math.max(1, Math.floor(card.stackLimit ?? 1));
+      const owned = state.runUpgradeState.ownedCards[card.id];
+      const cardLevel = owned?.level ?? 0;
       return {
         id: card.id,
         name: card.name || 'Festival Favor',
@@ -94,7 +101,12 @@ export function buildLevelUpViewModel(state: RunState, cards: LevelUpUpgradeCont
         rarity,
         stackCount,
         stackLimit,
-        cardAssetKey: getCardAssetKey(rarity)
+        cardAssetKey: getCardAssetKey(rarity),
+        cardLevel,
+        isOwned: Boolean(owned),
+        isMaxed: cardLevel >= 5,
+        readyToEvolve: owned?.readyToEvolve === true,
+        isLegendary: typeof owned?.legendaryEvolutionId === 'string' && owned.legendaryEvolutionId.length > 0
       };
     })
   };

@@ -969,3 +969,98 @@ Do not hardcode raw public/assets paths into content JSON.
 Keep content IDs and asset keys stable.
 Use canonical folders as primary paths and legacy folders as fallback-only.
 ```
+
+<!-- FEVER_SHOWTIME_CASCADE_UPDATE_2026_06_02_START -->
+## 2026-06-02 Feature Update — Monster/Boss Fever Showtime Metadata
+
+### Global Monster Fever Rules
+
+All monster and boss interactions with Fever Showtime must follow these rules:
+
+```text
+Fever pressure is allowed.
+Unwarned instant-loss pressure is not allowed.
+Boss/enemy block-add during Fever should use Fever Pressure Budget where practical.
+Soft Junk and Fever Heat are preferred over hidden scripted cancellation.
+Charged Lines, Soft Junk, and Heat never persist after node end.
+Bosses cannot be one-shot by a single Fever release.
+```
+
+### Boss Fever Cap Metadata
+
+| Rank | Fever Release Cap | Phase Rule |
+| --- | ---: | --- |
+| Regular monster | no direct cap; overkill does not carry by default | n/a |
+| Elite monster | 40% max HP | n/a unless elite has phases |
+| Boss | 30% max HP | one Fever release cannot skip multiple phases |
+| Final boss | 22-25% max HP | one Fever release cannot skip multiple phases |
+
+### High Score Hydra Fever Identity
+
+`boss_high_score_hydra` is the primary Fever Showtime boss.
+
+Updated role:
+
+```text
+Stage 5 boss that tests Fever meter use, Charged Line timing, cascade quality, preview disruption, score pressure, and Fever Pressure Budget.
+```
+
+Recommended boss behavior tags:
+
+```text
+fever_showtime
+charged_line_pressure
+cascade_challenge
+preview_disruption
+score_demand
+soft_junk_conversion
+fever_heat_pressure
+boss_drama_guard
+```
+
+Recommended special actions:
+
+| Action ID | Purpose | Fever Interaction |
+| --- | --- | --- |
+| `act_hydra_score_demand` | Demands combo/cascade score | Low cascade play increases pressure |
+| `act_hydra_preview_flash` | Disrupts preview/next queue | Warning required; counterable by preview tools |
+| `act_hydra_showtime_jam` | Adds pressure during active Fever | Uses Fever Pressure Budget |
+| `act_hydra_heat_rattle` | Converts excess pressure into Fever Heat | Cannot directly cause Game Over |
+| `act_hydra_drama_guard` | Prevents one-shot/phase skip | Converts excess damage into Showtime Overflow |
+
+### High Score Hydra Counterplay
+
+Counterplay should include:
+
+```text
+manual Fever release before Heat gets high
+Cascade Gravity chain setup
+preview counter items
+clean Charged Line timing
+Soft Junk cleanup
+Showtime Overflow utility
+Lumi star/cascade support
+Bruk shield/overflow support
+```
+
+### Other Boss Fever Hooks
+
+| Boss | Fever Interaction Direction |
+| --- | --- |
+| Cupcake Slime King | Sticky pressure may convert to Soft Junk during Fever if board is high. |
+| Prototype No. 7 | Junk/block-add machine pressure should route through Fever Pressure Budget when Fever is active. |
+| Gelato Golem | Freeze/speed pressure during Fever must keep warning windows and avoid spawn-zone lockouts. |
+| Sir Snore-a-Lot | Sleepy/soft-block pressure may increase Heat or convert to Soft Junk instead of instant lockout. |
+| High Score Hydra | Primary Fever Showtime boss with Pressure Budget and Boss Drama Guard messaging. |
+| King Bloxley | Final boss uses strict final cap, royal pattern pressure, and phase protection. |
+
+### Monster Wiki Implementation Status Field
+
+For monsters/bosses with Fever interactions, add implementation notes using:
+
+```text
+Fever Showtime: Not Implemented / Partial / Implemented / Fallback Only / Needs Smoke
+```
+
+This field should not replace the existing implementation status. It is a feature-specific overlay until a repo audit confirms actual behavior.
+<!-- FEVER_SHOWTIME_CASCADE_UPDATE_2026_06_02_END -->

@@ -1,0 +1,85 @@
+{
+    "id":  "card_hero_listening_lines",
+    "category":  "hero",
+    "iconKey":  "placeholder_upgrade",
+    "rarity":  "rare",
+    "tags":  [
+                 "hero_specific",
+                 "mana",
+                 "starter"
+             ],
+    "name":  "Listening Lines",
+    "legendaryPool":  [
+                          {
+                              "id":  "card_hero_listening_lines_legendary_placeholder",
+                              "name":  "Placeholder Evolution",
+                              "effectConfig":  {
+
+                                               },
+                              "description":  "Coming in Prompt 5.",
+                              "tags":  [
+                                           "placeholder"
+                                       ],
+                              "effectType":  "hero_passive_modifier"
+                          }
+                      ],
+    "description":  "Milo hears the board differently. Mana gain improves on clear.",
+    "heroId":  "hero_milo_blockmancer",
+    "flavorText":  "\"Every line has a rhythm.\" - Milo",
+    "legacyAliases":  [
+                          "upg_lvl_milo_plink_mana",
+                          "upg_lvl_milo_calm_board",
+                          "upg_lvl_milo_listener",
+                          "upg_lvl_milo_gentle_finish"
+                      ],
+    "enabled":  true,
+    "slotCost":  1,
+    "levels":  [
+                   {
+                       "effectType":  "hero_milo_mana_bonus",
+                       "title":  "Ear to the Board",
+                       "description":  "+2 mana on any line clear.",
+                       "level":  1,
+                       "effectConfig":  {
+                                            "manaPerLine":  2
+                                        }
+                   },
+                   {
+                       "effectType":  "hero_milo_mana_bonus",
+                       "title":  "Cadence Finder",
+                       "description":  "+5 mana on cascade completion.",
+                       "level":  2,
+                       "effectConfig":  {
+                                            "manaPerCascade":  5
+                                        }
+                   },
+                   {
+                       "effectType":  "hero_spell_damage",
+                       "title":  "Harmony Sense",
+                       "description":  "Spell costs reduced by 3.",
+                       "level":  3,
+                       "effectConfig":  {
+                                            "costReduction":  3
+                                        }
+                   },
+                   {
+                       "effectType":  "hero_warning_timing",
+                       "title":  "Deep Listen",
+                       "description":  "Enemy warning gives +1 extra turn.",
+                       "level":  4,
+                       "effectConfig":  {
+                                            "warningExtension":  1
+                                        }
+                   },
+                   {
+                       "effectType":  "hero_milo_mana_bonus",
+                       "title":  "Festival Conductor",
+                       "description":  "All mana gains doubled. Ready for Legendary Evolution.",
+                       "level":  5,
+                       "effectConfig":  {
+                                            "manaMultiplier":  2
+                                        }
+                   }
+               ],
+    "maxLevel":  5
+}

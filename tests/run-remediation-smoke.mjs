@@ -51,7 +51,7 @@ assert(levelUpRouterText.includes('consumePendingLevelUp'), 'Level-up selection 
 assert(levelUpRouterText.indexOf("'LevelUpRewardScene'") < levelUpRouterText.indexOf("'RewardScene'"), 'Level-up flow should resolve multiple pending level-ups before reward routing.');
 assert(levelUpRouterText.includes('game.mapSystem.completeNode'), 'Level-up flow does not return directly to map when no rewards remain.');
 assert(levelUpSystemText.includes('seededRandom') && !levelUpSystemText.includes('Math.random'), 'Level-up choices are not fully seed-driven.');
-assert(levelUpSceneText.includes('levelUpSelectionSeed') && levelUpSceneText.includes('pickLevelUpChoices(state, 3, seed)'), 'LevelUpRewardScene does not persist and reuse the level-up offer seed.');
+assert(levelUpSceneText.includes('levelUpSelectionSeed') && levelUpSceneText.includes('filterLevelUpChoicesByCategory'), 'LevelUpRewardScene does not persist and reuse the level-up offer seed.');
 assert(levelUpRouterText.includes("levelUpSelectionSeed = ''"), 'Level-up offer reset does not clear stale offer seeds.');
 assert(encounterPackSystemText.includes('selectEntryEffect(nodeType, scalingRule.stageNumber, seed + 409)'), 'Encounter entry effects are not generated from the encounter seed.');
 

@@ -1,0 +1,80 @@
+{
+    "id":  "card_fever_longer_showtime",
+    "category":  "fever",
+    "iconKey":  "placeholder_upgrade",
+    "rarity":  "uncommon",
+    "tags":  [
+                 "fever",
+                 "duration"
+             ],
+    "name":  "Longer Showtime",
+    "legendaryPool":  [
+                          {
+                              "id":  "card_fever_longer_showtime_legendary_placeholder",
+                              "name":  "Placeholder Evolution",
+                              "effectConfig":  {
+
+                                               },
+                              "description":  "Coming in Prompt 5.",
+                              "tags":  [
+                                           "placeholder"
+                                       ],
+                              "effectType":  "fever_gain_bonus"
+                          }
+                      ],
+    "description":  "The show goes on. Fever Showtime lasts longer.",
+    "flavorText":  "Encore! Encore!",
+    "legacyAliases":  [
+                          "upg_fever_duration"
+                      ],
+    "enabled":  true,
+    "slotCost":  1,
+    "levels":  [
+                   {
+                       "effectType":  "fever_duration_bonus",
+                       "title":  "Extra Beat",
+                       "description":  "Showtime duration +1 lock.",
+                       "level":  1,
+                       "effectConfig":  {
+                                            "durationBonus":  1
+                                        }
+                   },
+                   {
+                       "effectType":  "fever_duration_bonus",
+                       "title":  "Encore Beat",
+                       "description":  "Showtime duration +1 more lock (total +2).",
+                       "level":  2,
+                       "effectConfig":  {
+                                            "durationBonus":  1
+                                        }
+                   },
+                   {
+                       "effectType":  "fever_duration_bonus",
+                       "title":  "Sustained Note",
+                       "description":  "Showtime meter drains 10% slower during active phase.",
+                       "level":  3,
+                       "effectConfig":  {
+                                            "drainReduction":  0.1
+                                        }
+                   },
+                   {
+                       "effectType":  "fever_duration_bonus",
+                       "title":  "Crescendo Hold",
+                       "description":  "Manual release available 1 lock earlier with no penalty.",
+                       "level":  4,
+                       "effectConfig":  {
+                                            "earlyRelease":  true
+                                        }
+                   },
+                   {
+                       "effectType":  "fever_duration_bonus",
+                       "title":  "Endless Show",
+                       "description":  "Showtime duration +2 total. Ready for Legendary Evolution.",
+                       "level":  5,
+                       "effectConfig":  {
+                                            "durationBonus":  2
+                                        }
+                   }
+               ],
+    "maxLevel":  5
+}

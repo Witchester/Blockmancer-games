@@ -34,6 +34,9 @@ import type {
   HazardSeverity,
   NodeEncounterPack,
   PlayerLevelState,
+  RunUpgradeState,
+  RunUpgradeCardState,
+  RunUpgradeSlotState,
   LevelUpScreenState,
   FeverShowtimeState,
   FeverReleaseReason,
@@ -156,7 +159,9 @@ export function createDefaultLevelUpScreenState(): LevelUpScreenState {
     chosenUpgradeIds: [],
     rerollCharges: 0,
     levelUpSelectionSeed: '',
-    levelUpScreenResolved: true
+    levelUpScreenResolved: true,
+    selectedCategory: null,
+    pendingLegendaryEvolution: null
   };
 }
 
@@ -205,8 +210,101 @@ function normalizeLevelUpScreenState(value: unknown, levelState: PlayerLevelStat
     chosenUpgradeIds,
     rerollCharges: Math.min(rerollCharges, Math.max(0, levelState.rerollCharges)),
     levelUpSelectionSeed: typeof raw.levelUpSelectionSeed === 'string' ? raw.levelUpSelectionSeed : defaults.levelUpSelectionSeed,
-    levelUpScreenResolved: levelState.pendingLevelUps <= 0 ? true : levelUpScreenResolved
+    levelUpScreenResolved: levelState.pendingLevelUps <= 0 ? true : levelUpScreenResolved,
+    selectedCategory: typeof raw.selectedCategory === 'string' && (raw.selectedCategory === 'hero' || raw.selectedCategory === 'board' || raw.selectedCategory === 'fever') ? raw.selectedCategory : null,
+    pendingLegendaryEvolution: (raw.pendingLegendaryEvolution && typeof raw.pendingLegendaryEvolution === 'object' && typeof (raw.pendingLegendaryEvolution as { cardId?: string }).cardId === 'string') ? { cardId: (raw.pendingLegendaryEvolution as { cardId: string }).cardId } : null
   };
+}
+
+export function createDefaultRunUpgradeState(): RunUpgradeState {
+  return {
+    version: 1,
+    slots: [
+      { index: 0 },
+      { index: 1 },
+      { index: 2 }
+    ],
+    ownedCards: {},
+    legacyUpgradeIds: []
+  };
+}
+
+export function normalizeRunUpgradeState(value: unknown): RunUpgradeState {
+  const defaults = createDefaultRunUpgradeState();
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return defaults;
+  }
+  const raw = value as Partial<RunUpgradeState>;
+  const version = typeof raw.version === 'number' ? Math.max(1, Math.floor(raw.version)) : defaults.version;
+
+  const slots: RunUpgradeSlotState[] = Array.isArray(raw.slots)
+    ? raw.slots
+        .filter((s): s is RunUpgradeSlotState => Boolean(s) && typeof s === 'object' && typeof (s as RunUpgradeSlotState).index === 'number')
+        .map((s) => ({
+          index: Math.floor((s as RunUpgradeSlotState).index),
+          category: (s as RunUpgradeSlotState).category,
+          cardId: (s as RunUpgradeSlotState).cardId
+        }))
+    : defaults.slots;
+
+  if (slots.length <= 0) {
+    slots.push({ index: 0 }, { index: 1 }, { index: 2 });
+  }
+
+  const ownedCards: Record<string, RunUpgradeCardState> = {};
+  if (raw.ownedCards && typeof raw.ownedCards === 'object' && !Array.isArray(raw.ownedCards)) {
+    for (const [cardId, cardState] of Object.entries(raw.ownedCards)) {
+      if (!cardState || typeof cardState !== 'object' || Array.isArray(cardState)) continue;
+      const cs = cardState as Partial<RunUpgradeCardState>;
+      if (typeof cs.cardId !== 'string') continue;
+      const category = cs.category;
+      if (category !== 'hero' && category !== 'board' && category !== 'fever') continue;
+      const level = cs.level;
+      if (level !== 1 && level !== 2 && level !== 3 && level !== 4 && level !== 5) continue;
+      if (typeof cs.slotIndex !== 'number') continue;
+      ownedCards[cardId] = {
+        cardId: cs.cardId,
+        category,
+        level,
+        slotIndex: Math.max(0, Math.floor(cs.slotIndex)),
+        readyToEvolve: typeof cs.readyToEvolve === 'boolean' ? cs.readyToEvolve : undefined,
+        legendaryEvolutionId: typeof cs.legendaryEvolutionId === 'string' ? cs.legendaryEvolutionId : undefined
+      };
+    }
+  }
+
+  const legacyUpgradeIds: string[] = Array.isArray(raw.legacyUpgradeIds)
+    ? raw.legacyUpgradeIds.filter((id): id is string => typeof id === 'string')
+    : [...defaults.legacyUpgradeIds!];
+
+  return { version, slots, ownedCards, legacyUpgradeIds };
+}
+
+export function createDefaultRunUpgradeSlotState(count = 3): RunUpgradeSlotState[] {
+  return Array.from({ length: Math.max(1, count) }, (_, index) => ({ index }));
+}
+
+export function getUpgradeCategorySlotCounts(state: RunUpgradeState): Record<string, number> {
+  const counts: Record<string, number> = { total: 0, hero: 0, board: 0, fever: 0 };
+  for (const slot of state.slots) {
+    counts.total += 1;
+    if (slot.category) {
+      counts[slot.category] = (counts[slot.category] ?? 0) + 1;
+    }
+  }
+  return counts;
+}
+
+export function isUpgradeCardStateValid(card: RunUpgradeCardState): boolean {
+  return (
+    typeof card.cardId === 'string' &&
+    card.cardId.length > 0 &&
+    (card.category === 'hero' || card.category === 'board' || card.category === 'fever') &&
+    card.level >= 1 &&
+    card.level <= 5 &&
+    typeof card.slotIndex === 'number' &&
+    card.slotIndex >= 0
+  );
 }
 
 export function createDefaultFeverShowtimeState(): FeverShowtimeState {
@@ -670,6 +768,7 @@ export function createDefaultRunState(): RunState {
     levelUpScreenState: createDefaultLevelUpScreenState(),
     boardSizeModifier: undefined,
     routeProgress: createDefaultRouteProgress(),
+    runUpgradeState: createDefaultRunUpgradeState(),
     feverShowtime: createDefaultFeverShowtimeState(),
     festivalHubVisited: false,
     lastBattleWasBoss: false,
@@ -827,6 +926,7 @@ export function normalizeRunState(input: unknown): RunState {
   merged.activeOopsies = [...merged.player.oopsies];
   merged.routeProgress = normalizeRouteProgress(merged.routeProgress, merged.hero.id);
   merged.playerLevelState.pendingLevelUps = Math.max(0, Math.floor(merged.playerLevelState.pendingLevelUps));
+  merged.runUpgradeState = normalizeRunUpgradeState((raw as { runUpgradeState?: unknown }).runUpgradeState);
   merged.levelUpScreenState = normalizeLevelUpScreenState(
     (raw as { levelUpScreenState?: unknown }).levelUpScreenState,
     merged.playerLevelState

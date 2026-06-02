@@ -1,0 +1,82 @@
+{
+    "id":  "card_board_tidy_falling",
+    "category":  "board",
+    "iconKey":  "placeholder_upgrade",
+    "rarity":  "common",
+    "tags":  [
+                 "board",
+                 "damage",
+                 "cleanup"
+             ],
+    "name":  "Tidy Falling",
+    "legendaryPool":  [
+                          {
+                              "id":  "card_board_tidy_falling_legendary_placeholder",
+                              "name":  "Placeholder Evolution",
+                              "effectConfig":  {
+
+                                               },
+                              "description":  "Coming in Prompt 5.",
+                              "tags":  [
+                                           "placeholder"
+                                       ],
+                              "effectType":  "board_line_damage"
+                          }
+                      ],
+    "description":  "Blocks fall where they should. Line-clear damage and board cleanliness improve.",
+    "flavorText":  "A tidy board is a happy board.",
+    "legacyAliases":  [
+                          "upg_clean_stack",
+                          "upg_board_stable_hands"
+                      ],
+    "enabled":  true,
+    "slotCost":  1,
+    "levels":  [
+                   {
+                       "effectType":  "board_line_damage",
+                       "title":  "Clean Lines",
+                       "description":  "Line-clear damage +2.",
+                       "level":  1,
+                       "effectConfig":  {
+                                            "lineDamageBonus":  2
+                                        }
+                   },
+                   {
+                       "effectType":  "board_line_damage",
+                       "title":  "Tidy Drop",
+                       "description":  "Fall speed reduced by 3%.",
+                       "level":  2,
+                       "effectConfig":  {
+                                            "fallSpeedReduction":  0.03
+                                        }
+                   },
+                   {
+                       "effectType":  "board_soft_junk_reduction",
+                       "title":  "Soft Sweep",
+                       "description":  "Soft Junk lines clear after 3 fewer piece locks.",
+                       "level":  3,
+                       "effectConfig":  {
+                                            "junkClearReduction":  3
+                                        }
+                   },
+                   {
+                       "effectType":  "board_soft_junk_reduction",
+                       "title":  "Clear Board",
+                       "description":  "Line clears remove adjacent Soft Junk blocks.",
+                       "level":  4,
+                       "effectConfig":  {
+                                            "lineClearAdjacentJunk":  true
+                                        }
+                   },
+                   {
+                       "effectType":  "board_line_damage",
+                       "title":  "Pristine Board",
+                       "description":  "Double line clear triggers full column sweep. Ready for Legendary Evolution.",
+                       "level":  5,
+                       "effectConfig":  {
+                                            "columnSweepOnDouble":  true
+                                        }
+                   }
+               ],
+    "maxLevel":  5
+}
