@@ -22,7 +22,8 @@ export class UiPanel extends UiBaseComponent {
       .setStrokeStyle(2, options.strokeColor ?? COLORS.accent, options.strokeAlpha ?? 0.35);
     this.root.add(this.fallbackFrame);
     this.image = this.createSlotImage(this.resolveAssetKey(), 'ui', {
-      fit: this.spec.fitMode === 'contain' ? 'contain' : 'exact'
+      fit: this.spec.fitMode === 'contain' ? 'contain' : 'exact',
+      hideMissingUi: true
     });
     this.applyStateStyle();
     this.addDebug();

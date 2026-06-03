@@ -23,7 +23,7 @@
                               "effectType":  "hero_passive_modifier"
                           }
                       ],
-    "description":  "Time is on your side. Reroll and mana timing improve.",
+    "description":  "Time is on your side. Mana timing and warning windows improve.",
     "flavorText":  "Wait for the right moment.",
     "legacyAliases":  [
                           "upg_lvl_reward_reroll",
@@ -36,11 +36,11 @@
     "levels":  [
                    {
                        "effectType":  "hero_mana_gain",
-                       "title":  "Lucky Roll",
-                       "description":  "Gain +1 reward reroll charge.",
+                       "title":  "Mana Rhythm",
+                       "description":  "+3 mana after each cascade.",
                        "level":  1,
                        "effectConfig":  {
-                                            "rerollBonus":  1
+                                            "manaPerCascade":  3
                                         }
                    },
                    {

@@ -93,11 +93,9 @@ export class UpgradeCardEffectHandler {
 
   private heroManaGain = (state: RunState, cfg: EffectConfig, level: number): string => {
     const mana = this.n(cfg, 'manaPerCascade', 2);
-    const reroll = this.n(cfg, 'rerollBonus', 0);
     const tempo = this.n(cfg, 'tempoBonus', 0);
     const msg: string[] = [];
     if (mana) msg.push(`+${mana} mana per cascade`);
-    if (reroll) { state.playerLevelState.rerollCharges += reroll; msg.push(`+${reroll} reroll charge`); }
     if (tempo) msg.push(`+${tempo} tempo`);
     return msg.length > 0 ? msg.join('. ') + '.' : 'Mana rhythm improves.';
   };

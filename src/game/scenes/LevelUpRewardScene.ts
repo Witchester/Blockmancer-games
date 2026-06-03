@@ -108,7 +108,7 @@ export class LevelUpRewardScene extends Phaser.Scene {
     if (hasPendingChoices) {
       const offered = screenState.offeredUpgradeIds
         .map((id) => contentRegistry.getUpgrade(id) as unknown as LevelUpUpgradeContent | null)
-        .filter((card): card is LevelUpUpgradeContent => Boolean(card));
+        .filter((card): card is LevelUpUpgradeContent => Boolean(card && game.levelUpSystem.canOfferUpgrade(state, card)));
       if (offered.length >= 3) {
         return offered.slice(0, 3);
       }
@@ -126,7 +126,7 @@ export class LevelUpRewardScene extends Phaser.Scene {
         upgradeType: 'general',
         cardType: 'general',
         stackLimit: 999,
-        effectId: 'lvl_reward_reroll'
+        effectId: 'lvl_clear_line_damage'
       }];
     }
 
@@ -368,8 +368,8 @@ export class LevelUpRewardScene extends Phaser.Scene {
   private cardStatusText(card: LevelUpUpgradeCardViewModel): string {
     if (card.isLegendary) return 'Legendary';
     if (card.readyToEvolve) return 'Ready to Evolve';
-    if (card.isOwned) return 'Card Lv' + card.cardLevel;
-    return 'New Card';
+    if (card.isOwned) return 'Already Chosen';
+    return 'New Upgrade';
   }
 
   private renderFooter(model: ReturnType<typeof buildLevelUpViewModel>, centerX: number, y: number, panelWidth: number): void {

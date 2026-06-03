@@ -100,6 +100,7 @@ export class LevelUpSystem {
 
   canOfferUpgrade(state: RunState, upgrade: LevelUpUpgradeContent): boolean {
     if (!upgrade || upgrade.enabled === false) return false;
+    if (upgrade.id === 'upg_lvl_reward_reroll' || upgrade.effectId === 'lvl_reward_reroll') return false;
     if (!upgrade.effectId || !LEVEL_UP_EFFECT_IDS.has(upgrade.effectId)) return false;
     if (upgrade.upgradeType === 'hero_specific' && upgrade.heroId !== state.hero.id) return false;
     const limit = Math.max(1, Math.floor(upgrade.stackLimit ?? 1));
@@ -142,12 +143,12 @@ export class LevelUpSystem {
       chosen.push({
         id: `upg_lvl_fallback_${chosen.length}`,
         name: 'Festival Favor',
-        description: 'Gain +1 level-up reroll charge.',
+        description: 'Line-clear damage rises by +2.',
         iconKey: 'ui_level_up_stack_chip',
         upgradeType: 'general',
         cardType: 'general',
         stackLimit: 999,
-        effectId: 'lvl_reward_reroll'
+        effectId: 'upg_lvl_clear_line_damage'
       });
     }
 
@@ -484,12 +485,12 @@ export class LevelUpSystem {
       chosen.push({
         id: "upg_lvl_fallback_" + chosen.length,
         name: 'Festival Favor',
-        description: 'Gain +1 level-up reroll charge.',
+        description: 'Line-clear damage rises by +2.',
         iconKey: 'ui_level_up_stack_chip',
         upgradeType: 'general',
         cardType: 'general',
         stackLimit: 999,
-        effectId: 'lvl_reward_reroll'
+        effectId: 'upg_lvl_clear_line_damage'
       });
     }
 
@@ -525,7 +526,7 @@ export class LevelUpSystem {
         cardType: card.heroId ? 'hero' as const : 'general' as const,
         rarity: card.rarity || 'common',
         stackLimit: 5,
-        effectId: card.levels?.[0]?.effectType || 'lvl_reward_reroll',
+        effectId: card.levels?.[0]?.effectType || 'lvl_clear_line_damage',
         heroId: card.heroId,
         levelUpOnly: true,
         enabled: true
@@ -600,7 +601,6 @@ export const LEVEL_UP_EFFECT_IDS = new Set([
   'lvl_fever_gain',
   'lvl_hazard_resist',
   'lvl_entry_grace',
-  'lvl_reward_reroll',
   'lvl_milo_plink_mana',
   'lvl_milo_calm_board',
   'lvl_milo_listener',

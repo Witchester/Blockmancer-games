@@ -31,7 +31,7 @@ export class UiButton extends UiBaseComponent {
       .setOrigin(0, 0)
       .setStrokeStyle(2, COLORS.accent, 0.55);
     this.root.add(this.fallbackFrame);
-    this.background = this.createSlotImage(this.resolveAssetKey(), 'ui', { fit: 'exact' });
+    this.background = this.createSlotImage(this.resolveAssetKey(), 'ui', { fit: 'exact', hideMissingUi: true });
     if (options.iconKey) {
       const iconSpec = {
         ...this.spec,

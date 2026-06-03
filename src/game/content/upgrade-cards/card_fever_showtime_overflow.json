@@ -51,11 +51,11 @@
                    },
                    {
                        "effectType":  "fever_overflow_utility",
-                       "title":  "Utility Spill",
-                       "description":  "Overflow also grants +1 gold per 10 overflow.",
+                       "title":  "Safety Spill",
+                       "description":  "Overflow also converts to shield at 15% rate.",
                        "level":  3,
                        "effectConfig":  {
-                                            "goldConversion":  0.1
+                                            "shieldConversion":  0.15
                                         }
                    },
                    {
