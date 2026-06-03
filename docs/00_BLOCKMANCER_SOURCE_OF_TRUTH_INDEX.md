@@ -1,136 +1,169 @@
 # Blockmancer Dungeon — Source of Truth Index
 
-**Generated:** 2026-05-20  
-**Purpose:** Clean replacement documentation pack created by consolidating the uploaded Blockmancer Release 1 files into multiple focused sources of truth.
+**Updated:** 2026-06-02  
+**Purpose:** Current documentation map, source precedence, and active cross-SOT product decisions.
 
-This pack splits the project documentation by ownership area so future updates are less likely to create conflicts.
+This pack is the current canonical SOT set for Blockmancer Dungeon. It intentionally contains current project decisions only. Do not keep duplicate historical status sections in this index.
 
 ## Canonical Reading Order
 
 | Order | File | Use for |
 | ---: | --- | --- |
-| 0 | `00_BLOCKMANCER_SOURCE_OF_TRUTH_INDEX.md` | Documentation map, update policy, and source precedence. |
-| 1 | `01_BLOCKMANCER_GAME_DESIGN_SOURCE_OF_TRUTH.md` | Core game identity, tone, layout, Cascade Gravity, stages, heroes, routes, board systems, release design scope. |
-| 2 | `02_BLOCKMANCER_STORY_ROUTES_DIALOGUE_SOURCE_OF_TRUTH.md` | Story premise, polished writing direction, route scenes, dialogue, boss intros, endings, and narrative QA. |
-| 3 | `03_BLOCKMANCER_GAMEPLAY_REACTIVE_DIFFICULTY_SOURCE_OF_TRUTH.md` | Reactive difficulty, hazards, counter items, route reward/risk modifiers, runtime audit, and smoke tests. |
-| 4 | `04_BLOCKMANCER_ASSET_ANIMATION_SOURCE_OF_TRUTH.md` | Asset folders, exact-frame PNG contract, board block animations, variants, placeholders, and 32-bit pixel style rules. |
-| 5 | `05_BLOCKMANCER_RELEASE_IMPLEMENTATION_SOURCE_OF_TRUTH.md` | Current implementation status, code audit, route implementation audit, release plan, and agent prompts. |
-| 6 | `06_BLOCKMANCER_CANONICAL_FOLDER_STRUCTURE_SOURCE_OF_TRUTH.md` | Final `public/assets/` folder tree, stage folder separation, raw-path policy, and fallback-only path policy. |
-| 7 | `07_BLOCKMANCER_MONSTER_WIKIPEDIA_SOURCE_OF_TRUTH.md` | Monster/boss metadata, stage fit, attack intent, counterplay notes, boss Fever interaction metadata, and monster asset contracts. |
+| 0 | `00_BLOCKMANCER_SOURCE_OF_TRUTH_INDEX.md` | Documentation map, update policy, source precedence. |
+| 1 | `01_BLOCKMANCER_GAME_DESIGN_SOURCE_OF_TRUTH.md` | Core identity, tone, layout, Cascade Gravity, stages, heroes, Fever Showtime, upgrade rules, release design scope. |
+| 2 | `02_BLOCKMANCER_STORY_ROUTES_DIALOGUE_SOURCE_OF_TRUTH.md` | Story premise, route scenes, character voice, dialogue style, boss intros, endings, and microcopy. |
+| 3 | `03_BLOCKMANCER_GAMEPLAY_REACTIVE_DIFFICULTY_SOURCE_OF_TRUTH.md` | Hazards, counterplay, Pressure Budget, Soft Junk, Fever fairness, route reward/risk modifiers, smoke tests. |
+| 4 | `04_BLOCKMANCER_ASSET_ANIMATION_SOURCE_OF_TRUTH.md` | Asset sizes, exact-frame PNG contracts, animation frame counts, VFX, UI assets, fallback behavior. |
+| 5 | `05_BLOCKMANCER_RELEASE_IMPLEMENTATION_SOURCE_OF_TRUTH.md` | Implementation status, phases, validation expectations, agent prompts, release readiness. |
+| 6 | `06_BLOCKMANCER_CANONICAL_FOLDER_STRUCTURE_SOURCE_OF_TRUTH.md` | Canonical `public/assets/` tree, stage folder separation, raw-path policy, fallback path policy. |
+| 7 | `07_BLOCKMANCER_MONSTER_WIKIPEDIA_SOURCE_OF_TRUTH.md` | Monster/boss metadata, stage fit, attack intent, counterplay, Fever interactions, monster asset contracts. |
 
-## Source Precedence Rules
+## Source Precedence
 
-1. For **core design**, `01_BLOCKMANCER_GAME_DESIGN_SOURCE_OF_TRUTH.md` wins.
-2. For **actual dialogue, route scenes, and storyboards**, `02_BLOCKMANCER_STORY_ROUTES_DIALOGUE_SOURCE_OF_TRUTH.md` wins.
-3. For **hazards, item counters, spell catalysts, and route-triggered risks/rewards**, `03_BLOCKMANCER_GAMEPLAY_REACTIVE_DIFFICULTY_SOURCE_OF_TRUTH.md` wins.
-4. For **asset sizes, folder paths, animation frame counts, and fallback behavior**, `04_BLOCKMANCER_ASSET_ANIMATION_SOURCE_OF_TRUTH.md` wins.
-5. For **what is implemented, partial, missing, or next**, `05_BLOCKMANCER_RELEASE_IMPLEMENTATION_SOURCE_OF_TRUTH.md` wins.
-6. For **canonical asset folder placement and fallback-only path policy**, `06_BLOCKMANCER_CANONICAL_FOLDER_STRUCTURE_SOURCE_OF_TRUTH.md` wins.
-7. Older uploaded files are historical unless explicitly embedded in one of the files above.
+1. Core design: `01_BLOCKMANCER_GAME_DESIGN_SOURCE_OF_TRUTH.md`.
+2. Dialogue, routes, boss intros, endings, and player-facing voice: `02_BLOCKMANCER_STORY_ROUTES_DIALOGUE_SOURCE_OF_TRUTH.md`.
+3. Hazards, item counters, spell catalysts, route risks/rewards, Fever fairness: `03_BLOCKMANCER_GAMEPLAY_REACTIVE_DIFFICULTY_SOURCE_OF_TRUTH.md`.
+4. Asset sizes, frame counts, animation contracts, fallback behavior: `04_BLOCKMANCER_ASSET_ANIMATION_SOURCE_OF_TRUTH.md`.
+5. Current implementation status and release next steps: `05_BLOCKMANCER_RELEASE_IMPLEMENTATION_SOURCE_OF_TRUTH.md`.
+6. Asset folder placement and fallback-only path policy: `06_BLOCKMANCER_CANONICAL_FOLDER_STRUCTURE_SOURCE_OF_TRUTH.md`.
+7. Monster-facing metadata and boss behavior notes: `07_BLOCKMANCER_MONSTER_WIKIPEDIA_SOURCE_OF_TRUTH.md`.
 
 ## Active Product Decisions
 
-| Decision | Current source |
+| Area | Current Decision |
 | --- | --- |
-| Engine remains Phaser 3 + TypeScript + Vite + Capacitor. | Game Design SOT + Release Implementation SOT |
-| Core board identity is Cascade Gravity, not classic row shifting. | Game Design SOT |
-| Tone stays cheerful festival / cute chaos. No dark curse, horror, grim tragedy, gore, or edgy villain framing. | Game Design SOT + Story SOT |
-| Route story scope is 6 heroes × 6 stages = 36 route scenes. | Game Design SOT + Story SOT |
-| Route story is runtime-implemented but still needs manual smoke verification. | Release Implementation SOT |
-| Exact-frame PNG animation support exists, but final production frames are still incomplete. | Asset/Animation SOT |
-| Placeholder assets are runtime-safe but not final art. | Asset/Animation SOT |
-| Canonical asset root is `public/assets/`; stage `battle/` and `puzzle/` folders are separate; legacy paths are fallback-only. | Canonical Folder Structure SOT |
-| Next product focus is Stage 1 vertical slice stabilization, P0 tests, Priority 1 assets/VFX/audio, and manual portrait-mobile smoke tests. | Release Implementation SOT |
+| Engine | Phaser 3 + TypeScript + Vite + Capacitor remains the target stack. |
+| Core board identity | Cascade Gravity is the core line-clear behavior; do not replace it with classic row shifting. |
+| Tone | Cheerful festival, cute chaos, cozy arcade RPG. No horror, gore, grim tragedy, dark curse framing, or edgy villain fantasy. |
+| Primary layout | Portrait mobile, 1080×1920 reference frame, 25% combat / 55% puzzle / 20% controls. |
+| Asset root | Runtime assets live under `public/assets/`; content references asset keys, not raw paths. |
+| Fever | Fever is Showtime Cascade mode with Charged Lines, release timing, Fever Heat, Soft Junk, Pressure Budget, and Boss Drama Guard. |
+| Upgrade system | Level-up uses Hero / Board / Fever category selection, 5 total upgrade slots, Lv1-Lv5 cards, and Legendary Evolution. |
+| Save safety | Preserve save-facing IDs unless a migration is documented. Missing fields normalize safely. |
+| Fallback safety | Missing assets/audio/content must warn in development and never crash gameplay. |
 
-## Update Policy
+## Fever Showtime Cascade — Current Canonical Rules
 
-When making a change:
+Fever is Showtime Cascade mode, not a passive always-on buff.
 
-1. Update the relevant focused SOT first.
-2. Update this index only when file ownership, status, or reading order changes.
-3. Do not edit multiple SOT files for the same fact unless the fact truly belongs to multiple ownership areas.
-4. If a code audit proves the implementation status changed, update `05_BLOCKMANCER_RELEASE_IMPLEMENTATION_SOURCE_OF_TRUTH.md` first, then summarize the status in the other SOT only if it changes design or production rules.
-5. Preserve save-facing IDs and runtime asset IDs unless a migration is documented.
-
-## Codex / Agent Instruction
-
-Use this exact instruction at the start of future implementation prompts:
+Lifecycle:
 
 ```text
-Read docs/00_BLOCKMANCER_SOURCE_OF_TRUTH_INDEX.md first.
-Then read only the focused source-of-truth file that matches the task.
-Do not rely on older duplicated docs unless the index says they are supporting context.
-Keep Cascade Gravity, cheerful festival tone, portrait-mobile readability, placeholder-safe fallbacks, and existing save-facing IDs.
+Fill Fever meter
+→ Activate Showtime
+→ Completed lines become Charged Lines
+→ Stack during a short lock window
+→ Release manually or automatically
+→ Clear Charged Lines together
+→ Resolve through normal Cascade Gravity
+→ Apply combat damage, boss caps, overflow, pressure safety, and upgrade effects
 ```
 
-## Generated Files
+Rules:
+
+- Completed rows during Showtime become Charged Lines and do not clear immediately.
+- Fever release must resolve through the existing Cascade Gravity system.
+- Physical board state is encounter-local.
+- Charged Lines, Soft Junk, Fever Heat, and unresolved release state never persist between nodes.
+- Bosses and final bosses use Boss Drama Guard caps so Fever cannot one-shot or skip multiple phases.
+- Boss/enemy block-add during Fever uses Pressure Budget, Soft Junk, and Fever Heat.
+- Fever UI lives in compact HUD/right-rail/control patterns; do not create a separate top HP/Mana/Fever bar.
+
+
+## Upgrade System Redesign — Current Canonical Rules
+
+The upgrade system is split into three player-chosen categories:
 
 ```text
-blockmancer_sot_pack_2026_05_20/
-  00_BLOCKMANCER_SOURCE_OF_TRUTH_INDEX.md
-  01_BLOCKMANCER_GAME_DESIGN_SOURCE_OF_TRUTH.md
-  02_BLOCKMANCER_STORY_ROUTES_DIALOGUE_SOURCE_OF_TRUTH.md
-  03_BLOCKMANCER_GAMEPLAY_REACTIVE_DIFFICULTY_SOURCE_OF_TRUTH.md
-  04_BLOCKMANCER_ASSET_ANIMATION_SOURCE_OF_TRUTH.md
-  05_BLOCKMANCER_RELEASE_IMPLEMENTATION_SOURCE_OF_TRUTH.md
-  06_BLOCKMANCER_CANONICAL_FOLDER_STRUCTURE_SOURCE_OF_TRUTH.md
-  07_BLOCKMANCER_MONSTER_WIKIPEDIA_SOURCE_OF_TRUTH.md
-  SOURCE_MANIFEST.json
+Hero
+Board
+Fever
 ```
 
-<!-- FEVER_SHOWTIME_CASCADE_UPDATE_2026_06_02_START -->
-## 2026-06-02 Update — Fever Showtime Cascade Documentation Overlay
-
-This update adds the new **Fever Showtime Cascade** feature as a cross-SOT product decision.
-
-### Feature Definition
-
-Fever is no longer only a simple meter. It becomes **Fever Showtime**, a controlled cascade-building mode:
+Level-up flow:
 
 ```text
-Fill Fever meter -> activate Showtime -> completed lines become Charged Lines -> stack during a short lock window -> release manually or automatically -> clear Charged Lines together -> run normal Cascade Gravity -> apply combat damage, boss caps, overflow, pressure safety, and upgrade effects.
+Node cleared
+→ Node Result Screen
+→ Level Up Ready
+→ Choose upgrade category: Hero / Board / Fever
+→ Show 3 upgrade cards from the selected category
+→ Player picks 1 card
 ```
 
-### Source Ownership
+Card rarity/rank labels are removed from the normal upgrade system. Do not use Common / Uncommon / Rare / Epic / Legendary as normal card ranks.
 
-| Area | Canonical owner |
-| --- | --- |
-| Core gameplay rules, board lifecycle, Fever caps, upgrade rules, layout placement | `01_BLOCKMANCER_GAME_DESIGN_SOURCE_OF_TRUTH.md` |
-| Fever wording, event log lines, boss card phrasing, story-safe microcopy | `02_BLOCKMANCER_STORY_ROUTES_DIALOGUE_SOURCE_OF_TRUTH.md` |
-| Fever Pressure Budget, Soft Junk, Fever Heat, hazard fairness, smoke tests | `03_BLOCKMANCER_GAMEPLAY_REACTIVE_DIFFICULTY_SOURCE_OF_TRUTH.md` |
-| Fever UI/VFX/asset keys, frame counts, fallback behavior | `04_BLOCKMANCER_ASSET_ANIMATION_SOURCE_OF_TRUTH.md` |
-| Implementation phases, current status, validation, release readiness | `05_BLOCKMANCER_RELEASE_IMPLEMENTATION_SOURCE_OF_TRUTH.md` |
-| Canonical asset folder placement for Fever UI/VFX/icons | `06_BLOCKMANCER_CANONICAL_FOLDER_STRUCTURE_SOURCE_OF_TRUTH.md` |
-| Monster and boss Fever interaction metadata, especially High Score Hydra | `07_BLOCKMANCER_MONSTER_WIKIPEDIA_SOURCE_OF_TRUTH.md` |
+Normal card progression is:
 
-### New Active Product Decisions
+```text
+Card Lv1 → Lv2 → Lv3 → Lv4 → Lv5 → Legendary Evolution
+```
 
-| Decision | Rule |
-| --- | --- |
-| Fever mode | Fever is **Showtime Cascade mode**, not a passive always-on buff. |
-| Line clear behavior during Fever | Completed rows become **Charged Lines** and do not clear immediately until Fever releases. |
-| Cascade identity | Fever release must still resolve through the existing **Cascade Gravity** system. |
-| Battle lifecycle | Physical board state is encounter-local. Charged Lines, Soft Junk, Fever Heat, and unresolved release state never persist between nodes. |
-| Boss safety | Bosses and final bosses use Boss Drama Guard caps so Fever cannot one-shot or skip multiple phases. |
-| Pressure safety | Boss/enemy block-add during Fever uses systemic **Pressure Budget**, **Soft Junk**, and **Fever Heat**, not hidden scripted cancellation. |
-| Upgrade safety | Fever upgrades are allowed, but capped and unable to bypass boss caps or create infinite Fever loops. |
-| UI placement | Fever UI must live in existing compact HUD/right-rail/control patterns. No separate top HP/Mana/Fever bar. |
-| Asset policy | Fever assets reuse existing `public/assets/ui/`, `public/assets/effects/`, `public/assets/icons/upgrades/`, and `public/assets/sprites/board-blocks/` folders. No new top-level folders. |
+Every upgrade card has exactly 5 normal levels. Every level must provide a meaningfully different effect or behavior change. Avoid simple numeric-only stacking.
 
-### Updated Canonical Reading Order Addition
+Slot rules:
 
-`07_BLOCKMANCER_MONSTER_WIKIPEDIA_SOURCE_OF_TRUTH.md` is now part of the active SOT pack for monster/boss metadata. It does not override design, gameplay, asset, release, or folder SOTs, but it owns monster-facing implementation metadata and boss behavior notes.
+```text
+Total run upgrade slots: 5
+Hero slots: max 2
+Board slots: max 2
+Fever slots: max 2
+```
 
-### Prompt Instruction Update
+Valid examples:
 
-Future Fever implementation prompts should start with:
+```text
+2 Hero / 2 Board / 1 Fever
+2 Hero / 1 Board / 2 Fever
+1 Hero / 2 Board / 2 Fever
+```
+
+Invalid examples:
+
+```text
+5 Hero
+5 Board
+5 Fever
+```
+
+Owned-card selection levels the card and does not consume a new slot. New-card selection claims an available category slot.
+
+Owned cards should reappear more often than unowned cards. Higher-level owned cards should reappear more often than lower-level owned cards. Lv4 cards should receive strong priority so players can finish a build. Lv5 and Legendary cards are removed from the normal offer pool.
+
+When a card reaches Lv5:
+
+```text
+Card reaches Lv5
+→ readyToEvolve = true
+→ play or queue evolution transition
+→ show 2 Legendary Evolution choices from that card’s pool
+→ player chooses 1
+→ save legendaryEvolutionId
+→ card becomes Legendary
+```
+
+Each active card should have at least 10 possible Legendary Evolutions. Only 2 are shown at evolution time. Legendary Evolution uses the same slot and does not consume an extra slot.
+
+Hero-specific cards only appear for the selected hero. Generic Hero cards can appear for any hero. Board cards must preserve Cascade Gravity. Fever cards must respect Fever Showtime caps, Boss Drama Guard, and board-local state rules.
+
+
+## Codex / Agent Prompt Header
+
+Use this at the start of implementation prompts:
 
 ```text
 Use AGENTS.md.
 Use CodeGraph index before editing.
 Read docs/00_BLOCKMANCER_SOURCE_OF_TRUTH_INDEX.md first.
-Then read the focused SOT files for the phase.
+Then read only the focused SOT files for the phase.
 Keep Cascade Gravity, cheerful festival tone, portrait-mobile readability, fallback-safe assets/audio/content, and existing save-facing IDs.
 Fever Showtime board-local state must never persist between nodes.
 ```
-<!-- FEVER_SHOWTIME_CASCADE_UPDATE_2026_06_02_END -->
+
+## Update Policy
+
+- Update the focused SOT that owns the fact.
+- Update this index only when source ownership, active product decisions, reading order, or cross-SOT rules change.
+- Do not duplicate implementation status across design files; implementation truth belongs in `05`.
+- Do not add new asset folders in prompts; update `06` first.
+- Do not rename save-facing IDs or runtime asset keys without documenting migration behavior.
