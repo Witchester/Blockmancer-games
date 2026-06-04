@@ -138,21 +138,92 @@ for (const file of allJsonFiles) {
   }
 }
 
+// Phase 8: Validate upgrade card effect IDs (includes legacy effect IDs with aliases)
+const registeredEffectIds = new Set([
+    // Canonical effect IDs
+    'hero_max_hp_boost',
+    'hero_shield_start',
+    'hero_heal_after_node',
+    'hero_mana_gain',
+    'hero_spell_damage',
+    'hero_warning_timing',
+    'hero_milo_mana_bonus',
+    'hero_pippa_fire_mastery',
+    'hero_zuzu_bomb_safety',
+    'hero_nixie_slow_timing',
+    'hero_bruk_guard_bonus',
+    'hero_lumi_star_bonus',
+    'board_line_damage',
+    'board_cascade_bonus',
+    'board_hold_bonus',
+    'board_next_queue_reveal',
+    'board_soft_junk_reduction',
+    'board_hazard_warning',
+    'board_low_ceiling_safety',
+    'board_stack_rhythm',
+    'fever_gain_bonus',
+    'fever_duration_bonus',
+    'fever_capacity_bonus',
+    'fever_release_shield',
+    'fever_release_safety',
+    'fever_overflow_utility',
+    'fever_star_encore',
+    'fever_stagecraft',
+    // Legacy effect IDs with aliases in UpgradeCardEffectHandler
+    'increase_fever_gain',
+    'increase_fever_duration',
+    'increase_fever_capacity',
+    'manual_release_shield',
+    'fever_safety_clear',
+    'increase_fever_overflow',
+    'star_encore',
+    'increase_line_damage',
+    'reduce_spell_cost',
+    'increase_specific_spell_damage',
+    'heal_player',
+    'increase_combo_bonus',
+    'clear_extra_blocks',
+    'reduce_fall_speed'
+]);
+
+for (const file of walkJson(path.join(contentRoot, 'upgrade-cards')).filter((file) => path.basename(file) !== 'metadata.json')) {
+    const data = readJson(file);
+    const rel = path.relative(root, file);
+    // Validate level effect IDs
+    for (const level of data.levels ?? []) {
+        if (level.effectType && !registeredEffectIds.has(level.effectType)) {
+            warnings.push(`${rel}: level ${level.level} uses unregistered effectType "${level.effectType}"`);
+        }
+    }
+    // Validate legendary pool effect IDs
+    for (const legendary of data.legendaryPool ?? []) {
+        if (legendary.effectType && !registeredEffectIds.has(legendary.effectType)) {
+            warnings.push(`${rel}: legendary "${legendary.id}" uses unregistered effectType "${legendary.effectType}"`);
+        }
+    }
+}
+
 for (const file of walkJson(path.join(contentRoot, 'upgrades')).filter((file) => path.basename(file) !== 'metadata.json')) {
-  const data = readJson(file);
-  const rel = path.relative(root, file);
-  if (typeof data.id === 'string' && data.id.startsWith('upg_lvl_')) {
-    if (!levelUpUpgradeTypes.has(data.upgradeType)) errors.push(`${rel}: invalid upgradeType ${data.upgradeType}`);
-    if (!levelUpCardTypes.has(data.cardType)) errors.push(`${rel}: invalid cardType ${data.cardType}`);
-    if (!Number.isFinite(data.stackLimit) || data.stackLimit <= 0) errors.push(`${rel}: stackLimit must be > 0`);
-    if (!levelUpEffectIds.has(data.effectId)) errors.push(`${rel}: unknown level-up effectId ${data.effectId}`);
-    if (data.upgradeType === 'hero_specific' && !heroIds.has(data.heroId)) {
-      errors.push(`${rel}: hero-specific level-up card must use valid heroId`);
-    }
-    if (data.levelUpOnly !== true) {
-      warnings.push(`${rel}: expected levelUpOnly=true for upg_lvl_ card`);
-    }
-  }
+   const data = readJson(file);
+   const rel = path.relative(root, file);
+   if (typeof data.id === 'string' && data.id.startsWith('upg_lvl_')) {
+     if (!levelUpUpgradeTypes.has(data.upgradeType)) errors.push(`${rel}: invalid upgradeType ${data.upgradeType}`);
+     if (!levelUpCardTypes.has(data.cardType)) errors.push(`${rel}: invalid cardType ${data.cardType}`);
+     if (!Number.isFinite(data.stackLimit) || data.stackLimit <= 0) errors.push(`${rel}: stackLimit must be > 0`);
+     if (!levelUpEffectIds.has(data.effectId)) errors.push(`${rel}: unknown level-up effectId ${data.effectId}`);
+     if (data.upgradeType === 'hero_specific' && !heroIds.has(data.heroId)) {
+       errors.push(`${rel}: hero-specific level-up card must use valid heroId`);
+     }
+     if (data.levelUpOnly !== true) {
+       warnings.push(`${rel}: expected levelUpOnly=true for upg_lvl_ card`);
+     }
+   }
+   // Validate upgrade-card effect IDs in effects array
+   for (const effectId of data.effects ?? []) {
+     if (typeof effectId === 'string' && !registeredEffectIds.has(effectId)) {
+       warnings.push(`${rel}: uses unregistered effectType "${effectId}"`);
+     }
+   }
 }
 
 

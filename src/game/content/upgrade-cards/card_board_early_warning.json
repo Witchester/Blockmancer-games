@@ -1,81 +1,142 @@
 {
-    "id":  "card_board_early_warning",
-    "category":  "board",
-    "iconKey":  "placeholder_upgrade",
-    "rarity":  "common",
-    "tags":  [
-                 "board",
-                 "hazard",
-                 "defense"
-             ],
-    "name":  "Early Warning Ribbon",
-    "legendaryPool":  [
-                          {
-                              "id":  "card_board_early_warning_legendary_placeholder",
-                              "name":  "Placeholder Evolution",
-                              "effectConfig":  {
-
-                                               },
-                              "description":  "Coming in Prompt 5.",
-                              "tags":  [
-                                           "placeholder"
-                                       ],
-                              "effectType":  "board_line_damage"
-                          }
-                      ],
-    "description":  "Ribbon-tied warnings come early. Hazard response and counter windows improve.",
-    "flavorText":  "A ribbon of foresight.",
-    "legacyAliases":  [
-
-                      ],
-    "enabled":  true,
-    "slotCost":  1,
-    "levels":  [
-                   {
-                       "effectType":  "board_hazard_warning",
-                       "title":  "Ribbon Alert",
-                       "description":  "All hazard warnings appear +1 turn earlier.",
-                       "level":  1,
-                       "effectConfig":  {
-                                            "hazardWarningBonus":  1
-                                        }
-                   },
-                   {
-                       "effectType":  "board_hazard_warning",
-                       "title":  "Counter Ribbon",
-                       "description":  "Hazard counter windows extended by 1 piece lock.",
-                       "level":  2,
-                       "effectConfig":  {
-                                            "counterWindowBonus":  1
-                                        }
-                   },
-                   {
-                       "effectType":  "board_hazard_warning",
-                       "title":  "Royal Ribbon",
-                       "description":  "Royal block counter windows extended by 2 piece locks.",
-                       "level":  3,
-                       "effectConfig":  {
-                                            "royalCounterBonus":  2
-                                        }
-                   },
-                   {
-                       "effectType":  "board_hazard_warning",
-                       "title":  "Safety Ribbon",
-                       "description":  "Incoming junk shows exact column targets.",
-                       "level":  4,
-                       "effectConfig":  {
-                                            "revealJunkColumns":  true
-                                        }
-                   },
-                   {
-                       "effectType":  "board_hazard_warning",
-                       "title":  "Festival Ribbon",
-                       "description":  "All counter windows doubled. Ready for Legendary Evolution.",
-                       "level":  5,
-                       "effectConfig":  {
-                                            "counterMultiplier":  2
-                                        }
-                   }
-               ],
-    "maxLevel":  5
+    "id": "card_board_early_warning",
+    "category": "board",
+    "iconKey": "placeholder_upgrade",
+    "rarity": "common",
+    "tags": [
+        "board",
+        "hazard",
+        "defense"
+    ],
+    "name": "Early Warning Ribbon",
+    "legendaryPool": [
+        {
+            "id": "card_board_early_warning_legendary_omniscient",
+            "name": "Omniscient Ribbon",
+            "description": "All counter windows tripled and warnings +3 turns. You see everything.",
+            "effectType": "board_hazard_warning",
+            "effectConfig": {
+                "counterMultiplier": 3,
+                "warningExtension": 3
+            },
+            "tags": [
+                "control",
+                "hazard",
+                "utility"
+            ]
+        },
+        {
+            "id": "card_board_early_warning_legendary_foresight",
+            "name": "Perfect Foresight",
+            "description": "All warnings +3 turns and see exact column targets. Nothing is hidden.",
+            "effectType": "board_hazard_warning",
+            "effectConfig": {
+                "warningExtension": 3,
+                "revealJunkColumns": true
+            },
+            "tags": [
+                "control",
+                "utility",
+                "hazard"
+            ]
+        },
+        {
+            "id": "card_board_early_warning_legendary_festival_ribbon",
+            "name": "Festival Ribbon",
+            "description": "Counter windows doubled and warnings +2 turns. The ribbon never breaks.",
+            "effectType": "board_hazard_warning",
+            "effectConfig": {
+                "counterMultiplier": 2,
+                "warningExtension": 2
+            },
+            "tags": [
+                "control",
+                "hazard",
+                "defense"
+            ]
+        },
+        {
+            "id": "card_board_early_warning_legendary_master_reader",
+            "name": "Master Reader",
+            "description": "All warnings +4 turns and see incoming hazard type. Complete awareness.",
+            "effectType": "board_hazard_warning",
+            "effectConfig": {
+                "warningExtension": 4,
+                "revealNextHazard": true
+            },
+            "tags": [
+                "control",
+                "utility",
+                "hazard"
+            ]
+        },
+        {
+            "id": "card_board_early_warning_legendary_safety_net",
+            "name": "Safety Net",
+            "description": "Counter windows doubled and reveal exact junk columns. No surprises.",
+            "effectType": "board_hazard_warning",
+            "effectConfig": {
+                "counterMultiplier": 2,
+                "revealJunkColumns": true
+            },
+            "tags": [
+                "control",
+                "utility",
+                "defense"
+            ]
+        }
+    ],
+    "description": "Ribbon-tied warnings come early. Hazard response and counter windows improve.",
+    "flavorText": "A ribbon of foresight.",
+    "legacyAliases": [],
+    "enabled": true,
+    "slotCost": 1,
+    "levels": [
+        {
+            "effectType": "board_hazard_warning",
+            "title": "Ribbon Alert",
+            "description": "All hazard warnings appear +1 turn earlier.",
+            "level": 1,
+            "effectConfig": {
+                "hazardWarningBonus": 1
+            }
+        },
+        {
+            "effectType": "board_hazard_warning",
+            "title": "Counter Ribbon",
+            "description": "Hazard counter windows extended by 1 piece lock.",
+            "level": 2,
+            "effectConfig": {
+                "counterWindowBonus": 1
+            }
+        },
+        {
+            "effectType": "board_hazard_warning",
+            "title": "Royal Ribbon",
+            "description": "Royal block counter windows extended by 2 piece locks.",
+            "level": 3,
+            "effectConfig": {
+                "royalCounterBonus": 2
+            }
+        },
+        {
+            "effectType": "board_hazard_warning",
+            "title": "Safety Ribbon",
+            "description": "Incoming junk shows exact column targets.",
+            "level": 4,
+            "effectConfig": {
+                "revealJunkColumns": true
+            }
+        },
+        {
+            "effectType": "board_hazard_warning",
+            "title": "Festival Ribbon",
+            "description": "All counter windows doubled. Ready for Legendary Evolution.",
+            "level": 5,
+            "effectConfig": {
+                "counterMultiplier": 2
+            }
+        }
+    ],
+    "maxLevel": 5
 }

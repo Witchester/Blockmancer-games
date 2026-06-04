@@ -33,6 +33,17 @@ This file records target implementation direction and verification gates. If cod
 | Assets/Animation | Fallback-safe target; final art may still be incomplete. | Missing art should warn, not crash. |
 | Save Migration | P0 for new run-state fields. | Missing/partial state normalizes safely. |
 
+### Phase 4 - Enemy Entry Pressure + Player Gift
+
+Implemented June 4, 2026:
+
+- Sequential enemy entry pressure resolves through existing warning-first hazard queues or safe non-board challenges.
+- Mechanical pressure requires a successfully resolved player gift; otherwise pressure is skipped.
+- Entry gifts support capped mana, shield, small heal, deterministic helper placement, entry grace, capped Fever gain, and minor-hazard cleanup with safe fallback conversion.
+- Configured entry grace survives enemy attack-countdown normalization and produces event-log feedback.
+- Encounter-pack applied-effect and claimed-gift indexes prevent duplicate gifts after save/load normalization.
+- Unsupported entry, pressure, and gift IDs warn in development and degrade without blocking battle progression.
+
 ## 3. Required Validation Commands
 
 Use commands available in the repo. AGENTS.md owns final command usage. Common commands:
@@ -522,3 +533,12 @@ Validation commands run and result
 Manual smoke cases tested
 Known limitations / follow-up risks
 ```
+
+## Phase 9 Hero / Ending / Monster Meta Stabilization
+
+- All six Release 1 route hero passives retain their existing gameplay hooks. Passive dispatch now falls back safely when hero passive content is missing, and Nixie's once-per-room mitigation resets on battle entry.
+- Route smoke covers 36 route scenes and 18 endings. Normal, True, and Risky Variant resolution, fallback selection, boss callbacks, route save state, and meta ending unlock wiring remain data-driven.
+- Monster discovery is persisted separately from friendship points. Every defeated sequential encounter enemy, including intended elites and bosses, is recorded by stable monster ID before encounter advancement.
+- Collection UI is the Release 1 monster meta surface: discovered entries, mystery entries, metadata when available, placeholder icons, optional friendship point display, portrait scrolling, and safe back navigation.
+- Monster Friendship Release 1 scope is **Option B: collection plus passive friendship-point display**. Existing run-start friendship gifts remain supported; a larger balance/reward progression loop is backlog.
+- Poplin and Bloop remain preserved as disabled extra heroes/backlog content. They do not expand the six-hero Release 1 route matrix.

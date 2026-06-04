@@ -48,7 +48,8 @@ Map asset keys to components, screens, canonical folders, source sizes, render s
 | hero_milo_blockmancer__idle__f00 | hero_sprite_slot | screen_battle | public/assets/sprites/heroes/hero_milo_blockmancer/idle/ | 627x627 | 220x220 | placeholder_sprite | Not exhaustively verified on disk | Ready |
 | mon_cupcake_slime__idle__f00 | enemy_sprite_slot | screen_battle | public/assets/sprites/monsters/mon_cupcake_slime/idle/ | 627x627 | 240x240 | placeholder_sprite | Not exhaustively verified on disk | Ready |
 | vfx_enemy_hit | vfx_lane_center | screen_battle | public/assets/effects/ | 627x627 | 220x220 | vfx_player_hit | Not exhaustively verified on disk | Ready |
-| ui_monster_stack_chip | monster_stack_chip | screen_battle | public/assets/ui/hud/ | 627x627 | 88x88 | placeholder_icon | Not exhaustively verified on disk | Ready |
+| ui_monster_stack_chip | monster_stack_chip | screen_battle | public/assets/ui/hud/ | 627x627 | 152x40 stack bounds | placeholder_icon | Runtime uses dynamic monster icons and generated count text | Ready |
+| ui_monster_stack_mystery_chip | monster_stack_mystery_chip | screen_battle | public/assets/ui/hud/ | 627x627 | 32x32 | ui_panel_default / generated `+N` text | Final art optional; dynamic text fallback is implemented | Ready |
 | ui_event_log_strip | event_log_strip | screen_battle | public/assets/ui/panels/ | 984x104 | 984x104 | ui_panel_default | Not exhaustively verified on disk | Ready |
 | bg_stage_sprinkle_sewers_puzzle_mid | puzzle_background_mid | screen_battle | public/assets/stages/stage_sprinkle_sewers/puzzle/ | 1080x1056 | 1080x1056 | placeholder_puzzle_background | Not exhaustively verified on disk | Ready |
 | ui_hold_panel | hold_panel | screen_battle | public/assets/ui/panels/ | 220x220 | 220x220 | ui_panel_default | Not exhaustively verified on disk | Ready |

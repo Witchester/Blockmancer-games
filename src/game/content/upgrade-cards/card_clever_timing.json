@@ -1,84 +1,147 @@
 {
-    "id":  "card_clever_timing",
-    "category":  "hero",
-    "iconKey":  "placeholder_upgrade",
-    "rarity":  "uncommon",
-    "tags":  [
-                 "generic_hero",
-                 "mana",
-                 "utility"
-             ],
-    "name":  "Clever Timing",
-    "legendaryPool":  [
-                          {
-                              "id":  "card_clever_timing_legendary_placeholder",
-                              "name":  "Placeholder Evolution",
-                              "effectConfig":  {
-
-                                               },
-                              "description":  "Coming in Prompt 5.",
-                              "tags":  [
-                                           "placeholder"
-                                       ],
-                              "effectType":  "hero_passive_modifier"
-                          }
-                      ],
-    "description":  "Time is on your side. Mana timing and warning windows improve.",
-    "flavorText":  "Wait for the right moment.",
-    "legacyAliases":  [
-                          "upg_lvl_reward_reroll",
-                          "upg_lucky_roll",
-                          "upg_lvl_spell_damage"
-                      ],
-    "isGenericHeroCard":  true,
-    "enabled":  true,
-    "slotCost":  1,
-    "levels":  [
-                   {
-                       "effectType":  "hero_mana_gain",
-                       "title":  "Mana Rhythm",
-                       "description":  "+3 mana after each cascade.",
-                       "level":  1,
-                       "effectConfig":  {
-                                            "manaPerCascade":  3
-                                        }
-                   },
-                   {
-                       "effectType":  "hero_mana_gain",
-                       "title":  "Mana Rhythm",
-                       "description":  "+3 mana after each cascade.",
-                       "level":  2,
-                       "effectConfig":  {
-                                            "manaPerCascade":  3
-                                        }
-                   },
-                   {
-                       "effectType":  "hero_warning_timing",
-                       "title":  "Timing Window",
-                       "description":  "Enemy attack counter shows exact number.",
-                       "level":  3,
-                       "effectConfig":  {
-                                            "exactEnemyCounter":  true
-                                        }
-                   },
-                   {
-                       "effectType":  "hero_mana_gain",
-                       "title":  "Recovery Beat",
-                       "description":  "Regain 5 mana when taking damage.",
-                       "level":  4,
-                       "effectConfig":  {
-                                            "manaOnDamage":  5
-                                        }
-                   },
-                   {
-                       "effectType":  "hero_mana_gain",
-                       "title":  "Festival Tempo",
-                       "description":  "All cooldowns and counters are +1 faster. Ready for Legendary Evolution.",
-                       "level":  5,
-                       "effectConfig":  {
-                                            "tempoBonus":  1
-                                        }
-                   }
-               ],
-    "maxLevel":  5
+    "id": "card_clever_timing",
+    "category": "hero",
+    "iconKey": "placeholder_upgrade",
+    "rarity": "uncommon",
+    "tags": [
+        "generic_hero",
+        "mana",
+        "utility"
+    ],
+    "name": "Clever Timing",
+    "legendaryPool": [
+        {
+            "id": "card_clever_timing_legendary_tempo_master",
+            "name": "Tempo Master",
+            "description": "All cooldowns +2 faster and +8 mana per cascade. Time bends to your will.",
+            "effectType": "hero_mana_gain",
+            "effectConfig": {
+                "tempoBonus": 2,
+                "manaPerCascade": 8
+            },
+            "tags": [
+                "mana",
+                "tempo",
+                "utility"
+            ]
+        },
+        {
+            "id": "card_clever_timing_legendary_mana_flood",
+            "name": "Mana Flood",
+            "description": "+10 mana per cascade and regain 8 mana when taking damage. Overflowing power.",
+            "effectType": "hero_mana_gain",
+            "effectConfig": {
+                "manaPerCascade": 10,
+                "manaOnDamage": 8
+            },
+            "tags": [
+                "mana",
+                "sustain",
+                "tempo"
+            ]
+        },
+        {
+            "id": "card_clever_timing_legendary_festival_rhythm",
+            "name": "Festival Rhythm",
+            "description": "All cooldowns +1 faster and +6 mana per cascade. The beat goes on.",
+            "effectType": "hero_mana_gain",
+            "effectConfig": {
+                "tempoBonus": 1,
+                "manaPerCascade": 6
+            },
+            "tags": [
+                "mana",
+                "tempo",
+                "utility"
+            ]
+        },
+        {
+            "id": "card_clever_timing_legendary_clockwork",
+            "name": "Clockwork Mind",
+            "description": "Enemy counters shown exactly and +8 mana per cascade. Precision matters.",
+            "effectType": "hero_mana_gain",
+            "effectConfig": {
+                "exactEnemyCounter": true,
+                "manaPerCascade": 8
+            },
+            "tags": [
+                "mana",
+                "control",
+                "utility"
+            ]
+        },
+        {
+            "id": "card_clever_timing_legendary_lucky_strike",
+            "name": "Lucky Strike",
+            "description": "+7 mana per cascade and regain 6 mana when taking damage. Fortune favors the prepared.",
+            "effectType": "hero_mana_gain",
+            "effectConfig": {
+                "manaPerCascade": 7,
+                "manaOnDamage": 6
+            },
+            "tags": [
+                "mana",
+                "sustain",
+                "tempo"
+            ]
+        }
+    ],
+    "description": "Time is on your side. Mana timing and warning windows improve.",
+    "flavorText": "Wait for the right moment.",
+    "legacyAliases": [
+        "upg_lvl_reward_reroll",
+        "upg_lucky_roll",
+        "upg_lvl_spell_damage"
+    ],
+    "isGenericHeroCard": true,
+    "enabled": true,
+    "slotCost": 1,
+    "levels": [
+        {
+            "effectType": "hero_mana_gain",
+            "title": "Mana Rhythm",
+            "description": "+3 mana after each cascade.",
+            "level": 1,
+            "effectConfig": {
+                "manaPerCascade": 3
+            }
+        },
+        {
+            "effectType": "hero_mana_gain",
+            "title": "Mana Rhythm",
+            "description": "+3 mana after each cascade.",
+            "level": 2,
+            "effectConfig": {
+                "manaPerCascade": 3
+            }
+        },
+        {
+            "effectType": "hero_warning_timing",
+            "title": "Timing Window",
+            "description": "Enemy attack counter shows exact number.",
+            "level": 3,
+            "effectConfig": {
+                "exactEnemyCounter": true
+            }
+        },
+        {
+            "effectType": "hero_mana_gain",
+            "title": "Recovery Beat",
+            "description": "Regain 5 mana when taking damage.",
+            "level": 4,
+            "effectConfig": {
+                "manaOnDamage": 5
+            }
+        },
+        {
+            "effectType": "hero_mana_gain",
+            "title": "Festival Tempo",
+            "description": "All cooldowns and counters are +1 faster. Ready for Legendary Evolution.",
+            "level": 5,
+            "effectConfig": {
+                "tempoBonus": 1
+            }
+        }
+    ],
+    "maxLevel": 5
 }

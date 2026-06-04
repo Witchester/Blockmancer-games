@@ -11,6 +11,7 @@ export interface MetaState {
   routeVariantEndingsUnlocked: string[];
   hubBuildings: Record<string, number>;
   monsterFriendship: Record<string, number>;
+  discoveredMonsterIds: string[];
   completedStageGoals: string[];
   discoveredChaosRules: string[];
   discoveredBossRules: string[];

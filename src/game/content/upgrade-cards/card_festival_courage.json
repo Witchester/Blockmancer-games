@@ -1,84 +1,147 @@
 {
-    "id":  "card_festival_courage",
-    "category":  "hero",
-    "iconKey":  "placeholder_upgrade",
-    "rarity":  "common",
-    "tags":  [
-                 "generic_hero",
-                 "heal",
-                 "defense"
-             ],
-    "name":  "Festival Courage",
-    "legendaryPool":  [
-                          {
-                              "id":  "card_festival_courage_legendary_placeholder",
-                              "name":  "Placeholder Evolution",
-                              "effectConfig":  {
-
-                                               },
-                              "description":  "Coming in Prompt 5.",
-                              "tags":  [
-                                           "placeholder"
-                                       ],
-                              "effectType":  "hero_passive_modifier"
-                          }
-                      ],
-    "description":  "Face the festival challenges with courage. HP and healing improve.",
-    "flavorText":  "The festival rewards the brave!",
-    "legacyAliases":  [
-                          "upg_lvl_flat_hp",
-                          "upg_lvl_heal_after_node",
-                          "upg_extra_frosting"
-                      ],
-    "isGenericHeroCard":  true,
-    "enabled":  true,
-    "slotCost":  1,
-    "levels":  [
-                   {
-                       "effectType":  "hero_max_hp_boost",
-                       "title":  "Brave Heart",
-                       "description":  "Max HP +5.",
-                       "level":  1,
-                       "effectConfig":  {
-                                            "maxHpBonus":  5
-                                        }
-                   },
-                   {
-                       "effectType":  "hero_heal_after_node",
-                       "title":  "Steady Breath",
-                       "description":  "Heal 3 HP after each node clear.",
-                       "level":  2,
-                       "effectConfig":  {
-                                            "healAfterNode":  3
-                                        }
-                   },
-                   {
-                       "effectType":  "hero_warning_timing",
-                       "title":  "Fearless Step",
-                       "description":  "Enemy entry grace +1 piece.",
-                       "level":  3,
-                       "effectConfig":  {
-                                            "entryGraceBonus":  1
-                                        }
-                   },
-                   {
-                       "effectType":  "hero_shield_start",
-                       "title":  "Courageous Stand",
-                       "description":  "Take 15% less damage when shield is active.",
-                       "level":  4,
-                       "effectConfig":  {
-                                            "shieldBlockPercent":  0.15
-                                        }
-                   },
-                   {
-                       "effectType":  "hero_heal_after_node",
-                       "title":  "Festival Heart",
-                       "description":  "Heal to full after boss encounters. Ready for Legendary Evolution.",
-                       "level":  5,
-                       "effectConfig":  {
-                                            "bossFullHeal":  true
-                                        }
-                   }
-               ],
-    "maxLevel":  5
+    "id": "card_festival_courage",
+    "category": "hero",
+    "iconKey": "placeholder_upgrade",
+    "rarity": "common",
+    "tags": [
+        "generic_hero",
+        "heal",
+        "defense"
+    ],
+    "name": "Festival Courage",
+    "legendaryPool": [
+        {
+            "id": "card_festival_courage_legendary_unbreakable",
+            "name": "Unbreakable Spirit",
+            "description": "Max HP +15 and heal to full after boss. The festival never breaks you.",
+            "effectType": "hero_heal_after_node",
+            "effectConfig": {
+                "maxHpBonus": 15,
+                "bossFullHeal": true
+            },
+            "tags": [
+                "hp",
+                "heal",
+                "boss"
+            ]
+        },
+        {
+            "id": "card_festival_courage_legendary_fortress",
+            "name": "Festival Fortress",
+            "description": "Max HP +12 and start battles with 8 shield. A walking wall of courage.",
+            "effectType": "hero_max_hp_boost",
+            "effectConfig": {
+                "maxHpBonus": 12,
+                "startShield": 8
+            },
+            "tags": [
+                "hp",
+                "shield",
+                "defense"
+            ]
+        },
+        {
+            "id": "card_festival_courage_legendary_heart_of_festival",
+            "name": "Heart of the Festival",
+            "description": "Heal 8 HP after each node and take 15% less damage while shielded. The heart beats on.",
+            "effectType": "hero_heal_after_node",
+            "effectConfig": {
+                "healAfterNode": 8,
+                "shieldBlockPercent": 0.15
+            },
+            "tags": [
+                "heal",
+                "defense",
+                "sustain"
+            ]
+        },
+        {
+            "id": "card_festival_courage_legendary_brave_heart",
+            "name": "Brave Heart Supreme",
+            "description": "Max HP +18 and heal 6 HP after each node. Courage incarnate.",
+            "effectType": "hero_max_hp_boost",
+            "effectConfig": {
+                "maxHpBonus": 18,
+                "healAfterNode": 6
+            },
+            "tags": [
+                "hp",
+                "heal",
+                "sustain"
+            ]
+        },
+        {
+            "id": "card_festival_courage_legendary_courage_shield",
+            "name": "Courage Shield",
+            "description": "Start battles with 10 shield and enemy entry grace +2. Fearless.",
+            "effectType": "hero_shield_start",
+            "effectConfig": {
+                "startShield": 10,
+                "entryGraceBonus": 2
+            },
+            "tags": [
+                "shield",
+                "defense",
+                "control"
+            ]
+        }
+    ],
+    "description": "Face the festival challenges with courage. HP and healing improve.",
+    "flavorText": "The festival rewards the brave!",
+    "legacyAliases": [
+        "upg_lvl_flat_hp",
+        "upg_lvl_heal_after_node",
+        "upg_extra_frosting"
+    ],
+    "isGenericHeroCard": true,
+    "enabled": true,
+    "slotCost": 1,
+    "levels": [
+        {
+            "effectType": "hero_max_hp_boost",
+            "title": "Brave Heart",
+            "description": "Max HP +5.",
+            "level": 1,
+            "effectConfig": {
+                "maxHpBonus": 5
+            }
+        },
+        {
+            "effectType": "hero_heal_after_node",
+            "title": "Steady Breath",
+            "description": "Heal 3 HP after each node clear.",
+            "level": 2,
+            "effectConfig": {
+                "healAfterNode": 3
+            }
+        },
+        {
+            "effectType": "hero_warning_timing",
+            "title": "Fearless Step",
+            "description": "Enemy entry grace +1 piece.",
+            "level": 3,
+            "effectConfig": {
+                "entryGraceBonus": 1
+            }
+        },
+        {
+            "effectType": "hero_shield_start",
+            "title": "Courageous Stand",
+            "description": "Take 15% less damage when shield is active.",
+            "level": 4,
+            "effectConfig": {
+                "shieldBlockPercent": 0.15
+            }
+        },
+        {
+            "effectType": "hero_heal_after_node",
+            "title": "Festival Heart",
+            "description": "Heal to full after boss encounters. Ready for Legendary Evolution.",
+            "level": 5,
+            "effectConfig": {
+                "bossFullHeal": true
+            }
+        }
+    ],
+    "maxLevel": 5
 }

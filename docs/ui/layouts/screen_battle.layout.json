@@ -356,19 +356,19 @@
         "h": 627
       },
       "runtimeRenderSize": {
-        "w": 88,
-        "h": 88
+        "w": 152,
+        "h": 40
       },
-      "x": 860,
-      "y": 300,
-      "w": 88,
-      "h": 88,
-      "anchor": "center",
+      "x": 920,
+      "y": 104,
+      "w": 152,
+      "h": 40,
+      "anchor": "topLeft",
       "fitMode": "iconCenter",
       "scaleMode": "fitInteger",
       "safePadding": 0,
       "zIndex": 55,
-      "dynamicTextAllowed": false,
+      "dynamicTextAllowed": true,
       "pixelPerfect": {
         "integerCoordinates": true,
         "allowFractionalScale": false,
@@ -376,7 +376,7 @@
         "antiAliasing": false,
         "roundPixels": true
       },
-      "notes": "Icon centered in slot. No baked counts, labels, costs, or dynamic values."
+      "notes": "Compact sequential encounter stack bounds. Active and next monster icons resolve dynamically; later enemies use generated +N text."
     },
     {
       "id": "event_log_strip",

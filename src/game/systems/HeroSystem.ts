@@ -69,7 +69,7 @@ export class HeroSystem {
       id: hero.id,
       name: hero.name,
       className: hero.className,
-      passiveId: hero.passive.id,
+      passiveId: typeof hero.passive?.id === 'string' ? hero.passive.id : 'passive_none',
       unlocked: true // For current run it's true
     };
   }

@@ -1,85 +1,148 @@
 {
-    "id":  "card_hero_slow_the_room",
-    "category":  "hero",
-    "iconKey":  "placeholder_upgrade",
-    "rarity":  "rare",
-    "tags":  [
-                 "hero_specific",
-                 "slow",
-                 "control"
-             ],
-    "name":  "Slow the Room",
-    "legendaryPool":  [
-                          {
-                              "id":  "card_hero_slow_the_room_legendary_placeholder",
-                              "name":  "Placeholder Evolution",
-                              "effectConfig":  {
-
-                                               },
-                              "description":  "Coming in Prompt 5.",
-                              "tags":  [
-                                           "placeholder"
-                                       ],
-                              "effectType":  "hero_passive_modifier"
-                          }
-                      ],
-    "description":  "Nixie chills the battlefield. Enemy speed and entry effects slow down.",
-    "heroId":  "hero_nixie_frostbinder",
-    "flavorText":  "\"Take your time. I am.\" - Nixie",
-    "legacyAliases":  [
-                          "upg_lvl_nixie_chill_timing",
-                          "upg_lvl_nixie_soft_thaw",
-                          "upg_lvl_nixie_slow_entry",
-                          "upg_lvl_nixie_preserve"
-                      ],
-    "enabled":  true,
-    "slotCost":  1,
-    "levels":  [
-                   {
-                       "effectType":  "hero_nixie_slow_timing",
-                       "title":  "Chill Timing",
-                       "description":  "Enemy attack counter extends by 1 lock.",
-                       "level":  1,
-                       "effectConfig":  {
-                                            "enemyDelayLocks":  1
-                                        }
-                   },
-                   {
-                       "effectType":  "hero_nixie_slow_timing",
-                       "title":  "Soft Thaw",
-                       "description":  "Frozen enemies take +5 line-clear damage.",
-                       "level":  2,
-                       "effectConfig":  {
-                                            "frozenDamageBonus":  5
-                                        }
-                   },
-                   {
-                       "effectType":  "hero_nixie_slow_timing",
-                       "title":  "Slow Entry",
-                       "description":  "New enemies entering battle start with 2 extra entry grace pieces.",
-                       "level":  3,
-                       "effectConfig":  {
-                                            "entryGraceBonus":  2
-                                        }
-                   },
-                   {
-                       "effectType":  "hero_nixie_slow_timing",
-                       "title":  "Preserve",
-                       "description":  "Hold piece preserves its block effects when swapped.",
-                       "level":  4,
-                       "effectConfig":  {
-                                            "holdPreserveEffects":  true
-                                        }
-                   },
-                   {
-                       "effectType":  "hero_nixie_slow_timing",
-                       "title":  "Festival Freeze",
-                       "description":  "All enemy delays doubled. Ready for Legendary Evolution.",
-                       "level":  5,
-                       "effectConfig":  {
-                                            "enemyDelayMultiplier":  2
-                                        }
-                   }
-               ],
-    "maxLevel":  5
+    "id": "card_hero_slow_the_room",
+    "category": "hero",
+    "iconKey": "placeholder_upgrade",
+    "rarity": "rare",
+    "tags": [
+        "hero_specific",
+        "slow",
+        "control"
+    ],
+    "name": "Slow the Room",
+    "legendaryPool": [
+        {
+            "id": "card_hero_slow_the_room_legendary_glacial_control",
+            "name": "Glacial Control",
+            "description": "All enemy delays doubled and frozen enemies take +10 damage. Time itself slows.",
+            "effectType": "hero_nixie_slow_timing",
+            "effectConfig": {
+                "enemyDelayMultiplier": 2,
+                "frozenDamageBonus": 10
+            },
+            "tags": [
+                "control",
+                "damage",
+                "slow"
+            ]
+        },
+        {
+            "id": "card_hero_slow_the_room_legendary_frost_preserve",
+            "name": "Frost Preserve",
+            "description": "Hold piece preserves block effects and entry grace +3. Nothing is wasted.",
+            "effectType": "hero_nixie_slow_timing",
+            "effectConfig": {
+                "holdPreserveEffects": true,
+                "entryGraceBonus": 3
+            },
+            "tags": [
+                "utility",
+                "control",
+                "hold"
+            ]
+        },
+        {
+            "id": "card_hero_slow_the_room_legendary_winter_feast",
+            "name": "Winter Feast",
+            "description": "Enemy delays +2 locks and new enemies start with 4 extra grace pieces. The party freezes.",
+            "effectType": "hero_nixie_slow_timing",
+            "effectConfig": {
+                "enemyDelayLocks": 2,
+                "entryGraceBonus": 4
+            },
+            "tags": [
+                "control",
+                "slow",
+                "defense"
+            ]
+        },
+        {
+            "id": "card_hero_slow_the_room_legendary_cryo_mastery",
+            "name": "Cryo Mastery",
+            "description": "All enemy delays tripled and frozen enemies take +15 damage. Absolute zero.",
+            "effectType": "hero_nixie_slow_timing",
+            "effectConfig": {
+                "enemyDelayMultiplier": 3,
+                "frozenDamageBonus": 15
+            },
+            "tags": [
+                "control",
+                "damage",
+                "slow"
+            ]
+        },
+        {
+            "id": "card_hero_slow_the_room_legendary_snow_festival",
+            "name": "Snow Festival",
+            "description": "Hold preserves effects and enemy delays +2. The festival goes on forever.",
+            "effectType": "hero_nixie_slow_timing",
+            "effectConfig": {
+                "holdPreserveEffects": true,
+                "enemyDelayLocks": 2
+            },
+            "tags": [
+                "utility",
+                "control",
+                "hold"
+            ]
+        }
+    ],
+    "description": "Nixie chills the battlefield. Enemy speed and entry effects slow down.",
+    "heroId": "hero_nixie_frostbinder",
+    "flavorText": "\"Take your time. I am.\" - Nixie",
+    "legacyAliases": [
+        "upg_lvl_nixie_chill_timing",
+        "upg_lvl_nixie_soft_thaw",
+        "upg_lvl_nixie_slow_entry",
+        "upg_lvl_nixie_preserve"
+    ],
+    "enabled": true,
+    "slotCost": 1,
+    "levels": [
+        {
+            "effectType": "hero_nixie_slow_timing",
+            "title": "Chill Timing",
+            "description": "Enemy attack counter extends by 1 lock.",
+            "level": 1,
+            "effectConfig": {
+                "enemyDelayLocks": 1
+            }
+        },
+        {
+            "effectType": "hero_nixie_slow_timing",
+            "title": "Soft Thaw",
+            "description": "Frozen enemies take +5 line-clear damage.",
+            "level": 2,
+            "effectConfig": {
+                "frozenDamageBonus": 5
+            }
+        },
+        {
+            "effectType": "hero_nixie_slow_timing",
+            "title": "Slow Entry",
+            "description": "New enemies entering battle start with 2 extra entry grace pieces.",
+            "level": 3,
+            "effectConfig": {
+                "entryGraceBonus": 2
+            }
+        },
+        {
+            "effectType": "hero_nixie_slow_timing",
+            "title": "Preserve",
+            "description": "Hold piece preserves its block effects when swapped.",
+            "level": 4,
+            "effectConfig": {
+                "holdPreserveEffects": true
+            }
+        },
+        {
+            "effectType": "hero_nixie_slow_timing",
+            "title": "Festival Freeze",
+            "description": "All enemy delays doubled. Ready for Legendary Evolution.",
+            "level": 5,
+            "effectConfig": {
+                "enemyDelayMultiplier": 2
+            }
+        }
+    ],
+    "maxLevel": 5
 }

@@ -1,4 +1,4 @@
-import type { CascadeResult, RunState, FeverShowtimeState, FeverReleaseReason, FeverReleaseSummary, FeverHeatLevel, BoardState, BoardCell, BoardBlockCell } from '../types/GameTypes';
+import type { CascadeResult, RunState, FeverShowtimeState, FeverReleaseReason, FeverReleaseSummary, FeverHeatLevel, FeverHeatSource, BoardState, BoardCell, BoardBlockCell } from '../types/GameTypes';
 import type { FeverPressureBand, FeverPressureSnapshot, FeverPressureBudgetResult, SoftJunkCell, DelayedJunkEntry, FeverPressureConversionType } from '../types/FeverPressureTypes';
 import { FEVER_HEAT_LOW, FEVER_HEAT_MEDIUM, FEVER_HEAT_HIGH, FEVER_HEAT_MAX } from '../types/FeverPressureTypes';
 import { clamp } from '../utils/math';
@@ -92,6 +92,9 @@ export class FeverSystem {
             chargedLineRows: [],
             heat: 0,
             heatLevel: "none",
+            heatThisShowtime: 0,
+            lastHeatChangeReason: "" as FeverHeatSource | "",
+            messyRelease: false,
             manualReleaseAvailable: false,
             releaseRequested: false,
             lastReleaseSummary: undefined
@@ -130,6 +133,9 @@ export class FeverSystem {
             chargedLineRows,
             heat,
             heatLevel,
+            heatThisShowtime: this.clampInteger((state as any).heatThisShowtime, 0, 0, FEVER_HEAT_MAX),
+            lastHeatChangeReason: typeof (state as any).lastHeatChangeReason === "string" ? (state as any).lastHeatChangeReason : "",
+            messyRelease: Boolean((state as any).messyRelease),
             manualReleaseAvailable: Boolean(state.manualReleaseAvailable),
             releaseRequested: Boolean(state.releaseRequested)
         });
@@ -174,6 +180,9 @@ export class FeverSystem {
             chargedLineRows: [],
             heat: 0,
             heatLevel: 'none',
+            heatThisShowtime: 0,
+            lastHeatChangeReason: '' as FeverHeatSource | '',
+            messyRelease: false,
             manualReleaseAvailable: false,
             releaseRequested: false,
             lastReleaseSummary: normalized.lastReleaseSummary && !normalized.releaseRequested
@@ -186,7 +195,10 @@ export class FeverSystem {
         return {
             ...fever,
             heat: 0,
-            heatLevel: 'none'
+            heatLevel: 'none',
+            heatThisShowtime: 0,
+            lastHeatChangeReason: '' as FeverHeatSource | '',
+            messyRelease: false
         };
     }
 
@@ -499,6 +511,9 @@ export class FeverSystem {
             chargedLineRows,
             heat,
             heatLevel,
+            heatThisShowtime: Math.max(0, Number((state as any).heatThisShowtime ?? 0)),
+            lastHeatChangeReason: typeof (state as any).lastHeatChangeReason === 'string' ? (state as any).lastHeatChangeReason : '',
+            messyRelease: Boolean((state as any).messyRelease),
             manualReleaseAvailable,
             releaseRequested,
             lastReleaseSummary
@@ -521,19 +536,36 @@ export class FeverSystem {
         return state.ready && !state.active;
     }
 
-    activateFever(state: FeverShowtimeState): FeverShowtimeState {
+    activateFever(state: FeverShowtimeState, runState?: RunState): FeverShowtimeState {
         if (!state.ready) {
             return state;
         }
+        const effectiveDuration = runState
+            ? this.getEffectiveFeverDurationLocks(state.baseDurationLocks, runState, this.getFeverEncounterTypeFromState(runState))
+            : state.baseDurationLocks + (state.durationBonus ?? 0);
+        const effectiveCapacity = runState
+            ? this.getEffectiveFeverMaxChargedLines(FEVER_BASE_MAX_CHARGED_LINES, runState, this.getFeverEncounterTypeFromState(runState))
+            : FEVER_BASE_MAX_CHARGED_LINES + (state.capacityBonus ?? 0);
         return {
             ...state,
             active: true,
             ready: false,
-            locksRemaining: state.baseDurationLocks,
+            locksRemaining: effectiveDuration,
+            heatThisShowtime: 0,
+            lastHeatChangeReason: '' as FeverHeatSource | '',
+            messyRelease: false,
             manualReleaseAvailable: true,
             releaseRequested: false,
-            meter: 0
+            meter: 0,
+            maxChargedLines: effectiveCapacity,
+            // Reset per-node tracking
+            firstFeverThisNodeTriggered: false,
+            earlyReleaseShieldGranted: false
         };
+    }
+
+    getFeverEncounterTypeFromState(state: RunState): FeverEncounterType {
+        return this.getFeverEncounterType(state);
     }
 
     tickFeverOnPieceLock(state: FeverShowtimeState): FeverShowtimeState {
@@ -541,17 +573,23 @@ export class FeverSystem {
             return state;
         }
         const nextLocks = state.locksRemaining - 1;
+        // Phase 6: Heat gain per lock tick after initial 2 locks
+        const locksUsed = state.baseDurationLocks - nextLocks;
+        let nextState = state;
+        if (locksUsed > 2) {
+            nextState = this.addFeverHeat(nextState, 2, 'lock_tick', 'lock_tick');
+        }
         if (nextLocks <= 0) {
             return this.requestFeverRelease(
                 {
-                    ...state,
+                    ...nextState,
                     locksRemaining: 0
                 },
                 'duration_expired'
             );
         }
         return {
-            ...state,
+            ...nextState,
             locksRemaining: nextLocks
         };
     }
@@ -584,9 +622,15 @@ export class FeverSystem {
             chargedLineRows: [],
             heat: 0,
             heatLevel: 'none',
+            heatThisShowtime: 0,
+            lastHeatChangeReason: '' as FeverHeatSource | '',
+            messyRelease: false,
             manualReleaseAvailable: false,
             releaseRequested: false,
-            lastReleaseSummary: undefined
+            lastReleaseSummary: undefined,
+            // Reset per-node tracking
+            firstFeverThisNodeTriggered: undefined,
+            earlyReleaseShieldGranted: undefined
         };
     }
 
@@ -619,6 +663,12 @@ export class FeverSystem {
         // Keep state.feverShowtime in sync
         state.feverShowtime = this.gainFever(state.feverShowtime, gained, 'cascade');
 
+        // Phase 8: Apply fever activation mana bonus
+        const activationMana = state.feverShowtime.feverActivationMana ?? 0;
+        if (activationMana > 0) {
+            state.player.mana = clamp(state.player.mana + activationMana, 0, state.player.maxMana);
+        }
+
         if (state.player.fever < FEVER_MAX) {
             return { gained, triggered: false, activeLocks: 0 };
         }
@@ -631,11 +681,18 @@ export class FeverSystem {
         const effectiveDuration = this.getEffectiveFeverDurationLocks(FEVER_BASE_DURATION_LOCKS, state, encounterType);
         const effectiveCapacity = this.getEffectiveFeverMaxChargedLines(FEVER_BASE_MAX_CHARGED_LINES, state, encounterType);
 
-        state.feverShowtime = this.activateFever(state.feverShowtime);
+        state.feverShowtime = this.activateFever(state.feverShowtime, state);
         state.feverShowtime.locksRemaining = effectiveDuration;
         state.feverShowtime.baseDurationLocks = effectiveDuration;
         state.feverShowtime.maxChargedLines = effectiveCapacity;
         state.player.feverActiveLocks = effectiveDuration;
+
+        // Phase 8: Apply fever enemy delay on activation
+        const enemyDelay = state.feverShowtime.feverEnemyDelay ?? 0;
+        if (enemyDelay > 0 && state.activeEnemy) {
+            state.activeEnemy.attackCounter += enemyDelay;
+            state.eventLog.unshift(`Fever delays the enemy by ${enemyDelay} lock${enemyDelay > 1 ? 's' : ''}!`);
+        }
 
         return { gained, triggered: true, activeLocks: state.player.feverActiveLocks };
     }
@@ -745,13 +802,21 @@ export class FeverSystem {
             newChargedRows.push(row);
         }
 
-        const updatedFever: FeverShowtimeState = {
+        // Phase 6: Heat gain per charged line stacked beyond 2
+        let updatedFever: FeverShowtimeState = {
             ...fever,
             chargedLineRows: newChargedLineRows
         };
+        if (newChargedRows.length > 0) {
+            const totalCharged = newChargedLineRows.length;
+            if (totalCharged > 2) {
+                const heatGain = newChargedRows.length * 4;
+                updatedFever = this.addFeverHeat(updatedFever, heatGain, 'charged_line', 'charged_line');
+            }
+        }
 
         return {
-            board, // board is mutated in place
+            board,
             fever: updatedFever,
             chargedRowsAdded: newChargedRows
         };
@@ -834,6 +899,9 @@ export class FeverSystem {
                 chargedLineRows: [],
                 heat: 0,
                 heatLevel: 'none',
+                heatThisShowtime: 0,
+                lastHeatChangeReason: '' as FeverHeatSource | '',
+                messyRelease: false,
                 manualReleaseAvailable: false,
                 releaseRequested: false,
                 lastReleaseSummary: {
@@ -906,6 +974,20 @@ export class FeverSystem {
         // For now, we return a placeholder release summary with the basic info.
         // The actual damage calculation and capping will be done in the BattleScene or CombatSystem.
         // We will update the lastReleaseSummary with the basic cascade result and charged lines count.
+        // Phase 6: Resolve Soft Junk after Fever release clears charged lines
+        const softJunkResult = this.resolveSoftJunkAfterFever(board, fever, state);
+        board = softJunkResult.board;
+        state = softJunkResult.battleState;
+        if (softJunkResult.convertedToNormalJunk > 0) {
+            state.eventLog.unshift('Soft Junk settled onto the board!');
+        }
+        if (softJunkResult.convertedToDelayedJunk > 0) {
+            state.eventLog.unshift('Soft Junk became delayed junk!');
+        }
+
+        // Phase 6: Clear any remaining Soft Junk markers on the board
+        board = this.clearSoftJunkForNodeEnd(board);
+
         const updatedFever: FeverShowtimeState = {
             ...fever,
             active: false,
@@ -913,11 +995,14 @@ export class FeverSystem {
             chargedLineRows: [],
             heat: 0,
             heatLevel: 'none',
+            heatThisShowtime: 0,
+            lastHeatChangeReason: '' as FeverHeatSource | '',
+            messyRelease: fever.messyRelease,
             manualReleaseAvailable: false,
             releaseRequested: false,
             lastReleaseSummary: {
                 chargedLinesCleared: chargedLineRows.length,
-                rawDamage: 0, // To be calculated by the caller
+                rawDamage: 0,
                 cappedDamage: 0,
                 overflowDamage: 0,
                 manaGained: 0,
@@ -930,8 +1015,25 @@ export class FeverSystem {
             }
         };
 
-        const combatResult = this.applyFeverReleaseCombatResult(updatedFever.lastReleaseSummary!, state);
+        const combatResult = this.applyFeverReleaseCombatResult(updatedFever.lastReleaseSummary!, state, fever.heatLevel);
         updatedFever.lastReleaseSummary = combatResult.releaseSummary;
+
+        // Phase 6: Apply Heat release modifier (mana penalty, boss shield, messy flag)
+        const heatModified = this.applyFeverHeatReleaseModifier(
+            updatedFever.lastReleaseSummary,
+            fever,
+            combatResult.state
+        );
+        updatedFever.lastReleaseSummary = heatModified.releaseSummary;
+        updatedFever.messyRelease = heatModified.fever.messyRelease;
+        state = heatModified.battleState;
+
+        // Phase 6: Event log for messy release
+        if (updatedFever.messyRelease) {
+            state.eventLog.unshift('Messy Showtime release!');
+        }
+
+        state.eventLog = state.eventLog.slice(0, 50);
 
         return {
             board,
@@ -953,8 +1055,9 @@ export class FeverSystem {
             return 'normal';
         }
 
+        // 1. Primary: enemy roomType (set at spawn from rank metadata)
         if (enemy.roomType === 'boss') {
-            // Stage 6 is the final stage (starfall arcade)
+            // Stage 6 is the final stage
             if (state.stage >= 6) {
                 return 'final_boss';
             }
@@ -962,6 +1065,38 @@ export class FeverSystem {
         }
 
         if (enemy.roomType === 'elite') {
+            return 'elite';
+        }
+
+        // 2. Secondary: encounter pack node type
+        const pack = state.activeEncounterPack;
+        if (pack) {
+            if (pack.nodeType === 'boss') {
+                return state.stage >= 6 ? 'final_boss' : 'boss';
+            }
+            if (pack.nodeType === 'elite' || pack.nodeType === 'royal_guard' || pack.nodeType === 'mini_boss') {
+                return 'elite';
+            }
+        }
+
+        // 3. Tertiary: enemy rank from encounter pack entry
+        if (pack && pack.enemies && typeof pack.currentEnemyIndex === 'number') {
+            const currentEntry = pack.enemies[pack.currentEnemyIndex];
+            if (currentEntry) {
+                if (currentEntry.rank === 'boss') {
+                    return state.stage >= 6 ? 'final_boss' : 'boss';
+                }
+                if (currentEntry.rank === 'elite' || currentEntry.rank === 'elite_miniboss') {
+                    return 'elite';
+                }
+            }
+        }
+
+        // 4. Fallback: if enemy has boss-like ID prefix, prefer boss cap
+        if (enemy.id && enemy.id.startsWith('mon_boss_')) {
+            return state.stage >= 6 ? 'final_boss' : 'boss';
+        }
+        if (enemy.id && enemy.id.startsWith('mon_elite_')) {
             return 'elite';
         }
 
@@ -1006,16 +1141,21 @@ export class FeverSystem {
         const comboBonus = state.combo >= 4 ? 12 : state.combo === 3 ? 7 : state.combo === 2 ? 3 : 0;
         const rawBase = state.player.baseLineDamage + state.player.lineDamageBonus + lineBonus + comboBonus;
         const cascadeCount = Math.max(1, cascade?.cascadeCount ?? 1);
-        const cascadeMultiplier = cascadeCount >= 4
+        // Phase 8: Apply upgrade cascade multiplier
+        const upgradeCascadeMultiplier = state.feverShowtime.cascadeMultiplier ?? 1;
+        const cascadeMultiplier = (cascadeCount >= 4
             ? 2
             : cascadeCount === 3
                 ? 1.5
                 : cascadeCount === 2
                     ? 1.25
-                    : 1;
+                    : 1);
+        const effectiveCascadeMultiplier = cascadeMultiplier * upgradeCascadeMultiplier;
         const chargedLineBurst = chargedLines * 4;
         const cascadeDropBonus = Math.min(10, Math.floor((cascade?.blocksDropped ?? 0) / 6));
-        const mitigated = Math.round(rawBase * cascadeMultiplier + chargedLineBurst + cascadeDropBonus - state.activeEnemy.armor);
+        // Phase 8: Apply deep cascade damage bonus (extra burst for cascadeCount >= 3)
+        const deepCascadeBonus = state.feverShowtime.deepCascadeDamageBonus && cascadeCount >= 3 ? 8 : 0;
+        const mitigated = Math.round(rawBase * effectiveCascadeMultiplier + chargedLineBurst + cascadeDropBonus + deepCascadeBonus - state.activeEnemy.armor);
         return Math.max(1, mitigated);
     }
 
@@ -1083,14 +1223,18 @@ export class FeverSystem {
      */
     convertShowtimeOverflow(
         overflowDamage: number,
-        state: RunState
+        state: RunState,
+        heatLevel?: FeverHeatLevel
     ): {
         state: RunState;
         overflowUtility: ShowtimeOverflowUtility[];
     } {
-        const points = Math.max(
+        // Phase 6: Heat reduces overflow efficiency
+        const upgradeMultiplier = this.getShowtimeOverflowEfficiencyMultiplier(state);
+        const heatPenalty = heatLevel === 'max' ? 0.6 : heatLevel === 'high' ? 0.8 : 1.0;
+        let points = Math.max(
             0,
-            Math.floor((Math.max(0, overflowDamage) / 25) * this.getShowtimeOverflowEfficiencyMultiplier(state))
+            Math.floor((Math.max(0, overflowDamage) / 25) * upgradeMultiplier * heatPenalty)
         );
         const overflowUtility: ShowtimeOverflowUtility[] = [];
         if (points <= 0) {
@@ -1098,6 +1242,41 @@ export class FeverSystem {
         }
 
         let remaining = points;
+
+        // Phase 8: Apply upgrade-specific overflow conversion rates
+        const shieldConversion = state.feverShowtime.overflowShieldConversion ?? 0;
+        const manaConversion = state.feverShowtime.overflowManaConversion ?? 0;
+        const bossDelayBonus = state.feverShowtime.overflowBossDelay ?? 0;
+
+        // Apply shield conversion (from upgrade)
+        if (shieldConversion > 0 && state.player.shield < 99) {
+            const shieldPoints = Math.floor(remaining * shieldConversion);
+            const shieldAmount = Math.min(99 - state.player.shield, shieldPoints * 2);
+            if (shieldAmount > 0) {
+                state.player.shield += shieldAmount;
+                overflowUtility.push({ type: 'shield', amount: shieldAmount });
+                remaining -= Math.ceil(shieldAmount / 2);
+            }
+        }
+
+        // Apply mana conversion (from upgrade)
+        if (manaConversion > 0 && state.player.mana < state.player.maxMana) {
+            const manaPoints = Math.floor(remaining * manaConversion);
+            const manaAmount = Math.min(state.player.maxMana - state.player.mana, manaPoints * 2);
+            if (manaAmount > 0) {
+                state.player.mana += manaAmount;
+                overflowUtility.push({ type: 'mana', amount: manaAmount });
+                remaining -= Math.ceil(manaAmount / 2);
+            }
+        }
+
+        // Phase 6: score_bonus - small score bonus from early overflow points
+        if (remaining > 0) {
+            const scoreBonus = Math.min(remaining, 3);
+            overflowUtility.push({ type: 'score_bonus', amount: scoreBonus * 10 });
+            remaining -= scoreBonus;
+        }
+
         const clearableHazards = Math.min(remaining, state.activeHazards.length);
         if (clearableHazards > 0) {
             state.activeHazards = state.activeHazards.slice(clearableHazards);
@@ -1105,12 +1284,32 @@ export class FeverSystem {
             remaining -= clearableHazards;
         }
 
-        if (remaining > 0 && state.activeEnemy?.roomType === 'boss') {
-            state.activeEnemy.attackCounter += 1;
-            overflowUtility.push({ type: 'boss_intent_delay', amount: 1 });
-            remaining -= 1;
+        // Phase 6: reduce_next_boss_hazard - reduce next incoming hazard pressure
+        if (remaining > 0 && state.incomingJunkQueue && state.incomingJunkQueue.length > 0) {
+            const reduced = Math.min(remaining, 2);
+            const firstEntry = state.incomingJunkQueue[0];
+            if (firstEntry) {
+                const reduction = Math.min(reduced, firstEntry.remainingAmount ?? firstEntry.amount ?? 0);
+                if (reduction > 0) {
+                    firstEntry.remainingAmount = Math.max(0, (firstEntry.remainingAmount ?? firstEntry.amount ?? 0) - reduction);
+                    if (firstEntry.remainingAmount <= 0) {
+                        state.incomingJunkQueue = state.incomingJunkQueue.slice(1);
+                    }
+                    overflowUtility.push({ type: 'reduce_next_boss_hazard', amount: reduction });
+                    remaining -= Math.min(reduced, reduction);
+                }
+            }
         }
 
+        // Apply boss delay (from upgrade) then default
+        const totalBossDelay = (bossDelayBonus > 0 ? bossDelayBonus : 1);
+        if (remaining > 0 && state.activeEnemy?.roomType === 'boss') {
+            state.activeEnemy.attackCounter += totalBossDelay;
+            overflowUtility.push({ type: 'boss_intent_delay', amount: totalBossDelay });
+            remaining -= totalBossDelay;
+        }
+
+        // Remaining shield from default
         if (remaining > 0 && state.player.shield < 99) {
             const shieldAmount = Math.min(99 - state.player.shield, remaining * 2);
             state.player.shield += shieldAmount;
@@ -1118,6 +1317,7 @@ export class FeverSystem {
             remaining -= Math.ceil(shieldAmount / 2);
         }
 
+        // Remaining mana from default
         if (remaining > 0 && state.player.mana < state.player.maxMana) {
             const manaAmount = Math.min(state.player.maxMana - state.player.mana, remaining * 2);
             state.player.mana += manaAmount;
@@ -1143,7 +1343,8 @@ export class FeverSystem {
      */
     applyFeverReleaseCombatResult(
         releaseSummary: FeverReleaseSummary,
-        state: RunState
+        state: RunState,
+        heatLevel?: FeverHeatLevel
     ): {
         state: RunState;
         releaseSummary: FeverReleaseSummary;
@@ -1156,7 +1357,7 @@ export class FeverSystem {
         const encounterType = this.getFeverEncounterType(state);
         const rawDamage = this.calculateRawFeverReleaseDamage(releaseSummary, state);
         const capResult = this.applyFeverDamageCaps(rawDamage, state, encounterType);
-        const overflowResult = this.convertShowtimeOverflow(capResult.overflowDamage, state);
+        const overflowResult = this.convertShowtimeOverflow(capResult.overflowDamage, state, heatLevel);
         const cappedDamage = capResult.cappedDamage;
         const blocked = Math.min(enemy.shield, cappedDamage);
         enemy.shield -= blocked;
@@ -1171,9 +1372,23 @@ export class FeverSystem {
         const cascadeMana = releaseSummary.cascadeResult && releaseSummary.cascadeResult.cascadeCount > 1
             ? Math.floor(baseMana * CASCADE_MANA_BONUS_MULTIPLIER)
             : 0;
-        const manaGained = Math.max(0, baseMana + cascadeMana);
-        if (manaGained > 0) {
-            state.player.mana = clamp(state.player.mana + manaGained, 0, state.player.maxMana);
+        // Phase 8: Apply cascade mana bonus from upgrade
+        const upgradeCascadeMana = state.feverShowtime.cascadeManaBonus ?? 0;
+        const totalManaGained = Math.max(0, baseMana + cascadeMana + upgradeCascadeMana);
+        if (totalManaGained > 0) {
+            state.player.mana = clamp(state.player.mana + totalManaGained, 0, state.player.maxMana);
+        }
+        // Phase 8: Apply cascade fever bonus from upgrade
+        if (releaseSummary.cascadeResult && releaseSummary.cascadeResult.cascadeCount > 1) {
+            const upgradeCascadeFever = state.feverShowtime.cascadeFeverBonus ?? 0;
+            if (upgradeCascadeFever > 0) {
+                const feverBoost = Math.min(upgradeCascadeFever, 100 - state.feverShowtime.meter);
+                if (feverBoost > 0) {
+                    state.feverShowtime.meter = clamp(state.feverShowtime.meter + feverBoost, 0, FEVER_METER_MAX);
+                    state.feverShowtime.ready = state.feverShowtime.meter >= FEVER_METER_MAX;
+                    state.eventLog.unshift(`Cascade bonus Fever +${feverBoost}.`);
+                }
+            }
         }
 
         state.eventLog.unshift('Showtime released!');
@@ -1184,10 +1399,17 @@ export class FeverSystem {
             state.eventLog.unshift(`${enemy.name}'s shield blocks ${blocked} Showtime damage.`);
         }
         if (capResult.capApplied) {
-            state.eventLog.unshift('Boss Drama Guard softened the burst!');
+            if (encounterType === 'final_boss') {
+                state.eventLog.unshift('Finale Guard kept the last act standing!');
+            } else {
+                state.eventLog.unshift('Boss Drama Guard softened the burst!');
+            }
         }
         if (capResult.phaseGateApplied) {
             state.eventLog.unshift('The boss holds the stage for the next act!');
+        }
+        if (capResult.overflowDamage > 0) {
+            state.eventLog.unshift('Showtime burst reached the boss cap!');
         }
         for (const utility of overflowResult.overflowUtility) {
             switch (utility.type) {
@@ -1206,6 +1428,12 @@ export class FeverSystem {
                 case 'gold_bonus':
                     state.eventLog.unshift(`Showtime Overflow dropped ${utility.amount} gold!`);
                     break;
+                case 'score_bonus':
+                    state.eventLog.unshift('Showtime Overflow sparkled into score!');
+                    break;
+                case 'reduce_next_boss_hazard':
+                    state.eventLog.unshift('Showtime Overflow eased incoming pressure!');
+                    break;
                 default:
                     break;
             }
@@ -1219,7 +1447,7 @@ export class FeverSystem {
                 rawDamage,
                 cappedDamage,
                 overflowDamage: capResult.overflowDamage,
-                manaGained,
+                manaGained: totalManaGained,
                 encounterType,
                 capApplied: capResult.capApplied,
                 overflowUtility: overflowResult.overflowUtility
@@ -1467,8 +1695,12 @@ export class FeverSystem {
         const softResult = this.addSoftJunkCells(hardResult.board, softJunkCells, sourceId);
         softJunkCells = softResult.added;
 
+        // Phase 6: Additional heat per soft junk cell generated
+        const softJunkHeat = softJunkCells * 3;
+        const totalHeat = heatAdded + softJunkHeat;
+
         // Add fever heat
-        const updatedFever = this.addFeverHeat(fever, heatAdded, sourceId);
+        const updatedFever = this.addFeverHeat(fever, totalHeat, sourceId, 'pressure_conversion');
 
         // Add delayed junk to battle state
         let updatedBattleState = { ...battleState };
@@ -1502,6 +1734,25 @@ export class FeverSystem {
                 shield: Math.max(0, (updatedBattleState.player.shield || 0) - shieldDamage)
             };
         }
+
+        // Phase 6: Event log feedback for pressure budget conversion
+        if (softJunkCells > 0) {
+            updatedBattleState.eventLog.unshift('Soft Junk splashed onto the board!');
+        }
+        if (band === 'high' || band === 'critical') {
+            updatedBattleState.eventLog.unshift('Showtime pressure softened safely.');
+        }
+        if (heatAdded > 0) {
+            const newHeatLevel = updatedFever.heatLevel;
+            if (newHeatLevel === 'max') {
+                updatedBattleState.eventLog.unshift('Fever Heat is at max!');
+            } else if (newHeatLevel === 'high' && fever.heatLevel !== 'high' && fever.heatLevel !== 'max') {
+                updatedBattleState.eventLog.unshift('Fever Heat is rising!');
+            } else if (newHeatLevel === 'medium' && fever.heatLevel === 'none' || fever.heatLevel === 'low') {
+                updatedBattleState.eventLog.unshift('Fever Heat is warming up.');
+            }
+        }
+        updatedBattleState.eventLog = updatedBattleState.eventLog.slice(0, 50);
 
         const result: FeverPressureBudgetResult = {
             requestedCells: requestedPressureCells,
@@ -1647,7 +1898,7 @@ export class FeverSystem {
     }
 
     /**
-     * Add Fever Heat to the fever state.
+     * Add Fever Heat to the fever state (with heat source tracking).
      * @param fever The fever showtime state.
      * @param amount The amount of heat to add.
      * @param sourceId The source of the heat.
@@ -1656,16 +1907,30 @@ export class FeverSystem {
     addFeverHeat(
         fever: FeverShowtimeState,
         amount: number,
-        sourceId: string
+        sourceId: string,
+        heatSource?: FeverHeatSource
     ): FeverShowtimeState {
-        const newHeat = Math.min(FEVER_HEAT_MAX, fever.heat + amount);
+        const safeAmount = Math.max(0, Math.floor(amount));
+        if (safeAmount <= 0) return fever;
+        const newHeat = Math.min(FEVER_HEAT_MAX, fever.heat + safeAmount);
         const heatLevel = this.getFeverHeatLevel(newHeat);
 
+        const levelChanged = heatLevel !== fever.heatLevel;
         return {
             ...fever,
             heat: newHeat,
-            heatLevel
+            heatLevel,
+            heatThisShowtime: Math.min(FEVER_HEAT_MAX, fever.heatThisShowtime + safeAmount),
+            lastHeatChangeReason: heatSource ?? 'pressure_conversion'
         };
+    }
+
+    /**
+     * Check if the heat level changed during the last addFeverHeat call.
+     * Callers can use this to trigger event log messages.
+     */
+    didHeatLevelChange(oldLevel: FeverHeatLevel, newLevel: FeverHeatLevel): boolean {
+        return oldLevel !== newLevel;
     }
 
     /**
@@ -1749,6 +2014,16 @@ export class FeverSystem {
             };
         }
 
+        // Phase 6: Log soft junk resolution
+        if (convertedToNormalJunk > 0) {
+            updatedBattleState.eventLog.unshift('Soft Junk settled safely.');
+            updatedBattleState.eventLog = updatedBattleState.eventLog.slice(0, 50);
+        }
+        if (convertedToDelayedJunk > 0) {
+            updatedBattleState.eventLog.unshift('Soft Junk became delayed junk!');
+            updatedBattleState.eventLog = updatedBattleState.eventLog.slice(0, 50);
+        }
+
         return {
             board: { ...board, grid: newGrid },
             battleState: updatedBattleState,
@@ -1815,11 +2090,38 @@ export class FeverSystem {
             };
         }
 
+        // Phase 6: Mark messy release at high/max heat
+        const isMessy = heatLevel === 'high' || heatLevel === 'max';
+
+        // Phase 6: At max heat, small delayed pressure
+        if (heatLevel === 'max' && updatedBattleState.activeEnemy) {
+            const delayedPressure = Math.floor(releaseSummary.cappedDamage * 0.05);
+            if (delayedPressure > 0) {
+                const delayedEntry = {
+                    id: `delayed_heat_max_${Date.now()}`,
+                    sourceId: 'fever_heat_max',
+                    cellCount: Math.min(3, delayedPressure),
+                    delayPieces: 2,
+                    junkBlockId: 'block_crumb_junk',
+                    reason: 'fever_heat_messy_release'
+                };
+                updatedBattleState = {
+                    ...updatedBattleState,
+                    delayedJunkQueue: [
+                        ...(updatedBattleState.delayedJunkQueue || []),
+                        delayedEntry
+                    ]
+                };
+            }
+        }
+
         // Clear heat after release
         const updatedFever: FeverShowtimeState = {
             ...fever,
             heat: 0,
-            heatLevel: "none"
+            heatLevel: 'none',
+            messyRelease: isMessy || fever.messyRelease,
+            lastHeatChangeReason: '' as FeverHeatSource | ''
         };
 
         return {
@@ -2050,11 +2352,14 @@ export class FeverSystem {
     /**
      * Get the Showtime Overflow efficiency multiplier from upg_fever_overflow.
      * Base 1.0, +0.20 per stack (max 3 stacks = 1.60).
+     * Also considers upgrade-derived overflowEfficiencyMultiplier field.
      * Does not increase boss direct damage.
      */
     getShowtimeOverflowEfficiencyMultiplier(state: RunState): number {
         const stacks = Math.min(3, this.getFeverRunUpgradeStacks(state, 'upg_fever_overflow'));
-        return 1.0 + stacks * 0.20;
+        const stackBonus = 1.0 + stacks * 0.20;
+        const upgradeBonus = state.feverShowtime.overflowEfficiencyMultiplier ?? 1.0;
+        return stackBonus * upgradeBonus;
     }
 
     /**

@@ -1,82 +1,145 @@
 {
-    "id":  "card_board_queue_comb",
-    "category":  "board",
-    "iconKey":  "placeholder_upgrade",
-    "rarity":  "common",
-    "tags":  [
-                 "board",
-                 "preview",
-                 "utility"
-             ],
-    "name":  "Queue Comb Training",
-    "legendaryPool":  [
-                          {
-                              "id":  "card_board_queue_comb_legendary_placeholder",
-                              "name":  "Placeholder Evolution",
-                              "effectConfig":  {
-
-                                               },
-                              "description":  "Coming in Prompt 5.",
-                              "tags":  [
-                                           "placeholder"
-                                       ],
-                              "effectType":  "board_line_damage"
-                          }
-                      ],
-    "description":  "Train the Next Queue. Preview and piece prediction improve.",
-    "flavorText":  "Comb through the queue.",
-    "legacyAliases":  [
-                          "upg_bonus_preview",
-                          "upg_arcane_preview"
-                      ],
-    "enabled":  true,
-    "slotCost":  1,
-    "levels":  [
-                   {
-                       "effectType":  "board_next_queue_reveal",
-                       "title":  "Queue Peek",
-                       "description":  "See +1 extra piece in the Next Queue.",
-                       "level":  1,
-                       "effectConfig":  {
-                                            "previewBonus":  1
-                                        }
-                   },
-                   {
-                       "effectType":  "board_next_queue_reveal",
-                       "title":  "Comb Forward",
-                       "description":  "Next piece type predicted reliably.",
-                       "level":  2,
-                       "effectConfig":  {
-                                            "nextPrediction":  true
-                                        }
-                   },
-                   {
-                       "effectType":  "board_next_queue_reveal",
-                       "title":  "Queue Sense",
-                       "description":  "Preview also shows piece color/block type.",
-                       "level":  3,
-                       "effectConfig":  {
-                                            "previewBlockInfo":  true
-                                        }
-                   },
-                   {
-                       "effectType":  "board_next_queue_reveal",
-                       "title":  "Comb Pattern",
-                       "description":  "After 4 consecutive line clears, Next Queue shows +2 extra.",
-                       "level":  4,
-                       "effectConfig":  {
-                                            "streakPreviewBonus":  2
-                                        }
-                   },
-                   {
-                       "effectType":  "board_next_queue_reveal",
-                       "title":  "Festival Queue",
-                       "description":  "All preview counts doubled. Ready for Legendary Evolution.",
-                       "level":  5,
-                       "effectConfig":  {
-                                            "previewMultiplier":  2
-                                        }
-                   }
-               ],
-    "maxLevel":  5
+    "id": "card_board_queue_comb",
+    "category": "board",
+    "iconKey": "placeholder_upgrade",
+    "rarity": "common",
+    "tags": [
+        "board",
+        "preview",
+        "utility"
+    ],
+    "name": "Queue Comb Training",
+    "legendaryPool": [
+        {
+            "id": "card_board_queue_comb_legendary_prophet",
+            "name": "Queue Prophet",
+            "description": "All preview counts tripled and piece type predicted reliably. You see the future.",
+            "effectType": "board_next_queue_reveal",
+            "effectConfig": {
+                "previewMultiplier": 3,
+                "nextPrediction": true
+            },
+            "tags": [
+                "preview",
+                "utility",
+                "combo"
+            ]
+        },
+        {
+            "id": "card_board_queue_comb_legendary_crystal_ball",
+            "name": "Crystal Ball",
+            "description": "Preview shows +4 pieces and shows block effects. The ball reveals all.",
+            "effectType": "board_next_queue_reveal",
+            "effectConfig": {
+                "previewBonus": 4,
+                "previewBlockInfo": true
+            },
+            "tags": [
+                "preview",
+                "utility",
+                "combo"
+            ]
+        },
+        {
+            "id": "card_board_queue_comb_legendary_festival_queue",
+            "name": "Festival Queue",
+            "description": "Preview counts doubled and streak bonus +3. The queue flows.",
+            "effectType": "board_next_queue_reveal",
+            "effectConfig": {
+                "previewMultiplier": 2,
+                "streakPreviewBonus": 3
+            },
+            "tags": [
+                "preview",
+                "combo",
+                "utility"
+            ]
+        },
+        {
+            "id": "card_board_queue_comb_legendary_infinite_preview",
+            "name": "Infinite Preview",
+            "description": "Preview shows +5 pieces and block info shown. Nothing is hidden.",
+            "effectType": "board_next_queue_reveal",
+            "effectConfig": {
+                "previewBonus": 5,
+                "previewBlockInfo": true
+            },
+            "tags": [
+                "preview",
+                "utility",
+                "combo"
+            ]
+        },
+        {
+            "id": "card_board_queue_comb_legendary_streak_master",
+            "name": "Streak Master",
+            "description": "Streak bonus +4 and preview counts doubled. Momentum builds.",
+            "effectType": "board_next_queue_reveal",
+            "effectConfig": {
+                "streakPreviewBonus": 4,
+                "previewMultiplier": 2
+            },
+            "tags": [
+                "preview",
+                "combo",
+                "utility"
+            ]
+        }
+    ],
+    "description": "Train the Next Queue. Preview and piece prediction improve.",
+    "flavorText": "Comb through the queue.",
+    "legacyAliases": [
+        "upg_bonus_preview",
+        "upg_arcane_preview"
+    ],
+    "enabled": true,
+    "slotCost": 1,
+    "levels": [
+        {
+            "effectType": "board_next_queue_reveal",
+            "title": "Queue Peek",
+            "description": "See +1 extra piece in the Next Queue.",
+            "level": 1,
+            "effectConfig": {
+                "previewBonus": 1
+            }
+        },
+        {
+            "effectType": "board_next_queue_reveal",
+            "title": "Comb Forward",
+            "description": "Next piece type predicted reliably.",
+            "level": 2,
+            "effectConfig": {
+                "nextPrediction": true
+            }
+        },
+        {
+            "effectType": "board_next_queue_reveal",
+            "title": "Queue Sense",
+            "description": "Preview also shows piece color/block type.",
+            "level": 3,
+            "effectConfig": {
+                "previewBlockInfo": true
+            }
+        },
+        {
+            "effectType": "board_next_queue_reveal",
+            "title": "Comb Pattern",
+            "description": "After 4 consecutive line clears, Next Queue shows +2 extra.",
+            "level": 4,
+            "effectConfig": {
+                "streakPreviewBonus": 2
+            }
+        },
+        {
+            "effectType": "board_next_queue_reveal",
+            "title": "Festival Queue",
+            "description": "All preview counts doubled. Ready for Legendary Evolution.",
+            "level": 5,
+            "effectConfig": {
+                "previewMultiplier": 2
+            }
+        }
+    ],
+    "maxLevel": 5
 }

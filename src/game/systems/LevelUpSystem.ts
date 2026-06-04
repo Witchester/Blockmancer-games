@@ -2,6 +2,7 @@ import type { NodeResultSummary, PlayerLevelState, RunState, RunUpgradeState, Up
 import { contentRegistry } from './ContentRegistry';
 import { seededRandom, weightedChoice } from '../utils/random';
 import { getUpgradeCategorySlotCounts } from '../data/defaultRunState';
+import { TOTAL_UPGRADE_SLOTS, MAX_HERO_UPGRADE_SLOTS, MAX_BOARD_UPGRADE_SLOTS, MAX_FEVER_UPGRADE_SLOTS } from '../data/constants';
 import { upgradeCardEffectHandler } from './UpgradeCardEffectHandler';
 
 type LevelUpCardRarity = 'general' | 'hero' | 'rare';
@@ -162,11 +163,34 @@ export class LevelUpSystem {
 
   canSelectCategory(state: RunState, category: UpgradeCategory): boolean {
     const counts = getUpgradeCategorySlotCounts(state.runUpgradeState);
-    if (counts.total >= 5) return false;
-    if (category === 'hero' && counts.hero >= 2) return false;
-    if (category === 'board' && counts.board >= 2) return false;
-    if (category === 'fever' && counts.fever >= 2) return false;
+    if (counts.total >= TOTAL_UPGRADE_SLOTS) return false;
+    if (category === 'hero' && counts.hero >= MAX_HERO_UPGRADE_SLOTS) return false;
+    if (category === 'board' && counts.board >= MAX_BOARD_UPGRADE_SLOTS) return false;
+    if (category === 'fever' && counts.fever >= MAX_FEVER_UPGRADE_SLOTS) return false;
     return true;
+  }
+
+  canAddUpgrade(state: RunState, cardId: string, category: UpgradeCategory): { allowed: boolean; reason: string } {
+    if (this.isCardAlreadyOwned(state, cardId)) {
+      const existing = state.runUpgradeState.ownedCards[cardId];
+      if (existing.level >= 5) {
+        return { allowed: false, reason: 'Card is already maxed at level 5.' };
+      }
+      return { allowed: true, reason: 'Leveling up owned card — does not consume a new slot.' };
+    }
+    const counts = getUpgradeCategorySlotCounts(state.runUpgradeState);
+    if (counts.total >= TOTAL_UPGRADE_SLOTS) {
+      return { allowed: false, reason: 'All upgrade slots are full. Total limit is ' + TOTAL_UPGRADE_SLOTS + '.' };
+    }
+    const categoryLimits: Record<UpgradeCategory, number> = {
+      hero: MAX_HERO_UPGRADE_SLOTS,
+      board: MAX_BOARD_UPGRADE_SLOTS,
+      fever: MAX_FEVER_UPGRADE_SLOTS
+    };
+    if (counts[category] >= categoryLimits[category]) {
+      return { allowed: false, reason: category.charAt(0).toUpperCase() + category.slice(1) + ' category is full (' + counts[category] + '/' + categoryLimits[category] + '). Festival favor must find another path!' };
+    }
+    return { allowed: true, reason: 'Slot available.' };
   }
 
   getAvailableCategories(state: RunState): UpgradeCategory[] {
@@ -419,11 +443,7 @@ export class LevelUpSystem {
   }
 
   canApplyCardToRun(state: RunState, cardId: string, category: UpgradeCategory): boolean {
-    if (this.isCardAlreadyOwned(state, cardId)) {
-      const existing = state.runUpgradeState.ownedCards[cardId];
-      return existing.level < 5;
-    }
-    return this.canSelectCategory(state, category);
+    return this.canAddUpgrade(state, cardId, category).allowed;
   }
 
   filterLevelUpChoicesByCategory(
@@ -456,6 +476,8 @@ export class LevelUpSystem {
       const uniqueLegacy = legacyCards.filter(c => !mergedIds.has(c.id));
       pool = [...newCards, ...uniqueLegacy];
     }
+
+    pool = pool.filter((upg) => this.canAddUpgrade(state, upg.id, category).allowed);
 
     const chosen: LevelUpUpgradeContent[] = [];
     if (pool.length <= 0) return chosen;

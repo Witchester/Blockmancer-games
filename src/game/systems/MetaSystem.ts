@@ -15,6 +15,7 @@ const DEFAULT_META_STATE: MetaState = {
   routeVariantEndingsUnlocked: [],
   hubBuildings: {},
   monsterFriendship: {},
+  discoveredMonsterIds: [],
   completedStageGoals: [],
   discoveredChaosRules: [],
   discoveredBossRules: [],
@@ -48,6 +49,7 @@ export class MetaSystem {
       routeVariantEndingsUnlocked: loaded?.routeVariantEndingsUnlocked ? [...loaded.routeVariantEndingsUnlocked] : [],
       hubBuildings: { ...(loaded?.hubBuildings || {}) },
       monsterFriendship: { ...(loaded?.monsterFriendship || {}) },
+      discoveredMonsterIds: loaded?.discoveredMonsterIds ? [...loaded.discoveredMonsterIds] : [],
       completedStageGoals: loaded?.completedStageGoals ? [...loaded.completedStageGoals] : [],
       discoveredChaosRules: loaded?.discoveredChaosRules ? [...loaded.discoveredChaosRules] : [],
       discoveredBossRules: loaded?.discoveredBossRules ? [...loaded.discoveredBossRules] : []
@@ -87,6 +89,15 @@ export class MetaSystem {
     this.meta.monsterFriendship[monsterId] = next;
     this.save();
     return next;
+  }
+
+  recordMonsterDiscovered(monsterId: string): boolean {
+    if (!monsterId || this.meta.discoveredMonsterIds.includes(monsterId)) {
+      return false;
+    }
+    this.meta.discoveredMonsterIds.push(monsterId);
+    this.save();
+    return true;
   }
 
   upgradeHubBuilding(buildingId: string): number {

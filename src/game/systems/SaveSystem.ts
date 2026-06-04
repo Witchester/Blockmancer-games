@@ -2,7 +2,7 @@ import { readJsonStorage, removeStorageItem, writeJsonStorage } from '../utils/s
 import type { RunState } from '../types/GameTypes';
 import type { MetaState } from '../types/MetaTypes';
 import { DEFAULT_SETTINGS, type GameSettings } from '../types/SettingsTypes';
-import { SAVE_VERSION } from '../data/constants';
+import { SAVE_VERSION, TOTAL_UPGRADE_SLOTS, MAX_HERO_UPGRADE_SLOTS, MAX_BOARD_UPGRADE_SLOTS, MAX_FEVER_UPGRADE_SLOTS } from '../data/constants';
 import { FeverSystem } from './FeverSystem';
 
 const SAVE_KEY = 'blockmancer-dungeon-save';
@@ -261,22 +261,74 @@ export class SaveSystem {
       }
     }
 
-        if (version < 10 || !isObject(migrated.runUpgradeState)) {
+    if (version < 11 || !isObject(migrated.runUpgradeState)) {
       const legacyUpgrades = Array.isArray(migrated.upgrades)
         ? migrated.upgrades.filter((id: unknown): id is string => typeof id === 'string')
         : [];
+      const existingState = isObject(migrated.runUpgradeState) ? migrated.runUpgradeState : null;
+      const existingOwnedCards = existingState && isObject(existingState.ownedCards)
+        ? existingState.ownedCards as Record<string, unknown>
+        : {};
+      const categoryLimits: Record<string, number> = { hero: MAX_HERO_UPGRADE_SLOTS, board: MAX_BOARD_UPGRADE_SLOTS, fever: MAX_FEVER_UPGRADE_SLOTS };
+      const categoryCounts: Record<string, number> = { hero: 0, board: 0, fever: 0 };
+      const normalizedOwned: Record<string, unknown> = {};
+      for (const [cardId, card] of Object.entries(existingOwnedCards)) {
+        if (!card || typeof card !== 'object' || Array.isArray(card)) continue;
+        const cs = card as Record<string, unknown>;
+        if (typeof cs.cardId !== 'string') continue;
+        const cat = cs.category;
+        if (cat !== 'hero' && cat !== 'board' && cat !== 'fever') continue;
+        const lvl = cs.level;
+        if (lvl !== 1 && lvl !== 2 && lvl !== 3 && lvl !== 4 && lvl !== 5) continue;
+        if (typeof cs.slotIndex !== 'number') continue;
+        if ((categoryCounts[cat] ?? 0) >= (categoryLimits[cat] ?? 0)) continue;
+        categoryCounts[cat] = (categoryCounts[cat] ?? 0) + 1;
+        normalizedOwned[cardId] = cs;
+      }
+      const existingSlots = existingState && Array.isArray(existingState.slots)
+        ? (existingState.slots as Array<{ index?: number; category?: string; cardId?: string }>)
+            .filter((s): s is { index: number; category?: string; cardId?: string } =>
+              Boolean(s) && typeof s === 'object' && typeof s.index === 'number')
+        : [];
+      const usedIndices = new Set<number>();
+      for (const card of Object.values(normalizedOwned)) {
+        if (card && typeof card === 'object' && typeof (card as { slotIndex?: number }).slotIndex === 'number') {
+          usedIndices.add(Math.floor((card as { slotIndex: number }).slotIndex));
+        }
+      }
+      const slots: Array<{ index: number; category?: string; cardId?: string }> = existingSlots.length > 0
+        ? [...existingSlots]
+        : [];
+      if (slots.length <= 0) {
+        for (let i = 0; i < TOTAL_UPGRADE_SLOTS; i++) slots.push({ index: i });
+      } else {
+        let nextFallbackIndex = slots.reduce((max, s) => Math.max(max, s.index), -1) + 1;
+        while (slots.length < TOTAL_UPGRADE_SLOTS) {
+          while (usedIndices.has(nextFallbackIndex)) nextFallbackIndex += 1;
+          slots.push({ index: nextFallbackIndex });
+          usedIndices.add(nextFallbackIndex);
+          nextFallbackIndex += 1;
+        }
+        while (slots.length > TOTAL_UPGRADE_SLOTS) {
+          const emptyIdx = slots.findIndex((s) => !s.category && !s.cardId);
+          if (emptyIdx >= 0) { slots.splice(emptyIdx, 1); } else { break; }
+        }
+      }
+      slots.sort((a, b) => a.index - b.index);
+
       migrated.runUpgradeState = {
-        version: 1,
-        slots: [
-          { index: 0 },
-          { index: 1 },
-          { index: 2 }
-        ],
-        ownedCards: {},
-        legacyUpgradeIds: legacyUpgrades
+        version: 2,
+        slots,
+        ownedCards: normalizedOwned as Record<string, unknown>,
+        legacyUpgradeIds: (existingState && Array.isArray(existingState.legacyUpgradeIds)
+          ? existingState.legacyUpgradeIds
+          : legacyUpgrades) as string[]
       };
       if (Array.isArray(migrated.ownedRewards)) {
         (migrated.runUpgradeState as Record<string, unknown>).legacyOwnedRewards = [...(migrated.ownedRewards as unknown[])];
+      }
+      if (import.meta.env.DEV) {
+        console.warn('[SaveSystem] Save migration normalized runUpgradeState to ' + TOTAL_UPGRADE_SLOTS + ' upgrade slots.', { version, slotCount: slots.length });
       }
     }
 
@@ -318,6 +370,8 @@ export class SaveSystem {
     const endingsUnlocked = uniqueStrings(raw.endingsUnlocked, normalEndingFinished ? ['normal'] : []);
     const routeEndingsUnlocked = uniqueStrings(raw.routeEndingsUnlocked);
     const routeVariantEndingsUnlocked = uniqueStrings(raw.routeVariantEndingsUnlocked);
+    const monsterFriendship = isObject(raw.monsterFriendship) ? raw.monsterFriendship as Record<string, number> : {};
+    const discoveredMonsterIds = uniqueStrings(raw.discoveredMonsterIds, Object.keys(monsterFriendship));
 
     return {
       saveVersion: CURRENT_SAVE_VERSION,
@@ -333,7 +387,8 @@ export class SaveSystem {
       routeEndingsUnlocked,
       routeVariantEndingsUnlocked,
       hubBuildings: isObject(raw.hubBuildings) ? raw.hubBuildings as Record<string, number> : {},
-      monsterFriendship: isObject(raw.monsterFriendship) ? raw.monsterFriendship as Record<string, number> : {},
+      monsterFriendship,
+      discoveredMonsterIds,
       completedStageGoals: uniqueStrings(raw.completedStageGoals),
       discoveredChaosRules: uniqueStrings(raw.discoveredChaosRules),
       discoveredBossRules: uniqueStrings(raw.discoveredBossRules),

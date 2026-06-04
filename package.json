@@ -7,6 +7,9 @@
     "dev": "vite --force",
     "build": "tsc --noEmit && vite build",
     "test": "node tests/run-remediation-smoke.mjs",
+    "validate:content": "node scripts/validate-content-data.mjs",
+    "validate:metadata": "node scripts/validate-content-metadata.mjs",
+    "validate:animations": "node scripts/validate-animations.mjs",
     "validate:ui-layouts": "node scripts/validate-ui-layouts.mjs",
     "preview": "vite preview",
 

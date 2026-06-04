@@ -471,7 +471,13 @@ export class EncounterPackSystem {
 
     const effectGrace = entryEffect?.entryGracePieces || 0;
     const entryGraceBonus = Math.min(3, Math.max(0, state?.playerLevelState?.chosenUpgrades?.['upg_lvl_entry_grace'] ?? 0));
-    const totalGrace = baseGracePieces + effectGrace + entryGraceBonus;
+    const totalGrace = Math.min(
+      8,
+      Math.max(0, baseGracePieces) +
+        Math.max(0, entry.entryGracePieces) +
+        Math.max(0, effectGrace) +
+        entryGraceBonus
+    );
     const attackCounter = Math.max(1, baseAttackInterval + totalGrace);
 
     return {
@@ -512,14 +518,14 @@ export class EncounterPackSystem {
     state: RunState,
     entry: EncounterEnemyEntry,
     logCallback: (message: string) => void
-  ): { pressureEffectId?: string; playerGiftEffectId?: string; messages: string[] } {
+  ): { pressureEffectId?: string; playerGiftEffectId?: string; entryGracePieces: number; messages: string[] } {
     const messages: string[] = [];
 
-    if (!entry.entryEffectId || entry.entryEffectId === 'entry_none_safe') {
+    if (!entry.entryEffectId) {
       const message = 'A new festival troublemaker hops in!';
       messages.push(message);
       logCallback(message);
-      return { messages };
+      return { entryGracePieces: Math.max(0, entry.entryGracePieces), messages };
     }
 
     const effect = contentRegistry.getById<EnemyEntryEffect>(
@@ -528,10 +534,21 @@ export class EncounterPackSystem {
     );
 
     if (!effect) {
-      const message = 'Another guest arrives!';
+      console.warn(`[EncounterPackSystem] Unsupported enemy entry effect: ${entry.entryEffectId}. Skipping safely.`);
+      const message = 'Another guest arrives! Their surprise effect waits safely offstage.';
       messages.push(message);
       logCallback(message);
-      return { messages };
+      return { entryGracePieces: Math.max(0, entry.entryGracePieces), messages };
+    }
+
+    if (entry.entryEffectId === 'entry_none_safe') {
+      const message = effect.eventLogText || 'A new festival troublemaker hops in!';
+      messages.push(message);
+      logCallback(message);
+      return {
+        entryGracePieces: Math.max(0, entry.entryGracePieces + effect.entryGracePieces),
+        messages
+      };
     }
 
     if (effect.warningText) {
@@ -547,6 +564,7 @@ export class EncounterPackSystem {
     return {
       pressureEffectId: effect.pressureEffectId,
       playerGiftEffectId: effect.playerGiftEffectId,
+      entryGracePieces: Math.max(0, entry.entryGracePieces + effect.entryGracePieces),
       messages
     };
   }

@@ -1,83 +1,146 @@
 {
-    "id":  "card_careful_footing",
-    "category":  "hero",
-    "iconKey":  "placeholder_upgrade",
-    "rarity":  "uncommon",
-    "tags":  [
-                 "generic_hero",
-                 "hazard",
-                 "control"
-             ],
-    "name":  "Careful Footing",
-    "legendaryPool":  [
-                          {
-                              "id":  "card_careful_footing_legendary_placeholder",
-                              "name":  "Placeholder Evolution",
-                              "effectConfig":  {
-
-                                               },
-                              "description":  "Coming in Prompt 5.",
-                              "tags":  [
-                                           "placeholder"
-                                       ],
-                              "effectType":  "hero_passive_modifier"
-                          }
-                      ],
-    "description":  "Watch your step. Hazard handling and warning timing improve.",
-    "flavorText":  "One careful step at a time.",
-    "legacyAliases":  [
-                          "upg_lvl_hazard_resist",
-                          "upg_lvl_entry_grace"
-                      ],
-    "isGenericHeroCard":  true,
-    "enabled":  true,
-    "slotCost":  1,
-    "levels":  [
-                   {
-                       "effectType":  "hero_warning_timing",
-                       "title":  "Watchful Eye",
-                       "description":  "Hazard warnings appear 1 extra turn earlier.",
-                       "level":  1,
-                       "effectConfig":  {
-                                            "hazardWarningBonus":  1
-                                        }
-                   },
-                   {
-                       "effectType":  "board_soft_junk_reduction",
-                       "title":  "Quick Dodge",
-                       "description":  "Soft Junk lines clear 20% faster.",
-                       "level":  2,
-                       "effectConfig":  {
-                                            "junkClearRate":  0.2
-                                        }
-                   },
-                   {
-                       "effectType":  "board_low_ceiling_safety",
-                       "title":  "Safe Path",
-                       "description":  "Low-ceiling warnings happen 2 turns earlier.",
-                       "level":  3,
-                       "effectConfig":  {
-                                            "ceilingWarningBonus":  2
-                                        }
-                   },
-                   {
-                       "effectType":  "board_hazard_warning",
-                       "title":  "Hazard Scout",
-                       "description":  "See the next incoming hazard type on the board.",
-                       "level":  4,
-                       "effectConfig":  {
-                                            "revealNextHazard":  true
-                                        }
-                   },
-                   {
-                       "effectType":  "hero_warning_timing",
-                       "title":  "Festival Footwork",
-                       "description":  "All hazards cleared after node end. Ready for Legendary Evolution.",
-                       "level":  5,
-                       "effectConfig":  {
-                                            "clearHazardsOnNodeEnd":  true
-                                        }
-                   }
-               ],
-    "maxLevel":  5
+    "id": "card_careful_footing",
+    "category": "hero",
+    "iconKey": "placeholder_upgrade",
+    "rarity": "uncommon",
+    "tags": [
+        "generic_hero",
+        "hazard",
+        "control"
+    ],
+    "name": "Careful Footing",
+    "legendaryPool": [
+        {
+            "id": "card_careful_footing_legendary_master_path",
+            "name": "Master Pathfinder",
+            "description": "All hazards cleared after node end and warning +3 turns. Nothing surprises you.",
+            "effectType": "hero_warning_timing",
+            "effectConfig": {
+                "clearHazardsOnNodeEnd": true,
+                "warningExtension": 3
+            },
+            "tags": [
+                "defense",
+                "control",
+                "hazard"
+            ]
+        },
+        {
+            "id": "card_careful_footing_legendary_nimble",
+            "name": "Nimble Feet",
+            "description": "Soft Junk decays 40% faster and low-ceiling warning +3 turns. Quick and careful.",
+            "effectType": "board_soft_junk_reduction",
+            "effectConfig": {
+                "junkDecayRate": 0.4,
+                "ceilingWarningBonus": 3
+            },
+            "tags": [
+                "utility",
+                "junk",
+                "defense"
+            ]
+        },
+        {
+            "id": "card_careful_footing_legendary_festival_footing",
+            "name": "Festival Footwork",
+            "description": "Hazard warnings +2 turns and see next incoming hazard. The dance continues.",
+            "effectType": "hero_warning_timing",
+            "effectConfig": {
+                "warningExtension": 2,
+                "revealNextHazard": true
+            },
+            "tags": [
+                "control",
+                "hazard",
+                "utility"
+            ]
+        },
+        {
+            "id": "card_careful_footing_legendary_safety_master",
+            "name": "Safety Master",
+            "description": "All hazards cleared after node and low-ceiling +4 turns. Maximum safety.",
+            "effectType": "hero_warning_timing",
+            "effectConfig": {
+                "clearHazardsOnNodeEnd": true,
+                "ceilingWarningBonus": 4
+            },
+            "tags": [
+                "defense",
+                "hazard",
+                "control"
+            ]
+        },
+        {
+            "id": "card_careful_footing_legendary_agile_dancer",
+            "name": "Agile Dancer",
+            "description": "Soft Junk decays 50% faster and hazard warnings +2 turns. Grace under pressure.",
+            "effectType": "board_soft_junk_reduction",
+            "effectConfig": {
+                "junkDecayRate": 0.5,
+                "warningExtension": 2
+            },
+            "tags": [
+                "utility",
+                "junk",
+                "defense"
+            ]
+        }
+    ],
+    "description": "Watch your step. Hazard handling and warning timing improve.",
+    "flavorText": "One careful step at a time.",
+    "legacyAliases": [
+        "upg_lvl_hazard_resist",
+        "upg_lvl_entry_grace"
+    ],
+    "isGenericHeroCard": true,
+    "enabled": true,
+    "slotCost": 1,
+    "levels": [
+        {
+            "effectType": "hero_warning_timing",
+            "title": "Watchful Eye",
+            "description": "Hazard warnings appear 1 extra turn earlier.",
+            "level": 1,
+            "effectConfig": {
+                "hazardWarningBonus": 1
+            }
+        },
+        {
+            "effectType": "board_soft_junk_reduction",
+            "title": "Quick Dodge",
+            "description": "Soft Junk lines clear 20% faster.",
+            "level": 2,
+            "effectConfig": {
+                "junkClearRate": 0.2
+            }
+        },
+        {
+            "effectType": "board_low_ceiling_safety",
+            "title": "Safe Path",
+            "description": "Low-ceiling warnings happen 2 turns earlier.",
+            "level": 3,
+            "effectConfig": {
+                "ceilingWarningBonus": 2
+            }
+        },
+        {
+            "effectType": "board_hazard_warning",
+            "title": "Hazard Scout",
+            "description": "See the next incoming hazard type on the board.",
+            "level": 4,
+            "effectConfig": {
+                "revealNextHazard": true
+            }
+        },
+        {
+            "effectType": "hero_warning_timing",
+            "title": "Festival Footwork",
+            "description": "All hazards cleared after node end. Ready for Legendary Evolution.",
+            "level": 5,
+            "effectConfig": {
+                "clearHazardsOnNodeEnd": true
+            }
+        }
+    ],
+    "maxLevel": 5
 }

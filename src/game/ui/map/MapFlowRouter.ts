@@ -46,6 +46,7 @@ export function enterBattleFromMap(
     state.currentBossRule = undefined;
   }
   state.player.emergencyBarrierUsed = false;
+  state.reactiveState.nixieMitigationUsed = false;
   state.currentRoomProgress = 'entered';
   state.runStatus = 'battle';
   log(game, roomType === 'boss' ? 'The boss arena lights up for a big festival showdown.' : 'A fresh batch of festival troublemakers hops in.');

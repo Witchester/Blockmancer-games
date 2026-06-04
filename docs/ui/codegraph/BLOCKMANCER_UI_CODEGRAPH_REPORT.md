@@ -116,3 +116,15 @@ Panel and button components also suppress the generated `missing_ui` image when 
 
 The 3-lane level-up upgrade screen no longer displays card rank/level copy on offer cards; owned cards now show neutral ownership text. Item-like reroll/resource rewards were removed from level-up offers and fallbacks so consumable/reward resources stay in post-battle reward flow.
 
+## 2026-06-04 Phase 9 Collection / Ending Smoke Findings
+
+CollectionScene now renders the enabled monster roster as discovered or mystery entries, uses placeholder-safe icons and optional friendship points, and supports portrait-safe wheel scrolling with fixed header/back controls. Defeat recording occurs before sequential encounter advancement so each defeated enemy can persist to collection meta.
+
+The UI screenshot smoke fixture now isolates each scene before capture and includes RouteDialogueScene, CollectionScene, and VictoryScene at small-phone, phone, and tablet portrait viewports. Route and ending resolver smoke continues to cover the six Release 1 heroes, 36 route scenes, and 18 normal/true/risky ending definitions.
+
+## 2026-06-04 Phase 10 Release Readiness Findings
+
+CodeGraph was refreshed before the final audit. The UI screenshot smoke now includes a desktop 1440x900 viewport in addition to the three portrait viewports and treats only policy-accepted missing asset and placeholder-audio decode messages as nonfatal. The harness still fails on other page errors, other console errors, canvas overflow, missing/empty screenshots, or Monster Stack progression regressions.
+
+Phase 10 generated 52 scene screenshots and passed the responsive canvas and Monster Stack assertions. Visual review found no blocking board/control overlap; small-phone text density and generic route choice labels remain polish risks.
+

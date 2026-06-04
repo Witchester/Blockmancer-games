@@ -5,6 +5,7 @@ import type { UiComponentSpec } from '../../types/ui-layout';
 import { COLORS, FONT_FAMILY, TETROMINO_SHAPES } from '../../utils/constants';
 import { getTetrominoBlockId } from '../../systems/BoardSystem';
 import { UiPanel } from '../components';
+import { Button } from '../Button';
 import type { BattleScreenShell } from './BattleScreenShell';
 
 const PIXEL_PERFECT = {
@@ -70,6 +71,13 @@ export type PuzzleSectionStats = {
   feverMax: number;
   objective?: string;
   chaos?: string;
+  feverReady?: boolean;
+  feverActive?: boolean;
+  feverLocksRemaining?: number;
+  feverChargedLines?: number;
+  feverMaxChargedLines?: number;
+  feverHeatLevel?: string;
+  feverReleaseRequested?: boolean;
 };
 
 export type PuzzleSectionHoldState = {
@@ -120,10 +128,17 @@ export class BattlePuzzleSectionUi {
   feverLabelText!: Phaser.GameObjects.Text;
   feverBarBg!: Phaser.GameObjects.Rectangle;
   feverBarFill!: Phaser.GameObjects.Rectangle;
+  feverStatusText!: Phaser.GameObjects.Text;
+  feverInfoText!: Phaser.GameObjects.Text;
+  feverActionButton!: Button;
   objectiveText!: Phaser.GameObjects.Text;
 
   // Callbacks
   onInventoryClicked?: () => void;
+  onActivateFever?: () => void;
+  onReleaseFever?: () => void;
+
+  private feverActionMode: 'activate' | 'release' | 'none' = 'none';
 
   private created = false;
 
@@ -340,8 +355,10 @@ export class BattlePuzzleSectionUi {
     });
     this.rightStatCards.root.add(this.scoreText);
 
-    // Stat Row 3: Fever Meter
-    const row3 = this.scene.add.rectangle(cardStartX + cardWidth / 2, 214, cardWidth, 68, COLORS.panelAlt, 0.98)
+    // Stat Row 3: Fever Meter + Showtime Controls
+    const row3H = 155;
+    const row3CenterY = 180 + row3H / 2;
+    const row3 = this.scene.add.rectangle(cardStartX + cardWidth / 2, row3CenterY, cardWidth, row3H, COLORS.panelAlt, 0.98)
       .setStrokeStyle(1, COLORS.accentSoft, 0.45);
     this.rightStatCards.root.add(row3);
 
@@ -352,19 +369,52 @@ export class BattlePuzzleSectionUi {
       fontStyle: 'bold'
     }).setOrigin(0.5, 0);
 
-    this.feverBarBg = this.scene.add.rectangle(rightRailCenterX, 230, cardWidth - 24, 12, COLORS.boardEmpty, 1)
+    this.feverBarBg = this.scene.add.rectangle(rightRailCenterX, 215, cardWidth - 24, 12, COLORS.boardEmpty, 1)
       .setStrokeStyle(1, COLORS.accent, 0.55);
-    this.feverBarFill = this.scene.add.rectangle(rightRailCenterX - (cardWidth - 24) / 2, 230, 0, 8, COLORS.success, 1)
+    this.feverBarFill = this.scene.add.rectangle(rightRailCenterX - (cardWidth - 24) / 2, 215, 0, 8, COLORS.success, 1)
       .setOrigin(0, 0.5);
 
-    this.rightStatCards.root.add([this.feverLabelText, this.feverBarBg, this.feverBarFill]);
+    this.feverStatusText = this.scene.add.text(rightRailCenterX, 232, '', {
+      color: '#98a0c7',
+      fontFamily: FONT_FAMILY,
+      fontSize: '12px',
+      align: 'center',
+      wordWrap: { width: cardWidth - 20 }
+    }).setOrigin(0.5, 0);
 
-    // Stat Row 4: Objective / Chaos modifiers
-    const row4 = this.scene.add.rectangle(cardStartX + cardWidth / 2, 370, cardWidth, 230, COLORS.panelAlt, 0.98)
+    this.feverInfoText = this.scene.add.text(rightRailCenterX, 252, '', {
+      color: '#d8deff',
+      fontFamily: FONT_FAMILY,
+      fontSize: '12px',
+      align: 'center',
+      wordWrap: { width: cardWidth - 20 },
+      lineSpacing: 2
+    }).setOrigin(0.5, 0);
+
+    this.feverActionButton = new Button(this.scene, rightRailCenterX, 296, 156, 36, 'Showtime!', () => {
+      if (this.feverActionMode === 'activate') {
+        this.onActivateFever?.();
+      } else if (this.feverActionMode === 'release') {
+        this.onReleaseFever?.();
+      }
+    }, {
+      fontFamily: FONT_FAMILY,
+      fontSize: '14px'
+    });
+    this.feverActionButton.setVisible(false);
+    this.feverActionButton.setDisabled(true);
+
+    this.rightStatCards.root.add([this.feverLabelText, this.feverBarBg, this.feverBarFill, this.feverStatusText, this.feverInfoText]);
+    this.rightStatCards.root.add(this.feverActionButton);
+
+    // Stat Row 4: Objective / Chaos modifiers (shifted down to accommodate Fever controls)
+    const row4H = 180;
+    const row4CenterY = row3CenterY + row3H / 2 + 8 + row4H / 2;
+    const row4 = this.scene.add.rectangle(cardStartX + cardWidth / 2, row4CenterY, cardWidth, row4H, COLORS.panelAlt, 0.98)
       .setStrokeStyle(1, COLORS.accentSoft, 0.45);
     this.rightStatCards.root.add(row4);
 
-    this.objectiveText = this.scene.add.text(cardStartX + 12, 266, 'No objective', {
+    this.objectiveText = this.scene.add.text(cardStartX + 12, row4CenterY - row4H / 2 + 12, 'No objective', {
       color: '#d8deff',
       fontFamily: FONT_FAMILY,
       fontSize: '13px',
@@ -406,6 +456,9 @@ export class BattlePuzzleSectionUi {
     this.feverLabelText.destroy();
     this.feverBarBg.destroy();
     this.feverBarFill.destroy();
+    this.feverStatusText.destroy();
+    this.feverInfoText.destroy();
+    this.feverActionButton.destroy();
     this.objectiveText.destroy();
 
     this.created = false;
@@ -484,11 +537,65 @@ export class BattlePuzzleSectionUi {
       `Oopsies: ${statsState.oopsies}`
     );
 
-    // Fever Meter update
+    // Fever Meter + Showtime state update
     const pct = statsState.feverMax > 0 ? statsState.feverProgress / statsState.feverMax : 0;
     const barWidth = PUZZLE_SECTION_LOCAL_BOUNDS.rightRail.w - 48;
-    this.feverBarFill.width = Math.max(0, Math.min(barWidth - 2, (barWidth - 2) * pct));
-    this.feverLabelText.setText(pct >= 1 ? 'FEVER FULL!' : `FEVER ${statsState.feverProgress}/${statsState.feverMax}`);
+    const isActive = Boolean(statsState.feverActive);
+    const isReady = Boolean(statsState.feverReady);
+    const meterDisplay = isActive ? 1 : pct;
+
+    this.feverBarFill.width = Math.max(0, Math.min(barWidth - 2, (barWidth - 2) * meterDisplay));
+    this.feverBarFill.setFillStyle(
+      isActive ? COLORS.gold : isReady ? COLORS.success : COLORS.accent,
+      1
+    );
+
+    if (isActive) {
+      this.feverLabelText.setText('SHOWTIME!');
+      this.feverLabelText.setColor('#ffca6b');
+      this.feverStatusText.setText('Fever is active!');
+      this.feverStatusText.setColor('#ffca6b');
+
+      const locks = statsState.feverLocksRemaining ?? 0;
+      const charged = statsState.feverChargedLines ?? 0;
+      const maxCharged = statsState.feverMaxChargedLines ?? 4;
+      const heat = statsState.feverHeatLevel ?? 'none';
+      let info = `Locks: ${locks}  |  Charged: ${charged}/${maxCharged}`;
+      if (heat !== 'none') {
+        info += `\nHeat: ${heat}`;
+      }
+      this.feverInfoText.setText(info);
+      this.feverInfoText.setVisible(true);
+
+      const releaseRequested = Boolean(statsState.feverReleaseRequested);
+      this.feverActionMode = releaseRequested ? 'none' : 'release';
+      this.feverActionButton.setText(releaseRequested ? 'Releasing...' : 'Release!');
+      this.feverActionButton.setVisible(true);
+      this.feverActionButton.setDisabled(releaseRequested);
+    } else if (isReady) {
+      this.feverLabelText.setText('FEVER READY!');
+      this.feverLabelText.setColor('#65d6a5');
+      this.feverStatusText.setText('Tap Showtime to begin!');
+      this.feverStatusText.setColor('#65d6a5');
+      this.feverInfoText.setText(`Meter: ${statsState.feverProgress}/${statsState.feverMax}`);
+      this.feverInfoText.setVisible(true);
+
+      this.feverActionMode = 'activate';
+      this.feverActionButton.setText('Showtime!');
+      this.feverActionButton.setVisible(true);
+      this.feverActionButton.setDisabled(false);
+    } else {
+      this.feverLabelText.setText(pct >= 1 ? 'FEVER FULL!' : `FEVER ${statsState.feverProgress}/${statsState.feverMax}`);
+      this.feverLabelText.setColor(pct >= 1 ? '#65d6a5' : '#d8deff');
+      this.feverStatusText.setText(pct >= 0.75 ? 'Almost ready...' : '');
+      this.feverStatusText.setColor('#98a0c7');
+      this.feverInfoText.setText('');
+      this.feverInfoText.setVisible(false);
+
+      this.feverActionMode = 'none';
+      this.feverActionButton.setVisible(false);
+      this.feverActionButton.setDisabled(true);
+    }
 
     // Modifiers / Objectives
     const objMsg = statsState.objective ? statsState.objective : '';

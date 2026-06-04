@@ -1,85 +1,148 @@
 {
-    "id":  "card_hero_star_path",
-    "category":  "hero",
-    "iconKey":  "placeholder_upgrade",
-    "rarity":  "rare",
-    "tags":  [
-                 "hero_specific",
-                 "preview",
-                 "star"
-             ],
-    "name":  "Star Path",
-    "legendaryPool":  [
-                          {
-                              "id":  "card_hero_star_path_legendary_placeholder",
-                              "name":  "Placeholder Evolution",
-                              "effectConfig":  {
-
-                                               },
-                              "description":  "Coming in Prompt 5.",
-                              "tags":  [
-                                           "placeholder"
-                                       ],
-                              "effectType":  "hero_passive_modifier"
-                          }
-                      ],
-    "description":  "Lumi reads the stars. Preview and cascade effects improve.",
-    "heroId":  "hero_lumi_star_witch",
-    "flavorText":  "\"The stars already know.\" - Lumi",
-    "legacyAliases":  [
-                          "upg_lvl_lumi_star_guidance",
-                          "upg_lvl_lumi_cascade_wish",
-                          "upg_lvl_lumi_preview_light",
-                          "upg_lvl_lumi_wishkeeper"
-                      ],
-    "enabled":  true,
-    "slotCost":  1,
-    "levels":  [
-                   {
-                       "effectType":  "hero_lumi_star_bonus",
-                       "title":  "Star Guidance",
-                       "description":  "See +1 piece in the Next Queue.",
-                       "level":  1,
-                       "effectConfig":  {
-                                            "previewBonus":  1
-                                        }
-                   },
-                   {
-                       "effectType":  "hero_lumi_star_bonus",
-                       "title":  "Cascade Wish",
-                       "description":  "Cascades grant +3 Fever meter.",
-                       "level":  2,
-                       "effectConfig":  {
-                                            "cascadeFeverBonus":  3
-                                        }
-                   },
-                   {
-                       "effectType":  "hero_lumi_star_bonus",
-                       "title":  "Preview Light",
-                       "description":  "Preview shows block effects on upcoming pieces.",
-                       "level":  3,
-                       "effectConfig":  {
-                                            "previewBlockEffects":  true
-                                        }
-                   },
-                   {
-                       "effectType":  "hero_lumi_star_bonus",
-                       "title":  "Wishkeeper",
-                       "description":  "Hold piece grants +2 mana when released.",
-                       "level":  4,
-                       "effectConfig":  {
-                                            "holdManaRelease":  2
-                                        }
-                   },
-                   {
-                       "effectType":  "hero_lumi_star_bonus",
-                       "title":  "Festival Constellation",
-                       "description":  "All preview bonuses doubled. Ready for Legendary Evolution.",
-                       "level":  5,
-                       "effectConfig":  {
-                                            "previewMultiplier":  2
-                                        }
-                   }
-               ],
-    "maxLevel":  5
+    "id": "card_hero_star_path",
+    "category": "hero",
+    "iconKey": "placeholder_upgrade",
+    "rarity": "rare",
+    "tags": [
+        "hero_specific",
+        "preview",
+        "star"
+    ],
+    "name": "Star Path",
+    "legendaryPool": [
+        {
+            "id": "card_hero_star_path_legendary_constellation",
+            "name": "Constellation Guide",
+            "description": "See +3 pieces ahead and preview shows block effects. The stars reveal all.",
+            "effectType": "hero_lumi_star_bonus",
+            "effectConfig": {
+                "previewBonus": 3,
+                "previewBlockEffects": true
+            },
+            "tags": [
+                "preview",
+                "utility",
+                "star"
+            ]
+        },
+        {
+            "id": "card_hero_star_path_legendary_starfall",
+            "name": "Starfall Cascade",
+            "description": "Cascades grant +8 Fever meter and hold piece releases +4 mana. Stars rain down.",
+            "effectType": "hero_lumi_star_bonus",
+            "effectConfig": {
+                "cascadeFeverBonus": 8,
+                "holdManaRelease": 4
+            },
+            "tags": [
+                "fever",
+                "mana",
+                "cascade"
+            ]
+        },
+        {
+            "id": "card_hero_star_path_legendary_wishkeeper",
+            "name": "Wishkeeper Supreme",
+            "description": "All preview bonuses tripled and hold piece grants +3 mana. Every wish is granted.",
+            "effectType": "hero_lumi_star_bonus",
+            "effectConfig": {
+                "previewMultiplier": 3,
+                "holdManaRelease": 3
+            },
+            "tags": [
+                "preview",
+                "mana",
+                "star"
+            ]
+        },
+        {
+            "id": "card_hero_star_path_legendary_celestial_path",
+            "name": "Celestial Path",
+            "description": "See +2 pieces ahead and cascades deal +15% bonus damage. The stars light the way.",
+            "effectType": "hero_lumi_star_bonus",
+            "effectConfig": {
+                "previewBonus": 2,
+                "cascadeDamageBonus": 0.15
+            },
+            "tags": [
+                "preview",
+                "damage",
+                "star"
+            ]
+        },
+        {
+            "id": "card_hero_star_path_legendary_festival_stars",
+            "name": "Festival Stars",
+            "description": "Preview shows +4 pieces and Fever starts 20% filled. The night sky celebrates.",
+            "effectType": "hero_lumi_star_bonus",
+            "effectConfig": {
+                "previewBonus": 4,
+                "feverStartBonus": 20
+            },
+            "tags": [
+                "preview",
+                "fever",
+                "utility"
+            ]
+        }
+    ],
+    "description": "Lumi reads the stars. Preview and cascade effects improve.",
+    "heroId": "hero_lumi_star_witch",
+    "flavorText": "\"The stars already know.\" - Lumi",
+    "legacyAliases": [
+        "upg_lvl_lumi_star_guidance",
+        "upg_lvl_lumi_cascade_wish",
+        "upg_lvl_lumi_preview_light",
+        "upg_lvl_lumi_wishkeeper"
+    ],
+    "enabled": true,
+    "slotCost": 1,
+    "levels": [
+        {
+            "effectType": "hero_lumi_star_bonus",
+            "title": "Star Guidance",
+            "description": "See +1 piece in the Next Queue.",
+            "level": 1,
+            "effectConfig": {
+                "previewBonus": 1
+            }
+        },
+        {
+            "effectType": "hero_lumi_star_bonus",
+            "title": "Cascade Wish",
+            "description": "Cascades grant +3 Fever meter.",
+            "level": 2,
+            "effectConfig": {
+                "cascadeFeverBonus": 3
+            }
+        },
+        {
+            "effectType": "hero_lumi_star_bonus",
+            "title": "Preview Light",
+            "description": "Preview shows block effects on upcoming pieces.",
+            "level": 3,
+            "effectConfig": {
+                "previewBlockEffects": true
+            }
+        },
+        {
+            "effectType": "hero_lumi_star_bonus",
+            "title": "Wishkeeper",
+            "description": "Hold piece grants +2 mana when released.",
+            "level": 4,
+            "effectConfig": {
+                "holdManaRelease": 2
+            }
+        },
+        {
+            "effectType": "hero_lumi_star_bonus",
+            "title": "Festival Constellation",
+            "description": "All preview bonuses doubled. Ready for Legendary Evolution.",
+            "level": 5,
+            "effectConfig": {
+                "previewMultiplier": 2
+            }
+        }
+    ],
+    "maxLevel": 5
 }

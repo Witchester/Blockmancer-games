@@ -338,50 +338,98 @@ export type ShowtimeOverflowUtility =
       amount: number;
     };
 
+export type FeverHeatSource = "lock_tick" | "charged_line" | "soft_junk" | "pressure_conversion" | "board_danger" | "boss_pressure" | "critical_pressure" | "repair";
+
 export type FeverShowtimeState = {
-  meter: number;
-  ready: boolean;
-  active: boolean;
-  locksRemaining: number;
-  baseDurationLocks: number;
-  maxChargedLines: number;
-  chargedLineRows: number[];
-  heat: number;
-  heatLevel: FeverHeatLevel;
-  manualReleaseAvailable: boolean;
-  releaseRequested: boolean;
-  lastReleaseSummary?: FeverReleaseSummary;
-};
+   meter: number;
+   ready: boolean;
+   active: boolean;
+   locksRemaining: number;
+   baseDurationLocks: number;
+   maxChargedLines: number;
+   chargedLineRows: number[];
+   heat: number;
+   heatLevel: FeverHeatLevel;
+   heatThisShowtime: number;
+   lastHeatChangeReason: FeverHeatSource | "";
+   messyRelease: boolean;
+   manualReleaseAvailable: boolean;
+   releaseRequested: boolean;
+   lastReleaseSummary?: FeverReleaseSummary;
+   // Phase 8: Upgrade-derived fever state (persists between encounters but not nodes)
+   durationBonus?: number;
+   capacityBonus?: number;
+   feverGainMultiplier?: number;
+   feverGainRateBonus?: number;
+   feverStartBonus?: number;
+   feverActivationMana?: number;
+   heatDrainReduction?: number;
+   heatDecayBonus?: number;
+   earlyReleaseAvailable?: boolean;
+   releaseShieldMultiplier?: number;
+   baseReleaseShield?: number;
+   releaseHealBonus?: number;
+   releaseManaBonus?: number;
+   releaseShieldForEarly?: boolean;
+   allReleasesClearHazards?: boolean;
+   maxHeatClearAllHazards?: boolean;
+   clearSoftJunkOnRelease?: boolean;
+   safetyHazardClearCount?: number;
+   heatShieldBonus?: number;
+   heatManaBonus?: number;
+overflowEfficiencyMultiplier?: number;
+    overflowShieldConversion?: number;
+    overflowManaConversion?: number;
+    overflowBossDelay?: number;
+    starEncoreActive?: boolean;
+    starEncoreChance?: number;
+    starEncoreMax?: number;
+    chargedLineGlow?: boolean;
+    protectChargedRows?: boolean;
+    postReleaseRefillFloor?: number;
+    heatThresholdBonus?: number;
+    feverEnemyDelay?: number;
+    mediumHeatThresholdBonus?: number;
+    cascadeMultiplier?: number;
+    cascadeManaBonus?: number;
+    cascadeFeverBonus?: number;
+    deepCascadeDamageBonus?: boolean;
+    // Tracks first fever per node for Lumi Wishkeeper
+    firstFeverThisNodeTriggered?: boolean;
+    // Tracks early release shield granted
+    earlyReleaseShieldGranted?: boolean;
+ };
 
 export interface PlayerState {
-  maxHp: number;
-  hp: number;
-  shield: number;
-  maxMana: number;
-  mana: number;
-  fever: number;
-  feverActiveLocks: number;
-  gold: number;
-  totalGoldCollected: number;
-  baseLineDamage: number;
-  lineDamageBonus: number;
-  spellCostReduction: number;
-  spellBonuses: Record<SpellId, number>;
-  comboHeart: boolean;
-  extraPreview: boolean;
-  stonebreaker: boolean;
-  emergencyBarrier: boolean;
-  emergencyBarrierUsed: boolean;
-  frostLockDelayBonus: boolean;
-  voidCutRefund: boolean;
-  oopsies: string[];
-  /** @deprecated migrated to named oopsies */
-  curses: number;
-  inventoryCapacity: number;
-  level: number;
-  experience: number;
-  xpToNextLevel: number;
-}
+   maxHp: number;
+   hp: number;
+   shield: number;
+   maxMana: number;
+   mana: number;
+   fever: number;
+   feverActiveLocks: number;
+   gold: number;
+   totalGoldCollected: number;
+   baseLineDamage: number;
+   lineDamageBonus: number;
+   spellCostReduction: number;
+   spellBonuses: Record<SpellId, number>;
+   comboHeart: boolean;
+   extraPreview: boolean;
+   stonebreaker: boolean;
+   emergencyBarrier: boolean;
+   emergencyBarrierUsed: boolean;
+   frostLockDelayBonus: boolean;
+   voidCutRefund: boolean;
+   oopsies: string[];
+   /** @deprecated migrated to named oopsies */
+   curses: number;
+   inventoryCapacity: number;
+   level: number;
+   experience: number;
+   xpToNextLevel: number;
+   cascadeDamageBonus?: number;
+ }
 
 export interface HeroState {
   id: string;

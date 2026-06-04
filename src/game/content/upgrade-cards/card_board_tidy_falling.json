@@ -1,82 +1,145 @@
 {
-    "id":  "card_board_tidy_falling",
-    "category":  "board",
-    "iconKey":  "placeholder_upgrade",
-    "rarity":  "common",
-    "tags":  [
-                 "board",
-                 "damage",
-                 "cleanup"
-             ],
-    "name":  "Tidy Falling",
-    "legendaryPool":  [
-                          {
-                              "id":  "card_board_tidy_falling_legendary_placeholder",
-                              "name":  "Placeholder Evolution",
-                              "effectConfig":  {
-
-                                               },
-                              "description":  "Coming in Prompt 5.",
-                              "tags":  [
-                                           "placeholder"
-                                       ],
-                              "effectType":  "board_line_damage"
-                          }
-                      ],
-    "description":  "Blocks fall where they should. Line-clear damage and board cleanliness improve.",
-    "flavorText":  "A tidy board is a happy board.",
-    "legacyAliases":  [
-                          "upg_clean_stack",
-                          "upg_board_stable_hands"
-                      ],
-    "enabled":  true,
-    "slotCost":  1,
-    "levels":  [
-                   {
-                       "effectType":  "board_line_damage",
-                       "title":  "Clean Lines",
-                       "description":  "Line-clear damage +2.",
-                       "level":  1,
-                       "effectConfig":  {
-                                            "lineDamageBonus":  2
-                                        }
-                   },
-                   {
-                       "effectType":  "board_line_damage",
-                       "title":  "Tidy Drop",
-                       "description":  "Fall speed reduced by 3%.",
-                       "level":  2,
-                       "effectConfig":  {
-                                            "fallSpeedReduction":  0.03
-                                        }
-                   },
-                   {
-                       "effectType":  "board_soft_junk_reduction",
-                       "title":  "Soft Sweep",
-                       "description":  "Soft Junk lines clear after 3 fewer piece locks.",
-                       "level":  3,
-                       "effectConfig":  {
-                                            "junkClearReduction":  3
-                                        }
-                   },
-                   {
-                       "effectType":  "board_soft_junk_reduction",
-                       "title":  "Clear Board",
-                       "description":  "Line clears remove adjacent Soft Junk blocks.",
-                       "level":  4,
-                       "effectConfig":  {
-                                            "lineClearAdjacentJunk":  true
-                                        }
-                   },
-                   {
-                       "effectType":  "board_line_damage",
-                       "title":  "Pristine Board",
-                       "description":  "Double line clear triggers full column sweep. Ready for Legendary Evolution.",
-                       "level":  5,
-                       "effectConfig":  {
-                                            "columnSweepOnDouble":  true
-                                        }
-                   }
-               ],
-    "maxLevel":  5
+    "id": "card_board_tidy_falling",
+    "category": "board",
+    "iconKey": "placeholder_upgrade",
+    "rarity": "common",
+    "tags": [
+        "board",
+        "damage",
+        "cleanup"
+    ],
+    "name": "Tidy Falling",
+    "legendaryPool": [
+        {
+            "id": "card_board_tidy_falling_legendary_pristine",
+            "name": "Pristine Board",
+            "description": "Double line clears trigger full column sweep and damage +4. Perfection.",
+            "effectType": "board_line_damage",
+            "effectConfig": {
+                "columnSweepOnDouble": true,
+                "lineDamageBonus": 4
+            },
+            "tags": [
+                "damage",
+                "cleanup",
+                "combo"
+            ]
+        },
+        {
+            "id": "card_board_tidy_falling_legendary_clean_fall",
+            "name": "Clean Fall",
+            "description": "Line damage +5 and Soft Junk decays 40% faster. Tidy to the extreme.",
+            "effectType": "board_line_damage",
+            "effectConfig": {
+                "lineDamageBonus": 5,
+                "junkDecayRate": 0.4
+            },
+            "tags": [
+                "damage",
+                "junk",
+                "utility"
+            ]
+        },
+        {
+            "id": "card_board_tidy_falling_legendary_festival_sweep",
+            "name": "Festival Sweep",
+            "description": "Column sweep on double and line clears remove adjacent junk. The festival cleans up.",
+            "effectType": "board_line_damage",
+            "effectConfig": {
+                "columnSweepOnDouble": true,
+                "lineClearAdjacentJunk": true
+            },
+            "tags": [
+                "damage",
+                "junk",
+                "combo"
+            ]
+        },
+        {
+            "id": "card_board_tidy_falling_legendary_perfect_drop",
+            "name": "Perfect Drop",
+            "description": "Line damage +6 and fall speed reduced 5%. Precision matters.",
+            "effectType": "board_line_damage",
+            "effectConfig": {
+                "lineDamageBonus": 6,
+                "fallSpeedReduction": 0.05
+            },
+            "tags": [
+                "damage",
+                "control",
+                "utility"
+            ]
+        },
+        {
+            "id": "card_board_tidy_falling_legendary_master_tidy",
+            "name": "Master Tidy",
+            "description": "Line damage +3 and junk clear reduction 5. Everything in its place.",
+            "effectType": "board_line_damage",
+            "effectConfig": {
+                "lineDamageBonus": 3,
+                "junkClearReduction": 5
+            },
+            "tags": [
+                "damage",
+                "junk",
+                "utility"
+            ]
+        }
+    ],
+    "description": "Blocks fall where they should. Line-clear damage and board cleanliness improve.",
+    "flavorText": "A tidy board is a happy board.",
+    "legacyAliases": [
+        "upg_clean_stack",
+        "upg_board_stable_hands"
+    ],
+    "enabled": true,
+    "slotCost": 1,
+    "levels": [
+        {
+            "effectType": "board_line_damage",
+            "title": "Clean Lines",
+            "description": "Line-clear damage +2.",
+            "level": 1,
+            "effectConfig": {
+                "lineDamageBonus": 2
+            }
+        },
+        {
+            "effectType": "board_line_damage",
+            "title": "Tidy Drop",
+            "description": "Fall speed reduced by 3%.",
+            "level": 2,
+            "effectConfig": {
+                "fallSpeedReduction": 0.03
+            }
+        },
+        {
+            "effectType": "board_soft_junk_reduction",
+            "title": "Soft Sweep",
+            "description": "Soft Junk lines clear after 3 fewer piece locks.",
+            "level": 3,
+            "effectConfig": {
+                "junkClearReduction": 3
+            }
+        },
+        {
+            "effectType": "board_soft_junk_reduction",
+            "title": "Clear Board",
+            "description": "Line clears remove adjacent Soft Junk blocks.",
+            "level": 4,
+            "effectConfig": {
+                "lineClearAdjacentJunk": true
+            }
+        },
+        {
+            "effectType": "board_line_damage",
+            "title": "Pristine Board",
+            "description": "Double line clear triggers full column sweep. Ready for Legendary Evolution.",
+            "level": 5,
+            "effectConfig": {
+                "columnSweepOnDouble": true
+            }
+        }
+    ],
+    "maxLevel": 5
 }

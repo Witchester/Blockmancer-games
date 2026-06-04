@@ -1,85 +1,148 @@
 {
-    "id":  "card_hero_table_guard",
-    "category":  "hero",
-    "iconKey":  "placeholder_upgrade",
-    "rarity":  "rare",
-    "tags":  [
-                 "hero_specific",
-                 "defense",
-                 "heal"
-             ],
-    "name":  "Table Guard",
-    "legendaryPool":  [
-                          {
-                              "id":  "card_hero_table_guard_legendary_placeholder",
-                              "name":  "Placeholder Evolution",
-                              "effectConfig":  {
-
-                                               },
-                              "description":  "Coming in Prompt 5.",
-                              "tags":  [
-                                           "placeholder"
-                                       ],
-                              "effectType":  "hero_passive_modifier"
-                          }
-                      ],
-    "description":  "Bruk\u0027s shield grows stronger. Defense and snack effects improve.",
-    "heroId":  "hero_bruk_snack_knight",
-    "flavorText":  "\"Nobody touches the snacks.\" - Bruk",
-    "legacyAliases":  [
-                          "upg_lvl_bruk_snack_armor",
-                          "upg_lvl_bruk_table_shield",
-                          "upg_lvl_bruk_no_snack_lost",
-                          "upg_lvl_bruk_victory_plate"
-                      ],
-    "enabled":  true,
-    "slotCost":  1,
-    "levels":  [
-                   {
-                       "effectType":  "hero_bruk_guard_bonus",
-                       "title":  "Snack Armor",
-                       "description":  "Max HP +8.",
-                       "level":  1,
-                       "effectConfig":  {
-                                            "maxHpBonus":  8
-                                        }
-                   },
-                   {
-                       "effectType":  "hero_bruk_guard_bonus",
-                       "title":  "Table Shield",
-                       "description":  "Start each battle with 6 shield.",
-                       "level":  2,
-                       "effectConfig":  {
-                                            "startShield":  6
-                                        }
-                   },
-                   {
-                       "effectType":  "hero_bruk_guard_bonus",
-                       "title":  "No Snack Lost",
-                       "description":  "Inventory items have 30% chance to not be consumed on use.",
-                       "level":  3,
-                       "effectConfig":  {
-                                            "itemSaveChance":  0.3
-                                        }
-                   },
-                   {
-                       "effectType":  "hero_bruk_guard_bonus",
-                       "title":  "Victory Plate",
-                       "description":  "Heal 5 HP after each node clear.",
-                       "level":  4,
-                       "effectConfig":  {
-                                            "healAfterNode":  5
-                                        }
-                   },
-                   {
-                       "effectType":  "hero_bruk_guard_bonus",
-                       "title":  "Festival Feast",
-                       "description":  "All healing doubled. Ready for Legendary Evolution.",
-                       "level":  5,
-                       "effectConfig":  {
-                                            "healMultiplier":  2
-                                        }
-                   }
-               ],
-    "maxLevel":  5
+    "id": "card_hero_table_guard",
+    "category": "hero",
+    "iconKey": "placeholder_upgrade",
+    "rarity": "rare",
+    "tags": [
+        "hero_specific",
+        "defense",
+        "heal"
+    ],
+    "name": "Table Guard",
+    "legendaryPool": [
+        {
+            "id": "card_hero_table_guard_legendary_iron_feast",
+            "name": "Iron Feast",
+            "description": "Max HP +20 and start battles with 10 shield. Nothing gets past the table.",
+            "effectType": "hero_bruk_guard_bonus",
+            "effectConfig": {
+                "maxHpBonus": 20,
+                "startShield": 10
+            },
+            "tags": [
+                "defense",
+                "hp",
+                "shield"
+            ]
+        },
+        {
+            "id": "card_hero_table_guard_legendary_snack_shield",
+            "name": "Snack Shield",
+            "description": "All healing doubled and heal 8 HP after each node. The snacks keep you going.",
+            "effectType": "hero_bruk_guard_bonus",
+            "effectConfig": {
+                "healMultiplier": 2,
+                "healAfterNode": 8
+            },
+            "tags": [
+                "heal",
+                "sustain",
+                "defense"
+            ]
+        },
+        {
+            "id": "card_hero_table_guard_legendary_victory_banquet",
+            "name": "Victory Banquet",
+            "description": "Items have 50% save chance and heal to full after boss. Every battle is a feast.",
+            "effectType": "hero_bruk_guard_bonus",
+            "effectConfig": {
+                "itemSaveChance": 0.5,
+                "bossFullHeal": true
+            },
+            "tags": [
+                "utility",
+                "heal",
+                "boss"
+            ]
+        },
+        {
+            "id": "card_hero_table_guard_legendary_guardian_wall",
+            "name": "Guardian Wall",
+            "description": "Start battles with 12 shield and take 20% less damage while shielded. An immovable feast.",
+            "effectType": "hero_bruk_guard_bonus",
+            "effectConfig": {
+                "startShield": 12,
+                "shieldBlockPercent": 0.2
+            },
+            "tags": [
+                "defense",
+                "shield",
+                "damage"
+            ]
+        },
+        {
+            "id": "card_hero_table_guard_legendary_party_protector",
+            "name": "Party Protector",
+            "description": "Max HP +15 and heal 6 HP after each node. The party never stops.",
+            "effectType": "hero_bruk_guard_bonus",
+            "effectConfig": {
+                "maxHpBonus": 15,
+                "healAfterNode": 6
+            },
+            "tags": [
+                "hp",
+                "heal",
+                "sustain"
+            ]
+        }
+    ],
+    "description": "Bruk's shield grows stronger. Defense and snack effects improve.",
+    "heroId": "hero_bruk_snack_knight",
+    "flavorText": "\"Nobody touches the snacks.\" - Bruk",
+    "legacyAliases": [
+        "upg_lvl_bruk_snack_armor",
+        "upg_lvl_bruk_table_shield",
+        "upg_lvl_bruk_no_snack_lost",
+        "upg_lvl_bruk_victory_plate"
+    ],
+    "enabled": true,
+    "slotCost": 1,
+    "levels": [
+        {
+            "effectType": "hero_bruk_guard_bonus",
+            "title": "Snack Armor",
+            "description": "Max HP +8.",
+            "level": 1,
+            "effectConfig": {
+                "maxHpBonus": 8
+            }
+        },
+        {
+            "effectType": "hero_bruk_guard_bonus",
+            "title": "Table Shield",
+            "description": "Start each battle with 6 shield.",
+            "level": 2,
+            "effectConfig": {
+                "startShield": 6
+            }
+        },
+        {
+            "effectType": "hero_bruk_guard_bonus",
+            "title": "No Snack Lost",
+            "description": "Inventory items have 30% chance to not be consumed on use.",
+            "level": 3,
+            "effectConfig": {
+                "itemSaveChance": 0.3
+            }
+        },
+        {
+            "effectType": "hero_bruk_guard_bonus",
+            "title": "Victory Plate",
+            "description": "Heal 5 HP after each node clear.",
+            "level": 4,
+            "effectConfig": {
+                "healAfterNode": 5
+            }
+        },
+        {
+            "effectType": "hero_bruk_guard_bonus",
+            "title": "Festival Feast",
+            "description": "All healing doubled. Ready for Legendary Evolution.",
+            "level": 5,
+            "effectConfig": {
+                "healMultiplier": 2
+            }
+        }
+    ],
+    "maxLevel": 5
 }

@@ -1,81 +1,144 @@
 {
-    "id":  "card_board_soft_landing",
-    "category":  "board",
-    "iconKey":  "placeholder_upgrade",
-    "rarity":  "common",
-    "tags":  [
-                 "board",
-                 "junk",
-                 "defense"
-             ],
-    "name":  "Soft Landing",
-    "legendaryPool":  [
-                          {
-                              "id":  "card_board_soft_landing_legendary_placeholder",
-                              "name":  "Placeholder Evolution",
-                              "effectConfig":  {
-
-                                               },
-                              "description":  "Coming in Prompt 5.",
-                              "tags":  [
-                                           "placeholder"
-                                       ],
-                              "effectType":  "board_line_damage"
-                          }
-                      ],
-    "description":  "Land softly on trouble. Board pressure and Soft Junk become manageable.",
-    "flavorText":  "Every block finds a soft spot.",
-    "legacyAliases":  [
-                          "upg_clean_stack"
-                      ],
-    "enabled":  true,
-    "slotCost":  1,
-    "levels":  [
-                   {
-                       "effectType":  "board_soft_junk_reduction",
-                       "title":  "Cushion Drop",
-                       "description":  "Soft Junk decays 15% faster.",
-                       "level":  1,
-                       "effectConfig":  {
-                                            "junkDecayRate":  0.15
-                                        }
-                   },
-                   {
-                       "effectType":  "board_soft_junk_reduction",
-                       "title":  "Bounce Back",
-                       "description":  "Clearing a Soft Junk line grants +5 Fever meter.",
-                       "level":  2,
-                       "effectConfig":  {
-                                            "junkClearFever":  5
-                                        }
-                   },
-                   {
-                       "effectType":  "board_soft_junk_reduction",
-                       "title":  "Feather Landing",
-                       "description":  "New Soft Junk lines appear 1 row lower.",
-                       "level":  3,
-                       "effectConfig":  {
-                                            "junkRowOffset":  -1
-                                        }
-                   },
-                   {
-                       "effectType":  "board_soft_junk_reduction",
-                       "title":  "Soft Conversion",
-                       "description":  "Soft Junk converts to mana-granting blocks when cleared.",
-                       "level":  4,
-                       "effectConfig":  {
-                                            "junkToMana":  true
-                                        }
-                   },
-                   {
-                       "effectType":  "board_soft_junk_reduction",
-                       "title":  "Cloud Landing",
-                       "description":  "Soft Junk never reaches spawn zone. Ready for Legendary Evolution.",
-                       "level":  5,
-                       "effectConfig":  {
-                                            "junkBlockSpawnZone":  true
-                                        }
-                   }
-               ],
-    "maxLevel":  5
+    "id": "card_board_soft_landing",
+    "category": "board",
+    "iconKey": "placeholder_upgrade",
+    "rarity": "common",
+    "tags": [
+        "board",
+        "junk",
+        "defense"
+    ],
+    "name": "Soft Landing",
+    "legendaryPool": [
+        {
+            "id": "card_board_soft_landing_legendary_cloud_master",
+            "name": "Cloud Master",
+            "description": "Soft Junk never reaches spawn zone and converts to mana. Problems become solutions.",
+            "effectType": "board_soft_junk_reduction",
+            "effectConfig": {
+                "junkBlockSpawnZone": true,
+                "junkToMana": true
+            },
+            "tags": [
+                "junk",
+                "mana",
+                "defense"
+            ]
+        },
+        {
+            "id": "card_board_soft_landing_legendary_feather_dance",
+            "name": "Feather Dance",
+            "description": "Soft Junk decays 50% faster and clearing grants +8 Fever. Light as a feather.",
+            "effectType": "board_soft_junk_reduction",
+            "effectConfig": {
+                "junkDecayRate": 0.5,
+                "junkClearFever": 8
+            },
+            "tags": [
+                "junk",
+                "fever",
+                "utility"
+            ]
+        },
+        {
+            "id": "card_board_soft_landing_legendary_festival_cloud",
+            "name": "Festival Cloud",
+            "description": "Soft Junk never reaches spawn and line clears remove adjacent junk. Safe landing.",
+            "effectType": "board_soft_junk_reduction",
+            "effectConfig": {
+                "junkBlockSpawnZone": true,
+                "lineClearAdjacentJunk": true
+            },
+            "tags": [
+                "junk",
+                "defense",
+                "utility"
+            ]
+        },
+        {
+            "id": "card_board_soft_landing_legendary_junk_master",
+            "name": "Junk Master",
+            "description": "Soft Junk converts to mana and decays 40% faster. Master of junk.",
+            "effectType": "board_soft_junk_reduction",
+            "effectConfig": {
+                "junkToMana": true,
+                "junkDecayRate": 0.4
+            },
+            "tags": [
+                "junk",
+                "mana",
+                "utility"
+            ]
+        },
+        {
+            "id": "card_board_soft_landing_legendary_safe_cloud",
+            "name": "Safe Cloud",
+            "description": "Soft Junk never reaches spawn and clearing grants +6 Fever. Peace of mind.",
+            "effectType": "board_soft_junk_reduction",
+            "effectConfig": {
+                "junkBlockSpawnZone": true,
+                "junkClearFever": 6
+            },
+            "tags": [
+                "junk",
+                "fever",
+                "defense"
+            ]
+        }
+    ],
+    "description": "Land softly on trouble. Board pressure and Soft Junk become manageable.",
+    "flavorText": "Every block finds a soft spot.",
+    "legacyAliases": [
+        "upg_clean_stack"
+    ],
+    "enabled": true,
+    "slotCost": 1,
+    "levels": [
+        {
+            "effectType": "board_soft_junk_reduction",
+            "title": "Cushion Drop",
+            "description": "Soft Junk decays 15% faster.",
+            "level": 1,
+            "effectConfig": {
+                "junkDecayRate": 0.15
+            }
+        },
+        {
+            "effectType": "board_soft_junk_reduction",
+            "title": "Bounce Back",
+            "description": "Clearing a Soft Junk line grants +5 Fever meter.",
+            "level": 2,
+            "effectConfig": {
+                "junkClearFever": 5
+            }
+        },
+        {
+            "effectType": "board_soft_junk_reduction",
+            "title": "Feather Landing",
+            "description": "New Soft Junk lines appear 1 row lower.",
+            "level": 3,
+            "effectConfig": {
+                "junkRowOffset": -1
+            }
+        },
+        {
+            "effectType": "board_soft_junk_reduction",
+            "title": "Soft Conversion",
+            "description": "Soft Junk converts to mana-granting blocks when cleared.",
+            "level": 4,
+            "effectConfig": {
+                "junkToMana": true
+            }
+        },
+        {
+            "effectType": "board_soft_junk_reduction",
+            "title": "Cloud Landing",
+            "description": "Soft Junk never reaches spawn zone. Ready for Legendary Evolution.",
+            "level": 5,
+            "effectConfig": {
+                "junkBlockSpawnZone": true
+            }
+        }
+    ],
+    "maxLevel": 5
 }

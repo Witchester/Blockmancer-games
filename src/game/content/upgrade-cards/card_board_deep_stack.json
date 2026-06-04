@@ -1,81 +1,144 @@
 {
-    "id":  "card_board_deep_stack",
-    "category":  "board",
-    "iconKey":  "placeholder_upgrade",
-    "rarity":  "uncommon",
-    "tags":  [
-                 "board",
-                 "stack",
-                 "combo"
-             ],
-    "name":  "Deep Stack Rhythm",
-    "legendaryPool":  [
-                          {
-                              "id":  "card_board_deep_stack_legendary_placeholder",
-                              "name":  "Placeholder Evolution",
-                              "effectConfig":  {
-
-                                               },
-                              "description":  "Coming in Prompt 5.",
-                              "tags":  [
-                                           "placeholder"
-                                       ],
-                              "effectType":  "board_line_damage"
-                          }
-                      ],
-    "description":  "Stack deeper, hit harder. High stacks yield better rewards.",
-    "flavorText":  "The deeper the stack, the louder the pop.",
-    "legacyAliases":  [
-                          "upg_combo_cheer"
-                      ],
-    "enabled":  true,
-    "slotCost":  1,
-    "levels":  [
-                   {
-                       "effectType":  "board_stack_rhythm",
-                       "title":  "Stack Sense",
-                       "description":  "Lines cleared above row 10 deal +1 bonus damage.",
-                       "level":  1,
-                       "effectConfig":  {
-                                            "highRowDamageBonus":  1
-                                        }
-                   },
-                   {
-                       "effectType":  "board_stack_rhythm",
-                       "title":  "Deep Reward",
-                       "description":  "Clearing a column grants +3 mana.",
-                       "level":  2,
-                       "effectConfig":  {
-                                            "columnClearMana":  3
-                                        }
-                   },
-                   {
-                       "effectType":  "board_stack_rhythm",
-                       "title":  "Stack Rhythm",
-                       "description":  "Consecutive line clears (within 2 locks) deal +3 damage each.",
-                       "level":  3,
-                       "effectConfig":  {
-                                            "consecutiveClearBonus":  3
-                                        }
-                   },
-                   {
-                       "effectType":  "board_stack_rhythm",
-                       "title":  "Deep Pressure",
-                       "description":  "High stacks grant +8% Fever gain rate.",
-                       "level":  4,
-                       "effectConfig":  {
-                                            "highStackFeverBonus":  0.08
-                                        }
-                   },
-                   {
-                       "effectType":  "board_stack_rhythm",
-                       "title":  "Stack Symphony",
-                       "description":  "All stack bonuses doubled. Ready for Legendary Evolution.",
-                       "level":  5,
-                       "effectConfig":  {
-                                            "stackMultiplier":  2
-                                        }
-                   }
-               ],
-    "maxLevel":  5
+    "id": "card_board_deep_stack",
+    "category": "board",
+    "iconKey": "placeholder_upgrade",
+    "rarity": "uncommon",
+    "tags": [
+        "board",
+        "stack",
+        "combo"
+    ],
+    "name": "Deep Stack Rhythm",
+    "legendaryPool": [
+        {
+            "id": "card_board_deep_stack_legendary_symphony",
+            "name": "Stack Symphony",
+            "description": "All stack bonuses tripled and column clears grant +5 mana. The music of depth.",
+            "effectType": "board_stack_rhythm",
+            "effectConfig": {
+                "stackMultiplier": 3,
+                "columnClearMana": 5
+            },
+            "tags": [
+                "stack",
+                "mana",
+                "damage"
+            ]
+        },
+        {
+            "id": "card_board_deep_stack_legendary_deep_rhythm",
+            "name": "Deep Rhythm",
+            "description": "High-row damage +3 and consecutive clears +5. The deeper you go, the harder you hit.",
+            "effectType": "board_stack_rhythm",
+            "effectConfig": {
+                "highRowDamageBonus": 3,
+                "consecutiveClearBonus": 5
+            },
+            "tags": [
+                "damage",
+                "stack",
+                "combo"
+            ]
+        },
+        {
+            "id": "card_board_deep_stack_legendary_festival_depth",
+            "name": "Festival Depth",
+            "description": "All stack bonuses doubled and high stacks +12% Fever gain. The festival runs deep.",
+            "effectType": "board_stack_rhythm",
+            "effectConfig": {
+                "stackMultiplier": 2,
+                "highStackFeverBonus": 0.12
+            },
+            "tags": [
+                "stack",
+                "fever",
+                "damage"
+            ]
+        },
+        {
+            "id": "card_board_deep_stack_legendary_abyssal_beat",
+            "name": "Abyssal Beat",
+            "description": "Column clears +8 mana and high-row damage +2. The abyss has a pulse.",
+            "effectType": "board_stack_rhythm",
+            "effectConfig": {
+                "columnClearMana": 8,
+                "highRowDamageBonus": 2
+            },
+            "tags": [
+                "mana",
+                "damage",
+                "stack"
+            ]
+        },
+        {
+            "id": "card_board_deep_stack_legendary_ocean_rhythm",
+            "name": "Ocean Rhythm",
+            "description": "Consecutive clears +4 and high stacks +10% Fever. Waves of power.",
+            "effectType": "board_stack_rhythm",
+            "effectConfig": {
+                "consecutiveClearBonus": 4,
+                "highStackFeverBonus": 0.1
+            },
+            "tags": [
+                "combo",
+                "fever",
+                "stack"
+            ]
+        }
+    ],
+    "description": "Stack deeper, hit harder. High stacks yield better rewards.",
+    "flavorText": "The deeper the stack, the louder the pop.",
+    "legacyAliases": [
+        "upg_combo_cheer"
+    ],
+    "enabled": true,
+    "slotCost": 1,
+    "levels": [
+        {
+            "effectType": "board_stack_rhythm",
+            "title": "Stack Sense",
+            "description": "Lines cleared above row 10 deal +1 bonus damage.",
+            "level": 1,
+            "effectConfig": {
+                "highRowDamageBonus": 1
+            }
+        },
+        {
+            "effectType": "board_stack_rhythm",
+            "title": "Deep Reward",
+            "description": "Clearing a column grants +3 mana.",
+            "level": 2,
+            "effectConfig": {
+                "columnClearMana": 3
+            }
+        },
+        {
+            "effectType": "board_stack_rhythm",
+            "title": "Stack Rhythm",
+            "description": "Consecutive line clears (within 2 locks) deal +3 damage each.",
+            "level": 3,
+            "effectConfig": {
+                "consecutiveClearBonus": 3
+            }
+        },
+        {
+            "effectType": "board_stack_rhythm",
+            "title": "Deep Pressure",
+            "description": "High stacks grant +8% Fever gain rate.",
+            "level": 4,
+            "effectConfig": {
+                "highStackFeverBonus": 0.08
+            }
+        },
+        {
+            "effectType": "board_stack_rhythm",
+            "title": "Stack Symphony",
+            "description": "All stack bonuses doubled. Ready for Legendary Evolution.",
+            "level": 5,
+            "effectConfig": {
+                "stackMultiplier": 2
+            }
+        }
+    ],
+    "maxLevel": 5
 }

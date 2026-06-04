@@ -1,83 +1,146 @@
 {
-    "id":  "card_board_gravity_choir",
-    "category":  "board",
-    "iconKey":  "placeholder_upgrade",
-    "rarity":  "common",
-    "tags":  [
-                 "board",
-                 "cascade",
-                 "damage"
-             ],
-    "name":  "Gravity Choir",
-    "legendaryPool":  [
-                          {
-                              "id":  "card_board_gravity_choir_legendary_placeholder",
-                              "name":  "Placeholder Evolution",
-                              "effectConfig":  {
-
-                                               },
-                              "description":  "Coming in Prompt 5.",
-                              "tags":  [
-                                           "placeholder"
-                                       ],
-                              "effectType":  "board_line_damage"
-                          }
-                      ],
-    "description":  "Cascade Gravity sings louder. Cascade rewards improve.",
-    "flavorText":  "Let gravity do the singing.",
-    "legacyAliases":  [
-                          "upg_cascade_choir",
-                          "upg_sharp_sprinkles",
-                          "upg_smooth_cascade"
-                      ],
-    "enabled":  true,
-    "slotCost":  1,
-    "levels":  [
-                   {
-                       "effectType":  "board_cascade_bonus",
-                       "title":  "Soft Hum",
-                       "description":  "Cascade damage +5%.",
-                       "level":  1,
-                       "effectConfig":  {
-                                            "cascadeDamageBonus":  0.05
-                                        }
-                   },
-                   {
-                       "effectType":  "board_cascade_bonus",
-                       "title":  "Harmony Drop",
-                       "description":  "Cascade mana gain +2.",
-                       "level":  2,
-                       "effectConfig":  {
-                                            "cascadeManaBonus":  2
-                                        }
-                   },
-                   {
-                       "effectType":  "board_cascade_bonus",
-                       "title":  "Rhythm Fall",
-                       "description":  "Cascades grant +4 Fever meter.",
-                       "level":  3,
-                       "effectConfig":  {
-                                            "cascadeFeverBonus":  4
-                                        }
-                   },
-                   {
-                       "effectType":  "board_cascade_bonus",
-                       "title":  "Choir Amplifier",
-                       "description":  "Triple-cascade or higher deals bonus damage equal to cascade count.",
-                       "level":  4,
-                       "effectConfig":  {
-                                            "deepCascadeDamage":  true
-                                        }
-                   },
-                   {
-                       "effectType":  "board_cascade_bonus",
-                       "title":  "Gravity Symphony",
-                       "description":  "Cascade bonuses doubled. Ready for Legendary Evolution.",
-                       "level":  5,
-                       "effectConfig":  {
-                                            "cascadeMultiplier":  2
-                                        }
-                   }
-               ],
-    "maxLevel":  5
+    "id": "card_board_gravity_choir",
+    "category": "board",
+    "iconKey": "placeholder_upgrade",
+    "rarity": "common",
+    "tags": [
+        "board",
+        "cascade",
+        "damage"
+    ],
+    "name": "Gravity Choir",
+    "legendaryPool": [
+        {
+            "id": "card_board_gravity_choir_legendary_symphony",
+            "name": "Gravity Symphony",
+            "description": "Cascade bonuses tripled and cascade mana +4. The choir sings in harmony.",
+            "effectType": "board_cascade_bonus",
+            "effectConfig": {
+                "cascadeMultiplier": 3,
+                "cascadeManaBonus": 4
+            },
+            "tags": [
+                "cascade",
+                "mana",
+                "damage"
+            ]
+        },
+        {
+            "id": "card_board_gravity_choir_legendary_deep_harmony",
+            "name": "Deep Harmony",
+            "description": "Cascade mana +5 and Fever +8 per cascade. The music runs deep.",
+            "effectType": "board_cascade_bonus",
+            "effectConfig": {
+                "cascadeManaBonus": 5,
+                "cascadeFeverBonus": 8
+            },
+            "tags": [
+                "mana",
+                "fever",
+                "cascade"
+            ]
+        },
+        {
+            "id": "card_board_gravity_choir_legendary_festival_choir",
+            "name": "Festival Choir",
+            "description": "Cascade bonuses doubled and mana +3. The festival voices unite.",
+            "effectType": "board_cascade_bonus",
+            "effectConfig": {
+                "cascadeMultiplier": 2,
+                "cascadeManaBonus": 3
+            },
+            "tags": [
+                "cascade",
+                "mana",
+                "damage"
+            ]
+        },
+        {
+            "id": "card_board_gravity_choir_legendary_gravity_song",
+            "name": "Gravity Song",
+            "description": "Cascade Fever +10 and deep cascade damage. The song of gravity.",
+            "effectType": "board_cascade_bonus",
+            "effectConfig": {
+                "cascadeFeverBonus": 10,
+                "deepCascadeDamage": true
+            },
+            "tags": [
+                "fever",
+                "damage",
+                "cascade"
+            ]
+        },
+        {
+            "id": "card_board_gravity_choir_legendary_melody",
+            "name": "Cascade Melody",
+            "description": "Cascade mana +6 and Fever +6. A melody of cascades.",
+            "effectType": "board_cascade_bonus",
+            "effectConfig": {
+                "cascadeManaBonus": 6,
+                "cascadeFeverBonus": 6
+            },
+            "tags": [
+                "mana",
+                "fever",
+                "cascade"
+            ]
+        }
+    ],
+    "description": "Cascade Gravity sings louder. Cascade rewards improve.",
+    "flavorText": "Let gravity do the singing.",
+    "legacyAliases": [
+        "upg_cascade_choir",
+        "upg_sharp_sprinkles",
+        "upg_smooth_cascade"
+    ],
+    "enabled": true,
+    "slotCost": 1,
+    "levels": [
+        {
+            "effectType": "board_cascade_bonus",
+            "title": "Soft Hum",
+            "description": "Cascade damage +5%.",
+            "level": 1,
+            "effectConfig": {
+                "cascadeDamageBonus": 0.05
+            }
+        },
+        {
+            "effectType": "board_cascade_bonus",
+            "title": "Harmony Drop",
+            "description": "Cascade mana gain +2.",
+            "level": 2,
+            "effectConfig": {
+                "cascadeManaBonus": 2
+            }
+        },
+        {
+            "effectType": "board_cascade_bonus",
+            "title": "Rhythm Fall",
+            "description": "Cascades grant +4 Fever meter.",
+            "level": 3,
+            "effectConfig": {
+                "cascadeFeverBonus": 4
+            }
+        },
+        {
+            "effectType": "board_cascade_bonus",
+            "title": "Choir Amplifier",
+            "description": "Triple-cascade or higher deals bonus damage equal to cascade count.",
+            "level": 4,
+            "effectConfig": {
+                "deepCascadeDamage": true
+            }
+        },
+        {
+            "effectType": "board_cascade_bonus",
+            "title": "Gravity Symphony",
+            "description": "Cascade bonuses doubled. Ready for Legendary Evolution.",
+            "level": 5,
+            "effectConfig": {
+                "cascadeMultiplier": 2
+            }
+        }
+    ],
+    "maxLevel": 5
 }

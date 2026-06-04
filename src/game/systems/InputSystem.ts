@@ -54,7 +54,8 @@ export class InputSystem {
       a: Phaser.Input.Keyboard.KeyCodes.A,
       d: Phaser.Input.Keyboard.KeyCodes.D,
       s: Phaser.Input.Keyboard.KeyCodes.S,
-      w: Phaser.Input.Keyboard.KeyCodes.W
+      w: Phaser.Input.Keyboard.KeyCodes.W,
+      m: Phaser.Input.Keyboard.KeyCodes.M
     }) as Record<string, Phaser.Input.Keyboard.Key>;
 
     scene.input.keyboard!.on('keydown-UP', this.handleRotateUp);

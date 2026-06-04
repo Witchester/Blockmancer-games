@@ -1,81 +1,143 @@
 {
-    "id":  "card_fever_showtime_overflow",
-    "category":  "fever",
-    "iconKey":  "placeholder_upgrade",
-    "rarity":  "rare",
-    "tags":  [
-                 "fever",
-                 "overflow",
-                 "boss_safe"
-             ],
-    "name":  "Showtime Overflow",
-    "legendaryPool":  [
-                          {
-                              "id":  "card_fever_showtime_overflow_legendary_placeholder",
-                              "name":  "Placeholder Evolution",
-                              "effectConfig":  {
-
-                                               },
-                              "description":  "Coming in Prompt 5.",
-                              "tags":  [
-                                           "placeholder"
-                                       ],
-                              "effectType":  "fever_gain_bonus"
-                          }
-                      ],
-    "description":  "Overflow becomes useful. Excess damage converts to utility.",
-    "flavorText":  "Nothing goes to waste!",
-    "legacyAliases":  [
-                          "upg_fever_overflow"
-                      ],
-    "enabled":  true,
-    "slotCost":  1,
-    "levels":  [
-                   {
-                       "effectType":  "fever_overflow_utility",
-                       "title":  "Spillover",
-                       "description":  "Overflow damage converts to shield at 30% rate.",
-                       "level":  1,
-                       "effectConfig":  {
-                                            "shieldConversion":  0.3
-                                        }
-                   },
-                   {
-                       "effectType":  "fever_overflow_utility",
-                       "title":  "Sparkle Drops",
-                       "description":  "Overflow damage converts to mana at 20% rate.",
-                       "level":  2,
-                       "effectConfig":  {
-                                            "manaConversion":  0.2
-                                        }
-                   },
-                   {
-                       "effectType":  "fever_overflow_utility",
-                       "title":  "Safety Spill",
-                       "description":  "Overflow also converts to shield at 15% rate.",
-                       "level":  3,
-                       "effectConfig":  {
-                                            "shieldConversion":  0.15
-                                        }
-                   },
-                   {
-                       "effectType":  "fever_overflow_utility",
-                       "title":  "Boss Sparkle",
-                       "description":  "Overflow against bosses delays next boss action by 1 lock.",
-                       "level":  4,
-                       "effectConfig":  {
-                                            "bossDelay":  1
-                                        }
-                   },
-                   {
-                       "effectType":  "fever_overflow_utility",
-                       "title":  "Festival Overflow",
-                       "description":  "All conversions doubled. Ready for Legendary Evolution.",
-                       "level":  5,
-                       "effectConfig":  {
-                                            "conversionMultiplier":  2
-                                        }
-                   }
-               ],
-    "maxLevel":  5
+    "id": "card_fever_showtime_overflow",
+    "category": "fever",
+    "iconKey": "placeholder_upgrade",
+    "rarity": "rare",
+    "tags": [
+        "fever",
+        "overflow",
+        "boss_safe"
+    ],
+    "name": "Showtime Overflow",
+    "legendaryPool": [
+        {
+            "id": "card_fever_showtime_overflow_legendary_overflow_master",
+            "name": "Overflow Master",
+            "description": "All conversions tripled. Overflow becomes pure power.",
+            "effectType": "fever_overflow_utility",
+            "effectConfig": {
+                "conversionMultiplier": 3
+            },
+            "tags": [
+                "overflow",
+                "utility",
+                "damage"
+            ]
+        },
+        {
+            "id": "card_fever_showtime_overflow_legendary_sparkle_flood",
+            "name": "Sparkle Flood",
+            "description": "Overflow converts to shield 40% and mana 30%. A flood of sparkles.",
+            "effectType": "fever_overflow_utility",
+            "effectConfig": {
+                "shieldConversion": 0.4,
+                "manaConversion": 0.3
+            },
+            "tags": [
+                "overflow",
+                "shield",
+                "mana"
+            ]
+        },
+        {
+            "id": "card_fever_showtime_overflow_legendary_festival_overflow",
+            "name": "Festival Overflow",
+            "description": "All conversions doubled and boss delay +2. The festival overflows.",
+            "effectType": "fever_overflow_utility",
+            "effectConfig": {
+                "conversionMultiplier": 2,
+                "bossDelay": 2
+            },
+            "tags": [
+                "overflow",
+                "boss",
+                "utility"
+            ]
+        },
+        {
+            "id": "card_fever_showtime_overflow_legendary_shield_flood",
+            "name": "Shield Flood",
+            "description": "Overflow to shield 50% and mana 25%. Protection from overflow.",
+            "effectType": "fever_overflow_utility",
+            "effectConfig": {
+                "shieldConversion": 0.5,
+                "manaConversion": 0.25
+            },
+            "tags": [
+                "overflow",
+                "shield",
+                "mana"
+            ]
+        },
+        {
+            "id": "card_fever_showtime_overflow_legendary_boss_bane",
+            "name": "Boss Bane",
+            "description": "Overflow conversions doubled and boss delay +3. Bosses fear overflow.",
+            "effectType": "fever_overflow_utility",
+            "effectConfig": {
+                "conversionMultiplier": 2,
+                "bossDelay": 3
+            },
+            "tags": [
+                "overflow",
+                "boss",
+                "utility"
+            ]
+        }
+    ],
+    "description": "Overflow becomes useful. Excess damage converts to utility.",
+    "flavorText": "Nothing goes to waste!",
+    "legacyAliases": [
+        "upg_fever_overflow"
+    ],
+    "enabled": true,
+    "slotCost": 1,
+    "levels": [
+        {
+            "effectType": "fever_overflow_utility",
+            "title": "Spillover",
+            "description": "Overflow damage converts to shield at 30% rate.",
+            "level": 1,
+            "effectConfig": {
+                "shieldConversion": 0.3
+            }
+        },
+        {
+            "effectType": "fever_overflow_utility",
+            "title": "Sparkle Drops",
+            "description": "Overflow damage converts to mana at 20% rate.",
+            "level": 2,
+            "effectConfig": {
+                "manaConversion": 0.2
+            }
+        },
+        {
+            "effectType": "fever_overflow_utility",
+            "title": "Safety Spill",
+            "description": "Overflow also converts to shield at 15% rate.",
+            "level": 3,
+            "effectConfig": {
+                "shieldConversion": 0.15
+            }
+        },
+        {
+            "effectType": "fever_overflow_utility",
+            "title": "Boss Sparkle",
+            "description": "Overflow against bosses delays next boss action by 1 lock.",
+            "level": 4,
+            "effectConfig": {
+                "bossDelay": 1
+            }
+        },
+        {
+            "effectType": "fever_overflow_utility",
+            "title": "Festival Overflow",
+            "description": "All conversions doubled. Ready for Legendary Evolution.",
+            "level": 5,
+            "effectConfig": {
+                "conversionMultiplier": 2
+            }
+        }
+    ],
+    "maxLevel": 5
 }

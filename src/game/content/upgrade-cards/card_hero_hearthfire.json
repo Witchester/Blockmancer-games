@@ -1,85 +1,148 @@
 {
-    "id":  "card_hero_hearthfire",
-    "category":  "hero",
-    "iconKey":  "placeholder_upgrade",
-    "rarity":  "rare",
-    "tags":  [
-                 "hero_specific",
-                 "fire",
-                 "damage"
-             ],
-    "name":  "Hearthfire",
-    "legendaryPool":  [
-                          {
-                              "id":  "card_hero_hearthfire_legendary_placeholder",
-                              "name":  "Placeholder Evolution",
-                              "effectConfig":  {
-
-                                               },
-                              "description":  "Coming in Prompt 5.",
-                              "tags":  [
-                                           "placeholder"
-                                       ],
-                              "effectType":  "hero_passive_modifier"
-                          }
-                      ],
-    "description":  "Pippa\u0027s warmth grows. Fire damage and burn effects improve.",
-    "heroId":  "hero_pippa_pyromancer",
-    "flavorText":  "\"Keep the oven hot!\" - Pippa",
-    "legacyAliases":  [
-                          "upg_lvl_pippa_preheat",
-                          "upg_lvl_pippa_burn_sticky",
-                          "upg_lvl_pippa_oven_guard",
-                          "upg_lvl_pippa_hot_combo"
-                      ],
-    "enabled":  true,
-    "slotCost":  1,
-    "levels":  [
-                   {
-                       "effectType":  "hero_pippa_fire_mastery",
-                       "title":  "Kindling",
-                       "description":  "Fireball damage +8.",
-                       "level":  1,
-                       "effectConfig":  {
-                                            "fireballBonus":  8
-                                        }
-                   },
-                   {
-                       "effectType":  "hero_pippa_fire_mastery",
-                       "title":  "Steady Flame",
-                       "description":  "Burn effects last +1 turn on enemies.",
-                       "level":  2,
-                       "effectConfig":  {
-                                            "burnDurationBonus":  1
-                                        }
-                   },
-                   {
-                       "effectType":  "hero_pippa_fire_mastery",
-                       "title":  "Oven Guard",
-                       "description":  "Gain 4 shield after casting a fire spell.",
-                       "level":  3,
-                       "effectConfig":  {
-                                            "shieldPerFireSpell":  4
-                                        }
-                   },
-                   {
-                       "effectType":  "hero_pippa_fire_mastery",
-                       "title":  "Preheat",
-                       "description":  "Fever meter starts 15% filled each battle.",
-                       "level":  4,
-                       "effectConfig":  {
-                                            "feverStartBonus":  15
-                                        }
-                   },
-                   {
-                       "effectType":  "hero_pippa_fire_mastery",
-                       "title":  "Festival Bonfire",
-                       "description":  "Cascades deal +15% fire damage. Ready for Legendary Evolution.",
-                       "level":  5,
-                       "effectConfig":  {
-                                            "cascadeFireMultiplier":  1.15
-                                        }
-                   }
-               ],
-    "maxLevel":  5
+    "id": "card_hero_hearthfire",
+    "category": "hero",
+    "iconKey": "placeholder_upgrade",
+    "rarity": "rare",
+    "tags": [
+        "hero_specific",
+        "fire",
+        "damage"
+    ],
+    "name": "Hearthfire",
+    "legendaryPool": [
+        {
+            "id": "card_hero_hearthfire_legendary_inferno",
+            "name": "Inferno Master",
+            "description": "Fireball +20 damage and cascades deal +25% fire damage. The oven roars.",
+            "effectType": "hero_pippa_fire_mastery",
+            "effectConfig": {
+                "fireballBonus": 20,
+                "cascadeFireMultiplier": 1.25
+            },
+            "tags": [
+                "damage",
+                "fire",
+                "cascade"
+            ]
+        },
+        {
+            "id": "card_hero_hearthfire_legendary_bonfire",
+            "name": "Festival Bonfire",
+            "description": "Fever starts 25% filled and gain 6 shield per fire spell. The warmth spreads.",
+            "effectType": "hero_pippa_fire_mastery",
+            "effectConfig": {
+                "feverStartBonus": 25,
+                "shieldPerFireSpell": 6
+            },
+            "tags": [
+                "fever",
+                "shield",
+                "fire"
+            ]
+        },
+        {
+            "id": "card_hero_hearthfire_legendary_pyroclasm",
+            "name": "Pyroclasm",
+            "description": "Fireball +15 damage and burn lasts +2 turns. Fire everywhere!",
+            "effectType": "hero_pippa_fire_mastery",
+            "effectConfig": {
+                "fireballBonus": 15,
+                "burnDurationBonus": 2
+            },
+            "tags": [
+                "damage",
+                "fire",
+                "debuff"
+            ]
+        },
+        {
+            "id": "card_hero_hearthfire_legendary_flame_shield",
+            "name": "Flame Shield",
+            "description": "Gain 8 shield per fire spell and Fever starts 20% filled. Fire protects.",
+            "effectType": "hero_pippa_fire_mastery",
+            "effectConfig": {
+                "shieldPerFireSpell": 8,
+                "feverStartBonus": 20
+            },
+            "tags": [
+                "shield",
+                "fever",
+                "fire"
+            ]
+        },
+        {
+            "id": "card_hero_hearthfire_legendary_ember_storm",
+            "name": "Ember Storm",
+            "description": "Cascades deal +30% fire damage and burn +3 turns. The storm rages.",
+            "effectType": "hero_pippa_fire_mastery",
+            "effectConfig": {
+                "cascadeFireMultiplier": 1.3,
+                "burnDurationBonus": 3
+            },
+            "tags": [
+                "damage",
+                "fire",
+                "cascade"
+            ]
+        }
+    ],
+    "description": "Pippa's warmth grows. Fire damage and burn effects improve.",
+    "heroId": "hero_pippa_pyromancer",
+    "flavorText": "\"Keep the oven hot!\" - Pippa",
+    "legacyAliases": [
+        "upg_lvl_pippa_preheat",
+        "upg_lvl_pippa_burn_sticky",
+        "upg_lvl_pippa_oven_guard",
+        "upg_lvl_pippa_hot_combo"
+    ],
+    "enabled": true,
+    "slotCost": 1,
+    "levels": [
+        {
+            "effectType": "hero_pippa_fire_mastery",
+            "title": "Kindling",
+            "description": "Fireball damage +8.",
+            "level": 1,
+            "effectConfig": {
+                "fireballBonus": 8
+            }
+        },
+        {
+            "effectType": "hero_pippa_fire_mastery",
+            "title": "Steady Flame",
+            "description": "Burn effects last +1 turn on enemies.",
+            "level": 2,
+            "effectConfig": {
+                "burnDurationBonus": 1
+            }
+        },
+        {
+            "effectType": "hero_pippa_fire_mastery",
+            "title": "Oven Guard",
+            "description": "Gain 4 shield after casting a fire spell.",
+            "level": 3,
+            "effectConfig": {
+                "shieldPerFireSpell": 4
+            }
+        },
+        {
+            "effectType": "hero_pippa_fire_mastery",
+            "title": "Preheat",
+            "description": "Fever meter starts 15% filled each battle.",
+            "level": 4,
+            "effectConfig": {
+                "feverStartBonus": 15
+            }
+        },
+        {
+            "effectType": "hero_pippa_fire_mastery",
+            "title": "Festival Bonfire",
+            "description": "Cascades deal +15% fire damage. Ready for Legendary Evolution.",
+            "level": 5,
+            "effectConfig": {
+                "cascadeFireMultiplier": 1.15
+            }
+        }
+    ],
+    "maxLevel": 5
 }

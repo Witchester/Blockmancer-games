@@ -1,81 +1,142 @@
 {
-    "id":  "card_board_square_etiquette",
-    "category":  "board",
-    "iconKey":  "placeholder_upgrade",
-    "rarity":  "uncommon",
-    "tags":  [
-                 "board",
-                 "special",
-                 "combo"
-             ],
-    "name":  "Square Etiquette",
-    "legendaryPool":  [
-                          {
-                              "id":  "card_board_square_etiquette_legendary_placeholder",
-                              "name":  "Placeholder Evolution",
-                              "effectConfig":  {
-
-                                               },
-                              "description":  "Coming in Prompt 5.",
-                              "tags":  [
-                                           "placeholder"
-                                       ],
-                              "effectType":  "board_line_damage"
-                          }
-                      ],
-    "description":  "Square blocks play nice. O-piece and special block utility improves.",
-    "flavorText":  "Even squares have manners.",
-    "legacyAliases":  [
-
-                      ],
-    "enabled":  true,
-    "slotCost":  1,
-    "levels":  [
-                   {
-                       "effectType":  "board_line_damage",
-                       "title":  "Square Welcome",
-                       "description":  "O-piece grants +1 mana when placed without overhang.",
-                       "level":  1,
-                       "effectConfig":  {
-                                            "oPieceMana":  1
-                                        }
-                   },
-                   {
-                       "effectType":  "board_line_damage",
-                       "title":  "Block Manners",
-                       "description":  "Special blocks (magic, bomb, star) deal +10% damage.",
-                       "level":  2,
-                       "effectConfig":  {
-                                            "specialBlockDamage":  0.1
-                                        }
-                   },
-                   {
-                       "effectType":  "board_line_damage",
-                       "title":  "Square Dance",
-                       "description":  "Completing a 2x2 square with O-pieces clears surrounding blocks.",
-                       "level":  3,
-                       "effectConfig":  {
-                                            "oPieceSquareClear":  true
-                                        }
-                   },
-                   {
-                       "effectType":  "board_low_ceiling_safety",
-                       "title":  "Royal Manners",
-                       "description":  "Royal blocks cannot appear adjacent to each other.",
-                       "level":  4,
-                       "effectConfig":  {
-                                            "royalBlockSpacing":  true
-                                        }
-                   },
-                   {
-                       "effectType":  "board_line_damage",
-                       "title":  "Festival Etiquette",
-                       "description":  "All special blocks drop with +1 bonus effect. Ready for Legendary Evolution.",
-                       "level":  5,
-                       "effectConfig":  {
-                                            "specialBlockBonus":  1
-                                        }
-                   }
-               ],
-    "maxLevel":  5
+    "id": "card_board_square_etiquette",
+    "category": "board",
+    "iconKey": "placeholder_upgrade",
+    "rarity": "uncommon",
+    "tags": [
+        "board",
+        "special",
+        "combo"
+    ],
+    "name": "Square Etiquette",
+    "legendaryPool": [
+        {
+            "id": "card_board_square_etiquette_legendary_royal_dance",
+            "name": "Royal Dance",
+            "description": "Royal blocks cannot be adjacent and all special blocks +2 bonus effects. Elegant.",
+            "effectType": "board_low_ceiling_safety",
+            "effectConfig": {
+                "royalBlockSpacing": true,
+                "specialBlockBonus": 2
+            },
+            "tags": [
+                "special",
+                "combo",
+                "defense"
+            ]
+        },
+        {
+            "id": "card_board_square_etiquette_legendary_square_master",
+            "name": "Square Master",
+            "description": "O-piece square clears and +20% special block damage. Mastery of the square.",
+            "effectType": "board_line_damage",
+            "effectConfig": {
+                "oPieceSquareClear": true,
+                "specialBlockDamage": 0.2
+            },
+            "tags": [
+                "special",
+                "damage",
+                "combo"
+            ]
+        },
+        {
+            "id": "card_board_square_etiquette_legendary_festival_square",
+            "name": "Festival Square",
+            "description": "All special blocks +2 bonus and royal spacing. The square dances.",
+            "effectType": "board_line_damage",
+            "effectConfig": {
+                "specialBlockBonus": 2,
+                "royalBlockSpacing": true
+            },
+            "tags": [
+                "special",
+                "combo",
+                "defense"
+            ]
+        },
+        {
+            "id": "card_board_square_etiquette_legendary_block_master",
+            "name": "Block Master",
+            "description": "O-piece square clears and +15% special block damage. Block expertise.",
+            "effectType": "board_line_damage",
+            "effectConfig": {
+                "oPieceSquareClear": true,
+                "specialBlockDamage": 0.15
+            },
+            "tags": [
+                "special",
+                "damage",
+                "combo"
+            ]
+        },
+        {
+            "id": "card_board_square_etiquette_legendary_elegant_fall",
+            "name": "Elegant Fall",
+            "description": "O-piece grants +3 mana and all specials +15% damage. Graceful power.",
+            "effectType": "board_line_damage",
+            "effectConfig": {
+                "oPieceMana": 3,
+                "specialBlockDamage": 0.15
+            },
+            "tags": [
+                "mana",
+                "damage",
+                "special"
+            ]
+        }
+    ],
+    "description": "Square blocks play nice. O-piece and special block utility improves.",
+    "flavorText": "Even squares have manners.",
+    "legacyAliases": [],
+    "enabled": true,
+    "slotCost": 1,
+    "levels": [
+        {
+            "effectType": "board_line_damage",
+            "title": "Square Welcome",
+            "description": "O-piece grants +1 mana when placed without overhang.",
+            "level": 1,
+            "effectConfig": {
+                "oPieceMana": 1
+            }
+        },
+        {
+            "effectType": "board_line_damage",
+            "title": "Block Manners",
+            "description": "Special blocks (magic, bomb, star) deal +10% damage.",
+            "level": 2,
+            "effectConfig": {
+                "specialBlockDamage": 0.1
+            }
+        },
+        {
+            "effectType": "board_line_damage",
+            "title": "Square Dance",
+            "description": "Completing a 2x2 square with O-pieces clears surrounding blocks.",
+            "level": 3,
+            "effectConfig": {
+                "oPieceSquareClear": true
+            }
+        },
+        {
+            "effectType": "board_low_ceiling_safety",
+            "title": "Royal Manners",
+            "description": "Royal blocks cannot appear adjacent to each other.",
+            "level": 4,
+            "effectConfig": {
+                "royalBlockSpacing": true
+            }
+        },
+        {
+            "effectType": "board_line_damage",
+            "title": "Festival Etiquette",
+            "description": "All special blocks drop with +1 bonus effect. Ready for Legendary Evolution.",
+            "level": 5,
+            "effectConfig": {
+                "specialBlockBonus": 1
+            }
+        }
+    ],
+    "maxLevel": 5
 }

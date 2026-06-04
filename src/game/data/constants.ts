@@ -32,7 +32,12 @@ export const DEFAULT_FALL_SPEED = 1.0;
 export const DEFAULT_GOLD = 50;
 export const DEFAULT_RUN_STATUS: RunStatus = 'menu';
 export const DEFAULT_EVENT_LOG = ['The dungeon stirs beneath your feet.'];
-export const SAVE_VERSION = 10;
+export const SAVE_VERSION = 11;
+
+export const TOTAL_UPGRADE_SLOTS = 5;
+export const MAX_HERO_UPGRADE_SLOTS = 2;
+export const MAX_BOARD_UPGRADE_SLOTS = 2;
+export const MAX_FEVER_UPGRADE_SLOTS = 2;
 
 export function createDefaultHeroState(): HeroState {
   return {

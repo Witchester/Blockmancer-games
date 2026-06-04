@@ -433,6 +433,24 @@ export class BoardSystem {
             // Tick the fever lock duration
             this.state.feverShowtime = this.feverSystem.tickFeverOnPieceLock(this.state.feverShowtime);
 
+            // Phase 6: Board danger heat gain during Fever
+            if (this.state.feverShowtime.active) {
+                const snapshot = this.feverSystem.computeFeverPressureSnapshot(
+                    this.state.board, this.state.feverShowtime, 0, this.state
+                );
+                if (snapshot.band === 'high' || snapshot.band === 'critical') {
+                    const dangerHeat = snapshot.band === 'critical' ? 5 : 3;
+                    const oldLevel = this.state.feverShowtime.heatLevel;
+                    this.state.feverShowtime = this.feverSystem.addFeverHeat(
+                        this.state.feverShowtime, dangerHeat, 'board_danger', 'board_danger'
+                    );
+                    if (this.feverSystem.didHeatLevelChange(oldLevel, this.state.feverShowtime.heatLevel)) {
+                        this.state.eventLog.unshift('Fever Heat is rising!');
+                        this.state.eventLog = this.state.eventLog.slice(0, 50);
+                    }
+                }
+            }
+
             // If release is requested after ticking, resolve the fever release
             if (this.state.feverShowtime.releaseRequested) {
                 const releaseReason = this.state.feverShowtime.lastReleaseSummary?.releaseReason ?? 'manual';
@@ -592,7 +610,32 @@ export class BoardSystem {
   }
 
   spawnHelperBlock(blockId: string): boolean {
-    return this.addSpecialBlocks(blockId, 1) > 0;
+    const normalized = this.normalizeBlockId(blockId);
+    if (this.countActiveBlockId(normalized) >= this.getActiveCapForBlock(normalized)) {
+      return false;
+    }
+    const safeTopRows = Math.min(3, Math.max(1, Math.floor(this.rows / 4)));
+    const center = (this.columns - 1) / 2;
+    const safeCells: Array<[number, number]> = [];
+    for (let row = this.rows - 1; row >= safeTopRows; row -= 1) {
+      for (let col = 0; col < this.columns; col += 1) {
+        if (this.grid[row][col] === 0) {
+          safeCells.push([row, col]);
+        }
+      }
+    }
+    safeCells.sort((left, right) => {
+      const rowDifference = right[0] - left[0];
+      return rowDifference !== 0
+        ? rowDifference
+        : Math.abs(left[1] - center) - Math.abs(right[1] - center);
+    });
+    const target = safeCells[0];
+    if (!target) {
+      return false;
+    }
+    this.grid[target[0]][target[1]] = this.createBoardBlockCell(normalized);
+    return true;
   }
 
   addSpecialBlocksForSpell(blockId: string, count: number, sourceId = 'spell'): number {

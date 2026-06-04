@@ -1,81 +1,146 @@
 {
-    "id":  "card_board_space_reader",
-    "category":  "board",
-    "iconKey":  "placeholder_upgrade",
-    "rarity":  "uncommon",
-    "tags":  [
-                 "board",
-                 "hazard",
-                 "control"
-             ],
-    "name":  "Space Reader",
-    "legendaryPool":  [
-                          {
-                              "id":  "card_board_space_reader_legendary_placeholder",
-                              "name":  "Placeholder Evolution",
-                              "effectConfig":  {
-
-                                               },
-                              "description":  "Coming in Prompt 5.",
-                              "tags":  [
-                                           "placeholder"
-                                       ],
-                              "effectType":  "board_line_damage"
-                          }
-                      ],
-    "description":  "Read the space between blocks. Hazard handling and board spacing improve.",
-    "flavorText":  "See the space, not the blocks.",
-    "legacyAliases":  [
-                          "upg_clean_stack"
-                      ],
-    "enabled":  true,
-    "slotCost":  1,
-    "levels":  [
-                   {
-                       "effectType":  "board_hazard_warning",
-                       "title":  "Spacing Eye",
-                       "description":  "See board row danger zones highlighted.",
-                       "level":  1,
-                       "effectConfig":  {
-                                            "highlightDangerZones":  true
-                                        }
-                   },
-                   {
-                       "effectType":  "board_hazard_warning",
-                       "title":  "Gap Finder",
-                       "description":  "Single-empty-column warnings appear 2 turns early.",
-                       "level":  2,
-                       "effectConfig":  {
-                                            "gapWarningBonus":  2
-                                        }
-                   },
-                   {
-                       "effectType":  "board_soft_junk_reduction",
-                       "title":  "Soft Reader",
-                       "description":  "Soft Junk source and decay timer shown.",
-                       "level":  3,
-                       "effectConfig":  {
-                                            "revealJunkInfo":  true
-                                        }
-                   },
-                   {
-                       "effectType":  "board_low_ceiling_safety",
-                       "title":  "Space Planner",
-                       "description":  "Board can accept 2 extra rows before low-ceiling warning.",
-                       "level":  4,
-                       "effectConfig":  {
-                                            "ceilingExtension":  2
-                                        }
-                   },
-                   {
-                       "effectType":  "board_hazard_warning",
-                       "title":  "Spatial Mastery",
-                       "description":  "All warnings extended by +2. Ready for Legendary Evolution.",
-                       "level":  5,
-                       "effectConfig":  {
-                                            "warningExtension":  2
-                                        }
-                   }
-               ],
-    "maxLevel":  5
+    "id": "card_board_space_reader",
+    "category": "board",
+    "iconKey": "placeholder_upgrade",
+    "rarity": "uncommon",
+    "tags": [
+        "board",
+        "hazard",
+        "control"
+    ],
+    "name": "Space Reader",
+    "legendaryPool": [
+        {
+            "id": "card_board_space_reader_legendary_spatial_master",
+            "name": "Spatial Master",
+            "description": "All warnings +4 turns and board accepts 4 extra rows. Space is yours.",
+            "effectType": "board_hazard_warning",
+            "effectConfig": {
+                "warningExtension": 4,
+                "ceilingExtension": 4
+            },
+            "tags": [
+                "control",
+                "defense",
+                "utility"
+            ]
+        },
+        {
+            "id": "card_board_space_reader_legendary_cosmic_eye",
+            "name": "Cosmic Eye",
+            "description": "See danger zones, gap warnings +3, and low-ceiling +3 rows. The cosmos reveals.",
+            "effectType": "board_hazard_warning",
+            "effectConfig": {
+                "highlightDangerZones": true,
+                "gapWarningBonus": 3,
+                "ceilingExtension": 3
+            },
+            "tags": [
+                "control",
+                "utility",
+                "hazard"
+            ]
+        },
+        {
+            "id": "card_board_space_reader_legendary_festival_space",
+            "name": "Festival Space",
+            "description": "All warnings +3 turns and board accepts 3 extra rows. Room for everyone.",
+            "effectType": "board_hazard_warning",
+            "effectConfig": {
+                "warningExtension": 3,
+                "ceilingExtension": 3
+            },
+            "tags": [
+                "control",
+                "defense",
+                "utility"
+            ]
+        },
+        {
+            "id": "card_board_space_reader_legendary_void_reader",
+            "name": "Void Reader",
+            "description": "Danger zones highlighted, gap warnings +4, and soft junk info shown. Read the void.",
+            "effectType": "board_hazard_warning",
+            "effectConfig": {
+                "highlightDangerZones": true,
+                "gapWarningBonus": 4,
+                "revealJunkInfo": true
+            },
+            "tags": [
+                "control",
+                "utility",
+                "junk"
+            ]
+        },
+        {
+            "id": "card_board_space_reader_legendary_infinite_space",
+            "name": "Infinite Space",
+            "description": "Board accepts 5 extra rows and all warnings +3. Space has no limits.",
+            "effectType": "board_low_ceiling_safety",
+            "effectConfig": {
+                "ceilingExtension": 5,
+                "warningExtension": 3
+            },
+            "tags": [
+                "defense",
+                "control",
+                "utility"
+            ]
+        }
+    ],
+    "description": "Read the space between blocks. Hazard handling and board spacing improve.",
+    "flavorText": "See the space, not the blocks.",
+    "legacyAliases": [
+        "upg_clean_stack"
+    ],
+    "enabled": true,
+    "slotCost": 1,
+    "levels": [
+        {
+            "effectType": "board_hazard_warning",
+            "title": "Spacing Eye",
+            "description": "See board row danger zones highlighted.",
+            "level": 1,
+            "effectConfig": {
+                "highlightDangerZones": true
+            }
+        },
+        {
+            "effectType": "board_hazard_warning",
+            "title": "Gap Finder",
+            "description": "Single-empty-column warnings appear 2 turns early.",
+            "level": 2,
+            "effectConfig": {
+                "gapWarningBonus": 2
+            }
+        },
+        {
+            "effectType": "board_soft_junk_reduction",
+            "title": "Soft Reader",
+            "description": "Soft Junk source and decay timer shown.",
+            "level": 3,
+            "effectConfig": {
+                "revealJunkInfo": true
+            }
+        },
+        {
+            "effectType": "board_low_ceiling_safety",
+            "title": "Space Planner",
+            "description": "Board can accept 2 extra rows before low-ceiling warning.",
+            "level": 4,
+            "effectConfig": {
+                "ceilingExtension": 2
+            }
+        },
+        {
+            "effectType": "board_hazard_warning",
+            "title": "Spatial Mastery",
+            "description": "All warnings extended by +2. Ready for Legendary Evolution.",
+            "level": 5,
+            "effectConfig": {
+                "warningExtension": 2
+            }
+        }
+    ],
+    "maxLevel": 5
 }

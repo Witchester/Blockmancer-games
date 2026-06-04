@@ -10,7 +10,11 @@ import {
   DEFAULT_RUN_STATUS,
   DEFAULT_SPELL_IDS,
   DEFAULT_STAGE,
-  SAVE_VERSION
+  SAVE_VERSION,
+  TOTAL_UPGRADE_SLOTS,
+  MAX_HERO_UPGRADE_SLOTS,
+  MAX_BOARD_UPGRADE_SLOTS,
+  MAX_FEVER_UPGRADE_SLOTS
 } from './constants';
 import type {
   ActiveHazardState,
@@ -217,13 +221,10 @@ function normalizeLevelUpScreenState(value: unknown, levelState: PlayerLevelStat
 }
 
 export function createDefaultRunUpgradeState(): RunUpgradeState {
+  const slots: RunUpgradeSlotState[] = Array.from({ length: TOTAL_UPGRADE_SLOTS }, (_, index) => ({ index }));
   return {
-    version: 1,
-    slots: [
-      { index: 0 },
-      { index: 1 },
-      { index: 2 }
-    ],
+    version: 2,
+    slots,
     ownedCards: {},
     legacyUpgradeIds: []
   };
@@ -248,10 +249,12 @@ export function normalizeRunUpgradeState(value: unknown): RunUpgradeState {
     : defaults.slots;
 
   if (slots.length <= 0) {
-    slots.push({ index: 0 }, { index: 1 }, { index: 2 });
+    for (let i = 0; i < TOTAL_UPGRADE_SLOTS; i++) slots.push({ index: i });
   }
 
   const ownedCards: Record<string, RunUpgradeCardState> = {};
+  const categoryLimits: Record<string, number> = { hero: MAX_HERO_UPGRADE_SLOTS, board: MAX_BOARD_UPGRADE_SLOTS, fever: MAX_FEVER_UPGRADE_SLOTS };
+  const categoryCounts: Record<string, number> = { hero: 0, board: 0, fever: 0 };
   if (raw.ownedCards && typeof raw.ownedCards === 'object' && !Array.isArray(raw.ownedCards)) {
     for (const [cardId, cardState] of Object.entries(raw.ownedCards)) {
       if (!cardState || typeof cardState !== 'object' || Array.isArray(cardState)) continue;
@@ -262,6 +265,8 @@ export function normalizeRunUpgradeState(value: unknown): RunUpgradeState {
       const level = cs.level;
       if (level !== 1 && level !== 2 && level !== 3 && level !== 4 && level !== 5) continue;
       if (typeof cs.slotIndex !== 'number') continue;
+      if (categoryCounts[category] >= categoryLimits[category]) continue;
+      categoryCounts[category]++;
       ownedCards[cardId] = {
         cardId: cs.cardId,
         category,
@@ -273,17 +278,26 @@ export function normalizeRunUpgradeState(value: unknown): RunUpgradeState {
     }
   }
 
+  const usedIndices = new Set(Object.values(ownedCards).map((card) => card.slotIndex));
+  let nextFallbackIndex = slots.reduce((max, s) => Math.max(max, s.index), -1) + 1;
+  while (slots.length < TOTAL_UPGRADE_SLOTS) {
+    while (usedIndices.has(nextFallbackIndex)) nextFallbackIndex += 1;
+    slots.push({ index: nextFallbackIndex });
+    usedIndices.add(nextFallbackIndex);
+    nextFallbackIndex += 1;
+  }
+  while (slots.length > TOTAL_UPGRADE_SLOTS) {
+    const emptyIdx = slots.findIndex((s) => !s.category && !s.cardId);
+    if (emptyIdx >= 0) { slots.splice(emptyIdx, 1); } else { break; }
+  }
+  slots.sort((a, b) => a.index - b.index);
+
   const legacyUpgradeIds: string[] = Array.isArray(raw.legacyUpgradeIds)
     ? raw.legacyUpgradeIds.filter((id): id is string => typeof id === 'string')
     : [...defaults.legacyUpgradeIds!];
 
-  return { version, slots, ownedCards, legacyUpgradeIds };
+  return { version: Math.max(version, 2), slots, ownedCards, legacyUpgradeIds };
 }
-
-export function createDefaultRunUpgradeSlotState(count = 3): RunUpgradeSlotState[] {
-  return Array.from({ length: Math.max(1, count) }, (_, index) => ({ index }));
-}
-
 export function getUpgradeCategorySlotCounts(state: RunUpgradeState): Record<string, number> {
   const counts: Record<string, number> = { total: 0, hero: 0, board: 0, fever: 0 };
   for (const slot of state.slots) {
@@ -318,6 +332,9 @@ export function createDefaultFeverShowtimeState(): FeverShowtimeState {
     chargedLineRows: [],
     heat: 0,
     heatLevel: 'none',
+    heatThisShowtime: 0,
+    lastHeatChangeReason: '',
+    messyRelease: false,
     manualReleaseAvailable: false,
     releaseRequested: false,
     lastReleaseSummary: undefined
@@ -397,6 +414,9 @@ export function normalizeFeverShowtimeState(value: unknown): FeverShowtimeState 
     chargedLineRows,
     heat,
     heatLevel,
+    heatThisShowtime: Math.max(0, Math.floor(Number((raw as any).heatThisShowtime ?? defaults.heatThisShowtime))),
+    lastHeatChangeReason: typeof (raw as any).lastHeatChangeReason === 'string' ? (raw as any).lastHeatChangeReason : defaults.lastHeatChangeReason,
+    messyRelease: Boolean((raw as any).messyRelease ?? defaults.messyRelease),
     manualReleaseAvailable: Boolean(raw.manualReleaseAvailable ?? defaults.manualReleaseAvailable),
     releaseRequested: Boolean(raw.releaseRequested ?? defaults.releaseRequested),
     lastReleaseSummary

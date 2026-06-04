@@ -6,6 +6,7 @@ const baseUrl = process.env.UI_CHECK_URL ?? 'http://127.0.0.1:5173';
 const outDir = path.resolve('artifacts', 'ui-check');
 
 const viewports = [
+  { name: 'desktop-1440x900', width: 1440, height: 900 },
   { name: 'phone-390x844', width: 390, height: 844 },
   { name: 'small-360x740', width: 360, height: 740 },
   { name: 'tablet-720x1280', width: 720, height: 1280 }
@@ -14,6 +15,7 @@ const viewports = [
 const scenes = [
   'MainMenuScene',
   'HeroSelectScene',
+  'RouteDialogueScene',
   'MapScene',
   'BattleScene',
   'RewardScene',
@@ -21,6 +23,8 @@ const scenes = [
   'ShopScene',
   'RestScene',
   'TreasureScene',
+  'CollectionScene',
+  'VictoryScene',
   'GameOverScene'
 ];
 
@@ -32,10 +36,17 @@ const failures = [];
 try {
   for (const viewport of viewports) {
     const page = await browser.newPage({ viewport });
-    page.on('pageerror', (error) => failures.push(`${viewport.name}: page error: ${error.message}`));
+    page.on('pageerror', (error) => {
+      if (!error.message.includes('Unable to decode audio data')) {
+        failures.push(`${viewport.name}: page error: ${error.message}`);
+      }
+    });
     page.on('console', (message) => {
-      if (message.type() === 'error') {
-        failures.push(`${viewport.name}: console error: ${message.text()}`);
+      const text = message.text();
+      const expectedMissingAssetFallback = text.includes('Failed to process file:');
+      const expectedPlaceholderAudio = text.includes('Error decoding audio:') && text.includes('Unable to decode audio data');
+      if (message.type() === 'error' && !expectedMissingAssetFallback && !expectedPlaceholderAudio) {
+        failures.push(`${viewport.name}: console error: ${text}`);
       }
     });
 
@@ -55,6 +66,9 @@ try {
       const screenshot = await stat(screenshotPath);
       if (screenshot.size < 5000) {
         failures.push(`${viewport.name}/${scene}: screenshot file is unexpectedly small (${screenshot.size} bytes)`);
+      }
+      if (scene === 'BattleScene') {
+        await assertMonsterStackProgression(page, `${viewport.name}/${scene}`);
       }
     }
 
@@ -78,6 +92,7 @@ async function setScene(page, scene) {
       throw new Error('Missing dev game handle.');
     }
 
+    game.scene.getScenes(true).forEach((activeScene) => game.scene.stop(activeScene.scene.key));
     const state = game.newRun();
     state.eventLog = [
       'Entered Fight.',
@@ -99,6 +114,12 @@ async function setScene(page, scene) {
       case 'HeroSelectScene':
         state.runStatus = 'menu';
         break;
+      case 'RouteDialogueScene':
+        state.runStatus = 'map';
+        state.currentNodeId = 'event-a';
+        state.currentRoomType = 'event';
+        state.currentRoomProgress = 'entered';
+        break;
       case 'MapScene':
         state.runStatus = 'map';
         state.currentNodeId = 'start';
@@ -110,7 +131,42 @@ async function setScene(page, scene) {
         state.currentNodeId = 'fight-a';
         state.currentRoomType = 'fight';
         state.currentRoomProgress = 'entered';
-        state.activeEnemy = game.enemySystem.spawnEnemy('fight', state.stage);
+        state.activeEncounterPack = {
+          encounterPackId: 'ui_smoke_monster_stack',
+          nodeId: state.currentNodeId,
+          stageId: 'stage_sprinkle_sewers',
+          biomeId: 'ui_smoke_biome',
+          nodeType: 'normal',
+          enemies: ['mon_cupcake_slime', 'mon_sugar_bat', 'mon_sprinkle_snail'].map((enemyId) => ({
+            enemyId,
+            role: 'support',
+            rank: 'normal',
+            hpMultiplier: 1,
+            attackMultiplier: 1,
+            entryGracePieces: 0,
+            tags: ['ui-smoke']
+          })),
+          currentEnemyIndex: 0,
+          totalHpBudgetMultiplier: 1,
+          totalAttackBudgetMultiplier: 1,
+          maxActiveHazards: 1,
+          rewardsGrantedOnlyOnNodeClear: true,
+          xpGrantedOnlyOnNodeClear: true,
+          defeatedEnemyIds: [],
+          defeatedEnemyIndexes: [],
+          remainingEnemyCount: 3,
+          appliedEntryEffectEnemyIndexes: [],
+          entryGiftClaimedEnemyIndexes: [],
+          encounterPackCompleted: false,
+          nodeRewardsGranted: false,
+          routeFallbackTriggeredForEncounterPack: false
+        };
+        state.activeEnemy = game.encounterPackSystem.spawnEncounterEnemy(
+          state.activeEncounterPack.enemies[0],
+          state.stage,
+          0,
+          state
+        );
         break;
       case 'RewardScene':
         state.runStatus = 'reward';
@@ -144,6 +200,15 @@ async function setScene(page, scene) {
         state.currentRoomProgress = 'entered';
         state.pendingRewards = game.rewardSystem.getRandomRewards(1);
         break;
+      case 'CollectionScene':
+        state.runStatus = 'menu';
+        game.metaSystem.state.discoveredMonsterIds = ['mon_cupcake_slime', 'mon_sugar_bat', 'mon_boss_cupcake_slime_king'];
+        game.metaSystem.state.monsterFriendship.mon_cupcake_slime = 2;
+        break;
+      case 'VictoryScene':
+        state.runStatus = 'victory';
+        state.victory = true;
+        break;
       case 'GameOverScene':
         state.runStatus = 'game-over';
         state.victory = false;
@@ -152,7 +217,12 @@ async function setScene(page, scene) {
         throw new Error(`Unknown scene ${sceneKey}`);
     }
 
-    game.scene.start(sceneKey, sceneKey === 'GameOverScene' ? { victory: false } : undefined);
+    const sceneData = sceneKey === 'GameOverScene'
+      ? { victory: false }
+      : sceneKey === 'VictoryScene'
+        ? { endingKind: 'normal', routeEndingId: 'ending_milo_normal', routeVariantEndingId: 'ending_milo_festival_grace_variant' }
+        : undefined;
+    game.scene.start(sceneKey, sceneData);
   }, scene);
 }
 
@@ -183,5 +253,47 @@ async function assertCanvasHealthy(page, label) {
 
   if (!result.ok) {
     failures.push(`${label}: ${result.reason}`);
+  }
+}
+
+async function assertMonsterStackProgression(page, label) {
+  const result = await page.evaluate(() => {
+    const game = window.__blockmancerGame;
+    const scene = game?.scene.getScene('BattleScene');
+    const preview = scene?.monsterStackPreview;
+    const pack = game?.runState.activeEncounterPack;
+    if (!preview || !pack) {
+      return { ok: false, reason: 'missing monster stack preview or encounter pack' };
+    }
+
+    const inspect = (index, completed = false) => {
+      pack.currentEnemyIndex = index;
+      pack.encounterPackCompleted = completed;
+      preview.updateQueue(pack);
+      return { visible: preview.root.visible, childCount: preview.root.list.length };
+    };
+
+    const threeEnemy = inspect(0);
+    const twoEnemy = inspect(1);
+    const finalEnemy = inspect(2);
+    const malformedRestore = inspect(99);
+    const completed = inspect(2, true);
+    inspect(0);
+
+    const ok =
+      threeEnemy.visible && threeEnemy.childCount === 3 &&
+      twoEnemy.visible && twoEnemy.childCount === 2 &&
+      !finalEnemy.visible && finalEnemy.childCount === 0 &&
+      !malformedRestore.visible && malformedRestore.childCount === 0 &&
+      !completed.visible && completed.childCount === 0;
+
+    return {
+      ok,
+      reason: JSON.stringify({ threeEnemy, twoEnemy, finalEnemy, malformedRestore, completed })
+    };
+  });
+
+  if (!result.ok) {
+    failures.push(`${label}: monster stack progression failed: ${result.reason}`);
   }
 }

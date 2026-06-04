@@ -1,82 +1,145 @@
 {
-    "id":  "card_fever_festival_hype",
-    "category":  "fever",
-    "iconKey":  "placeholder_upgrade",
-    "rarity":  "common",
-    "tags":  [
-                 "fever",
-                 "starter",
-                 "gain"
-             ],
-    "name":  "Festival Hype",
-    "legendaryPool":  [
-                          {
-                              "id":  "card_fever_festival_hype_legendary_placeholder",
-                              "name":  "Placeholder Evolution",
-                              "effectConfig":  {
-
-                                               },
-                              "description":  "Coming in Prompt 5.",
-                              "tags":  [
-                                           "placeholder"
-                                       ],
-                              "effectType":  "fever_gain_bonus"
-                          }
-                      ],
-    "description":  "The crowd gets louder. Fever meter fills faster.",
-    "flavorText":  "The festival is HYPE!",
-    "legacyAliases":  [
-                          "upg_fever_gain",
-                          "upg_festival_fever"
-                      ],
-    "enabled":  true,
-    "slotCost":  1,
-    "levels":  [
-                   {
-                       "effectType":  "fever_gain_bonus",
-                       "title":  "Light Cheer",
-                       "description":  "Fever gain rate +8%.",
-                       "level":  1,
-                       "effectConfig":  {
-                                            "gainRateBonus":  0.08
-                                        }
-                   },
-                   {
-                       "effectType":  "fever_gain_bonus",
-                       "title":  "Rising Cheer",
-                       "description":  "Fever meter starts +10% filled each battle.",
-                       "level":  2,
-                       "effectConfig":  {
-                                            "feverStartBonus":  10
-                                        }
-                   },
-                   {
-                       "effectType":  "fever_gain_bonus",
-                       "title":  "Loud Cheer",
-                       "description":  "Cascade Fever gain +3.",
-                       "level":  3,
-                       "effectConfig":  {
-                                            "cascadeFeverBonus":  3
-                                        }
-                   },
-                   {
-                       "effectType":  "fever_gain_bonus",
-                       "title":  "Roaring Cheer",
-                       "description":  "Fever activation grants +8 mana.",
-                       "level":  4,
-                       "effectConfig":  {
-                                            "activationMana":  8
-                                        }
-                   },
-                   {
-                       "effectType":  "fever_gain_bonus",
-                       "title":  "Festival Roar",
-                       "description":  "Fever gain rate doubled. Ready for Legendary Evolution.",
-                       "level":  5,
-                       "effectConfig":  {
-                                            "gainMultiplier":  2
-                                        }
-                   }
-               ],
-    "maxLevel":  5
+    "id": "card_fever_festival_hype",
+    "category": "fever",
+    "iconKey": "placeholder_upgrade",
+    "rarity": "common",
+    "tags": [
+        "fever",
+        "starter",
+        "gain"
+    ],
+    "name": "Festival Hype",
+    "legendaryPool": [
+        {
+            "id": "card_fever_festival_hype_legendary_hype_master",
+            "name": "Hype Master",
+            "description": "Fever gain rate tripled and activation grants +15 mana. Maximum hype.",
+            "effectType": "fever_gain_bonus",
+            "effectConfig": {
+                "gainMultiplier": 3,
+                "activationMana": 15
+            },
+            "tags": [
+                "fever",
+                "mana",
+                "hype"
+            ]
+        },
+        {
+            "id": "card_fever_festival_hype_legendary_roar",
+            "name": "Festival Roar",
+            "description": "Fever gain doubled and starts 25% filled. The crowd goes wild.",
+            "effectType": "fever_gain_bonus",
+            "effectConfig": {
+                "gainMultiplier": 2,
+                "feverStartBonus": 25
+            },
+            "tags": [
+                "fever",
+                "hype",
+                "start"
+            ]
+        },
+        {
+            "id": "card_fever_festival_hype_legendary_cheer_master",
+            "name": "Cheer Master",
+            "description": "Fever gain +40% and activation +10 mana. The cheers echo.",
+            "effectType": "fever_gain_bonus",
+            "effectConfig": {
+                "gainRateBonus": 0.4,
+                "activationMana": 10
+            },
+            "tags": [
+                "fever",
+                "mana",
+                "hype"
+            ]
+        },
+        {
+            "id": "card_fever_festival_hype_legendary_crowd_fury",
+            "name": "Crowd Fury",
+            "description": "Fever starts 30% filled and gain rate +35%. The crowd is furious.",
+            "effectType": "fever_gain_bonus",
+            "effectConfig": {
+                "feverStartBonus": 30,
+                "gainRateBonus": 0.35
+            },
+            "tags": [
+                "fever",
+                "hype",
+                "start"
+            ]
+        },
+        {
+            "id": "card_fever_festival_hype_legendary_festival_roar",
+            "name": "Festival Roar Supreme",
+            "description": "Fever gain rate doubled and starts 20% filled. The roar of the festival.",
+            "effectType": "fever_gain_bonus",
+            "effectConfig": {
+                "gainMultiplier": 2,
+                "feverStartBonus": 20
+            },
+            "tags": [
+                "fever",
+                "hype",
+                "start"
+            ]
+        }
+    ],
+    "description": "The crowd gets louder. Fever meter fills faster.",
+    "flavorText": "The festival is HYPE!",
+    "legacyAliases": [
+        "upg_fever_gain",
+        "upg_festival_fever"
+    ],
+    "enabled": true,
+    "slotCost": 1,
+    "levels": [
+        {
+            "effectType": "fever_gain_bonus",
+            "title": "Light Cheer",
+            "description": "Fever gain rate +8%.",
+            "level": 1,
+            "effectConfig": {
+                "gainRateBonus": 0.08
+            }
+        },
+        {
+            "effectType": "fever_gain_bonus",
+            "title": "Rising Cheer",
+            "description": "Fever meter starts +10% filled each battle.",
+            "level": 2,
+            "effectConfig": {
+                "feverStartBonus": 10
+            }
+        },
+        {
+            "effectType": "fever_gain_bonus",
+            "title": "Loud Cheer",
+            "description": "Cascade Fever gain +3.",
+            "level": 3,
+            "effectConfig": {
+                "cascadeFeverBonus": 3
+            }
+        },
+        {
+            "effectType": "fever_gain_bonus",
+            "title": "Roaring Cheer",
+            "description": "Fever activation grants +8 mana.",
+            "level": 4,
+            "effectConfig": {
+                "activationMana": 8
+            }
+        },
+        {
+            "effectType": "fever_gain_bonus",
+            "title": "Festival Roar",
+            "description": "Fever gain rate doubled. Ready for Legendary Evolution.",
+            "level": 5,
+            "effectConfig": {
+                "gainMultiplier": 2
+            }
+        }
+    ],
+    "maxLevel": 5
 }

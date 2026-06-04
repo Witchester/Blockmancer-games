@@ -1,81 +1,144 @@
 {
-    "id":  "card_board_pocket_planner",
-    "category":  "board",
-    "iconKey":  "placeholder_upgrade",
-    "rarity":  "uncommon",
-    "tags":  [
-                 "board",
-                 "hold",
-                 "utility"
-             ],
-    "name":  "Pocket Planner",
-    "legendaryPool":  [
-                          {
-                              "id":  "card_board_pocket_planner_legendary_placeholder",
-                              "name":  "Placeholder Evolution",
-                              "effectConfig":  {
-
-                                               },
-                              "description":  "Coming in Prompt 5.",
-                              "tags":  [
-                                           "placeholder"
-                                       ],
-                              "effectType":  "board_line_damage"
-                          }
-                      ],
-    "description":  "Plan your pocket piece. Hold and next-queue capabilities improve.",
-    "flavorText":  "Always have a plan in your pocket.",
-    "legacyAliases":  [
-                          "upg_quick_hold"
-                      ],
-    "enabled":  true,
-    "slotCost":  1,
-    "levels":  [
-                   {
-                       "effectType":  "board_hold_bonus",
-                       "title":  "Pocket Ready",
-                       "description":  "Hold piece can be swapped once per 3 locks.",
-                       "level":  1,
-                       "effectConfig":  {
-                                            "holdCooldownReduction":  1
-                                        }
-                   },
-                   {
-                       "effectType":  "board_hold_bonus",
-                       "title":  "Quick Draw",
-                       "description":  "Releasing Hold grants +1 line clear bonus damage.",
-                       "level":  2,
-                       "effectConfig":  {
-                                            "holdReleaseDamage":  1
-                                        }
-                   },
-                   {
-                       "effectType":  "board_hold_bonus",
-                       "title":  "Pocket Magic",
-                       "description":  "Hold piece gains random beneficial block effect.",
-                       "level":  3,
-                       "effectConfig":  {
-                                            "holdMagicBlock":  true
-                                        }
-                   },
-                   {
-                       "effectType":  "board_hold_bonus",
-                       "title":  "Deep Pocket",
-                       "description":  "Hold can store 1 extra piece swap (does not override current Hold).",
-                       "level":  4,
-                       "effectConfig":  {
-                                            "holdExtraSlot":  true
-                                        }
-                   },
-                   {
-                       "effectType":  "board_hold_bonus",
-                       "title":  "Festival Pocket",
-                       "description":  "Hold always available. Ready for Legendary Evolution.",
-                       "level":  5,
-                       "effectConfig":  {
-                                            "holdNoCooldown":  true
-                                        }
-                   }
-               ],
-    "maxLevel":  5
+    "id": "card_board_pocket_planner",
+    "category": "board",
+    "iconKey": "placeholder_upgrade",
+    "rarity": "uncommon",
+    "tags": [
+        "board",
+        "hold",
+        "utility"
+    ],
+    "name": "Pocket Planner",
+    "legendaryPool": [
+        {
+            "id": "card_board_pocket_planner_legendary_master_planner",
+            "name": "Master Planner",
+            "description": "Hold always available and hold piece grants +3 mana on release. Always prepared.",
+            "effectType": "board_hold_bonus",
+            "effectConfig": {
+                "holdNoCooldown": true,
+                "holdManaRelease": 3
+            },
+            "tags": [
+                "hold",
+                "mana",
+                "utility"
+            ]
+        },
+        {
+            "id": "card_board_pocket_planner_legendary_infinite_pocket",
+            "name": "Infinite Pocket",
+            "description": "Hold can store 2 extra pieces and hold grants random block effect. Endless possibilities.",
+            "effectType": "board_hold_bonus",
+            "effectConfig": {
+                "holdExtraSlot": true,
+                "holdMagicBlock": true
+            },
+            "tags": [
+                "hold",
+                "utility",
+                "combo"
+            ]
+        },
+        {
+            "id": "card_board_pocket_planner_legendary_festival_plan",
+            "name": "Festival Plan",
+            "description": "Hold always available and releasing grants +2 damage. The plan comes together.",
+            "effectType": "board_hold_bonus",
+            "effectConfig": {
+                "holdNoCooldown": true,
+                "holdReleaseDamage": 2
+            },
+            "tags": [
+                "hold",
+                "damage",
+                "utility"
+            ]
+        },
+        {
+            "id": "card_board_pocket_planner_legendary_magic_pocket",
+            "name": "Magic Pocket",
+            "description": "Hold grants random block effect and no cooldown. Pure pocket magic.",
+            "effectType": "board_hold_bonus",
+            "effectConfig": {
+                "holdMagicBlock": true,
+                "holdNoCooldown": true
+            },
+            "tags": [
+                "hold",
+                "utility",
+                "magic"
+            ]
+        },
+        {
+            "id": "card_board_pocket_planner_legendary_deep_pocket",
+            "name": "Deep Pocket",
+            "description": "Hold stores 2 extra pieces and no cooldown. The pocket goes deeper.",
+            "effectType": "board_hold_bonus",
+            "effectConfig": {
+                "holdExtraSlot": 2,
+                "holdNoCooldown": true
+            },
+            "tags": [
+                "hold",
+                "utility",
+                "combo"
+            ]
+        }
+    ],
+    "description": "Plan your pocket piece. Hold and next-queue capabilities improve.",
+    "flavorText": "Always have a plan in your pocket.",
+    "legacyAliases": [
+        "upg_quick_hold"
+    ],
+    "enabled": true,
+    "slotCost": 1,
+    "levels": [
+        {
+            "effectType": "board_hold_bonus",
+            "title": "Pocket Ready",
+            "description": "Hold piece can be swapped once per 3 locks.",
+            "level": 1,
+            "effectConfig": {
+                "holdCooldownReduction": 1
+            }
+        },
+        {
+            "effectType": "board_hold_bonus",
+            "title": "Quick Draw",
+            "description": "Releasing Hold grants +1 line clear bonus damage.",
+            "level": 2,
+            "effectConfig": {
+                "holdReleaseDamage": 1
+            }
+        },
+        {
+            "effectType": "board_hold_bonus",
+            "title": "Pocket Magic",
+            "description": "Hold piece gains random beneficial block effect.",
+            "level": 3,
+            "effectConfig": {
+                "holdMagicBlock": true
+            }
+        },
+        {
+            "effectType": "board_hold_bonus",
+            "title": "Deep Pocket",
+            "description": "Hold can store 1 extra piece swap (does not override current Hold).",
+            "level": 4,
+            "effectConfig": {
+                "holdExtraSlot": true
+            }
+        },
+        {
+            "effectType": "board_hold_bonus",
+            "title": "Festival Pocket",
+            "description": "Hold always available. Ready for Legendary Evolution.",
+            "level": 5,
+            "effectConfig": {
+                "holdNoCooldown": true
+            }
+        }
+    ],
+    "maxLevel": 5
 }

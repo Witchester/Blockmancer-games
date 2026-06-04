@@ -1,9 +1,9 @@
 # ASSET Folder Structure Standardization Audit
 
-Generated: 2026-06-02T08:17:47.166Z
+Generated: 2026-06-04T09:14:08.933Z
 
 ## Summary
-- Runtime/content asset-like keys scanned: 916
+- Runtime/content asset-like keys scanned: 943
 - Expected unique keys and exact frames: 2693
 - Physical assets scanned: 581
 - Missing primary files: 2263

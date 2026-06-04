@@ -1,81 +1,147 @@
 {
-    "id":  "card_fever_graceful_release",
-    "category":  "fever",
-    "iconKey":  "placeholder_upgrade",
-    "rarity":  "common",
-    "tags":  [
-                 "fever",
-                 "shield",
-                 "release"
-             ],
-    "name":  "Graceful Release",
-    "legendaryPool":  [
-                          {
-                              "id":  "card_fever_graceful_release_legendary_placeholder",
-                              "name":  "Placeholder Evolution",
-                              "effectConfig":  {
-
-                                               },
-                              "description":  "Coming in Prompt 5.",
-                              "tags":  [
-                                           "placeholder"
-                                       ],
-                              "effectType":  "fever_gain_bonus"
-                          }
-                      ],
-    "description":  "Release with grace. Manual release and shield improve.",
-    "flavorText":  "A bow before the curtain.",
-    "legacyAliases":  [
-                          "upg_fever_manual_release"
-                      ],
-    "enabled":  true,
-    "slotCost":  1,
-    "levels":  [
-                   {
-                       "effectType":  "fever_release_shield",
-                       "title":  "Gentle Bow",
-                       "description":  "Manual release grants +4 shield.",
-                       "level":  1,
-                       "effectConfig":  {
-                                            "releaseShield":  4
-                                        }
-                   },
-                   {
-                       "effectType":  "fever_release_shield",
-                       "title":  "Curtain Call",
-                       "description":  "Release also heals 3 HP.",
-                       "level":  2,
-                       "effectConfig":  {
-                                            "releaseHeal":  3
-                                        }
-                   },
-                   {
-                       "effectType":  "fever_release_shield",
-                       "title":  "Standing Ovation",
-                       "description":  "Release grants +6 mana.",
-                       "level":  3,
-                       "effectConfig":  {
-                                            "releaseMana":  6
-                                        }
-                   },
-                   {
-                       "effectType":  "fever_release_shield",
-                       "title":  "Perfect Timing",
-                       "description":  "Manual release within first 2 locks grants double shield.",
-                       "level":  4,
-                       "effectConfig":  {
-                                            "earlyReleaseBonus":  true
-                                        }
-                   },
-                   {
-                       "effectType":  "fever_release_shield",
-                       "title":  "Festival Bow",
-                       "description":  "All release bonuses doubled. Ready for Legendary Evolution.",
-                       "level":  5,
-                       "effectConfig":  {
-                                            "releaseMultiplier":  2
-                                        }
-                   }
-               ],
-    "maxLevel":  5
+    "id": "card_fever_graceful_release",
+    "category": "fever",
+    "iconKey": "placeholder_upgrade",
+    "rarity": "common",
+    "tags": [
+        "fever",
+        "shield",
+        "release"
+    ],
+    "name": "Graceful Release",
+    "legendaryPool": [
+        {
+            "id": "card_fever_graceful_release_legendary_perfect_bow",
+            "name": "Perfect Bow",
+            "description": "All release bonuses tripled. The perfect bow after the perfect show.",
+            "effectType": "fever_release_shield",
+            "effectConfig": {
+                "releaseMultiplier": 3
+            },
+            "tags": [
+                "release",
+                "shield",
+                "heal"
+            ]
+        },
+        {
+            "id": "card_fever_graceful_release_legendary_standing_ovation",
+            "name": "Standing Ovation",
+            "description": "Release grants +10 shield, heals 8 HP, and +12 mana. The crowd stands.",
+            "effectType": "fever_release_shield",
+            "effectConfig": {
+                "releaseShield": 10,
+                "releaseHeal": 8,
+                "releaseMana": 12
+            },
+            "tags": [
+                "release",
+                "shield",
+                "heal",
+                "mana"
+            ]
+        },
+        {
+            "id": "card_fever_graceful_release_legendary_festival_bow",
+            "name": "Festival Bow",
+            "description": "All release bonuses doubled and early release bonus. The festival bows.",
+            "effectType": "fever_release_shield",
+            "effectConfig": {
+                "releaseMultiplier": 2,
+                "earlyReleaseBonus": true
+            },
+            "tags": [
+                "release",
+                "shield",
+                "utility"
+            ]
+        },
+        {
+            "id": "card_fever_graceful_release_legendary_graceful_master",
+            "name": "Graceful Master",
+            "description": "Release +8 shield, heal 6 HP, and +10 mana. Grace personified.",
+            "effectType": "fever_release_shield",
+            "effectConfig": {
+                "releaseShield": 8,
+                "releaseHeal": 6,
+                "releaseMana": 10
+            },
+            "tags": [
+                "release",
+                "shield",
+                "heal",
+                "mana"
+            ]
+        },
+        {
+            "id": "card_fever_graceful_release_legendary_curtain_call",
+            "name": "Curtain Call",
+            "description": "Release grants +12 shield and early release bonus. The curtain falls.",
+            "effectType": "fever_release_shield",
+            "effectConfig": {
+                "releaseShield": 12,
+                "earlyReleaseBonus": true
+            },
+            "tags": [
+                "release",
+                "shield",
+                "utility"
+            ]
+        }
+    ],
+    "description": "Release with grace. Manual release and shield improve.",
+    "flavorText": "A bow before the curtain.",
+    "legacyAliases": [
+        "upg_fever_manual_release"
+    ],
+    "enabled": true,
+    "slotCost": 1,
+    "levels": [
+        {
+            "effectType": "fever_release_shield",
+            "title": "Gentle Bow",
+            "description": "Manual release grants +4 shield.",
+            "level": 1,
+            "effectConfig": {
+                "releaseShield": 4
+            }
+        },
+        {
+            "effectType": "fever_release_shield",
+            "title": "Curtain Call",
+            "description": "Release also heals 3 HP.",
+            "level": 2,
+            "effectConfig": {
+                "releaseHeal": 3
+            }
+        },
+        {
+            "effectType": "fever_release_shield",
+            "title": "Standing Ovation",
+            "description": "Release grants +6 mana.",
+            "level": 3,
+            "effectConfig": {
+                "releaseMana": 6
+            }
+        },
+        {
+            "effectType": "fever_release_shield",
+            "title": "Perfect Timing",
+            "description": "Manual release within first 2 locks grants double shield.",
+            "level": 4,
+            "effectConfig": {
+                "earlyReleaseBonus": true
+            }
+        },
+        {
+            "effectType": "fever_release_shield",
+            "title": "Festival Bow",
+            "description": "All release bonuses doubled. Ready for Legendary Evolution.",
+            "level": 5,
+            "effectConfig": {
+                "releaseMultiplier": 2
+            }
+        }
+    ],
+    "maxLevel": 5
 }
